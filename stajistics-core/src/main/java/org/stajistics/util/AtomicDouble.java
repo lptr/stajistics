@@ -72,11 +72,11 @@ public class AtomicDouble extends Number {
     }
 
     public double incrementAndGet() {
-        return Double.longBitsToDouble(this.value.incrementAndGet());
+        return addAndGet(1);
     }
 
     public double decrementAndGet() {
-        return Double.longBitsToDouble(this.value.decrementAndGet());
+        return addAndGet(-1);
     }
 
     public double getAndAdd(final double value) {
