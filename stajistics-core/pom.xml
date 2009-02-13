@@ -13,4 +13,11 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
+  <scm>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-core/</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-core/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-core</url>
+    <tag>trunk</tag>
+  </scm>
+
 </project>
