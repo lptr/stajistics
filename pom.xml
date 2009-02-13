@@ -52,6 +52,13 @@
       <unsubscribe>stajistics-dev-unsubscribe@googlegroups.com</unsubscribe>
       <post>stajistics-dev@googlegroups.com</post>
     </mailingList>
+    <mailingList>
+      <name>stajistics-users</name>
+      <archive>http://groups.google.com/group/stajistics-users/topics</archive>
+      <subscribe>stajistics-users-subscribe@googlegroups.com</subscribe>
+      <unsubscribe>stajistics-users-unsubscribe@googlegroups.com</unsubscribe>
+      <post>stajistics-users@googlegroups.com</post>
+    </mailingList>
   </mailingLists>
 
   <repositories>
@@ -163,12 +170,10 @@
           <docTitle>Stajistics ${project.version} Cross Reference</docTitle>
         </configuration>
       </plugin>
-      <!-- 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>
       </plugin>
-      --> 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
