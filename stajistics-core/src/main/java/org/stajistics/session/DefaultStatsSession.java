@@ -14,8 +14,6 @@
  */
 package org.stajistics.session;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
@@ -29,12 +27,6 @@ import org.stajistics.util.AtomicDouble;
 public class DefaultStatsSession extends AbstractStatsSession {
 
     private static final long serialVersionUID = -6959191477629645419L;
-
-    protected final AtomicReference<Double> first = new AtomicReference<Double>(null);
-    protected final AtomicDouble last = new AtomicDouble(Double.NaN);
-    protected final AtomicDouble min = new AtomicDouble(Double.MAX_VALUE);
-    protected final AtomicDouble max = new AtomicDouble(Double.MIN_VALUE);
-    protected final AtomicDouble sum = new AtomicDouble(0);
 
     protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
     protected final AtomicDouble sumOfInverses = new AtomicDouble(0); // For harmonic mean
@@ -50,41 +42,6 @@ public class DefaultStatsSession extends AbstractStatsSession {
         double tmp;
         double currentValue = tracker.getValue();
 
-        // First
-        if (first.get() == null) {
-            first.compareAndSet(null, new Double(currentValue));
-        }
-
-        // Last
-        last.set(currentValue);
-
-        // Min
-        for (;;) {
-            tmp = min.get();
-            if (currentValue < tmp) {
-                if (min.compareAndSet(tmp, currentValue)) {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-
-        // Max
-        for (;;) {
-            tmp = max.get();
-            if (currentValue > tmp) {
-                if (max.compareAndSet(tmp, currentValue)) {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-
-        // Sum
-        sum.getAndAdd(currentValue);
-
         // Sum of squares (for standard deviation and quadratic mean calculation)
         sumOfSquares.getAndAdd(currentValue * currentValue);
 
@@ -99,37 +56,6 @@ public class DefaultStatsSession extends AbstractStatsSession {
 
         // Sum of inverses (for harmonic mean calculation)
         sumOfInverses.getAndAdd(1 / currentValue);
-    }
-
-
-    @Override
-    public double getFirst() {
-        Double firstValue = first.get();
-
-        if (firstValue == null) {
-            return Double.NaN;
-        }
-
-        return firstValue.doubleValue();
-    }
-
-    @Override
-    public double getLast() {
-        return this.last.get();
-    }
-
-    @Override
-    public double getMin() {
-        return this.min.get();
-    }
-
-    @Override
-    public double getMax() {
-        return this.max.get();
-    }
-
-    public double getSum() {
-        return this.sum.get();
     }
 
     public double getArithmeticMean() {
@@ -183,11 +109,6 @@ public class DefaultStatsSession extends AbstractStatsSession {
 
     @Override
     protected void appendStats(final StringBuilder buf) {
-        appendStat(buf, Attributes.FIRST, getFirst());
-        appendStat(buf, Attributes.LAST, getLast());
-        appendStat(buf, Attributes.MIN, getMin());
-        appendStat(buf, Attributes.MAX, getMax());
-        appendStat(buf, Attributes.SUM, getSum());
         appendStat(buf, Attributes.ARITHMETIC_MEAN, getArithmeticMean());
         appendStat(buf, Attributes.GEOMETRIC_MEAN, getGeometricMean());
         appendStat(buf, Attributes.HARMONIC_MEAN, getHarmonicMean());

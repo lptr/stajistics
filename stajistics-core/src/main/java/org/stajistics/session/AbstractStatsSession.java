@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +31,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.util.AtomicDouble;
 
 /**
  * 
@@ -59,9 +60,15 @@ public abstract class AbstractStatsSession implements StatsSession {
     protected final AtomicLong lastHitStamp = new AtomicLong(0);
     protected final AtomicLong commits = new AtomicLong(0);
 
+    protected final AtomicReference<Double> first = new AtomicReference<Double>(null);
+    protected final AtomicDouble last = new AtomicDouble(Double.NaN);
+    protected final AtomicDouble min = new AtomicDouble(Double.MAX_VALUE);
+    protected final AtomicDouble max = new AtomicDouble(Double.MIN_VALUE);
+    protected final AtomicDouble sum = new AtomicDouble(0);
+
     protected final ConcurrentMap<String,Object> clientAttrs = new ConcurrentHashMap<String,Object>();
 
-    protected final Lock updateLock = new ReentrantLock();
+    protected Lock updateLock = null;
 
     public AbstractStatsSession(final StatsKey key) {
         if (key == null) {
@@ -70,7 +77,7 @@ public abstract class AbstractStatsSession implements StatsSession {
 
         this.key = key;
     }
-
+    
     @Override
     public void open(final StatsTracker tracker, 
                      long now) {
@@ -126,15 +133,59 @@ public abstract class AbstractStatsSession implements StatsSession {
             now = System.currentTimeMillis();
         }
 
+        double currentValue = tracker.getValue();
+        double tmp;
+
+        Lock myLock = updateLock;
+
         try {
-            updateLock.lock();
+            if (myLock != null) {
+                myLock.lock();
+            }
 
             commits.incrementAndGet();
+
+            // First
+            if (first.get() == null) {
+                first.compareAndSet(null, new Double(currentValue));
+            }
+
+            // Last
+            last.set(currentValue);
+
+            // Min
+            for (;;) {
+                tmp = min.get();
+                if (currentValue < tmp) {
+                    if (min.compareAndSet(tmp, currentValue)) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            // Max
+            for (;;) {
+                tmp = max.get();
+                if (currentValue > tmp) {
+                    if (max.compareAndSet(tmp, currentValue)) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            // Sum
+            sum.getAndAdd(currentValue);
 
             updateImpl(tracker, now);
 
         } finally {
-            updateLock.unlock();
+            if (myLock != null) {
+                myLock.unlock();
+            }
         }
 
         if (logger.isInfoEnabled()) {
@@ -143,6 +194,36 @@ public abstract class AbstractStatsSession implements StatsSession {
 
         StatsManager.getEventManager()
                     .fireEvent(StatsEventType.TRACKER_COMMITTED, this, tracker);
+    }
+
+    @Override
+    public double getFirst() {
+        Double firstValue = first.get();
+
+        if (firstValue == null) {
+            return Double.NaN;
+        }
+
+        return firstValue.doubleValue();
+    }
+
+    @Override
+    public double getLast() {
+        return this.last.get();
+    }
+
+    @Override
+    public double getMin() {
+        return this.min.get();
+    }
+
+    @Override
+    public double getMax() {
+        return this.max.get();
+    }
+
+    public double getSum() {
+        return this.sum.get();
     }
 
     @Override
@@ -199,6 +280,11 @@ public abstract class AbstractStatsSession implements StatsSession {
         appendStat(buf, Attributes.FIRST_HIT_STAMP, new java.util.Date(getFirstHitStamp()).toString());
         appendStat(buf, Attributes.LAST_HIT_STAMP, new java.util.Date(getLastHitStamp()).toString());
         appendStat(buf, Attributes.COMMITS, getCommits());
+        appendStat(buf, Attributes.FIRST, getFirst());
+        appendStat(buf, Attributes.LAST, getLast());
+        appendStat(buf, Attributes.MIN, getMin());
+        appendStat(buf, Attributes.MAX, getMax());
+        appendStat(buf, Attributes.SUM, getSum());
 
         appendStats(buf);
 

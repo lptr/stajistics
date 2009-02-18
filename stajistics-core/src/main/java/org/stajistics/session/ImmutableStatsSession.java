@@ -41,6 +41,7 @@ public class ImmutableStatsSession implements StatsSession {
     private final double last;
     private final double min;
     private final double max;
+    private final double sum;
 
     private final Map<String,Object> attrs;
 
@@ -55,6 +56,7 @@ public class ImmutableStatsSession implements StatsSession {
         this.last = copyFrom.getLast();
         this.min = copyFrom.getMin();
         this.max = copyFrom.getMax();
+        this.sum = copyFrom.getSum();
 
         this.attrs = Collections.unmodifiableMap(new HashMap<String,Object>(copyFrom.getAttributes()));
     }
@@ -112,6 +114,11 @@ public class ImmutableStatsSession implements StatsSession {
     @Override
     public double getMin() {
         return min;
+    }
+
+    @Override
+    public double getSum() {
+        return sum;
     }
 
     @Override

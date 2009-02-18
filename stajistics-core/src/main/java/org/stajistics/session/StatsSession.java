@@ -66,6 +66,8 @@ public interface StatsSession extends Serializable {
 
     double getMax();
 
+    double getSum();
+
     Object getAttribute(String name);
 
     Map<String,Object> getAttributes();
