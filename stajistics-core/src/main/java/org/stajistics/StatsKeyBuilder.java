@@ -14,10 +14,10 @@
  */
 package org.stajistics;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.Map;
 
 import org.stajistics.session.StatsSession;
+import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -25,19 +25,20 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public interface StatsSessionManager {
+public interface StatsKeyBuilder {
 
-    int getSessionCount();
+    StatsKeyBuilder withName(String name);
 
-    Set<StatsKey> getKeys();
+    StatsKeyBuilder withUnit(String unit);
 
-    Collection<StatsSession> getSessions();
+    StatsKeyBuilder withAttributes(Map<String,Object> attributes);
 
-    StatsSession getSession(StatsKey key);
+    StatsKeyBuilder withAttribute(String name, Object value);
 
-    StatsSession remove(StatsKey key);
+    StatsKeyBuilder withTracker(Class<? extends StatsTracker> trackerClass);
 
-    boolean remove(StatsSession statsSession);
+    StatsKeyBuilder withSession(Class<? extends StatsSession> sessionClass);
 
-    void clear();
+    StatsKey newKey();
+
 }

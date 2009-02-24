@@ -51,7 +51,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     }
 
     @Override
-    public StatsTracker open() {
+    public StatsTracker track() {
 
         if (tracking) {
             throw new IllegalStateException("Already tracking");
@@ -61,12 +61,12 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
         timeStamp = System.currentTimeMillis();
 
-        openImpl(timeStamp);
+        trackImpl(timeStamp);
 
         return this;
     }
 
-    protected void openImpl(final long now) {
+    protected void trackImpl(final long now) {
         statsSession.open(this, now);
     }
 

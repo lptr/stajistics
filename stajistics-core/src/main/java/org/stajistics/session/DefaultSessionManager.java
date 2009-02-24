@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.session;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,8 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.session.DefaultStatsSession;
-import org.stajistics.session.StatsSession;
+import org.stajistics.StatsKey;
 
 /**
  * 

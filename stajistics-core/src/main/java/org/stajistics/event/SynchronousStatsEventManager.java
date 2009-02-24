@@ -46,7 +46,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     protected List<StatsEventHandler> createEventHandlerList() {
         return new CopyOnWriteArrayList<StatsEventHandler>();
     }
-    
+
     @Override
     public boolean isEnabled() {
         return enabled.get();

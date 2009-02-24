@@ -34,7 +34,7 @@ public class StatsKeyTest {
 
     @Test
     public void testBuild1() {
-        StatsKey statsKey = StatsKey.build(TEST_NAME).key();
+        StatsKey statsKey = Stats.newKey(TEST_NAME);
         assertEquals(TEST_NAME, statsKey.getName());
         assertEquals("ms", statsKey.getUnit());
         assertEquals(0, statsKey.getAttributes().size());
@@ -42,9 +42,9 @@ public class StatsKeyTest {
 
     @Test
     public void testBuild2() {
-        StatsKey statsKey = StatsKey.build(TEST_NAME)
-                                    .withUnit(TEST_UNIT)
-                                    .key();
+        StatsKey statsKey = Stats.buildKey(TEST_NAME)
+                                 .withUnit(TEST_UNIT)
+                                 .newKey();
 
         assertEquals(TEST_NAME, statsKey.getName());
         assertEquals(TEST_UNIT, statsKey.getUnit());
@@ -53,10 +53,10 @@ public class StatsKeyTest {
 
     @Test
     public void testBuild3() {
-        StatsKey statsKey = StatsKey.build(TEST_NAME)
-                                    .withUnit(TEST_UNIT)
-                                    .withAttribute("one", "one")
-                                    .key();
+        StatsKey statsKey = Stats.buildKey(TEST_NAME)
+                                 .withUnit(TEST_UNIT)
+                                 .withAttribute("one", "one")
+                                 .newKey();
 
         assertEquals(TEST_NAME, statsKey.getName());
         assertEquals(TEST_UNIT, statsKey.getUnit());
@@ -66,12 +66,12 @@ public class StatsKeyTest {
 
     @Test
     public void testCopy1() {
-        StatsKey firstKey = StatsKey.build(TEST_NAME)
-                                    .withUnit(TEST_UNIT)
-                                    .withAttribute("one", "one")
-                                    .key();
+        StatsKey firstKey = Stats.buildKey(TEST_NAME)
+                                 .withUnit(TEST_UNIT)
+                                 .withAttribute("one", "one")
+                                 .newKey();
 
-        StatsKey secondKey = firstKey.copy().key();
+        StatsKey secondKey = firstKey.buildCopy().newKey();
 
         assertEquals(firstKey, secondKey);
         assertEquals(firstKey.hashCode(), secondKey.hashCode());
@@ -82,14 +82,14 @@ public class StatsKeyTest {
 
     @Test
     public void testCopy2() {
-        StatsKey firstKey = StatsKey.build(TEST_NAME)
-                                    .withUnit(TEST_UNIT)
-                                    .withAttribute("one", "one")
-                                    .key();
+        StatsKey firstKey = Stats.buildKey(TEST_NAME)
+                                 .withUnit(TEST_UNIT)
+                                 .withAttribute("one", "one")
+                                 .newKey();
 
-        StatsKey secondKey = firstKey.copy()
+        StatsKey secondKey = firstKey.buildCopy()
                                      .withUnit(TEST_UNIT + "2")
-                                     .key();
+                                     .newKey();
 
         assertFalse(firstKey.equals(secondKey));
         assertTrue(firstKey.hashCode() != secondKey.hashCode());
@@ -101,14 +101,14 @@ public class StatsKeyTest {
 
     @Test
     public void testCopy3() {
-        StatsKey firstKey = StatsKey.build(TEST_NAME)
-                                    .withUnit(TEST_UNIT)
-                                    .withAttribute("one", "one")
-                                    .key();
+        StatsKey firstKey = Stats.buildKey(TEST_NAME)
+                                 .withUnit(TEST_UNIT)
+                                 .withAttribute("one", "one")
+                                 .newKey();
 
-        StatsKey secondKey = firstKey.copy()
+        StatsKey secondKey = firstKey.buildCopy()
                                      .withAttribute("one", "two")
-                                     .key();
+                                     .newKey();
 
         assertFalse(firstKey.equals(secondKey));
         assertTrue(firstKey.hashCode() != secondKey.hashCode());

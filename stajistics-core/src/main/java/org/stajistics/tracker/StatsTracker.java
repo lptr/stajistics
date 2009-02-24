@@ -14,6 +14,7 @@
  */
 package org.stajistics.tracker;
 
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 
@@ -25,7 +26,7 @@ import org.stajistics.session.StatsSession;
  */
 public interface StatsTracker {
 
-    StatsTracker open();
+    StatsTracker track();
 
     StatsTracker commit();
 

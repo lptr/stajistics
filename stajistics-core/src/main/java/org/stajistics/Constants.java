@@ -14,8 +14,10 @@
  */
 package org.stajistics;
 
+import org.stajistics.session.DefaultStatsSession;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 
@@ -23,12 +25,10 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public interface StatsTrackerStore {
+public interface Constants {
 
-    StatsTracker getStatsTracker(StatsSession statsSession);
-
-    StatsTrackerFactory getStatsTrackerFactory();
-
-    void setStatsTrackerFactory(StatsTrackerFactory factory);
+    String DEFAULT_UNIT = "ms";
+    Class<? extends StatsTracker> DEFAULT_TRACKER_CLASS = TimeDurationTracker.class;
+    Class<? extends StatsSession> DEFAULT_SESSION_CLASS = DefaultStatsSession.class;
 
 }

@@ -12,10 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.session;
 
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
+import java.util.Collection;
+import java.util.Set;
+
+import org.stajistics.StatsKey;
 
 /**
  * 
@@ -23,9 +25,19 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public interface StatsTrackerFactory {
+public interface StatsSessionManager {
 
-    <T extends StatsTracker> T createStatsTracker(StatsSession statsSession,
-                                                  Class<T> trackerClass);
+    int getSessionCount();
 
+    Set<StatsKey> getKeys();
+
+    Collection<StatsSession> getSessions();
+
+    StatsSession getSession(StatsKey key);
+
+    StatsSession remove(StatsKey key);
+
+    boolean remove(StatsSession statsSession);
+
+    void clear();
 }

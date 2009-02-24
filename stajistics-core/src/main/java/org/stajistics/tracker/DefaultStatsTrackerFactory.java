@@ -12,16 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.tracker;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.ConcurrentAccessTracker;
-import org.stajistics.tracker.ManualTracker;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 

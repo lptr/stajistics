@@ -32,7 +32,7 @@ class TestClient {
 
     public TestClient() {
 
-        StatsManager.getEventManager().addGlobalEventHandler(
+        Stats.getEventManager().addGlobalEventHandler(
                 new StatsEventHandler() {
                     @Override
                     public void handleStatsEvent(
@@ -43,18 +43,7 @@ class TestClient {
                     }
                 });
 
-        StatsManager.getEventManager().addSessionEventHandler(
-                StatsKey.create("NotTest"), new StatsEventHandler() {
-                    @Override
-                    public void handleStatsEvent(
-                            final StatsEventType eventType,
-                            final StatsSession session,
-                            final StatsTracker tracker) {
-                        System.out.println("Not supposed to happen");
-                    }
-                });
-
-        StatsManager.getEventManager().addGlobalEventHandler(
+        Stats.getEventManager().addGlobalEventHandler(
                 new AbstractAlarmCondition(new AlarmHandler() {
                     @Override
                     public void alarmTriggered(final AlarmCondition condition,
@@ -77,7 +66,15 @@ class TestClient {
 
     public void test1() {
 
-        StatsTracker tracker = StatsManager.open("Test");
+        StatsKey key1 = Stats.newKey("Test1");
+
+        /*
+        StatsKey key2 = key1.buildCopy()
+                            .withAttribute("cool", true)
+                            .newKey();
+        */
+
+        StatsTracker tracker = Stats.track(key1);
 
         try {
 

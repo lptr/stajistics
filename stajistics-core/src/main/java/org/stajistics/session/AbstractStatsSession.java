@@ -28,7 +28,7 @@ import java.util.concurrent.locks.Lock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
+import org.stajistics.Stats;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
@@ -97,7 +97,7 @@ public abstract class AbstractStatsSession implements StatsSession {
             logger.debug("Open: " + this);
         }
 
-        StatsManager.getEventManager()
+        Stats.getEventManager()
                     .fireEvent(StatsEventType.TRACKER_OPENED, this, tracker);
     }
 
@@ -192,7 +192,7 @@ public abstract class AbstractStatsSession implements StatsSession {
             logger.info("Commit: " + this);
         }
 
-        StatsManager.getEventManager()
+        Stats.getEventManager()
                     .fireEvent(StatsEventType.TRACKER_COMMITTED, this, tracker);
     }
 

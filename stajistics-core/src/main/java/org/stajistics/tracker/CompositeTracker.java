@@ -76,9 +76,9 @@ public class CompositeTracker implements StatsTracker {
     }
 
     @Override
-    public StatsTracker open() {
+    public StatsTracker track() {
         for (int i = 0; i < trackers.length; i++) {
-            trackers[i].open();
+            trackers[i].track();
         }
 
         return this;

@@ -20,9 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.SynchronousStatsEventManager;
+import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
+import org.stajistics.tracker.DefaultStatsTrackerFactory;
+import org.stajistics.tracker.DefaultStatsTrackerStore;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerStore;
 
 /**
  * 
@@ -30,39 +35,39 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public abstract class StatsManager {
+public abstract class Stats {
 
-    protected static final Logger logger = LoggerFactory.getLogger(StatsManager.class);
+    protected static final Logger logger = LoggerFactory.getLogger(Stats.class);
 
-    private static StatsManager instance = null;
+    private static Stats instance = null;
 
     protected final AtomicBoolean enabled = new AtomicBoolean(true);
 
     protected StatsEventManager eventManager = new SynchronousStatsEventManager();
 
-    protected StatsManager() {}
+    protected Stats() {}
 
-    public static synchronized void loadInstance(final StatsManager instance) {
+    public static synchronized void loadInstance(final Stats instance) {
         if (instance == null) {
             throw new NullPointerException("instance");
         }
 
-        if (StatsManager.instance != null) {
+        if (Stats.instance != null) {
             if (logger.isWarnEnabled()) {
-                logger.warn("A StatsManager has already been loaded. Replacing existing: " + StatsManager.instance);
+                logger.warn("A Stats instance has already been loaded. Replacing existing: " + Stats.instance);
             }
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Loaded StatsManager: " + instance);
+            logger.debug("Loaded Stats: " + instance);
         }
 
-        StatsManager.instance = instance;
+        Stats.instance = instance;
     }
 
-    protected static final StatsManager getInstance() {
+    protected static final Stats getInstance() {
         if (instance == null) { // soft check
-            synchronized (StatsManager.class) {
+            synchronized (Stats.class) {
                 if (instance == null) { // hard check
                     loadInstance(new DefaultStatsManager());
                 }
@@ -80,11 +85,11 @@ public abstract class StatsManager {
         return getInstance().enabled.get();
     }
 
-    public static StatsTracker get(final String key) {
-        return get(StatsKey.create(key));
+    public static StatsTracker getTracker(final String key) {
+        return getTracker(new SimpleStatsKey(key));
     }
 
-    public static StatsTracker get(final StatsKey key) {
+    public static StatsTracker getTracker(final StatsKey key) {
 
         if (key == null) {
             throw new NullPointerException("key");
@@ -93,7 +98,7 @@ public abstract class StatsManager {
         StatsTracker tracker = null;
 
         if (isEnabled()) {
-            tracker = getInstance().getImpl(key);
+            tracker = getInstance().getTrackerImpl(key);
         }
 
         if (tracker == null) {
@@ -103,19 +108,31 @@ public abstract class StatsManager {
         return tracker;
     }
 
-    public static StatsTracker open(final String key) {
-        return get(key).open();
+    public static StatsTracker track(final String key) {
+        return getTracker(new SimpleStatsKey(key)).track();
     }
 
-    public static StatsTracker open(final StatsKey key) {
-        return get(key).open();
+    public static StatsTracker track(final StatsKey key) {
+        return getTracker(key).track();
     }
 
-    protected abstract StatsTracker getImpl(StatsKey key);
+    public static StatsKey newKey(final String name) {
+        return new SimpleStatsKey(name);
+    }
+
+    public static StatsKeyBuilder buildKey(final String name) {
+        StatsKeyBuilder builder = getInstance().createKeyBuilder();
+        builder.withName(name);
+        return builder;
+    }
+
+    protected abstract StatsKeyBuilder createKeyBuilder();
+
+    protected abstract StatsTracker getTrackerImpl(StatsKey key);
 
     /* INNER CLASSES */
 
-    protected static class DefaultStatsManager extends StatsManager {
+    protected static class DefaultStatsManager extends Stats {
 
         protected StatsSessionManager sessionManager;
         protected StatsTrackerStore trackerStore;
@@ -126,7 +143,12 @@ public abstract class StatsManager {
         }
 
         @Override
-        protected StatsTracker getImpl(final StatsKey key) {
+        protected StatsKeyBuilder createKeyBuilder() {
+            return new DefaultStatsKeyBuilder();
+        }
+
+        @Override
+        protected StatsTracker getTrackerImpl(final StatsKey key) {
             StatsSession statsSession = sessionManager.getSession(key);
             StatsTracker tracker = trackerStore.getStatsTracker(statsSession);
 

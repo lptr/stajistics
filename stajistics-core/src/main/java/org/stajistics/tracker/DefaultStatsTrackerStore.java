@@ -12,10 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.tracker;
 
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -36,7 +35,8 @@ public class DefaultStatsTrackerStore implements StatsTrackerStore {
         StatsTracker tracker = lookup(statsSession);
         if (tracker == null) {
             tracker = factory.createStatsTracker(statsSession,
-                                                 statsSession.getKey().getTrackerClass());
+                                                 statsSession.getKey()
+                                                             .getTrackerClass());
         }
 
         return tracker;

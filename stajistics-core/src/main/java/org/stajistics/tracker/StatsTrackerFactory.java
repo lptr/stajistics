@@ -22,20 +22,9 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class ManualTracker extends AbstractStatsTracker {
+public interface StatsTrackerFactory {
 
-    public ManualTracker(final StatsSession statsSession) {
-        super(statsSession);
-    }
-
-    public StatsTracker update(final double value) {
-        this.value += value;
-        return this;
-    }
-
-    public StatsTracker setValue(final double value) {
-        this.value = value;
-        return this;
-    }
+    <T extends StatsTracker> T createStatsTracker(StatsSession statsSession,
+                                                  Class<T> trackerClass);
 
 }

@@ -39,7 +39,7 @@ public final class NullTracker implements StatsTracker {
     }
 
     @Override
-    public StatsTracker open() {
+    public StatsTracker track() {
         return this;
     }
 

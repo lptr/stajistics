@@ -61,7 +61,7 @@ public abstract class AbstractStatsTrackerTestCase {
             one(mockSession).open(with(tracker), with(any(long.class)));
         }});
 
-        tracker.open();
+        tracker.track();
 
         assertEquals(0, tracker.getValue(), 0);
 
@@ -79,7 +79,7 @@ public abstract class AbstractStatsTrackerTestCase {
             ignoring(mockSession).getCommits();
         }});
 
-        tracker.open();
+        tracker.track();
         tracker.commit();
 
         mockery.assertIsSatisfied();
@@ -108,10 +108,10 @@ public abstract class AbstractStatsTrackerTestCase {
             one(mockSession).open(with(tracker), with(any(long.class)));
         }});
 
-        tracker.open();
+        tracker.track();
 
         try {
-            tracker.open();
+            tracker.track();
             fail("Allowed second open without commit");
         } catch (IllegalStateException ise) {
             // Success
