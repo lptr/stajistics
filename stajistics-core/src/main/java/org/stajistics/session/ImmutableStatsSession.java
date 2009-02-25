@@ -43,32 +43,65 @@ public class ImmutableStatsSession implements StatsSession {
     private final double max;
     private final double sum;
 
-    private final Map<String,Object> attrs;
+    private final Map<String,Object> attributes;
+
+    public ImmutableStatsSession(final StatsKey key) {
+        this(key, 0, 0, 0, 0, 0, 0, 0, 0, 0, null);
+    }
 
     public ImmutableStatsSession(final StatsSession copyFrom) {
-        this.key = copyFrom.getKey();
+        this(copyFrom.getKey(),
+             copyFrom.getHits(),
+             copyFrom.getFirstHitStamp(),
+             copyFrom.getLastHitStamp(),
+             copyFrom.getCommits(),
+             copyFrom.getFirst(),
+             copyFrom.getLast(),
+             copyFrom.getMin(),
+             copyFrom.getMax(),
+             copyFrom.getSum(),
+             copyFrom.getAttributes());
+    }
 
-        this.hits = copyFrom.getHits();
-        this.firstHitStamp = copyFrom.getFirstHitStamp();
-        this.lastHitStamp = copyFrom.getLastHitStamp();
-        this.commits = copyFrom.getCommits();
-        this.first = copyFrom.getFirst();
-        this.last = copyFrom.getLast();
-        this.min = copyFrom.getMin();
-        this.max = copyFrom.getMax();
-        this.sum = copyFrom.getSum();
+    public ImmutableStatsSession(final StatsKey key,
+                                 final long hits,
+                                 final long firstHitStamp,
+                                 final long lastHitStamp,
+                                 final long commits,
+                                 final double first,
+                                 final double last,
+                                 final double min,
+                                 final double max,
+                                 final double sum,
+                                 final Map<String,Object> attributes) {
+        if (key == null) {
+            throw new NullPointerException("key");
+        }
 
-        this.attrs = Collections.unmodifiableMap(new HashMap<String,Object>(copyFrom.getAttributes()));
+        this.key = key;
+        this.hits = hits;
+        this.firstHitStamp = firstHitStamp;
+        this.lastHitStamp = lastHitStamp;
+        this.commits = commits;
+        this.first = first;
+        this.last = last;
+        this.min = min;
+        this.max = max;
+        this.sum = sum;
+
+        this.attributes = (attributes == null)
+            ? Collections.<String,Object>emptyMap()
+            : Collections.unmodifiableMap(new HashMap<String,Object>(attributes));
     }
 
     @Override
     public Object getAttribute(String name) {
-        return attrs.get(name);
+        return attributes.get(name);
     }
 
     @Override
     public Map<String,Object> getAttributes() {
-        return attrs;
+        return attributes;
     }
 
     @Override

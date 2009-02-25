@@ -41,10 +41,10 @@ public class DefaultStatsKey implements StatsKey {
     protected final int hashCode;
 
     public DefaultStatsKey(final String name,
-                              final String unit,
-                              final Map<String,Object> attributes,
-                              final Class<? extends StatsTracker> trackerClass,
-                              final Class<? extends StatsSession> sessionClass) {
+                           final String unit,
+                           final Map<String,Object> attributes,
+                           final Class<? extends StatsTracker> trackerClass,
+                           final Class<? extends StatsSession> sessionClass) {
         if (name == null) {
             throw new NullPointerException("name");
         }
@@ -84,8 +84,7 @@ public class DefaultStatsKey implements StatsKey {
 
     @Override
     public StatsKeyBuilder buildCopy() {
-        // TODO
-        return null;
+        return Stats.getInstance().createKeyBuilder(this);
     }
 
     @Override
@@ -121,6 +120,11 @@ public class DefaultStatsKey implements StatsKey {
     @Override
     public int hashCode() {
         return hashCode;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        return (other instanceof StatsKey) && equals((StatsKey)other);
     }
 
     public boolean equals(final StatsKey other) {

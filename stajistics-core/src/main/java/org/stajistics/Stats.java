@@ -14,8 +14,6 @@
  */
 package org.stajistics;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventManager;
@@ -41,11 +39,10 @@ public abstract class Stats {
 
     private static Stats instance = null;
 
-    protected final AtomicBoolean enabled = new AtomicBoolean(true);
+    protected volatile boolean enabled = true;
 
-    protected StatsEventManager eventManager = new SynchronousStatsEventManager();
+    protected StatsEventManager eventManager;
 
-    protected Stats() {}
 
     public static synchronized void loadInstance(final Stats instance) {
         if (instance == null) {
@@ -82,7 +79,11 @@ public abstract class Stats {
     }
 
     public static boolean isEnabled() {
-        return getInstance().enabled.get();
+        return getInstance().enabled;
+    }
+
+    public static void setEnabled(final boolean enabled) {
+        getInstance().enabled = enabled;
     }
 
     public static StatsTracker getTracker(final String key) {
@@ -128,9 +129,11 @@ public abstract class Stats {
 
     protected abstract StatsKeyBuilder createKeyBuilder();
 
+    protected abstract StatsKeyBuilder createKeyBuilder(StatsKey template);
+
     protected abstract StatsTracker getTrackerImpl(StatsKey key);
 
-    /* INNER CLASSES */
+    /* NESTED CLASSES */
 
     protected static class DefaultStatsManager extends Stats {
 
@@ -138,6 +141,9 @@ public abstract class Stats {
         protected StatsTrackerStore trackerStore;
 
         protected DefaultStatsManager() {
+            super();
+
+            eventManager = new SynchronousStatsEventManager();
             sessionManager = new DefaultSessionManager();
             trackerStore = new DefaultStatsTrackerStore(new DefaultStatsTrackerFactory());
         }
@@ -145,6 +151,11 @@ public abstract class Stats {
         @Override
         protected StatsKeyBuilder createKeyBuilder() {
             return new DefaultStatsKeyBuilder();
+        }
+
+        @Override
+        protected StatsKeyBuilder createKeyBuilder(final StatsKey template) {
+            return new DefaultStatsKeyBuilder(template);
         }
 
         @Override

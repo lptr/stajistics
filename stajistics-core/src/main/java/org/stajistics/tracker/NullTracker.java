@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import org.stajistics.SimpleStatsKey;
+import org.stajistics.session.ImmutableStatsSession;
 import org.stajistics.session.StatsSession;
 
 
@@ -26,6 +28,9 @@ import org.stajistics.session.StatsSession;
 public final class NullTracker implements StatsTracker {
 
     private static final NullTracker instance = new NullTracker();
+
+    private static final StatsSession session = 
+        new ImmutableStatsSession(new SimpleStatsKey(NullTracker.class.getName()));
 
     private NullTracker() {}
 
@@ -65,7 +70,7 @@ public final class NullTracker implements StatsTracker {
 
     @Override
     public StatsSession getSession() {
-        return null;
+        return session;
     }
 
 }

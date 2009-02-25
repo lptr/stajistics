@@ -29,37 +29,33 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
+    private static final int DEFAULT_ATTR_COUNT = 4;
+
     protected String name;
     protected String unit;
-    protected Map<String, Object> attributes;
+    protected Map<String,Object> attributes;
     protected Class<? extends StatsTracker> trackerClass;
     protected Class<? extends StatsSession> sessionClass;
 
     public DefaultStatsKeyBuilder() {}
 
+    public DefaultStatsKeyBuilder(final StatsKey template) {
+        this(template.getName(),
+             template.getUnit(),
+             copyAttributes(template.getAttributes()),
+             template.getTrackerClass(),
+             template.getSessionClass());
+    }
+
+
+
     public DefaultStatsKeyBuilder(final String name, 
-                                     final String unit,
-                                     final Map<String, Object> attributes,
-                                     final Class<? extends StatsTracker> trackerClass,
-                                     final Class<? extends StatsSession> sessionClass) {
+                                  final String unit,
+                                  final Map<String, Object> attributes,
+                                  final Class<? extends StatsTracker> trackerClass,
+                                  final Class<? extends StatsSession> sessionClass) {
         if (name == null) {
             throw new NullPointerException("name");
-        }
-
-        if (unit == null) {
-            throw new NullPointerException("unit");
-        }
-
-        if (attributes == null) {
-            throw new NullPointerException("attributes");
-        }
-
-        if (trackerClass == null) {
-            throw new NullPointerException("trackerClass");
-        }
-
-        if (sessionClass == null) {
-            throw new NullPointerException("sessionClass");
         }
 
         this.name = name;
@@ -69,9 +65,17 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         this.sessionClass = sessionClass;
     }
 
+    protected static Map<String,Object> copyAttributes(final Map<String,Object> attrs) {
+        if (attrs == null || attrs.isEmpty()) {
+            return null;
+        }
+
+        return new HashMap<String,Object>(attrs);
+    }
+
     protected void ensureAttributesInited() {
         if (attributes == null) {
-            attributes = new HashMap<String, Object>();
+            attributes = new HashMap<String, Object>(DEFAULT_ATTR_COUNT);
         }
     }
 
@@ -93,7 +97,6 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         ensureAttributesInited();
 
         attributes.putAll(attributes);
-
         return this;
     }
 
@@ -134,7 +137,6 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         }
 
         this.unit = unit;
-
         return this;
     }
 

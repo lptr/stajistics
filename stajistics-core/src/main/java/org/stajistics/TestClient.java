@@ -68,11 +68,9 @@ class TestClient {
 
         StatsKey key1 = Stats.newKey("Test1");
 
-        /*
         StatsKey key2 = key1.buildCopy()
                             .withAttribute("cool", true)
                             .newKey();
-        */
 
         StatsTracker tracker = Stats.track(key1);
 

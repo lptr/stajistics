@@ -37,7 +37,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
     protected AbstractStatsTracker() {}
 
-    public AbstractStatsTracker(final StatsSession statsSession) {
+    protected AbstractStatsTracker(final StatsSession statsSession) {
         if (statsSession == null) {
             throw new NullPointerException("statsSession");
         }

@@ -15,14 +15,16 @@
 package org.stajistics.tracker;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.session.StatsSession;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 
 /**
@@ -51,10 +53,12 @@ public abstract class AbstractStatsTrackerTestCase {
 
         assertEquals(mockSession, tracker.getSession());
         assertEquals(0, tracker.getValue(), 0);
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
-    public void testOpen() {
+    public void testTrack() {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
@@ -86,6 +90,141 @@ public abstract class AbstractStatsTrackerTestCase {
     }
 
     @Test
+    public void testGetTimeStamp() {
+        final StatsTracker tracker = createStatsTracker();
+
+        mockery.checking(new Expectations() {{
+            one(mockSession).open(with(tracker), with(any(long.class)));
+            one(mockSession).update(with(tracker), with(any(long.class)));
+            ignoring(mockSession).getHits();
+            ignoring(mockSession).getCommits();
+        }});
+
+        assertEquals(0, tracker.getTimeStamp());
+
+        tracker.track();
+
+        long timeStamp = tracker.getTimeStamp();
+
+        assertTrue(System.currentTimeMillis() >= timeStamp);
+
+        tracker.commit();
+
+        assertEquals(timeStamp, tracker.getTimeStamp());
+        
+        mockery.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testIsTracking() {
+        final StatsTracker tracker = createStatsTracker();
+
+        mockery.checking(new Expectations() {{
+            one(mockSession).open(with(tracker), with(any(long.class)));
+            one(mockSession).update(with(tracker), with(any(long.class)));
+            ignoring(mockSession).getHits();
+            ignoring(mockSession).getCommits();
+        }});
+
+        assertFalse(tracker.isTracking());
+
+        tracker.track();
+
+        assertTrue(tracker.isTracking());
+
+        tracker.commit();
+
+        assertFalse(tracker.isTracking());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testResetBeforeTracking() {
+        final StatsTracker tracker = createStatsTracker();
+
+        mockery.checking(new Expectations() {{
+            ignoring(mockSession).open(with(tracker), with(any(long.class)));
+            ignoring(mockSession).update(with(tracker), with(any(long.class)));
+        }});
+
+        boolean isTracking = tracker.isTracking();
+        double value = tracker.getValue();
+        long timeStamp = tracker.getTimeStamp();
+
+        tracker.reset();
+
+        assertEquals(isTracking, tracker.isTracking());
+        assertEquals(value, tracker.getValue(), 0.0000000001);
+        assertEquals(timeStamp, tracker.getTimeStamp());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testResetWhileTracking() {
+        final StatsTracker tracker = createStatsTracker();
+
+        mockery.checking(new Expectations() {{
+            ignoring(mockSession).open(with(tracker), with(any(long.class)));
+            ignoring(mockSession).update(with(tracker), with(any(long.class)));
+        }});
+
+        boolean isTracking = tracker.isTracking();
+        double value = tracker.getValue();
+        long timeStamp = tracker.getTimeStamp();
+
+        tracker.track();
+
+        assertTrue(isTracking != tracker.isTracking());
+        assertTrue(timeStamp != tracker.getTimeStamp());
+
+        tracker.reset();
+
+        assertEquals(isTracking, tracker.isTracking());
+        assertEquals(value, tracker.getValue(), 0.0000000001);
+        assertEquals(timeStamp, tracker.getTimeStamp());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testResetAfterCommit() {
+        final StatsTracker tracker = createStatsTracker();
+
+        mockery.checking(new Expectations() {{
+            ignoring(mockSession).open(with(tracker), with(any(long.class)));
+            ignoring(mockSession).update(with(tracker), with(any(long.class)));
+            ignoring(mockSession).getHits();
+            ignoring(mockSession).getCommits();
+        }});
+
+        boolean isTracking = tracker.isTracking();
+        double value = tracker.getValue();
+        long timeStamp = tracker.getTimeStamp();
+
+        tracker.reset();
+
+        assertEquals(isTracking, tracker.isTracking());
+        assertEquals(value, tracker.getValue(), 0.0000000001);
+        assertEquals(timeStamp, tracker.getTimeStamp());
+
+        tracker.track();
+
+        assertTrue(isTracking != tracker.isTracking());
+        assertTrue(timeStamp != tracker.getTimeStamp());
+
+        tracker.commit();
+        tracker.reset();
+
+        assertEquals(isTracking, tracker.isTracking());
+        assertEquals(value, tracker.getValue(), 0.0000000001);
+        assertEquals(timeStamp, tracker.getTimeStamp());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
     public void testCommitWithoutOpen() {
 
         final StatsTracker tracker = createStatsTracker();
@@ -98,6 +237,8 @@ public abstract class AbstractStatsTrackerTestCase {
         } catch (IllegalStateException ise) {
             // Success
         }
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -116,5 +257,7 @@ public abstract class AbstractStatsTrackerTestCase {
         } catch (IllegalStateException ise) {
             // Success
         }
+
+        mockery.assertIsSatisfied();
     }
 }
