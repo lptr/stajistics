@@ -29,7 +29,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
     protected static final Logger logger = LoggerFactory.getLogger("org.stajistics.tracker");
 
-    protected StatsSession statsSession;
+    protected StatsSession session;
 
     protected boolean tracking = false;
     protected long timeStamp = 0;
@@ -37,12 +37,12 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
     protected AbstractStatsTracker() {}
 
-    protected AbstractStatsTracker(final StatsSession statsSession) {
-        if (statsSession == null) {
-            throw new NullPointerException("statsSession");
+    protected AbstractStatsTracker(final StatsSession session) {
+        if (session == null) {
+            throw new NullPointerException("session");
         }
 
-        this.statsSession = statsSession;
+        this.session = session;
     }
 
     @Override
@@ -67,7 +67,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     }
 
     protected void trackImpl(final long now) {
-        statsSession.open(this, now);
+        session.open(this, now);
     }
 
     @Override
@@ -85,7 +85,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     }
 
     protected void commitImpl(final long now) {
-        statsSession.update(this, now);
+        session.update(this, now);
     }
 
     @Override
@@ -108,7 +108,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
     @Override
     public StatsSession getSession() {
-        return statsSession;
+        return session;
     }
 
     @Override
@@ -120,8 +120,8 @@ public abstract class AbstractStatsTracker implements StatsTracker {
         buf.append(timeStamp);
         buf.append(",value=");
         buf.append(value);
-        buf.append(",statsSession=");
-        buf.append(statsSession);
+        buf.append(",session=");
+        buf.append(session);
         buf.append(']');
 
         return buf.toString();

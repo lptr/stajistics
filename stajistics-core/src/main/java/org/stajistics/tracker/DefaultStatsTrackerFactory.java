@@ -32,7 +32,7 @@ public class DefaultStatsTrackerFactory implements StatsTrackerFactory {
     public <T extends StatsTracker> T createStatsTracker(final StatsSession statsSession,
                                                          final Class<T> trackerClass) {
         if (statsSession == null) {
-            throw new NullPointerException("statsSession");
+            throw new NullPointerException("session");
         }
 
         if (trackerClass == null) {

@@ -14,7 +14,12 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.SimpleStatsKey;
+import java.util.Collections;
+import java.util.Map;
+
+import org.stajistics.Constants;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyBuilder;
 import org.stajistics.session.ImmutableStatsSession;
 import org.stajistics.session.StatsSession;
 
@@ -30,7 +35,7 @@ public final class NullTracker implements StatsTracker {
     private static final NullTracker instance = new NullTracker();
 
     private static final StatsSession session = 
-        new ImmutableStatsSession(new SimpleStatsKey(NullTracker.class.getName()));
+        new ImmutableStatsSession(new NullStatsKey());
 
     private NullTracker() {}
 
@@ -71,6 +76,60 @@ public final class NullTracker implements StatsTracker {
     @Override
     public StatsSession getSession() {
         return session;
+    }
+
+    /* NESTED CLASSES */
+
+    private static final class NullStatsKey implements StatsKey {
+
+        private static final long serialVersionUID = 8750923978457461394L;
+
+        private NullStatsKey() {}
+
+        @Override
+        public StatsKeyBuilder buildCopy() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getName() {
+            return NullTracker.class.getName();
+        }
+
+        @Override
+        public String getUnit() {
+            return Constants.DEFAULT_UNIT;
+        }
+
+        @Override
+        public Object getAttribute(String name) {
+            return null;
+        }
+
+        @Override
+        public Map<String, Object> getAttributes() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public Class<? extends StatsSession> getSessionClass() {
+            return Constants.DEFAULT_SESSION_CLASS;
+        }
+
+        @Override
+        public Class<? extends StatsTracker> getTrackerClass() {
+            return Constants.DEFAULT_TRACKER_CLASS;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return this == obj;
+        }
+
+        @Override
+        public int hashCode() {
+            return 0;
+        }
     }
 
 }

@@ -12,9 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.tracker;
+package org.stajistics;
+
+import java.util.Map;
 
 import org.stajistics.session.StatsSession;
+import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -22,12 +25,15 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public interface StatsTrackerStore {
+public class DefaultStatsKeyTest extends AbstractStatsKeyTestCase {
 
-    StatsTracker getTracker(StatsSession session);
-
-    StatsTrackerFactory getTrackerFactory();
-
-    void setTrackerFactory(StatsTrackerFactory factory);
+    @Override
+    protected StatsKey createStatsKey(final String name,
+                                      final String unit,
+                                      final Map<String,Object> attributes,
+                                      final Class<? extends StatsTracker> trackerClass,
+                                      final Class<? extends StatsSession> sessionClass) {
+        return new DefaultStatsKey(name, unit, attributes, trackerClass, sessionClass);
+    }
 
 }

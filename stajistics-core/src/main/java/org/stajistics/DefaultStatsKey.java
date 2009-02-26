@@ -17,10 +17,8 @@ package org.stajistics;
 import java.util.Collections;
 import java.util.Map;
 
-import org.stajistics.session.DefaultStatsSession;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 
@@ -77,6 +75,7 @@ public class DefaultStatsKey implements StatsKey {
     protected int hash() {
         return name.hashCode() ^
                unit.hashCode() ^
+               attributes.size() ^ // This matters
                attributes.hashCode() ^
                trackerClass.hashCode() ^
                sessionClass.hashCode();

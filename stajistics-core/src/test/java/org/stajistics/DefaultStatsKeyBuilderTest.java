@@ -18,8 +18,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.StatsKey;
 
 /**
  * 
@@ -27,16 +28,44 @@ import org.stajistics.StatsKey;
  *
  * @author The Stajistics Project
  */
-public class StatsKeyTest {
+public class DefaultStatsKeyBuilderTest {
 
     private static final String TEST_NAME = "testName";
     private static final String TEST_UNIT = "testUnit";
+
+    protected StatsKeyBuilder createBuilder() {
+        return new DefaultStatsKeyBuilder();
+    }
+
+    protected StatsKeyBuilder createKeyBuilder(final StatsKey template) {
+        return new DefaultStatsKeyBuilder(template);
+    }
+
+    @Before
+    public void setUp() {
+        Stats.loadInstance(new Stats.DefaultStats() {
+            @Override
+            protected StatsKeyBuilder createKeyBuilder() {
+                return DefaultStatsKeyBuilderTest.this.createBuilder();
+            }
+
+            @Override
+            protected StatsKeyBuilder createKeyBuilder(StatsKey template) {
+                return DefaultStatsKeyBuilderTest.this.createKeyBuilder(template);
+            }
+        });
+    }
+
+    @After
+    public void tearDown() {
+        Stats.loadInstance(new Stats.DefaultStats());
+    }
 
     @Test
     public void testBuild1() {
         StatsKey statsKey = Stats.newKey(TEST_NAME);
         assertEquals(TEST_NAME, statsKey.getName());
-        assertEquals("ms", statsKey.getUnit());
+        assertEquals(Constants.DEFAULT_UNIT, statsKey.getUnit());
         assertEquals(0, statsKey.getAttributes().size());
     }
 

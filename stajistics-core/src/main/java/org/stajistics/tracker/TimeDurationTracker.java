@@ -26,8 +26,8 @@ import org.stajistics.session.StatsSession;
  */
 public class TimeDurationTracker extends AbstractStatsTracker {
 
-    public TimeDurationTracker(final StatsSession statsSession) {
-        super(statsSession);
+    public TimeDurationTracker(final StatsSession session) {
+        super(session);
     }
 
     @Override

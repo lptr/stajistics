@@ -22,7 +22,7 @@ import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.DefaultStatsTrackerFactory;
-import org.stajistics.tracker.DefaultStatsTrackerStore;
+import org.stajistics.tracker.ThreadLocalStatsTrackerStore;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerStore;
@@ -66,7 +66,7 @@ public abstract class Stats {
         if (instance == null) { // soft check
             synchronized (Stats.class) {
                 if (instance == null) { // hard check
-                    loadInstance(new DefaultStatsManager());
+                    loadInstance(new DefaultStats());
                 }
             }
         }
@@ -135,17 +135,29 @@ public abstract class Stats {
 
     /* NESTED CLASSES */
 
-    protected static class DefaultStatsManager extends Stats {
+    protected static class DefaultStats extends Stats {
 
         protected StatsSessionManager sessionManager;
         protected StatsTrackerStore trackerStore;
 
-        protected DefaultStatsManager() {
+        protected DefaultStats() {
             super();
 
-            eventManager = new SynchronousStatsEventManager();
-            sessionManager = new DefaultSessionManager();
-            trackerStore = new DefaultStatsTrackerStore(new DefaultStatsTrackerFactory());
+            eventManager = createEventManager();
+            sessionManager = createSessionManager();
+            trackerStore = createTrackerStore();
+        }
+
+        protected StatsEventManager createEventManager() {
+            return new SynchronousStatsEventManager();
+        }
+
+        protected StatsSessionManager createSessionManager() {
+            return new DefaultSessionManager();
+        }
+
+        protected StatsTrackerStore createTrackerStore() {
+            return new ThreadLocalStatsTrackerStore(new DefaultStatsTrackerFactory());
         }
 
         @Override
@@ -161,7 +173,7 @@ public abstract class Stats {
         @Override
         protected StatsTracker getTrackerImpl(final StatsKey key) {
             StatsSession statsSession = sessionManager.getSession(key);
-            StatsTracker tracker = trackerStore.getStatsTracker(statsSession);
+            StatsTracker tracker = trackerStore.getTracker(statsSession);
 
             return tracker;
         }
