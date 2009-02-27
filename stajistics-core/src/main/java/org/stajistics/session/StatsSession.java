@@ -78,4 +78,6 @@ public interface StatsSession extends Serializable {
 
     StatsSession snapshot();
 
+    void clear();
+
 }

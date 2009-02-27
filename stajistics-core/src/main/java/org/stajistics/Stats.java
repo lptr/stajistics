@@ -39,7 +39,7 @@ public abstract class Stats {
 
     private static Stats instance = null;
 
-    protected volatile boolean enabled = true;
+    private static volatile boolean enabled = true;
 
     protected StatsEventManager eventManager;
 
@@ -79,11 +79,11 @@ public abstract class Stats {
     }
 
     public static boolean isEnabled() {
-        return getInstance().enabled;
+        return enabled;
     }
 
     public static void setEnabled(final boolean enabled) {
-        getInstance().enabled = enabled;
+        Stats.enabled = enabled;
     }
 
     public static StatsTracker getTracker(final String key) {

@@ -14,7 +14,25 @@
  */
 package org.stajistics.session;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.event.StatsEventType;
+import org.stajistics.session.collector.DataCollector;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
 
@@ -24,96 +42,260 @@ import org.stajistics.util.AtomicDouble;
  * 
  * @author The Stajistics Project
  */
-public class DefaultStatsSession extends AbstractStatsSession {
+public class DefaultStatsSession implements StatsSession {
 
-    private static final long serialVersionUID = -6959191477629645419L;
+    private static final long serialVersionUID = -5265957157097835416L;
 
-    protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
-    protected final AtomicDouble sumOfInverses = new AtomicDouble(0); // For harmonic mean
-    protected final AtomicDouble sumOfSquares = new AtomicDouble(0); // For standard deviation and quadratic mean
+    private static final Logger logger = LoggerFactory.getLogger(DefaultStatsSession.class);
+
+    private static final DecimalFormat DECIMAL_FORMAT;
+    static {
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
+        dfs.setDecimalSeparator('.');
+        DECIMAL_FORMAT = new DecimalFormat("0.###", dfs);
+        DECIMAL_FORMAT.setGroupingSize(Byte.MAX_VALUE);
+    }
+
+    protected final StatsKey key;
+
+    protected final AtomicLong hits = new AtomicLong(0);
+    protected final AtomicLong firstHitStamp = new AtomicLong(0);
+    protected final AtomicLong lastHitStamp = new AtomicLong(0);
+    protected final AtomicLong commits = new AtomicLong(0);
+
+    protected final AtomicReference<Double> first = new AtomicReference<Double>(null);
+    protected final AtomicDouble last = new AtomicDouble(Double.NaN);
+    protected final AtomicDouble min = new AtomicDouble(Double.MAX_VALUE);
+    protected final AtomicDouble max = new AtomicDouble(Double.MIN_VALUE);
+    protected final AtomicDouble sum = new AtomicDouble(0);
+
+    protected final List<DataCollector> dataCollectors = new LinkedList<DataCollector>();
+
+    protected final ConcurrentMap<String,Object> clientAttrs = new ConcurrentHashMap<String,Object>();
+
+    protected Lock updateLock = null;
 
     public DefaultStatsSession(final StatsKey key) {
-        super(key);
-    }
-
-    protected void updateImpl(final StatsTracker tracker,
-                              final long now) {
-
-        double tmp;
-        double currentValue = tracker.getValue();
-
-        // Sum of squares (for standard deviation and quadratic mean calculation)
-        sumOfSquares.getAndAdd(currentValue * currentValue);
-
-        // Product (for geometric mean calculation)
-        for (;;) {
-            tmp = product.get();
-            double newProduct = tmp * currentValue;
-            if (product.compareAndSet(tmp, newProduct)) {
-                break;
-            }
+        if (key == null) {
+            throw new NullPointerException("key");
         }
 
-        // Sum of inverses (for harmonic mean calculation)
-        sumOfInverses.getAndAdd(1 / currentValue);
+        this.key = key;
     }
+    
+    @Override
+    public void open(final StatsTracker tracker, 
+                     long now) {
 
-    public double getArithmeticMean() {
-        long n = getCommits();
-        if (n == 0) {
-            return 0.0;
+        if (now < 0) {
+            now = System.currentTimeMillis();
         }
 
-        return sum.get() / n;
-    }
+        hits.incrementAndGet();
 
-    public double getGeometricMean() {
-        long n = getCommits();
-        if (n == 0) {
-            return 0.0;
+        if (firstHitStamp.get() == 0) {
+            firstHitStamp.compareAndSet(0, now);
+        }
+        lastHitStamp.set(now);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Open: " + this);
         }
 
-        return Math.pow(product.get(), 1.0 / n);
-    }
-
-    public double getHarmonicMean() {
-        long n = getCommits();
-        if (n == 0) {
-            return 0.0;
-        }
-
-        return n / sumOfInverses.get();
-    }
-
-    public double getQuadraticMean() {
-        long n = getCommits();
-        if (n == 0) {
-            return 0.0;
-        }
-
-        return Math.sqrt(sumOfSquares.get() / n);
-    }
-
-    public double getStandardDeviation() {
-        long n = getCommits();
-        if (n == 0) {
-            return 0.0;
-        }
-
-        double valueSum = getSum();
-        double nMinus1 = (n <= 1) ? 1 : n - 1;
-        double numerator = sumOfSquares.get() - ((valueSum * valueSum) / n);
-
-        return Math.sqrt(numerator / nMinus1);
+        Stats.getEventManager()
+             .fireEvent(StatsEventType.TRACKER_OPENED, this, tracker);
     }
 
     @Override
-    protected void appendStats(final StringBuilder buf) {
-        appendStat(buf, Attributes.ARITHMETIC_MEAN, getArithmeticMean());
-        appendStat(buf, Attributes.GEOMETRIC_MEAN, getGeometricMean());
-        appendStat(buf, Attributes.HARMONIC_MEAN, getHarmonicMean());
-        appendStat(buf, Attributes.QUADRATIC_MEAN, getQuadraticMean());
-        appendStat(buf, Attributes.STANDARD_DEVIATION, getStandardDeviation());
+    public long getHits() {
+        return hits.get();
+    }
+
+    @Override
+    public long getFirstHitStamp() {
+        return firstHitStamp.get();
+    }
+
+    @Override
+    public long getLastHitStamp() {
+        return lastHitStamp.get();
+    }
+
+    @Override
+    public long getCommits() {
+        return commits.get();
+    }
+
+    @Override
+    public StatsKey getKey() {
+        return key;
+    }
+
+    @Override
+    public void update(final StatsTracker tracker, long now) {
+
+        if (now < 0) {
+            now = System.currentTimeMillis();
+        }
+
+        double currentValue = tracker.getValue();
+        double tmp;
+
+        Lock myLock = updateLock;
+
+        try {
+            if (myLock != null) {
+                myLock.lock();
+            }
+
+            commits.incrementAndGet();
+
+            // First
+            if (first.get() == null) {
+                first.compareAndSet(null, new Double(currentValue));
+            }
+
+            // Last
+            last.set(currentValue);
+
+            // Min
+            for (;;) {
+                tmp = min.get();
+                if (currentValue < tmp) {
+                    if (min.compareAndSet(tmp, currentValue)) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            // Max
+            for (;;) {
+                tmp = max.get();
+                if (currentValue > tmp) {
+                    if (max.compareAndSet(tmp, currentValue)) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            // Sum
+            sum.getAndAdd(currentValue);
+
+            for (DataCollector dataCollector : dataCollectors) {
+                dataCollector.update(this, tracker, now);
+            }
+
+        } finally {
+            if (myLock != null) {
+                myLock.unlock();
+            }
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.info("Commit: " + this);
+        }
+
+        Stats.getEventManager()
+                    .fireEvent(StatsEventType.TRACKER_COMMITTED, this, tracker);
+    }
+
+    @Override
+    public double getFirst() {
+        Double firstValue = first.get();
+
+        if (firstValue == null) {
+            return Double.NaN;
+        }
+
+        return firstValue.doubleValue();
+    }
+
+    @Override
+    public double getLast() {
+        return this.last.get();
+    }
+
+    @Override
+    public double getMin() {
+        return this.min.get();
+    }
+
+    @Override
+    public double getMax() {
+        return this.max.get();
+    }
+
+    public double getSum() {
+        return this.sum.get();
+    }
+
+    @Override
+    public Object getAttribute(final String name) {
+        return clientAttrs.get(name);
+    }
+
+    @Override
+    public Map<String,Object> getAttributes() {
+        return Collections.unmodifiableMap(clientAttrs);
+    }
+
+    @Override
+    public final StatsSession snapshot() {
+        try {
+            updateLock.lock();
+
+            return new ImmutableStatsSession(this);
+
+        } finally {
+            updateLock.unlock();
+        }
+    }
+
+    @Override
+    public void clear() {
+        // TODO
+    }
+
+    protected void appendStat(final StringBuilder buf,
+                              final String name,
+                              final Object value) {
+        buf.append(',');
+        buf.append(name);
+        buf.append('=');
+
+        if (value instanceof Double) {
+            buf.append(DECIMAL_FORMAT.format(value));
+        } else {
+            buf.append(String.valueOf(value));
+        }
+    }
+
+    public String toString() {
+
+        StringBuilder buf = new StringBuilder();
+
+        buf.append(StatsSession.class.getSimpleName());
+        buf.append("[key=");
+        buf.append(key);
+
+        appendStat(buf, Attributes.HITS, getHits());
+        appendStat(buf, Attributes.FIRST_HIT_STAMP, new java.util.Date(getFirstHitStamp()).toString());
+        appendStat(buf, Attributes.LAST_HIT_STAMP, new java.util.Date(getLastHitStamp()).toString());
+        appendStat(buf, Attributes.COMMITS, getCommits());
+        appendStat(buf, Attributes.FIRST, getFirst());
+        appendStat(buf, Attributes.LAST, getLast());
+        appendStat(buf, Attributes.MIN, getMin());
+        appendStat(buf, Attributes.MAX, getMax());
+        appendStat(buf, Attributes.SUM, getSum());
+
+
+        buf.append(']');
+
+        return buf.toString();
     }
 
 }

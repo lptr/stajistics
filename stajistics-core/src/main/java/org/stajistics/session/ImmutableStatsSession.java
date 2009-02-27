@@ -169,4 +169,6 @@ public class ImmutableStatsSession implements StatsSession {
         return this;
     }
 
+    @Override
+    public void clear() {}
 }
