@@ -14,6 +14,10 @@
  */
 package org.stajistics.util;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 /**
  * 
  * 
@@ -21,6 +25,14 @@ package org.stajistics.util;
  * @author The Stajistics Project
  */
 public class Range {
+
+    private static final DecimalFormat DECIMAL_FORMAT;
+    static {
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
+        dfs.setDecimalSeparator('.');
+        DECIMAL_FORMAT = new DecimalFormat("0.###", dfs);
+        DECIMAL_FORMAT.setGroupingSize(Byte.MAX_VALUE);
+    }
 
     private final double begin;
     private final double end;
@@ -44,18 +56,24 @@ public class Range {
         this.end = end;
 
         if (name == null) {
-            this.name = formatDefaultName(begin, end);
+            this.name = defaultName(begin, end);
         } else {
             this.name = name;
         }
     }
 
-    private String formatDefaultName(final double begin,
+    public static String defaultName(final double begin,
                                      final double end) {
-        //TODO: decimal format
-        return "range(" + begin + "-" + end + ")";
+        StringBuilder buf = new StringBuilder(32);
+        buf.append("range(");
+        buf.append(DECIMAL_FORMAT.format(begin));
+        buf.append('-');
+        buf.append(DECIMAL_FORMAT.format(end));
+        buf.append(')');
+
+        return buf.toString();
     }
-    
+
     public double getBegin() {
         return begin;
     }
@@ -104,6 +122,34 @@ public class Range {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof Range) && equals((Range)obj);
+    }
+
+    public boolean equals(final Range other) {
+        if (other == null) {
+            return false;
+        }
+
+        if (Double.doubleToLongBits(begin) != Double.doubleToLongBits(other.begin)) {
+            return false;
+        }
+
+        if (Double.doubleToLongBits(end) != Double.doubleToLongBits(other.end)) {
+            return false;
+        }
+
+        return name.equals(other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int)(Double.doubleToLongBits(begin) ^ 
+                     Double.doubleToLongBits(end)) ^ 
+               name.hashCode();
     }
 
     public String toString() {

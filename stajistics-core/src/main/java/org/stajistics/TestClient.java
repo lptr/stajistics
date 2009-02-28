@@ -20,7 +20,12 @@ import org.stajistics.event.alarm.AbstractAlarmCondition;
 import org.stajistics.event.alarm.AlarmCondition;
 import org.stajistics.event.alarm.AlarmHandler;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.collector.DistributionDataCollector;
+import org.stajistics.session.collector.RangeDataCollector;
+import org.stajistics.tracker.ConcurrentAccessTracker;
+import org.stajistics.tracker.HitFrequencyTracker;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.util.RangeList;
 
 /**
  * 
@@ -29,6 +34,34 @@ import org.stajistics.tracker.StatsTracker;
  * @author The Stajistics Project
  */
 class TestClient {
+
+    private final StatsKey key1 = Stats.newKey("Test");
+    {
+        Stats.getSessionManager()
+             .getSession(key1)
+             .addDataCollector(new DistributionDataCollector())
+             .addDataCollector(new RangeDataCollector(RangeList.build()
+                                                               .addRange(0, 5)
+                                                               .addRange(5, 10)
+                                                               .addRange(10, 20)
+                                                               .addRange(20, 40)
+                                                               .addRange(40, 80)
+                                                               .rangeList()));
+    }
+
+    private final StatsKey key2 = Stats.buildKey("Test")
+                                       .withTracker(ConcurrentAccessTracker.class)
+                                       .newKey();
+
+
+    private final StatsKey key3 = Stats.buildKey("Test")
+                                       .withTracker(HitFrequencyTracker.class)
+                                       .newKey();
+    {
+        Stats.getSessionManager()
+             .getSession(key3)
+             .addDataCollector(new DistributionDataCollector());
+    }
 
     public TestClient() {
 
@@ -62,17 +95,12 @@ class TestClient {
                     }
                 });
 
+
     }
 
     public void test1() {
 
-        StatsKey key1 = Stats.newKey("Test1");
-
-        StatsKey key2 = key1.buildCopy()
-                            .withAttribute("cool", true)
-                            .newKey();
-
-        StatsTracker tracker = Stats.track(key1);
+        StatsTracker tracker = Stats.track(key1, key2, key3);
 
         try {
 

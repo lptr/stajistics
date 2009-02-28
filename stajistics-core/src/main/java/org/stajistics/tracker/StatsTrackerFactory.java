@@ -24,7 +24,7 @@ import org.stajistics.session.StatsSession;
  */
 public interface StatsTrackerFactory {
 
-    <T extends StatsTracker> T createStatsTracker(StatsSession statsSession,
+    <T extends StatsTracker> T createStatsTracker(StatsSession session,
                                                   Class<T> trackerClass);
 
 }

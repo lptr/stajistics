@@ -157,7 +157,16 @@ public class DefaultStatsKey implements StatsKey {
         buf.append(",unit=");
         buf.append(unit);
 
-        //TODO: more
+        if (!attributes.isEmpty()) {
+           buf.append(",attrs=");
+           buf.append(attributes);
+        }
+
+        buf.append(",tracker=");
+        buf.append(trackerClass.getSimpleName());
+        
+        buf.append(",session=");
+        buf.append(sessionClass.getSimpleName());
 
         buf.append(']');
 

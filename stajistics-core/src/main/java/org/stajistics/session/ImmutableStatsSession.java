@@ -16,9 +16,11 @@ package org.stajistics.session;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.stajistics.StatsKey;
+import org.stajistics.session.collector.DataCollector;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -95,11 +97,6 @@ public class ImmutableStatsSession implements StatsSession {
     }
 
     @Override
-    public Object getAttribute(String name) {
-        return attributes.get(name);
-    }
-
-    @Override
     public Map<String,Object> getAttributes() {
         return attributes;
     }
@@ -171,4 +168,17 @@ public class ImmutableStatsSession implements StatsSession {
 
     @Override
     public void clear() {}
+
+    @Override
+    public StatsSession addDataCollector(DataCollector dataCollector) {
+        return this;
+    }
+
+    @Override
+    public void removeDataCollector(DataCollector dataCollector) {}
+
+    @Override
+    public List<DataCollector> getDataCollectors() {
+        return Collections.emptyList();
+    }
 }

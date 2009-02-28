@@ -12,12 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.tracker;
 
-import org.stajistics.session.ConcurrentStatsSession;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 
@@ -25,10 +22,33 @@ import org.stajistics.tracker.TimeDurationTracker;
  *
  * @author The Stajistics Project
  */
-public interface Constants {
+public class HitFrequencyTracker extends AbstractStatsTracker {
 
-    String DEFAULT_UNIT = "ms";
-    Class<? extends StatsTracker> DEFAULT_TRACKER_CLASS = TimeDurationTracker.class;
-    Class<? extends StatsSession> DEFAULT_SESSION_CLASS = ConcurrentStatsSession.class;
+    private long lastHitStamp;
 
+    public HitFrequencyTracker(final StatsSession session) {
+        super(session);
+    }
+
+    @Override
+    protected void trackImpl(final long now) {
+        lastHitStamp = session.getLastHitStamp();
+
+        super.trackImpl(now);
+    }
+
+    @Override
+    protected void commitImpl(final long now) {
+        if (lastHitStamp != 0) {
+            value = timeStamp - lastHitStamp;
+
+            super.commitImpl(now);
+        }
+    }
+
+    @Override
+    public StatsTracker reset() {
+        lastHitStamp = 0;
+        return super.reset();
+    }
 }

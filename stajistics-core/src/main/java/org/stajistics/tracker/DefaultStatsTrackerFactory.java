@@ -29,9 +29,9 @@ public class DefaultStatsTrackerFactory implements StatsTrackerFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends StatsTracker> T createStatsTracker(final StatsSession statsSession,
+    public <T extends StatsTracker> T createStatsTracker(final StatsSession session,
                                                          final Class<T> trackerClass) {
-        if (statsSession == null) {
+        if (session == null) {
             throw new NullPointerException("session");
         }
 
@@ -40,21 +40,34 @@ public class DefaultStatsTrackerFactory implements StatsTrackerFactory {
         }
 
         if (trackerClass == TimeDurationTracker.class) {
-            return (T)new TimeDurationTracker(statsSession);
+            return (T)new TimeDurationTracker(session);
         }
 
         if (trackerClass == ConcurrentAccessTracker.class) {
-            return (T)new ConcurrentAccessTracker(statsSession);
+            return (T)new ConcurrentAccessTracker(session);
+        }
+
+        if (trackerClass == HitFrequencyTracker.class) {
+            return (T)new HitFrequencyTracker(session);
         }
 
         if (trackerClass == ManualTracker.class) {
-            return (T)new ManualTracker(statsSession);
+            return (T)new ManualTracker(session);
         }
 
+        /* TODO: Creating trackers reflectively for client-defined types 
+         * is unacceptable for performance. Figure something out.
+         */
+        return createReflectively(session, trackerClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends StatsTracker> T createReflectively(final StatsSession session,
+                                                          final Class<T> trackerClass) {
         try {
             Constructor<StatsTracker> ctor = (Constructor<StatsTracker>)trackerClass.getConstructor(new Class[] { StatsSession.class });
 
-            return (T)ctor.newInstance(new Object[] { statsSession });
+            return (T)ctor.newInstance(new Object[] { session });
 
         } catch (SecurityException e) {
             throw new RuntimeException(e);

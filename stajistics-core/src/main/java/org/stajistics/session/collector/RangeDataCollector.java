@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.Range;
+import org.stajistics.util.RangeList;
 
 /**
  * 
@@ -30,76 +31,52 @@ import org.stajistics.util.Range;
  */
 public class RangeDataCollector implements DataCollector {
 
-    private final Range[] ranges;
+    private final RangeList rangeList;
     private final AtomicInteger[] hits;
-    private final boolean exclusiveRangeEnd;
 
-    private final boolean hasOverlap;
+    public RangeDataCollector(final RangeList rangeList) {
+        if (rangeList == null) {
+            throw new NullPointerException("rangeList");
+        }
 
-    public RangeDataCollector(final List<Range> rangeList,
-                              final boolean exclusiveRangeEnd) {
+        this.rangeList = rangeList;
 
-        this.ranges = rangeList.toArray(new Range[rangeList.size()]);
-        this.exclusiveRangeEnd = exclusiveRangeEnd;
-
-        hits = new AtomicInteger[this.ranges.length];
+        hits = new AtomicInteger[rangeList.size()];
         for (int i = 0; i < hits.length; i++) {
             hits[i] = new AtomicInteger(0);
         }
-
-        boolean hasOverlap = false;
-
-        for (int i = 0; i < ranges.length; i++) {
-            for (int j = 0; j < ranges.length; j++) {
-                if (i == j) {
-                    continue;
-                }
-
-                if (ranges[i].overlaps(ranges[j], exclusiveRangeEnd)) {
-                    hasOverlap = true;
-                    break;
-                }
-            }
-        }
-
-        this.hasOverlap = hasOverlap;
     }
+
 
     @Override
     public void update(final StatsSession session,
                        final StatsTracker tracker, 
                        final long now) {
         final double value = tracker.getValue();
+        final boolean hasOverlap = rangeList.hasOverlap();
 
-        final int rangeCount = ranges.length;
-        Range range;
-
-        for (int i = 0; i < rangeCount; i++) {
-            range = ranges[i];
-            if (range.contains(value, exclusiveRangeEnd)) {
+        int i = -1;
+        do {
+            i = rangeList.indexOfRangeContaining(value, i + 1);
+            if (i != -1) {
                 hits[i].incrementAndGet();
-
-                if (!hasOverlap) {
-                    break;
-                }
             }
-        }
+        } while (i != -1 && hasOverlap);
     }
 
     @Override
     public void getAttributes(final StatsSession session,
                               final Map<String, Object> attributes) {
-        final int rangeCount = ranges.length;
-        Range range;
+        List<Range> ranges = rangeList.getRanges();
+        final int rangeCount = ranges.size();
         for (int i = 0; i < rangeCount; i++) {
-            range = ranges[i];
-            attributes.put(range.getName(), hits[i].get());
+            attributes.put(ranges.get(i).getName(), hits[i].get());
         }
     }
 
     @Override
     public void clear() {
-        final int rangeCount = ranges.length;
+        final int rangeCount = rangeList.size();
         for (int i = 0; i < rangeCount; i++) {
             hits[i].set(0);
         }

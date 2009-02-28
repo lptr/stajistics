@@ -17,15 +17,14 @@ package org.stajistics.session;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +41,11 @@ import org.stajistics.util.AtomicDouble;
  * 
  * @author The Stajistics Project
  */
-public class DefaultStatsSession implements StatsSession {
+public class ConcurrentStatsSession implements StatsSession {
 
     private static final long serialVersionUID = -5265957157097835416L;
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultStatsSession.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConcurrentStatsSession.class);
 
     private static final DecimalFormat DECIMAL_FORMAT;
     static {
@@ -71,18 +70,14 @@ public class DefaultStatsSession implements StatsSession {
 
     protected final List<DataCollector> dataCollectors = new LinkedList<DataCollector>();
 
-    protected final ConcurrentMap<String,Object> clientAttrs = new ConcurrentHashMap<String,Object>();
-
-    protected Lock updateLock = null;
-
-    public DefaultStatsSession(final StatsKey key) {
+    public ConcurrentStatsSession(final StatsKey key) {
         if (key == null) {
             throw new NullPointerException("key");
         }
 
         this.key = key;
     }
-    
+
     @Override
     public void open(final StatsTracker tracker, 
                      long now) {
@@ -102,8 +97,13 @@ public class DefaultStatsSession implements StatsSession {
             logger.debug("Open: " + this);
         }
 
+        fireOpenEvent(this, tracker);
+    }
+
+    protected void fireOpenEvent(final StatsSession session,
+                                 final StatsTracker tracker) {
         Stats.getEventManager()
-             .fireEvent(StatsEventType.TRACKER_OPENED, this, tracker);
+             .fireEvent(StatsEventType.TRACKER_OPENED, session, tracker);
     }
 
     @Override
@@ -141,66 +141,58 @@ public class DefaultStatsSession implements StatsSession {
         double currentValue = tracker.getValue();
         double tmp;
 
-        Lock myLock = updateLock;
+        commits.incrementAndGet();
 
-        try {
-            if (myLock != null) {
-                myLock.lock();
-            }
+        // First
+        if (first.get() == null) {
+            first.compareAndSet(null, new Double(currentValue));
+        }
 
-            commits.incrementAndGet();
+        // Last
+        last.set(currentValue);
 
-            // First
-            if (first.get() == null) {
-                first.compareAndSet(null, new Double(currentValue));
-            }
-
-            // Last
-            last.set(currentValue);
-
-            // Min
-            for (;;) {
-                tmp = min.get();
-                if (currentValue < tmp) {
-                    if (min.compareAndSet(tmp, currentValue)) {
-                        break;
-                    }
-                } else {
+        // Min
+        for (;;) {
+            tmp = min.get();
+            if (currentValue < tmp) {
+                if (min.compareAndSet(tmp, currentValue)) {
                     break;
                 }
+            } else {
+                break;
             }
+        }
 
-            // Max
-            for (;;) {
-                tmp = max.get();
-                if (currentValue > tmp) {
-                    if (max.compareAndSet(tmp, currentValue)) {
-                        break;
-                    }
-                } else {
+        // Max
+        for (;;) {
+            tmp = max.get();
+            if (currentValue > tmp) {
+                if (max.compareAndSet(tmp, currentValue)) {
                     break;
                 }
+            } else {
+                break;
             }
+        }
 
-            // Sum
-            sum.getAndAdd(currentValue);
+        // Sum
+        sum.getAndAdd(currentValue);
 
-            for (DataCollector dataCollector : dataCollectors) {
-                dataCollector.update(this, tracker, now);
-            }
-
-        } finally {
-            if (myLock != null) {
-                myLock.unlock();
-            }
+        for (DataCollector dataCollector : dataCollectors) {
+            dataCollector.update(this, tracker, now);
         }
 
         if (logger.isInfoEnabled()) {
             logger.info("Commit: " + this);
         }
 
+        fireUpdateEvent(this, tracker);
+    }
+
+    protected void fireUpdateEvent(final StatsSession session,
+                                   final StatsTracker tracker) {
         Stats.getEventManager()
-                    .fireEvent(StatsEventType.TRACKER_COMMITTED, this, tracker);
+             .fireEvent(StatsEventType.TRACKER_COMMITTED, session, tracker);
     }
 
     @Override
@@ -234,30 +226,72 @@ public class DefaultStatsSession implements StatsSession {
     }
 
     @Override
-    public Object getAttribute(final String name) {
-        return clientAttrs.get(name);
-    }
-
-    @Override
     public Map<String,Object> getAttributes() {
-        return Collections.unmodifiableMap(clientAttrs);
+
+        Map<String,Object> attributes = new LinkedHashMap<String,Object>(64); //TODO: magic number
+
+        attributes.put(Attributes.HITS, getHits());
+        attributes.put(Attributes.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
+        attributes.put(Attributes.LAST_HIT_STAMP, new Date(getLastHitStamp()));
+        attributes.put(Attributes.COMMITS, getCommits());
+        attributes.put(Attributes.FIRST, getFirst());
+        attributes.put(Attributes.LAST, getLast());
+        attributes.put(Attributes.MIN, getMin());
+        attributes.put(Attributes.MAX, getMax());
+        attributes.put(Attributes.SUM, getSum());
+
+        for (DataCollector dataCollector : dataCollectors) {
+            dataCollector.getAttributes(this, attributes);
+        }
+
+        return Collections.unmodifiableMap(attributes);
     }
 
     @Override
-    public final StatsSession snapshot() {
-        try {
-            updateLock.lock();
-
-            return new ImmutableStatsSession(this);
-
-        } finally {
-            updateLock.unlock();
-        }
+    public StatsSession snapshot() {
+        return new ImmutableStatsSession(this);
     }
 
     @Override
     public void clear() {
-        // TODO
+        hits.set(0);
+        firstHitStamp.set(0);
+        lastHitStamp.set(0);
+        commits.set(0);
+        first.set(null);
+        last.set(0);
+        min.set(0);
+        max.set(0);
+        sum.set(0);
+
+        for (DataCollector dataCollector : dataCollectors) {
+            dataCollector.clear();
+        }
+    }
+
+    @Override
+    public StatsSession addDataCollector(final DataCollector dataCollector) {
+        if (dataCollector == null) {
+            throw new NullPointerException("dataCollector");
+        }
+
+        dataCollectors.add(dataCollector);
+
+        return this;
+    }
+
+    @Override
+    public void removeDataCollector(final DataCollector dataCollector) {
+        if (dataCollector == null) {
+            return;
+        }
+
+        dataCollectors.remove(dataCollector);
+    }
+
+    @Override
+    public List<DataCollector> getDataCollectors() {
+        return Collections.unmodifiableList(dataCollectors);
     }
 
     protected void appendStat(final StringBuilder buf,
@@ -276,22 +310,16 @@ public class DefaultStatsSession implements StatsSession {
 
     public String toString() {
 
-        StringBuilder buf = new StringBuilder();
+        StringBuilder buf = new StringBuilder(512);
 
         buf.append(StatsSession.class.getSimpleName());
         buf.append("[key=");
         buf.append(key);
 
-        appendStat(buf, Attributes.HITS, getHits());
-        appendStat(buf, Attributes.FIRST_HIT_STAMP, new java.util.Date(getFirstHitStamp()).toString());
-        appendStat(buf, Attributes.LAST_HIT_STAMP, new java.util.Date(getLastHitStamp()).toString());
-        appendStat(buf, Attributes.COMMITS, getCommits());
-        appendStat(buf, Attributes.FIRST, getFirst());
-        appendStat(buf, Attributes.LAST, getLast());
-        appendStat(buf, Attributes.MIN, getMin());
-        appendStat(buf, Attributes.MAX, getMax());
-        appendStat(buf, Attributes.SUM, getSum());
-
+        Map<String,Object> attributes = getAttributes();
+        for (Map.Entry<String,Object> entry : attributes.entrySet()) {
+            appendStat(buf, entry.getKey(), entry.getValue());
+        }
 
         buf.append(']');
 

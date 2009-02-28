@@ -87,11 +87,18 @@ public class DefaultSessionManager implements StatsSessionManager {
     }
 
     protected StatsSession createSession(final StatsKey key) {
-        return new DefaultStatsSession(key);
+        return new ConcurrentStatsSession(key);
     }
 
     @Override
     public void clear() {
         sessionMap.clear();
+    }
+
+    @Override
+    public void clearAllSessions() {
+        for (StatsSession session : sessionMap.values()) {
+            session.clear();
+        }
     }
 }

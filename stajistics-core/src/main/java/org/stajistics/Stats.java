@@ -21,11 +21,11 @@ import org.stajistics.event.SynchronousStatsEventManager;
 import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.tracker.CompositeTracker;
 import org.stajistics.tracker.DefaultStatsTrackerFactory;
-import org.stajistics.tracker.ThreadLocalStatsTrackerStore;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerStore;
+import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -41,6 +41,7 @@ public abstract class Stats {
 
     private static volatile boolean enabled = true;
 
+    protected StatsSessionManager sessionManager;
     protected StatsEventManager eventManager;
 
 
@@ -50,8 +51,8 @@ public abstract class Stats {
         }
 
         if (Stats.instance != null) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("A Stats instance has already been loaded. Replacing existing: " + Stats.instance);
+            if (logger.isDebugEnabled()) {
+                logger.debug("A Stats instance has already been loaded. Replacing existing: " + Stats.instance);
             }
         }
 
@@ -72,6 +73,10 @@ public abstract class Stats {
         }
 
         return instance;
+    }
+
+    public static StatsSessionManager getSessionManager() {
+        return getInstance().sessionManager;
     }
 
     public static StatsEventManager getEventManager() {
@@ -98,7 +103,7 @@ public abstract class Stats {
 
         StatsTracker tracker = null;
 
-        if (isEnabled()) {
+        if (enabled) {
             tracker = getInstance().getTrackerImpl(key);
         }
 
@@ -109,12 +114,34 @@ public abstract class Stats {
         return tracker;
     }
 
+    public static StatsTracker getTracker(final StatsKey firstKey, 
+                                          final StatsKey secondKey,
+                                          final StatsKey... otherKeys) {
+
+        final StatsTracker[] trackers = new StatsTracker[2 + otherKeys.length];
+
+        trackers[0] = getTracker(firstKey);
+        trackers[1] = getTracker(secondKey);
+
+        for (int i = 0; i < otherKeys.length; i++) {
+            trackers[i + 2] = getTracker(otherKeys[i]);
+        }
+
+        return new CompositeTracker(trackers);
+    }
+
     public static StatsTracker track(final String key) {
         return getTracker(new SimpleStatsKey(key)).track();
     }
 
     public static StatsTracker track(final StatsKey key) {
         return getTracker(key).track();
+    }
+
+    public static StatsTracker track(final StatsKey firstKey,
+                                     final StatsKey secondKey,
+                                     final StatsKey... otherKeys) {
+        return getTracker(firstKey, secondKey, otherKeys).track();
     }
 
     public static StatsKey newKey(final String name) {
@@ -137,15 +164,16 @@ public abstract class Stats {
 
     protected static class DefaultStats extends Stats {
 
-        protected StatsSessionManager sessionManager;
-        protected StatsTrackerStore trackerStore;
+        //protected StatsTrackerStore trackerStore;
+        protected StatsTrackerFactory trackerFactory;
 
         protected DefaultStats() {
             super();
 
-            eventManager = createEventManager();
             sessionManager = createSessionManager();
-            trackerStore = createTrackerStore();
+            eventManager = createEventManager();
+            //trackerStore = createTrackerStore();
+            trackerFactory = createTrackerFactory();
         }
 
         protected StatsEventManager createEventManager() {
@@ -156,8 +184,14 @@ public abstract class Stats {
             return new DefaultSessionManager();
         }
 
+        /*
         protected StatsTrackerStore createTrackerStore() {
             return new ThreadLocalStatsTrackerStore(new DefaultStatsTrackerFactory());
+        }
+        */
+
+        protected StatsTrackerFactory createTrackerFactory() {
+            return new DefaultStatsTrackerFactory();
         }
 
         @Override
@@ -172,8 +206,16 @@ public abstract class Stats {
 
         @Override
         protected StatsTracker getTrackerImpl(final StatsKey key) {
-            StatsSession statsSession = sessionManager.getSession(key);
-            StatsTracker tracker = trackerStore.getTracker(statsSession);
+            StatsSession session = sessionManager.getSession(key);
+
+            /* Reusing StatsTrackers needs a lot more thought.
+             * Currently it is too complicated to bother with, so just
+             * create a new tracker every time.
+             */
+            //StatsTracker tracker = trackerStore.getTracker(statsSession);
+
+            StatsTracker tracker = trackerFactory.createStatsTracker(session, 
+                                                                     key.getTrackerClass());
 
             return tracker;
         }

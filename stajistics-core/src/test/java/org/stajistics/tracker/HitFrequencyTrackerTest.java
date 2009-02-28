@@ -12,12 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session;
-
-import java.util.Collection;
-import java.util.Set;
-
-import org.stajistics.StatsKey;
+package org.stajistics.tracker;
 
 /**
  * 
@@ -25,21 +20,10 @@ import org.stajistics.StatsKey;
  *
  * @author The Stajistics Project
  */
-public interface StatsSessionManager {
+public class HitFrequencyTrackerTest extends AbstractStatsTrackerTestCase {
 
-    int getSessionCount();
-
-    Set<StatsKey> getKeys();
-
-    Collection<StatsSession> getSessions();
-
-    StatsSession getSession(StatsKey key);
-
-    StatsSession remove(StatsKey key);
-
-    boolean remove(StatsSession statsSession);
-
-    void clear();
-
-    void clearAllSessions();
+    @Override
+    protected StatsTracker createStatsTracker() {
+        return new HitFrequencyTracker(mockSession);
+    }
 }

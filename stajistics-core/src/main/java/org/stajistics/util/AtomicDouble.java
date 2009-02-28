@@ -27,7 +27,9 @@ public class AtomicDouble extends Number {
 
     private final AtomicLong value = new AtomicLong();
 
-    public AtomicDouble() {}
+    public AtomicDouble() {
+        set(0);
+    }
 
     public AtomicDouble(final double value) {
         set(value);

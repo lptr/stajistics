@@ -63,6 +63,7 @@ public abstract class AbstractStatsTrackerTestCase {
 
         mockery.checking(new Expectations() {{
             one(mockSession).open(with(tracker), with(any(long.class)));
+            ignoring(mockSession).getLastHitStamp();
         }});
 
         tracker.track();
@@ -78,8 +79,9 @@ public abstract class AbstractStatsTrackerTestCase {
 
         mockery.checking(new Expectations() {{
             one(mockSession).open(with(tracker), with(any(long.class)));
-            one(mockSession).update(with(tracker), with(any(long.class)));
+            between(0, 1).of(mockSession).update(with(tracker), with(any(long.class)));
             ignoring(mockSession).getHits();
+            ignoring(mockSession).getLastHitStamp();
             ignoring(mockSession).getCommits();
         }});
 
@@ -94,10 +96,7 @@ public abstract class AbstractStatsTrackerTestCase {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            one(mockSession).open(with(tracker), with(any(long.class)));
-            one(mockSession).update(with(tracker), with(any(long.class)));
-            ignoring(mockSession).getHits();
-            ignoring(mockSession).getCommits();
+            ignoring(mockSession);
         }});
 
         assertEquals(0, tracker.getTimeStamp());
@@ -114,16 +113,13 @@ public abstract class AbstractStatsTrackerTestCase {
         
         mockery.assertIsSatisfied();
     }
-    
+
     @Test
     public void testIsTracking() {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            one(mockSession).open(with(tracker), with(any(long.class)));
-            one(mockSession).update(with(tracker), with(any(long.class)));
-            ignoring(mockSession).getHits();
-            ignoring(mockSession).getCommits();
+            ignoring(mockSession);
         }});
 
         assertFalse(tracker.isTracking());
@@ -166,8 +162,7 @@ public abstract class AbstractStatsTrackerTestCase {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            ignoring(mockSession).open(with(tracker), with(any(long.class)));
-            ignoring(mockSession).update(with(tracker), with(any(long.class)));
+            ignoring(mockSession);
         }});
 
         boolean isTracking = tracker.isTracking();
@@ -193,10 +188,7 @@ public abstract class AbstractStatsTrackerTestCase {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            ignoring(mockSession).open(with(tracker), with(any(long.class)));
-            ignoring(mockSession).update(with(tracker), with(any(long.class)));
-            ignoring(mockSession).getHits();
-            ignoring(mockSession).getCommits();
+            ignoring(mockSession);
         }});
 
         boolean isTracking = tracker.isTracking();
@@ -247,6 +239,9 @@ public abstract class AbstractStatsTrackerTestCase {
 
         mockery.checking(new Expectations() {{
             one(mockSession).open(with(tracker), with(any(long.class)));
+            ignoring(mockSession).getHits();
+            ignoring(mockSession).getLastHitStamp();
+            ignoring(mockSession).getCommits();
         }});
 
         tracker.track();

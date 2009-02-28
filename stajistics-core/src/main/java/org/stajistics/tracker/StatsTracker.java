@@ -14,7 +14,6 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 

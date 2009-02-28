@@ -15,9 +15,11 @@
 package org.stajistics.session;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.stajistics.StatsKey;
+import org.stajistics.session.collector.DataCollector;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -68,8 +70,6 @@ public interface StatsSession extends Serializable {
 
     double getSum();
 
-    Object getAttribute(String name);
-
     Map<String,Object> getAttributes();
 
     void open(StatsTracker tracker, long now);
@@ -79,5 +79,11 @@ public interface StatsSession extends Serializable {
     StatsSession snapshot();
 
     void clear();
+
+    StatsSession addDataCollector(DataCollector dataCollector);
+
+    void removeDataCollector(DataCollector dataCollector);
+
+    List<DataCollector> getDataCollectors();
 
 }
