@@ -28,6 +28,8 @@ import java.util.NoSuchElementException;
  */
 public class Range implements Iterable<Double> {
 
+    protected static boolean DEFAULT_EXCLUSIVE_RANGE_END = true;
+
     private static final DecimalFormat DECIMAL_FORMAT;
     static {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
@@ -88,6 +90,10 @@ public class Range implements Iterable<Double> {
         return name;
     }
 
+    public boolean contains(final double value) {
+        return contains(value, DEFAULT_EXCLUSIVE_RANGE_END);
+    }
+
     public boolean contains(final double value,
                             final boolean exclusiveRangeEnd) {
         if (value < begin) {
@@ -120,6 +126,10 @@ public class Range implements Iterable<Double> {
         return false;
     }
 
+    public boolean overlaps(final Range other) {
+        return overlaps(other, DEFAULT_EXCLUSIVE_RANGE_END);
+    }
+
     public boolean overlaps(final Range other,
                             final boolean exclusiveRangeEnd) {
         if (begin <= other.begin) {
@@ -128,10 +138,12 @@ public class Range implements Iterable<Double> {
             } else {
                 return other.begin <= end;
             }
-        } else if (begin <= other.end) {
-            if (exclusiveRangeEnd) {
+        } else if (exclusiveRangeEnd) {
+            if (begin < other.end) {
                 return other.end < end;
-            } else {
+            }
+        } else {
+            if (begin <= other.end) {
                 return other.end <= end;
             }
         }
@@ -172,8 +184,8 @@ public class Range implements Iterable<Double> {
 
     @Override
     public int hashCode() {
-        return (int)(Double.doubleToLongBits(begin) ^ 
-                     Double.doubleToLongBits(end)) ^ 
+        return (int)Double.doubleToLongBits(begin) ^ 
+               (int)Double.doubleToLongBits(end) ^ 
                name.hashCode();
     }
 

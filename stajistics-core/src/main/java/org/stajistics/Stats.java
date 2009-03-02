@@ -214,8 +214,12 @@ public abstract class Stats {
              */
             //StatsTracker tracker = trackerStore.getTracker(statsSession);
 
-            StatsTracker tracker = trackerFactory.createStatsTracker(session, 
-                                                                     key.getTrackerClass());
+            StatsTracker tracker = null;
+
+            if (session.isEnabled()) {
+                tracker = trackerFactory.createStatsTracker(session, 
+                                                            key.getTrackerClass());
+            }
 
             return tracker;
         }

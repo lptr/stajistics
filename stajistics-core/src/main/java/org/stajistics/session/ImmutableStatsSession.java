@@ -97,6 +97,14 @@ public class ImmutableStatsSession implements StatsSession {
     }
 
     @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {}
+
+    @Override
     public Map<String,Object> getAttributes() {
         return attributes;
     }

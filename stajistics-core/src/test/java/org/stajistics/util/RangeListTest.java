@@ -34,7 +34,7 @@ import org.junit.Test;
  */
 public class RangeListTest {
 
-    private static final double DELTA = 0.00000000000001;
+    private static final double DELTA = 0.000000000000001;
 
     // no overlap
     private static final List<Range> TEST_RANGES1 = new ArrayList<Range>(
@@ -82,7 +82,7 @@ public class RangeListTest {
             fail("Allowed construction with null range list");
 
         } catch (NullPointerException npe) {
-            //pass
+            //expected
         }
     }
 

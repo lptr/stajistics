@@ -36,7 +36,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SynchronousStatsEventManager.class);
 
-    private final AtomicBoolean enabled = new AtomicBoolean(true);
+    private volatile boolean enabled = true;
 
     private final List<StatsEventHandler> globalEventHandlers = createEventHandlerList();
 
@@ -49,12 +49,12 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
     @Override
     public boolean isEnabled() {
-        return enabled.get();
+        return enabled;
     }
 
     @Override
     public void setEnabled(final boolean enabled) {
-        this.enabled.set(enabled);
+        this.enabled = enabled;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
                           final StatsSession session,
                           final StatsTracker tracker) {
 
-        if (!enabled.get()) {
+        if (!enabled) {
             return;
         }
 

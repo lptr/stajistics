@@ -57,6 +57,8 @@ public class ConcurrentStatsSession implements StatsSession {
 
     protected final StatsKey key;
 
+    protected volatile boolean enabled = true;
+
     protected final AtomicLong hits = new AtomicLong(0);
     protected final AtomicLong firstHitStamp = new AtomicLong(0);
     protected final AtomicLong lastHitStamp = new AtomicLong(0);
@@ -81,6 +83,10 @@ public class ConcurrentStatsSession implements StatsSession {
     @Override
     public void open(final StatsTracker tracker, 
                      long now) {
+
+        if (!enabled) {
+            return;
+        }
 
         if (now < 0) {
             now = System.currentTimeMillis();
@@ -130,9 +136,23 @@ public class ConcurrentStatsSession implements StatsSession {
     public StatsKey getKey() {
         return key;
     }
+    
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @Override
     public void update(final StatsTracker tracker, long now) {
+
+        if (!enabled) {
+            return;
+        }
 
         if (now < 0) {
             now = System.currentTimeMillis();

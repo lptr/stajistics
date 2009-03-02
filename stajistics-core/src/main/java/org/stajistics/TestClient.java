@@ -55,6 +55,7 @@ class TestClient {
 
     private final StatsKey key2 = Stats.buildKey("Test")
                                        .withTracker(ConcurrentAccessTracker.class)
+                                       .withUnit("accesses")
                                        .newKey();
 
 
@@ -69,7 +70,7 @@ class TestClient {
 
     public TestClient() {
 
-        Stats.getEventManager().addGlobalEventHandler(
+        Stats.getEventManager().addSessionEventHandler(key1,
                 new StatsEventHandler() {
                     @Override
                     public void handleStatsEvent(
@@ -80,7 +81,7 @@ class TestClient {
                     }
                 });
 
-        Stats.getEventManager().addGlobalEventHandler(
+        Stats.getEventManager().addSessionEventHandler(key1,
                 new AbstractAlarmCondition(new AlarmHandler() {
                     @Override
                     public void alarmTriggered(final AlarmCondition condition,

@@ -52,6 +52,10 @@ public interface StatsSession extends Serializable {
 
     StatsKey getKey();
 
+    boolean isEnabled();
+
+    void setEnabled(boolean enabled);
+
     long getHits();
 
     long getFirstHitStamp();

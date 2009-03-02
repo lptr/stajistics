@@ -27,8 +27,6 @@ import java.util.List;
  */
 public class RangeList implements Iterable<Range> {
 
-    private static final boolean DEFAULT_EXCLUSIVE_RANGE_END = true;
-
     private final Range[] ranges;
 
     private final boolean exclusiveRangeEnd;
@@ -38,7 +36,7 @@ public class RangeList implements Iterable<Range> {
     private final double maxEnd;
 
     public RangeList(final List<Range> ranges) {
-        this(ranges, DEFAULT_EXCLUSIVE_RANGE_END);
+        this(ranges, Range.DEFAULT_EXCLUSIVE_RANGE_END);
     }
 
     public RangeList(final List<Range> ranges,
@@ -195,7 +193,7 @@ public class RangeList implements Iterable<Range> {
     public static class Builder {
 
         private final List<Range> ranges = new LinkedList<Range>();
-        private boolean exclusiveRangeEnd = DEFAULT_EXCLUSIVE_RANGE_END;
+        private boolean exclusiveRangeEnd = Range.DEFAULT_EXCLUSIVE_RANGE_END;
 
         private boolean beginningRangeAdded = false;
         private boolean endingRangeAdded = false;
