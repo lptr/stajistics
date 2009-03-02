@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventHandler;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.event.alarm.AbstractAlarmCondition;
@@ -34,6 +36,8 @@ import org.stajistics.util.RangeList;
  * @author The Stajistics Project
  */
 class TestClient {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestClient.class);
 
     private final StatsKey key1 = Stats.newKey("Test");
     {
@@ -72,7 +76,7 @@ class TestClient {
                             final StatsEventType eventType,
                             final StatsSession session,
                             final StatsTracker tracker) {
-                        System.out.println(eventType + " -> " + session.getKey());
+                        LOGGER.info(eventType + " -> " + session.getKey());
                     }
                 });
 
@@ -82,7 +86,7 @@ class TestClient {
                     public void alarmTriggered(final AlarmCondition condition,
                                                final StatsSession session,
                                                final StatsTracker tracker) {
-                        System.out.println("Alarm triggered");
+                        LOGGER.warn("Alarm triggered");
                     }
                 }) {
                     @Override
@@ -106,10 +110,7 @@ class TestClient {
 
             for (int i = 0; i < 1000; i++) {
                 new Object();
-                System.out.print('.');
             }
-
-            System.out.println();
 
         } finally {
             tracker.commit();

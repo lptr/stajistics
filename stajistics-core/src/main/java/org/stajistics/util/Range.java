@@ -16,7 +16,9 @@ package org.stajistics.util;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 /**
  * 
@@ -24,7 +26,7 @@ import java.util.Locale;
  *
  * @author The Stajistics Project
  */
-public class Range {
+public class Range implements Iterable<Double> {
 
     private static final DecimalFormat DECIMAL_FORMAT;
     static {
@@ -105,6 +107,19 @@ public class Range {
         return true;
     }
 
+    public boolean contains(final Range range,
+                            final boolean exclusiveRangeEnd) {
+        if (begin <= range.begin) {
+            if (exclusiveRangeEnd) {
+                return range.end < end;
+            } else {
+                return range.end <= end;
+            }
+        }
+
+        return false;
+    }
+
     public boolean overlaps(final Range other,
                             final boolean exclusiveRangeEnd) {
         if (begin <= other.begin) {
@@ -122,6 +137,16 @@ public class Range {
         }
 
         return false;
+    }
+
+    @Override
+    public Iterator<Double> iterator() {
+        return iterator(1, true);
+    }
+
+    public Iterator<Double> iterator(final double increment,
+                                     final boolean exclusiveRangeEnd) {
+        return new RangeItr(begin, end, increment, exclusiveRangeEnd);
     }
 
     @Override
@@ -154,5 +179,59 @@ public class Range {
 
     public String toString() {
         return getName();
+    }
+
+    /* NESTED CLASSES */
+
+    protected static class RangeItr implements Iterator<Double> {
+
+        private final double increment;
+        private final double end;
+        private final boolean exclusiveRangeEnd;
+
+        private double current;
+
+        RangeItr(final double begin,
+                 final double end,
+                 final double increment,
+                 final boolean exclusiveRangeEnd) {
+            this.current = begin - increment;
+            this.end = end;
+            this.increment = increment;
+            this.exclusiveRangeEnd = exclusiveRangeEnd;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (exclusiveRangeEnd) {
+                return (current + increment) < end;
+            } else {
+                return (current + increment) <= end;
+            }
+        }
+
+        @Override
+        public Double next() {
+            double val = current + increment;
+
+            if (exclusiveRangeEnd) {
+                if (val >= end) {
+                    throw new NoSuchElementException();
+                }
+            } else {
+                if (val > end) {
+                    throw new NoSuchElementException();
+                }
+            }
+
+            current += increment;
+
+            return val;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

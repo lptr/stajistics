@@ -164,7 +164,7 @@ public class DefaultStatsKey implements StatsKey {
 
         buf.append(",tracker=");
         buf.append(trackerClass.getSimpleName());
-        
+
         buf.append(",session=");
         buf.append(sessionClass.getSimpleName());
 

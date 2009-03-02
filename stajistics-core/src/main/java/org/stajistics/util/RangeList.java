@@ -139,7 +139,7 @@ public class RangeList implements Iterable<Range> {
 
     public int indexOfRangeContaining(final double value,
                                       int fromIndex) {
-        if (value < minBegin || value > maxEnd) {
+        if (value < minBegin || value > maxEnd || (exclusiveRangeEnd && value == maxEnd)) {
             return -1;
         }
 
@@ -162,7 +162,7 @@ public class RangeList implements Iterable<Range> {
     }
 
     public boolean contains(final double value) {
-        if (value < minBegin || value > maxEnd) {
+        if (value < minBegin || value > maxEnd || (exclusiveRangeEnd && value == maxEnd)) {
             return false;
         }
 
