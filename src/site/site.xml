@@ -1,0 +1,18 @@
+<project name="Stajistics">
+  <bannerLeft>
+    <name>Stajistics</name>
+    <src>images/logo.png</src>
+    <href>http://www.stajistics.org</href>
+  </bannerLeft>
+  <version position="left" />
+  <body>
+    <breadcrumbs>
+      <item name="stajistics.googlecode.com" href="http://stajistics.googlecode.com" />
+    </breadcrumbs>
+    <menu name="Stajistics">
+      <item name="Overview" href="index.html" />      
+    </menu>
+    <menu ref="modules" />
+    <menu ref="reports" />
+  </body>
+</project>

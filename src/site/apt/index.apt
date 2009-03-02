@@ -1,0 +1,28 @@
+Overview
+
+  Stajistics is a free monitoring and runtime performance statistics collection API for Java.
+
+  This project is currently in the alpha stage. No binary releases have been made yet.
+
+  Features:
+
+    * Extensible statistics collection API
+
+    * In-memory statistics database
+
+    * Event and alarming API
+
+    * Configurable data retention policy (Planned)
+
+    * Data persistence service (Planned)
+
+    * Java Management eXtensions (JMX) integration (Planned)
+
+    * XML based configuration (Planned)
+
+    * Annotation based configuration (Planned)
+
+
+  Requirements:
+
+    * Java 1.5 
