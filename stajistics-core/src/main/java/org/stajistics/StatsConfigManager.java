@@ -14,31 +14,16 @@
  */
 package org.stajistics;
 
-import java.io.Serializable;
-import java.util.Map;
-
 /**
  * 
  * 
  *
  * @author The Stajistics Project
  */
-public interface StatsKey extends Serializable {
+public interface StatsConfigManager {
 
-    String getName();
+    StatsConfig getConfig(StatsKey key);
 
-    Object getAttribute(String name);
-
-    Map<String,Object> getAttributes();
-
-    int getAttributeCount();
-
-    StatsKeyBuilder buildCopy();
-
-    @Override
-    boolean equals(Object obj);
-
-    @Override
-    int hashCode();
+    StatsConfig putConfigIfAbsent(StatsKey key, StatsConfig config);
 
 }

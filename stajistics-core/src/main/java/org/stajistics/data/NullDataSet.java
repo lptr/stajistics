@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.data;
 
-import java.io.Serializable;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * 
@@ -23,22 +23,34 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public interface StatsKey extends Serializable {
+public final class NullDataSet implements DataSet {
 
-    String getName();
+    private static final NullDataSet instance = new NullDataSet();
 
-    Object getAttribute(String name);
+    private NullDataSet() {}
 
-    Map<String,Object> getAttributes();
-
-    int getAttributeCount();
-
-    StatsKeyBuilder buildCopy();
+    public static NullDataSet getInstance() {
+        return instance;
+    }
 
     @Override
-    boolean equals(Object obj);
+    public Object getField(String name) {
+        return null;
+    }
 
     @Override
-    int hashCode();
+    public Set<String> getFieldNames() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
 
 }

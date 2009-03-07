@@ -17,9 +17,6 @@ package org.stajistics;
 import java.util.Collections;
 import java.util.Map;
 
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
-
 /**
  * 
  * 
@@ -78,11 +75,11 @@ public class SimpleStatsKey implements StatsKey {
 
     @Override
     public StatsKeyBuilder buildCopy() {
-        return Stats.getInstance().createKeyBuilder(this);
+        return Stats.getInstance().createConfigBuilder(this);
     }
 
     @Override
-    public Object getAttribute(String name) {
+    public Object getAttribute(final String name) {
         return null;
     }
 
@@ -92,22 +89,19 @@ public class SimpleStatsKey implements StatsKey {
     }
 
     @Override
-    public Class<? extends StatsSession> getSessionClass() {
-        return Constants.DEFAULT_SESSION_CLASS;
-    }
-
-    @Override
-    public Class<? extends StatsTracker> getTrackerClass() {
-        return Constants.DEFAULT_TRACKER_CLASS;
-    }
-
-    @Override
-    public String getUnit() {
-        return Constants.DEFAULT_UNIT;
+    public int getAttributeCount() {
+        return 0;
     }
 
     @Override
     public String toString() {
-        return name;
+        StringBuilder buf = new StringBuilder(name.length() + 16);
+
+        buf.append(StatsKey.class.getSimpleName());
+        buf.append("[name=");
+        buf.append(name);
+        buf.append(']');
+
+        return buf.toString();
     }
 }

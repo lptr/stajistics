@@ -17,9 +17,6 @@ package org.stajistics;
 import java.util.Collections;
 import java.util.Map;
 
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
-
 /**
  * 
  * 
@@ -31,59 +28,35 @@ public class DefaultStatsKey implements StatsKey {
     private static final long serialVersionUID = -9052397460294109721L;
 
     protected final String name;
-    protected final String unit;
     protected final Map<String,Object> attributes;
-    protected final Class<? extends StatsTracker> trackerClass;
-    protected final Class<? extends StatsSession> sessionClass;
 
     protected final int hashCode;
 
     public DefaultStatsKey(final String name,
-                           final String unit,
-                           final Map<String,Object> attributes,
-                           final Class<? extends StatsTracker> trackerClass,
-                           final Class<? extends StatsSession> sessionClass) {
+                           final Map<String,Object> attributes) {
         if (name == null) {
             throw new NullPointerException("name");
         }
 
-        if (unit == null) {
-            throw new NullPointerException("unit");
-        }
-        
         if (attributes == null) {
             throw new NullPointerException("attributes");
         }
-        
-        if (trackerClass == null) {
-            throw new NullPointerException("trackerClass");
-        }
-
-        if (sessionClass == null) {
-            throw new NullPointerException("sessionClass");
-        }
 
         this.name = name;
-        this.unit = unit;
         this.attributes = attributes;
-        this.trackerClass = trackerClass;
-        this.sessionClass = sessionClass;
 
         this.hashCode = hash();
     }
 
     protected int hash() {
         return name.hashCode() ^
-               unit.hashCode() ^
                attributes.size() ^ // This matters
-               attributes.hashCode() ^
-               trackerClass.hashCode() ^
-               sessionClass.hashCode();
+               attributes.hashCode();
     }
 
     @Override
     public StatsKeyBuilder buildCopy() {
-        return Stats.getInstance().createKeyBuilder(this);
+        return Stats.getInstance().createConfigBuilder(this);
     }
 
     @Override
@@ -92,28 +65,18 @@ public class DefaultStatsKey implements StatsKey {
     }
 
     @Override
-    public Map<String, Object> getAttributes() {
+    public Map<String,Object> getAttributes() {
         return Collections.unmodifiableMap(attributes);
+    }
+
+    @Override
+    public int getAttributeCount() {
+        return attributes.size();
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public Class<? extends StatsSession> getSessionClass() {
-        return sessionClass;
-    }
-
-    @Override
-    public Class<? extends StatsTracker> getTrackerClass() {
-        return trackerClass;
-    }
-
-    @Override
-    public String getUnit() {
-        return unit;
     }
 
     @Override
@@ -154,19 +117,11 @@ public class DefaultStatsKey implements StatsKey {
         buf.append(StatsKey.class.getSimpleName());
         buf.append("[name=");
         buf.append(name);
-        buf.append(",unit=");
-        buf.append(unit);
 
         if (!attributes.isEmpty()) {
            buf.append(",attrs=");
            buf.append(attributes);
         }
-
-        buf.append(",tracker=");
-        buf.append(trackerClass.getSimpleName());
-
-        buf.append(",session=");
-        buf.append(sessionClass.getSimpleName());
 
         buf.append(']');
 

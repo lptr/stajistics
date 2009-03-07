@@ -17,6 +17,8 @@ package org.stajistics.tracker;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsConfig;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
@@ -47,8 +49,9 @@ public class ThreadLocalStatsTrackerStore implements StatsTrackerStore {
             trackerLocal = new ThreadLocal<StatsTracker>() {
                 @Override
                 protected StatsTracker initialValue() {
+                    StatsConfig config = Stats.getConfig(key);
                     return factory.createStatsTracker(session,
-                                                      key.getTrackerClass());
+                                                      config.getTrackerClass());
                 }
             };
 

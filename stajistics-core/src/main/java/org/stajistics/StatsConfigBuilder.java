@@ -14,8 +14,8 @@
  */
 package org.stajistics;
 
-import java.io.Serializable;
-import java.util.Map;
+import org.stajistics.session.StatsSession;
+import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -23,22 +23,15 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public interface StatsKey extends Serializable {
-
-    String getName();
-
-    Object getAttribute(String name);
-
-    Map<String,Object> getAttributes();
-
-    int getAttributeCount();
-
-    StatsKeyBuilder buildCopy();
+public interface StatsConfigBuilder extends StatsKeyBuilder {
 
     @Override
-    boolean equals(Object obj);
+    StatsConfigBuilder withAttribute(String name, Object value);
 
-    @Override
-    int hashCode();
+    StatsConfigBuilder withUnit(String unit);
+
+    StatsConfigBuilder withTracker(Class<? extends StatsTracker> trackerClass);
+
+    StatsConfigBuilder withSession(Class<? extends StatsSession> sessionClass);
 
 }

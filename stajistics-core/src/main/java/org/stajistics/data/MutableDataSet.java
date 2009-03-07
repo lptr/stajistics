@@ -12,10 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
-
-import java.io.Serializable;
-import java.util.Map;
+package org.stajistics.data;
 
 /**
  * 
@@ -23,22 +20,11 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public interface StatsKey extends Serializable {
+public interface MutableDataSet extends DataSet {
 
-    String getName();
+    DataSet setField(String name, Object value);
 
-    Object getAttribute(String name);
+    Object removeField(String name);
 
-    Map<String,Object> getAttributes();
-
-    int getAttributeCount();
-
-    StatsKeyBuilder buildCopy();
-
-    @Override
-    boolean equals(Object obj);
-
-    @Override
-    int hashCode();
-
+    void clear();
 }

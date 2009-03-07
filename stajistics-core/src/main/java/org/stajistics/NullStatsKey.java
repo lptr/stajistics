@@ -12,12 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.tracker;
+package org.stajistics;
 
-import org.stajistics.NullStatsKey;
-import org.stajistics.session.ImmutableStatsSession;
-import org.stajistics.session.StatsSession;
-
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * 
@@ -25,52 +23,51 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public final class NullTracker implements StatsTracker {
+public final class NullStatsKey implements StatsKey {
 
-    private static final NullTracker instance = new NullTracker();
+    private static final long serialVersionUID = 6441310707399203190L;
 
-    private static final StatsSession session = 
-        new ImmutableStatsSession(NullStatsKey.getInstance());
+    private static final NullStatsKey instance = new NullStatsKey();
 
-    private NullTracker() {}
+    private NullStatsKey() {}
 
-    public static NullTracker getInstance() {
+    public static NullStatsKey getInstance() {
         return instance;
     }
 
     @Override
-    public boolean isTracking() {
-        return false;
+    public String getName() {
+        return null;
     }
 
     @Override
-    public StatsTracker track() {
-        return this;
+    public Object getAttribute(final String name) {
+        return null;
     }
 
     @Override
-    public StatsTracker commit() {
-        return this;
+    public Map<String, Object> getAttributes() {
+        return Collections.emptyMap();
     }
 
     @Override
-    public double getValue() {
+    public int getAttributeCount() {
         return 0;
     }
 
     @Override
-    public long getTimeStamp() {
+    public StatsKeyBuilder buildCopy() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int hashCode() {
         return 0;
     }
 
     @Override
-    public StatsTracker reset() {
-        return this;
-    }
-
-    @Override
-    public StatsSession getSession() {
-        return session;
+    public boolean equals(final Object obj) {
+        return this == obj;
     }
 
 }

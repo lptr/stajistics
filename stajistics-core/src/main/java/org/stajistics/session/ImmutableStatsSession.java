@@ -15,11 +15,11 @@
 package org.stajistics.session;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.stajistics.StatsKey;
+import org.stajistics.data.DataSet;
+import org.stajistics.data.NullDataSet;
 import org.stajistics.session.collector.DataCollector;
 import org.stajistics.tracker.StatsTracker;
 
@@ -45,10 +45,10 @@ public class ImmutableStatsSession implements StatsSession {
     private final double max;
     private final double sum;
 
-    private final Map<String,Object> attributes;
+    private final DataSet dataSet;
 
     public ImmutableStatsSession(final StatsKey key) {
-        this(key, 0, 0, 0, 0, 0, 0, 0, 0, 0, null);
+        this(key, 0, 0, 0, 0, 0, 0, 0, 0, 0, NullDataSet.getInstance());
     }
 
     public ImmutableStatsSession(final StatsSession copyFrom) {
@@ -62,7 +62,7 @@ public class ImmutableStatsSession implements StatsSession {
              copyFrom.getMin(),
              copyFrom.getMax(),
              copyFrom.getSum(),
-             copyFrom.getAttributes());
+             copyFrom.dataSet());
     }
 
     public ImmutableStatsSession(final StatsKey key,
@@ -75,7 +75,7 @@ public class ImmutableStatsSession implements StatsSession {
                                  final double min,
                                  final double max,
                                  final double sum,
-                                 final Map<String,Object> attributes) {
+                                 final DataSet dataSet) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -91,22 +91,12 @@ public class ImmutableStatsSession implements StatsSession {
         this.max = max;
         this.sum = sum;
 
-        this.attributes = (attributes == null)
-            ? Collections.<String,Object>emptyMap()
-            : Collections.unmodifiableMap(new HashMap<String,Object>(attributes));
+        this.dataSet = dataSet;
     }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {}
-
-    @Override
-    public Map<String,Object> getAttributes() {
-        return attributes;
+    public DataSet dataSet() {
+        return dataSet;
     }
 
     @Override

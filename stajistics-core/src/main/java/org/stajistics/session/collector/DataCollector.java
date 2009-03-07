@@ -14,8 +14,7 @@
  */
 package org.stajistics.session.collector;
 
-import java.util.Map;
-
+import org.stajistics.data.MutableDataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 
@@ -29,7 +28,7 @@ public interface DataCollector {
 
     void update(StatsSession session, StatsTracker tracker, long now);
 
-    void getAttributes(StatsSession session, Map<String,Object> attributes);
+    void getData(StatsSession session, MutableDataSet dataSet);
 
     void clear();
 

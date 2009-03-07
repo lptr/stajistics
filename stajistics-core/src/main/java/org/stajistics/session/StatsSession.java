@@ -16,9 +16,9 @@ package org.stajistics.session;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import org.stajistics.StatsKey;
+import org.stajistics.data.DataSet;
 import org.stajistics.session.collector.DataCollector;
 import org.stajistics.tracker.StatsTracker;
 
@@ -52,10 +52,6 @@ public interface StatsSession extends Serializable {
 
     StatsKey getKey();
 
-    boolean isEnabled();
-
-    void setEnabled(boolean enabled);
-
     long getHits();
 
     long getFirstHitStamp();
@@ -74,7 +70,7 @@ public interface StatsSession extends Serializable {
 
     double getSum();
 
-    Map<String,Object> getAttributes();
+    DataSet dataSet();
 
     void open(StatsTracker tracker, long now);
 

@@ -153,7 +153,7 @@ public class Range implements Iterable<Double> {
 
     @Override
     public Iterator<Double> iterator() {
-        return iterator(1, true);
+        return iterator(1, DEFAULT_EXCLUSIVE_RANGE_END);
     }
 
     public Iterator<Double> iterator(final double increment,
@@ -203,10 +203,10 @@ public class Range implements Iterable<Double> {
 
         private double current;
 
-        RangeItr(final double begin,
-                 final double end,
-                 final double increment,
-                 final boolean exclusiveRangeEnd) {
+        protected RangeItr(final double begin,
+                           final double end,
+                           final double increment,
+                           final boolean exclusiveRangeEnd) {
             this.current = begin - increment;
             this.end = end;
             this.increment = increment;

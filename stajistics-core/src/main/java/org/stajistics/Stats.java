@@ -41,9 +41,9 @@ public abstract class Stats {
 
     private static volatile boolean enabled = true;
 
+    protected StatsConfigManager configManager;
     protected StatsSessionManager sessionManager;
     protected StatsEventManager eventManager;
-
 
     public static synchronized void loadInstance(final Stats instance) {
         if (instance == null) {
@@ -52,7 +52,8 @@ public abstract class Stats {
 
         if (Stats.instance != null) {
             if (logger.isDebugEnabled()) {
-                logger.debug("A Stats instance has already been loaded. Replacing existing: " + Stats.instance);
+                logger.debug("A Stats instance has already been loaded. Replacing existing: " + 
+                             Stats.instance);
             }
         }
 
@@ -91,8 +92,12 @@ public abstract class Stats {
         Stats.enabled = enabled;
     }
 
-    public static StatsTracker getTracker(final String key) {
-        return getTracker(new SimpleStatsKey(key));
+    public static StatsConfig getConfig(final StatsKey key) {
+        return getInstance().getConfigManager().getConfig(key);
+    }
+
+    public static StatsTracker getTracker(final String name) {
+        return getTracker(newKey(name));
     }
 
     public static StatsTracker getTracker(final StatsKey key) {
@@ -130,8 +135,8 @@ public abstract class Stats {
         return new CompositeTracker(trackers);
     }
 
-    public static StatsTracker track(final String key) {
-        return getTracker(new SimpleStatsKey(key)).track();
+    public static StatsTracker track(final String name) {
+        return getTracker(newKey(name)).track();
     }
 
     public static StatsTracker track(final StatsKey key) {
@@ -145,20 +150,31 @@ public abstract class Stats {
     }
 
     public static StatsKey newKey(final String name) {
-        return new SimpleStatsKey(name);
+        StatsKey key = new SimpleStatsKey(name);
+
+        StatsConfigManager configManager = getInstance().getConfigManager();
+        StatsConfig config = configManager.getConfig(key);
+        if (config == null) {
+            config = DefaultStatsConfig.createDefaultConfig();
+            configManager.putConfigIfAbsent(key, config);
+        }
+
+        return key;
     }
 
-    public static StatsKeyBuilder buildKey(final String name) {
-        StatsKeyBuilder builder = getInstance().createKeyBuilder();
-        builder.withName(name);
-        return builder;
+    public static StatsConfigBuilder buildConfig(final String name) {
+        return getInstance().createConfigBuilder(name);
     }
 
-    protected abstract StatsKeyBuilder createKeyBuilder();
+    protected abstract StatsConfigBuilder createConfigBuilder(String name);
 
-    protected abstract StatsKeyBuilder createKeyBuilder(StatsKey template);
+    protected abstract StatsConfigBuilder createConfigBuilder(StatsKey template);
 
     protected abstract StatsTracker getTrackerImpl(StatsKey key);
+
+    protected StatsConfigManager getConfigManager() {
+        return configManager;
+    }
 
     /* NESTED CLASSES */
 
@@ -170,20 +186,25 @@ public abstract class Stats {
         protected DefaultStats() {
             super();
 
+            configManager = createConfigManager();
             sessionManager = createSessionManager();
             eventManager = createEventManager();
             //trackerStore = createTrackerStore();
             trackerFactory = createTrackerFactory();
         }
 
-        protected StatsEventManager createEventManager() {
-            return new SynchronousStatsEventManager();
+        protected StatsConfigManager createConfigManager() {
+            return new DefaultStatsConfigManager();
         }
 
         protected StatsSessionManager createSessionManager() {
             return new DefaultSessionManager();
         }
 
+        protected StatsEventManager createEventManager() {
+            return new SynchronousStatsEventManager();
+        }
+        
         /*
         protected StatsTrackerStore createTrackerStore() {
             return new ThreadLocalStatsTrackerStore(new DefaultStatsTrackerFactory());
@@ -195,17 +216,20 @@ public abstract class Stats {
         }
 
         @Override
-        protected StatsKeyBuilder createKeyBuilder() {
-            return new DefaultStatsKeyBuilder();
+        protected StatsConfigBuilder createConfigBuilder(final String name) {
+            return new DefaultStatsConfigBuilder(name);
         }
 
         @Override
-        protected StatsKeyBuilder createKeyBuilder(final StatsKey template) {
-            return new DefaultStatsKeyBuilder(template);
+        protected StatsConfigBuilder createConfigBuilder(final StatsKey template) {
+            return new DefaultStatsConfigBuilder(template);
         }
 
         @Override
         protected StatsTracker getTrackerImpl(final StatsKey key) {
+
+            StatsConfig config = configManager.getConfig(key);
+
             StatsSession session = sessionManager.getSession(key);
 
             /* Reusing StatsTrackers needs a lot more thought.
@@ -216,9 +240,9 @@ public abstract class Stats {
 
             StatsTracker tracker = null;
 
-            if (session.isEnabled()) {
+            if (config.isEnabled()) {
                 tracker = trackerFactory.createStatsTracker(session, 
-                                                            key.getTrackerClass());
+                                                            config.getTrackerClass());
             }
 
             return tracker;

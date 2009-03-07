@@ -14,11 +14,11 @@
  */
 package org.stajistics.session;
 
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.stajistics.StatsKey;
+import org.stajistics.data.DataSet;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -70,10 +70,10 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
     }
 
     @Override
-    public Map<String, Object> getAttributes() {
+    public DataSet dataSet() {
         lock.lock();
         try {
-            return super.getAttributes();
+            return super.dataSet();
 
         } finally {
             lock.unlock();

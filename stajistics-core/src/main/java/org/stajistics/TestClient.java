@@ -53,13 +53,13 @@ class TestClient {
                                                                .rangeList()));
     }
 
-    private final StatsKey key2 = Stats.buildKey("Test")
+    private final StatsKey key2 = Stats.buildConfig("Test2")
                                        .withTracker(ConcurrentAccessTracker.class)
                                        .withUnit("accesses")
                                        .newKey();
 
 
-    private final StatsKey key3 = Stats.buildKey("Test")
+    private final StatsKey key3 = Stats.buildConfig("Test3")
                                        .withTracker(HitFrequencyTracker.class)
                                        .newKey();
     {

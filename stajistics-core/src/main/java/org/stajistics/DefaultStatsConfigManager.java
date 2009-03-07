@@ -14,8 +14,8 @@
  */
 package org.stajistics;
 
-import java.io.Serializable;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * 
@@ -23,22 +23,19 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public interface StatsKey extends Serializable {
+public class DefaultStatsConfigManager implements StatsConfigManager {
 
-    String getName();
-
-    Object getAttribute(String name);
-
-    Map<String,Object> getAttributes();
-
-    int getAttributeCount();
-
-    StatsKeyBuilder buildCopy();
+    private ConcurrentMap<String,StatsConfig> configMap =
+        new ConcurrentHashMap<String,StatsConfig>();
 
     @Override
-    boolean equals(Object obj);
+    public StatsConfig getConfig(final StatsKey key) {
+        return configMap.get(key.getName());
+    }
 
     @Override
-    int hashCode();
-
+    public StatsConfig putConfigIfAbsent(StatsKey key, StatsConfig config) {
+        return configMap.putIfAbsent(key.getName(), config);
+    }
+    
 }

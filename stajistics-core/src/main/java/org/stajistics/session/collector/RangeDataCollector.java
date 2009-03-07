@@ -15,9 +15,9 @@
 package org.stajistics.session.collector;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.stajistics.data.MutableDataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.Range;
@@ -65,12 +65,11 @@ public class RangeDataCollector implements DataCollector {
     }
 
     @Override
-    public void getAttributes(final StatsSession session,
-                              final Map<String, Object> attributes) {
+    public void getData(final StatsSession session, final MutableDataSet dataSet) {
         List<Range> ranges = rangeList.getRanges();
         final int rangeCount = ranges.size();
         for (int i = 0; i < rangeCount; i++) {
-            attributes.put(ranges.get(i).getName(), hits[i].get());
+            dataSet.setField(ranges.get(i).getName(), hits[i].get());
         }
     }
 

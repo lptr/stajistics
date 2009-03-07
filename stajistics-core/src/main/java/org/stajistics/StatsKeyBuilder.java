@@ -14,10 +14,6 @@
  */
 package org.stajistics;
 
-import java.util.Map;
-
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -27,17 +23,7 @@ import org.stajistics.tracker.StatsTracker;
  */
 public interface StatsKeyBuilder {
 
-    StatsKeyBuilder withName(String name);
-
-    StatsKeyBuilder withUnit(String unit);
-
-    StatsKeyBuilder withAttributes(Map<String,Object> attributes);
-
     StatsKeyBuilder withAttribute(String name, Object value);
-
-    StatsKeyBuilder withTracker(Class<? extends StatsTracker> trackerClass);
-
-    StatsKeyBuilder withSession(Class<? extends StatsSession> sessionClass);
 
     StatsKey newKey();
 

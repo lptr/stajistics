@@ -16,9 +16,6 @@ package org.stajistics;
 
 import java.util.Map;
 
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
-
 /**
  * 
  * 
@@ -29,11 +26,8 @@ public class DefaultStatsKeyTest extends AbstractStatsKeyTestCase {
 
     @Override
     protected StatsKey createStatsKey(final String name,
-                                      final String unit,
-                                      final Map<String,Object> attributes,
-                                      final Class<? extends StatsTracker> trackerClass,
-                                      final Class<? extends StatsSession> sessionClass) {
-        return new DefaultStatsKey(name, unit, attributes, trackerClass, sessionClass);
+                                      final Map<String,Object> attributes) {
+        return new DefaultStatsKey(name, attributes);
     }
 
 }

@@ -18,11 +18,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -30,6 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.data.DataSet;
+import org.stajistics.data.DefaultDataSet;
+import org.stajistics.data.MutableDataSet;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.collector.DataCollector;
 import org.stajistics.tracker.StatsTracker;
@@ -136,16 +137,6 @@ public class ConcurrentStatsSession implements StatsSession {
     public StatsKey getKey() {
         return key;
     }
-    
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
 
     @Override
     public void update(final StatsTracker tracker, long now) {
@@ -246,25 +237,25 @@ public class ConcurrentStatsSession implements StatsSession {
     }
 
     @Override
-    public Map<String,Object> getAttributes() {
+    public DataSet dataSet() {
 
-        Map<String,Object> attributes = new LinkedHashMap<String,Object>(64); //TODO: magic number
+        MutableDataSet dataSet = new DefaultDataSet();
 
-        attributes.put(Attributes.HITS, getHits());
-        attributes.put(Attributes.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
-        attributes.put(Attributes.LAST_HIT_STAMP, new Date(getLastHitStamp()));
-        attributes.put(Attributes.COMMITS, getCommits());
-        attributes.put(Attributes.FIRST, getFirst());
-        attributes.put(Attributes.LAST, getLast());
-        attributes.put(Attributes.MIN, getMin());
-        attributes.put(Attributes.MAX, getMax());
-        attributes.put(Attributes.SUM, getSum());
+        dataSet.setField(Attributes.HITS, getHits());
+        dataSet.setField(Attributes.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
+        dataSet.setField(Attributes.LAST_HIT_STAMP, new Date(getLastHitStamp()));
+        dataSet.setField(Attributes.COMMITS, getCommits());
+        dataSet.setField(Attributes.FIRST, getFirst());
+        dataSet.setField(Attributes.LAST, getLast());
+        dataSet.setField(Attributes.MIN, getMin());
+        dataSet.setField(Attributes.MAX, getMax());
+        dataSet.setField(Attributes.SUM, getSum());
 
         for (DataCollector dataCollector : dataCollectors) {
-            dataCollector.getAttributes(this, attributes);
+            dataCollector.getData(this, dataSet);
         }
 
-        return Collections.unmodifiableMap(attributes);
+        return dataSet;
     }
 
     @Override
@@ -336,9 +327,10 @@ public class ConcurrentStatsSession implements StatsSession {
         buf.append("[key=");
         buf.append(key);
 
-        Map<String,Object> attributes = getAttributes();
-        for (Map.Entry<String,Object> entry : attributes.entrySet()) {
-            appendStat(buf, entry.getKey(), entry.getValue());
+        DataSet dataSet = dataSet();
+
+        for (String name : dataSet.getFieldNames()) {
+            appendStat(buf, name, dataSet.getField(name));
         }
 
         buf.append(']');
