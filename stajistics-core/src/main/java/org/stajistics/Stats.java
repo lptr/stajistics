@@ -37,7 +37,7 @@ public abstract class Stats {
 
     protected static final Logger logger = LoggerFactory.getLogger(Stats.class);
 
-    private static Stats instance = null;
+    private static volatile Stats instance = null;
 
     private static volatile boolean enabled = true;
 
@@ -45,7 +45,7 @@ public abstract class Stats {
     protected StatsSessionManager sessionManager;
     protected StatsEventManager eventManager;
 
-    public static synchronized void loadInstance(final Stats instance) {
+    public static void loadInstance(final Stats instance) {
         if (instance == null) {
             throw new NullPointerException("instance");
         }
@@ -65,12 +65,8 @@ public abstract class Stats {
     }
 
     protected static final Stats getInstance() {
-        if (instance == null) { // soft check
-            synchronized (Stats.class) {
-                if (instance == null) { // hard check
-                    loadInstance(new DefaultStats());
-                }
-            }
+        if (instance == null) {
+            loadInstance(new DefaultStats());
         }
 
         return instance;
