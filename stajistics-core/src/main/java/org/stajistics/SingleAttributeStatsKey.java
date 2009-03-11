@@ -33,15 +33,29 @@ public class SingleAttributeStatsKey implements StatsKey {
 
     private final int hashCode;
 
-    public SingleAttributeStatsKey(final String name,
-                                   final String attrName,
-                                   final Object attrValue) {
+    protected SingleAttributeStatsKey(final String name,
+                                      final String attrName,
+                                      final Object attrValue) {
         if (name == null) {
             throw new NullPointerException("name");
         }
 
+        if (!Util.isValidKeyString(name)) {
+            throw new IllegalArgumentException("invalid name: " + name);
+        }
+
         if (attrName != null && attrValue == null) {
             throw new NullPointerException("attrValue");
+        }
+
+        if (!Util.isValidKeyString(attrName)) {
+            throw new IllegalArgumentException("invalid attrName: " + attrName);
+        }
+
+        if (attrValue.getClass() == String.class) {
+            if (!Util.isValidKeyString((String)attrValue)) {
+                throw new IllegalArgumentException("invalid attrValue: " + attrValue);
+            }
         }
 
         this.name = name;
@@ -80,7 +94,7 @@ public class SingleAttributeStatsKey implements StatsKey {
     }
 
     @Override
-    public Map<String, Object> getAttributes() {
+    public Map<String,Object> getAttributes() {
         return Collections.singletonMap(attrName, attrValue);
     }
 

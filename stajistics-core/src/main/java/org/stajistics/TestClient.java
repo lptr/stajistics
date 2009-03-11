@@ -21,7 +21,6 @@ import org.stajistics.event.StatsEventType;
 import org.stajistics.event.alarm.AbstractAlarmCondition;
 import org.stajistics.event.alarm.AlarmCondition;
 import org.stajistics.event.alarm.AlarmHandler;
-import org.stajistics.management.StatsManagement;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.collector.DistributionDataCollector;
 import org.stajistics.session.collector.RangeDataCollector;
@@ -71,9 +70,6 @@ class TestClient {
 
     public TestClient() {
 
-        StatsManagement mgmt = new StatsManagement();
-        mgmt.registerStatsMBean();
-
         Stats.getEventManager().addSessionEventHandler(key1,
                 new StatsEventHandler() {
                     @Override
@@ -109,7 +105,15 @@ class TestClient {
 
     public void test1() {
 
-        StatsTracker tracker = Stats.track(key1, key2, key3);
+        StatsKey key4 = key3.buildCopy()
+                            .withAttribute("cool", true) // pretend runtime data
+                            .newKey();
+
+        StatsKey key5 = key4.buildCopy()
+                            .withAttribute("coolest", false) // pretend runtime data
+                            .newKey();
+
+        StatsTracker tracker = Stats.track(key1, key2, key3, key4, key5);
 
         try {
 

@@ -28,11 +28,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
-import org.stajistics.data.DataSet;
-import org.stajistics.data.DefaultDataSet;
-import org.stajistics.data.MutableDataSet;
 import org.stajistics.event.StatsEventType;
+import org.stajistics.management.StatsManagement;
 import org.stajistics.session.collector.DataCollector;
+import org.stajistics.session.data.DataSet;
+import org.stajistics.session.data.DefaultDataSet;
+import org.stajistics.session.data.MutableDataSet;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
 
@@ -79,6 +80,9 @@ public class ConcurrentStatsSession implements StatsSession {
         }
 
         this.key = key;
+
+        //TODO: better spot for this?
+        StatsManagement.getInstance().registerSessionMBean(this);
     }
 
     @Override

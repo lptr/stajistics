@@ -12,9 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.data;
-
-import java.util.Set;
+package org.stajistics.management;
 
 /**
  * 
@@ -22,14 +20,8 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public interface DataSet {
+public interface StatsSessionMBean {
 
-    Object getField(String name);
-
-    Set<String> getFieldNames();
-
-    int size();
-
-    boolean isEmpty();
+    
 
 }

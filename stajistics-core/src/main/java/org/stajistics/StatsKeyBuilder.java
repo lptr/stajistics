@@ -23,7 +23,13 @@ package org.stajistics;
  */
 public interface StatsKeyBuilder {
 
-    StatsKeyBuilder withAttribute(String name, Object value);
+    StatsKeyBuilder withAttribute(String name, String value);
+
+    StatsKeyBuilder withAttribute(String name, Boolean value);
+
+    StatsKeyBuilder withAttribute(String name, Integer value);
+
+    StatsKeyBuilder withAttribute(String name, Long value);
 
     StatsKey newKey();
 

@@ -12,9 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.data;
+package org.stajistics.session.data;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -23,34 +22,14 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public final class NullDataSet implements DataSet {
+public interface DataSet {
 
-    private static final NullDataSet instance = new NullDataSet();
+    Object getField(String name);
 
-    private NullDataSet() {}
+    Set<String> getFieldNames();
 
-    public static NullDataSet getInstance() {
-        return instance;
-    }
+    int size();
 
-    @Override
-    public Object getField(String name) {
-        return null;
-    }
-
-    @Override
-    public Set<String> getFieldNames() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    @Override
-    public int size() {
-        return 0;
-    }
+    boolean isEmpty();
 
 }

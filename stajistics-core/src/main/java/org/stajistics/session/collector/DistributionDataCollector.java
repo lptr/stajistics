@@ -14,8 +14,8 @@
  */
 package org.stajistics.session.collector;
 
-import org.stajistics.data.MutableDataSet;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.data.MutableDataSet;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
 

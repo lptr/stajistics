@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -26,13 +27,13 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class Stats implements StatsMBean {
+public class SessionManager implements SessionManagerMBean {
 
     private static final String SESSION_DUMP_LOGGER_NAME = "stajistics.session.dump";
 
     @Override
     public int getSessionCount() throws IOException {
-        return org.stajistics.Stats.getSessionManager().getSessions().size();
+        return Stats.getSessionManager().getSessions().size();
     }
 
     @Override
@@ -47,12 +48,12 @@ public class Stats implements StatsMBean {
 
     @Override
     public void clearAllSessions() throws IOException {
-        org.stajistics.Stats.getSessionManager().clearAllSessions();
+        Stats.getSessionManager().clearAllSessions();
     }
 
     @Override
     public void destroyAllSessions() throws IOException {
-        org.stajistics.Stats.getSessionManager().clear();
+        Stats.getSessionManager().clear();
     }
 
 }

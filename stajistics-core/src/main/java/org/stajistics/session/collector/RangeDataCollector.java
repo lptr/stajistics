@@ -17,8 +17,8 @@ package org.stajistics.session.collector;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.stajistics.data.MutableDataSet;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.data.MutableDataSet;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.Range;
 import org.stajistics.util.RangeList;

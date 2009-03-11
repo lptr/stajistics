@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.collector;
+package org.stajistics.session.data;
 
-import org.stajistics.session.StatsSession;
-import org.stajistics.session.data.MutableDataSet;
-import org.stajistics.tracker.StatsTracker;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * 
@@ -24,12 +23,34 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public interface DataCollector {
+public final class NullDataSet implements DataSet {
 
-    void update(StatsSession session, StatsTracker tracker, long now);
+    private static final NullDataSet instance = new NullDataSet();
 
-    void getData(StatsSession session, MutableDataSet dataSet);
+    private NullDataSet() {}
 
-    void clear();
+    public static NullDataSet getInstance() {
+        return instance;
+    }
+
+    @Override
+    public Object getField(String name) {
+        return null;
+    }
+
+    @Override
+    public Set<String> getFieldNames() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
 
 }

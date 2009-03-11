@@ -18,7 +18,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.stajistics.StatsKey;
-import org.stajistics.data.DataSet;
+import org.stajistics.session.data.DataSet;
 import org.stajistics.tracker.StatsTracker;
 
 /**

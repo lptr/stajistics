@@ -29,9 +29,13 @@ public class SimpleStatsKey implements StatsKey {
 
     private final String name;
 
-    public SimpleStatsKey(final String name) {
+    protected SimpleStatsKey(final String name) {
         if (name == null) {
             throw new NullPointerException("name");
+        }
+
+        if (!Util.isValidKeyString(name)) {
+            throw new IllegalArgumentException("invalid name: " + name);
         }
 
         this.name = name;

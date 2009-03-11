@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.SynchronousStatsEventManager;
+import org.stajistics.management.StatsManagement;
 import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
@@ -187,6 +188,9 @@ public abstract class Stats {
             eventManager = createEventManager();
             //trackerStore = createTrackerStore();
             trackerFactory = createTrackerFactory();
+
+            //TODO: better spot for this?
+            StatsManagement.getInstance().registerSessionManagerMBean();
         }
 
         protected StatsConfigManager createConfigManager() {

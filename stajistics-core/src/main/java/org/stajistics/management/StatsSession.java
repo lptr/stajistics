@@ -12,11 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.collector;
-
-import org.stajistics.session.StatsSession;
-import org.stajistics.session.data.MutableDataSet;
-import org.stajistics.tracker.StatsTracker;
+package org.stajistics.management;
 
 /**
  * 
@@ -24,12 +20,17 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public interface DataCollector {
+public class StatsSession implements StatsSessionMBean {
 
-    void update(StatsSession session, StatsTracker tracker, long now);
+    private final org.stajistics.session.StatsSession session;
 
-    void getData(StatsSession session, MutableDataSet dataSet);
+    public StatsSession(final org.stajistics.session.StatsSession session) {
+        if (session == null) {
+            throw new NullPointerException("session");
+        }
 
-    void clear();
+        this.session = session;
+    }
 
+    
 }

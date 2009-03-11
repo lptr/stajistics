@@ -18,9 +18,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.stajistics.StatsKey;
-import org.stajistics.data.DataSet;
-import org.stajistics.data.NullDataSet;
 import org.stajistics.session.collector.DataCollector;
+import org.stajistics.session.data.DataSet;
+import org.stajistics.session.data.NullDataSet;
 import org.stajistics.tracker.StatsTracker;
 
 /**

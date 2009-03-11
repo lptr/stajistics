@@ -12,11 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.collector;
+package org.stajistics.management;
 
-import org.stajistics.session.StatsSession;
-import org.stajistics.session.data.MutableDataSet;
-import org.stajistics.tracker.StatsTracker;
+import java.io.IOException;
 
 /**
  * 
@@ -24,12 +22,25 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public interface DataCollector {
+public class StatsConfig implements StatsConfigMBean {
 
-    void update(StatsSession session, StatsTracker tracker, long now);
+    private final org.stajistics.StatsConfig config;
 
-    void getData(StatsSession session, MutableDataSet dataSet);
+    public StatsConfig(final org.stajistics.StatsConfig config) {
+        if (config == null) {
+            throw new NullPointerException("config");
+        }
 
-    void clear();
+        this.config = config;
+    }
 
+    @Override
+    public boolean getEnabled() throws IOException {
+        return config.isEnabled();
+    }
+
+    @Override
+    public void setEnabled(final boolean enabled) throws IOException {
+        config.setEnabled(enabled);
+    }
 }

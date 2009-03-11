@@ -12,9 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
-
-import java.io.IOException;
+package org.stajistics;
 
 /**
  * 
@@ -22,14 +20,32 @@ import java.io.IOException;
  *
  * @author The Stajistics Project
  */
-public interface StatsMBean {
+final class Util {
 
-    int getSessionCount() throws IOException;
+    private Util() {}
 
-    void dumpAllSessions() throws IOException;
+    public static boolean isValidKeyString(final String name) {
+        if (name.indexOf('*') > -1) {
+            return false;
+        }
 
-    void clearAllSessions() throws IOException;
+        if (name.indexOf(',') > -1) {
+            return false;
+        }
 
-    void destroyAllSessions() throws IOException;
+        if (name.indexOf('=') > -1) {
+            return false;
+        }
+
+        if (name.indexOf(':') > -1) {
+            return false;
+        }
+
+        if (name.indexOf('?') > -1) {
+            return false;
+        }
+
+        return true;
+    }
 
 }

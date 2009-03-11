@@ -18,8 +18,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.stajistics.StatsKey;
-import org.stajistics.data.DataSet;
 import org.stajistics.session.collector.DataCollector;
+import org.stajistics.session.data.DataSet;
 import org.stajistics.tracker.StatsTracker;
 
 /**

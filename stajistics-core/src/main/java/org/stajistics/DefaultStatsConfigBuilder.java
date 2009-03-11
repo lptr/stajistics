@@ -34,15 +34,31 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     }
 
     public DefaultStatsConfigBuilder(final StatsKey key) {
-        super(key.getName());
+        super(key);
 
         //TODO
     }
 
     @Override
-    public StatsConfigBuilder withAttribute(String name, Object value) {
+    public StatsConfigBuilder withAttribute(final String name, final String value) {
         return (StatsConfigBuilder)super.withAttribute(name, value);
     }
+
+    @Override
+    public StatsConfigBuilder withAttribute(final String name, final Boolean value) {
+        return (StatsConfigBuilder)super.withAttribute(name, value);
+    }
+
+    @Override
+    public StatsConfigBuilder withAttribute(final String name, final Integer value) {
+        return (StatsConfigBuilder)super.withAttribute(name, value);
+    }
+
+    @Override
+    public StatsConfigBuilder withAttribute(final String name, final Long value) {
+        return (StatsConfigBuilder)super.withAttribute(name, value);
+    }
+
 
     @Override
     public StatsConfigBuilder withSession(final Class<? extends StatsSession> sessionClass) {

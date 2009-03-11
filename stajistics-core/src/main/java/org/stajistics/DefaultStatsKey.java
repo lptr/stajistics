@@ -32,14 +32,18 @@ public class DefaultStatsKey implements StatsKey {
 
     protected final int hashCode;
 
-    public DefaultStatsKey(final String name,
-                           final Map<String,Object> attributes) {
+    protected DefaultStatsKey(final String name,
+                              final Map<String,Object> attributes) {
         if (name == null) {
             throw new NullPointerException("name");
         }
 
         if (attributes == null) {
             throw new NullPointerException("attributes");
+        }
+
+        if (!Util.isValidKeyString(name)) {
+            throw new IllegalArgumentException("invalid name: " + name);
         }
 
         this.name = name;

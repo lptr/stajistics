@@ -26,7 +26,16 @@ import org.stajistics.tracker.StatsTracker;
 public interface StatsConfigBuilder extends StatsKeyBuilder {
 
     @Override
-    StatsConfigBuilder withAttribute(String name, Object value);
+    StatsConfigBuilder withAttribute(String name, String value);
+
+    @Override
+    StatsConfigBuilder withAttribute(String name, Boolean value);
+
+    @Override
+    StatsConfigBuilder withAttribute(String name, Integer value);
+
+    @Override
+    StatsConfigBuilder withAttribute(String name, Long value);
 
     StatsConfigBuilder withUnit(String unit);
 

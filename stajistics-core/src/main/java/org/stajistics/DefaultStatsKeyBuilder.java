@@ -14,7 +14,6 @@
  */
 package org.stajistics;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +28,10 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
     private static final int DEFAULT_ATTR_COUNT = 4;
 
     protected String name;
+
+    protected String firstAttrName;
+    protected Object firstAttrValue;
+
     protected Map<String,Object> attributes;
 
     public DefaultStatsKeyBuilder(final String name) {
@@ -36,49 +39,111 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
             throw new NullPointerException("name");
         }
 
+        if (!Util.isValidKeyString(name)) {
+            throw new IllegalArgumentException("invalid name: " + name);
+        }
+
         this.name = name;
     }
 
     public DefaultStatsKeyBuilder(final StatsKey template) {
-        this(template.getName(),
-             copyAttributes(template));
+        if (template == null) {
+            throw new NullPointerException("template");
+        }
+
+        this.name = template.getName();
+
+        if (!Util.isValidKeyString(name)) {
+            throw new IllegalArgumentException("invalid name: " + name);
+        }
+
+        Map<String,Object> attrs = template.getAttributes();
+        if (attrs != null && !attrs.isEmpty()) {
+            if (attrs.size() == 1) {
+                Map.Entry<String,Object> entry = attrs.entrySet()
+                                                      .iterator()
+                                                      .next();
+                firstAttrName = entry.getKey();
+                firstAttrValue = entry.getValue();
+
+            } else {
+                firstAttrName = "dummy"; //TODO: this is lame
+
+                this.attributes = new HashMap<String,Object>(attrs);
+            }
+        }
     }
 
-    public DefaultStatsKeyBuilder(final String name, 
-                                  final Map<String, Object> attributes) {
+    protected DefaultStatsKeyBuilder(final String name, 
+                                     final Map<String, Object> attributes) {
         if (name == null) {
             throw new NullPointerException("name");
+        }
+
+        if (!Util.isValidKeyString(name)) {
+            throw new IllegalArgumentException("invalid name: " + name);
         }
 
         this.name = name;
         this.attributes = attributes;
     }
 
-    protected static Map<String,Object> copyAttributes(final StatsKey template) {
-        if (template.getAttributeCount() > 0) {
-            return new HashMap<String,Object>(template.getAttributes());
-        }
-
-        return null;
-    }
-
-    protected void ensureAttributesInited() {
-        if (attributes == null) {
-            attributes = new HashMap<String, Object>(DEFAULT_ATTR_COUNT);
-        }
+    @Override
+    public StatsKeyBuilder withAttribute(final String name, final String value) {
+        putAttribute(name, value);
+        return this;
     }
 
     @Override
-    public StatsKeyBuilder withAttribute(final String name, final Object value) {
-        ensureAttributesInited();
+    public StatsKeyBuilder withAttribute(final String name, final Boolean value) {
+        putAttribute(name, value);
+        return this;
+    }
 
-        if (value == null) {
-            attributes.remove(name);
-        } else {
-            attributes.put(name, value);
+    @Override
+    public StatsKeyBuilder withAttribute(final String name, final Integer value) {
+        putAttribute(name, value);
+        return this;
+    }
+
+    @Override
+    public StatsKeyBuilder withAttribute(final String name, final Long value) {
+        putAttribute(name, value);
+        return this;
+    }
+
+    protected void putAttribute(final String name, final Object value) {
+
+        if (name == null) {
+            throw new NullPointerException("name");
         }
 
-        return this;
+        if (value == null) {
+            throw new NullPointerException("value for name: " + name);
+        }
+
+        if (!Util.isValidKeyString(name)) {
+            throw new IllegalArgumentException("invalid name: " + name);
+        }
+
+        if (value.getClass() == String.class) {
+            if (!Util.isValidKeyString((String)value)) {
+                throw new IllegalArgumentException("invalid value: " + value);
+            }
+        }
+
+        if (firstAttrName == null) {
+            firstAttrName = name;
+            firstAttrValue = value;
+
+        } else {
+            if (attributes == null) {
+                attributes = new HashMap<String, Object>(DEFAULT_ATTR_COUNT);
+                attributes.put(firstAttrName, firstAttrValue);
+            }
+
+            attributes.put(name, value);
+        }
     }
 
     @Override
@@ -88,24 +153,19 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
             throw new IllegalStateException("Must specify a name");
         }
 
-        Map<String,Object> attributes;
-
-        if (this.attributes == null || this.attributes.isEmpty()) {
-            attributes = Collections.emptyMap();
-
-        } else {
-            if (this.attributes.size() == 1) {
-                Map.Entry<String,Object> entry = this.attributes.entrySet()
-                                                                .iterator()
-                                                                .next();
-                attributes = Collections.singletonMap(entry.getKey(), 
-                                                      entry.getValue());
-
-            } else {
-                attributes = this.attributes;
-            }
+        // If no attributes
+        if (firstAttrName == null) {
+            return new SimpleStatsKey(name);
         }
 
+        // If one attribute
+        if (attributes == null) {
+            return new SingleAttributeStatsKey(name,
+                                               firstAttrName, 
+                                               firstAttrValue);
+        }
+
+        // Many attributes
         return new DefaultStatsKey(name, attributes);
     }
 

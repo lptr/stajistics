@@ -12,7 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.data;
+package org.stajistics.management;
+
+import java.io.IOException;
 
 /**
  * 
@@ -20,11 +22,14 @@ package org.stajistics.data;
  *
  * @author The Stajistics Project
  */
-public interface MutableDataSet extends DataSet {
+public interface SessionManagerMBean {
 
-    DataSet setField(String name, Object value);
+    int getSessionCount() throws IOException;
 
-    Object removeField(String name);
+    void dumpAllSessions() throws IOException;
 
-    void clear();
+    void clearAllSessions() throws IOException;
+
+    void destroyAllSessions() throws IOException;
+
 }
