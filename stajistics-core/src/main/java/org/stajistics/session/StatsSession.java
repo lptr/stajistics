@@ -30,26 +30,6 @@ import org.stajistics.tracker.StatsTracker;
  */
 public interface StatsSession extends Serializable {
 
-    /**
-     * Common attributes
-     */
-    public interface Attributes {
-        public static final String HITS = "hits";
-        public static final String FIRST_HIT_STAMP = "firstHitStamp";
-        public static final String LAST_HIT_STAMP = "lastHitStamp";
-        public static final String COMMITS = "commits";
-        public static final String FIRST = "first";
-        public static final String LAST = "last";
-        public static final String MIN = "min";
-        public static final String MAX = "max";
-        public static final String SUM = "sum";
-        public static final String ARITHMETIC_MEAN = "aMean";
-        public static final String GEOMETRIC_MEAN = "gMean";
-        public static final String HARMONIC_MEAN = "hMean";
-        public static final String QUADRATIC_MEAN = "qMean";
-        public static final String STANDARD_DEVIATION = "stdDev";
-    }
-
     StatsKey getKey();
 
     long getHits();

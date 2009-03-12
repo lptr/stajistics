@@ -41,8 +41,9 @@ public class RangeDataCollector implements DataCollector {
 
         this.rangeList = rangeList;
 
-        hits = new AtomicInteger[rangeList.size()];
-        for (int i = 0; i < hits.length; i++) {
+        int size = rangeList.size();
+        hits = new AtomicInteger[size];
+        for (int i = 0; i < size; i++) {
             hits[i] = new AtomicInteger(0);
         }
     }

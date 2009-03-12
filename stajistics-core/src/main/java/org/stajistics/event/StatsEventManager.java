@@ -47,6 +47,7 @@ public interface StatsEventManager {
     void clearSessionEventHandlers();
 
     void fireEvent(StatsEventType eventType,
+                   StatsKey key,
                    StatsSession session,
                    StatsTracker tracker);
 

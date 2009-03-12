@@ -43,4 +43,14 @@ public class StatsConfig implements StatsConfigMBean {
     public void setEnabled(final boolean enabled) throws IOException {
         config.setEnabled(enabled);
     }
+
+    @Override
+    public String getUnit() throws IOException {
+        return config.getUnit();
+    }
+
+    @Override
+    public void setUnit(final String unit) throws IOException {
+        config.setUnit(unit);
+    }
 }

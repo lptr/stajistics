@@ -14,8 +14,8 @@
  */
 package org.stajistics;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 
@@ -24,8 +24,6 @@ import java.util.Map;
  * @author The Stajistics Project
  */
 public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
-
-    private static final int DEFAULT_ATTR_COUNT = 4;
 
     protected String name;
 
@@ -59,18 +57,7 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
         Map<String,Object> attrs = template.getAttributes();
         if (attrs != null && !attrs.isEmpty()) {
-            if (attrs.size() == 1) {
-                Map.Entry<String,Object> entry = attrs.entrySet()
-                                                      .iterator()
-                                                      .next();
-                firstAttrName = entry.getKey();
-                firstAttrValue = entry.getValue();
-
-            } else {
-                firstAttrName = "dummy"; //TODO: this is lame
-
-                this.attributes = new HashMap<String,Object>(attrs);
-            }
+            attributes = new TreeMap<String,Object>(attrs);
         }
     }
 
@@ -132,16 +119,15 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
             }
         }
 
-        if (firstAttrName == null) {
-            firstAttrName = name;
-            firstAttrValue = value;
-
-        } else {
-            if (attributes == null) {
-                attributes = new HashMap<String, Object>(DEFAULT_ATTR_COUNT);
+        if (attributes == null) {
+            if (firstAttrName == null) {
+                firstAttrName = name;
+                firstAttrValue = value;
+            } else {
+                attributes = new TreeMap<String, Object>();
                 attributes.put(firstAttrName, firstAttrValue);
             }
-
+        } else {
             attributes.put(name, value);
         }
     }
@@ -153,13 +139,13 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
             throw new IllegalStateException("Must specify a name");
         }
 
-        // If no attributes
-        if (firstAttrName == null) {
-            return new SimpleStatsKey(name);
-        }
-
-        // If one attribute
         if (attributes == null) {
+            // If no attributes
+            if (firstAttrName == null) {
+                return new SimpleStatsKey(name);
+            }
+
+            // One attribute
             return new SingleAttributeStatsKey(name,
                                                firstAttrName, 
                                                firstAttrValue);

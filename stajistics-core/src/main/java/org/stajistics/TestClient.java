@@ -21,6 +21,7 @@ import org.stajistics.event.StatsEventType;
 import org.stajistics.event.alarm.AbstractAlarmCondition;
 import org.stajistics.event.alarm.AlarmCondition;
 import org.stajistics.event.alarm.AlarmHandler;
+import org.stajistics.management.StatsManagement;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.collector.DistributionDataCollector;
 import org.stajistics.session.collector.RangeDataCollector;
@@ -38,6 +39,10 @@ import org.stajistics.util.RangeList;
 class TestClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestClient.class);
+
+    static {
+        StatsManagement.getInstance().initializeManagement();
+    }
 
     private final StatsKey key1 = Stats.newKey("Test");
     {
@@ -75,9 +80,10 @@ class TestClient {
                     @Override
                     public void handleStatsEvent(
                             final StatsEventType eventType,
+                            final StatsKey key,
                             final StatsSession session,
                             final StatsTracker tracker) {
-                        LOGGER.info(eventType + " -> " + session.getKey());
+                        LOGGER.info(eventType + " -> " + key);
                     }
                 });
 
@@ -92,6 +98,7 @@ class TestClient {
                 }) {
                     @Override
                     public void handleStatsEvent(final StatsEventType eventType,
+                                                 final StatsKey key,
                                                  final StatsSession session, 
                                                  final StatsTracker tracker) {
                         if (eventType == StatsEventType.TRACKER_COMMITTED && session.getLast() > 25) {

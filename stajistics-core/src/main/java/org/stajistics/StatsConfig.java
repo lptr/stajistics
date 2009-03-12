@@ -31,6 +31,8 @@ public interface StatsConfig {
 
     String getUnit();
 
+    void setUnit(String unit);
+
     Class<? extends StatsTracker> getTrackerClass();
 
     Class<? extends StatsSession> getSessionClass();

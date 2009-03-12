@@ -106,7 +106,7 @@ public class AtomicDoubleTest {
     }
 
     @Test
-    public void getGetAndDecrement() {
+    public void testGetAndDecrement() {
         AtomicDouble ad = new AtomicDouble();
         for (double i = -0.0; i >= -100.0; i--) {
             assertEquals(i, ad.getAndDecrement(), DELTA);

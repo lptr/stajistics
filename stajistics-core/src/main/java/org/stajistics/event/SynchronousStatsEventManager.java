@@ -126,6 +126,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
     @Override
     public void fireEvent(final StatsEventType eventType, 
+                          final StatsKey key,
                           final StatsSession session,
                           final StatsTracker tracker) {
 
@@ -134,24 +135,25 @@ public class SynchronousStatsEventManager implements StatsEventManager {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Firing event: " + eventType + ", key: " + session.getKey());
+            logger.debug("Firing event: " + eventType + ", key: " + key);
         }
 
-        List<StatsEventHandler> sessionEventHandlers = getSessionEventHandlers(session.getKey(), false);
+        List<StatsEventHandler> sessionEventHandlers = getSessionEventHandlers(key, false);
         if (sessionEventHandlers != null) {
-            fireEvent(sessionEventHandlers, eventType, session, tracker);
+            fireEvent(sessionEventHandlers, eventType, key, session, tracker);
         }
 
-        fireEvent(globalEventHandlers, eventType, session, tracker);
+        fireEvent(globalEventHandlers, eventType, key, session, tracker);
     }
 
     protected void fireEvent(final List<StatsEventHandler> handlers,
                              final StatsEventType eventType, 
+                             final StatsKey key,
                              final StatsSession session,
                              final StatsTracker tracker) {
         for (StatsEventHandler handler : handlers) {
             try {
-                handler.handleStatsEvent(eventType, session, tracker);
+                handler.handleStatsEvent(eventType, key, session, tracker);
             } catch (Exception e) {
                 logger.error("Uncaught Exception in " + 
                                  StatsEventHandler.class.getSimpleName(), 

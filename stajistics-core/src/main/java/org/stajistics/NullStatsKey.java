@@ -37,7 +37,7 @@ public final class NullStatsKey implements StatsKey {
 
     @Override
     public String getName() {
-        return null;
+        return "null";
     }
 
     @Override

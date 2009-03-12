@@ -17,7 +17,7 @@ package org.stajistics;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.stajistics.management.StatsManagement;
+import org.stajistics.event.StatsEventType;
 
 /**
  * 
@@ -27,7 +27,7 @@ import org.stajistics.management.StatsManagement;
  */
 public class DefaultStatsConfigManager implements StatsConfigManager {
 
-    private ConcurrentMap<String,StatsConfig> configMap =
+    private final ConcurrentMap<String,StatsConfig> configMap =
         new ConcurrentHashMap<String,StatsConfig>();
 
     @Override
@@ -36,16 +36,15 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     @Override
-    public StatsConfig putConfigIfAbsent(StatsKey key, StatsConfig config) {
+    public StatsConfig putConfigIfAbsent(final StatsKey key, final StatsConfig config) {
         StatsConfig existingConfig = configMap.putIfAbsent(key.getName(), config);
 
         if (existingConfig == null) {
-            // Not a replacement, so register MBean
-            // TODO: what about replacement?
-            StatsManagement.getInstance().registerConfigMBean(key, config);
+            Stats.getEventManager()
+                 .fireEvent(StatsEventType.CONFIG_CREATED, key, null, null);
         }
 
         return existingConfig;
     }
-    
+
 }

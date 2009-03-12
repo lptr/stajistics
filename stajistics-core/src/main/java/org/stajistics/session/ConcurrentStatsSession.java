@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.event.StatsEventType;
-import org.stajistics.management.StatsManagement;
 import org.stajistics.session.collector.DataCollector;
 import org.stajistics.session.data.DataSet;
 import org.stajistics.session.data.DefaultDataSet;
@@ -59,8 +58,6 @@ public class ConcurrentStatsSession implements StatsSession {
 
     protected final StatsKey key;
 
-    protected volatile boolean enabled = true;
-
     protected final AtomicLong hits = new AtomicLong(0);
     protected final AtomicLong firstHitStamp = new AtomicLong(0);
     protected final AtomicLong lastHitStamp = new AtomicLong(0);
@@ -80,19 +77,11 @@ public class ConcurrentStatsSession implements StatsSession {
         }
 
         this.key = key;
-
-        //TODO: better spot for this?
-        StatsManagement.getInstance().registerSessionMBean(this);
     }
 
     @Override
     public void open(final StatsTracker tracker, 
                      long now) {
-
-        if (!enabled) {
-            return;
-        }
-
         if (now < 0) {
             now = System.currentTimeMillis();
         }
@@ -114,7 +103,7 @@ public class ConcurrentStatsSession implements StatsSession {
     protected void fireOpenEvent(final StatsSession session,
                                  final StatsTracker tracker) {
         Stats.getEventManager()
-             .fireEvent(StatsEventType.TRACKER_OPENED, session, tracker);
+             .fireEvent(StatsEventType.TRACKER_OPENED, key, session, tracker);
     }
 
     @Override
@@ -144,16 +133,11 @@ public class ConcurrentStatsSession implements StatsSession {
 
     @Override
     public void update(final StatsTracker tracker, long now) {
-
-        if (!enabled) {
-            return;
-        }
-
         if (now < 0) {
             now = System.currentTimeMillis();
         }
 
-        double currentValue = tracker.getValue();
+        final double currentValue = tracker.getValue();
         double tmp;
 
         commits.incrementAndGet();
@@ -207,7 +191,7 @@ public class ConcurrentStatsSession implements StatsSession {
     protected void fireUpdateEvent(final StatsSession session,
                                    final StatsTracker tracker) {
         Stats.getEventManager()
-             .fireEvent(StatsEventType.TRACKER_COMMITTED, session, tracker);
+             .fireEvent(StatsEventType.TRACKER_COMMITTED, key, session, tracker);
     }
 
     @Override
@@ -245,15 +229,15 @@ public class ConcurrentStatsSession implements StatsSession {
 
         MutableDataSet dataSet = new DefaultDataSet();
 
-        dataSet.setField(Attributes.HITS, getHits());
-        dataSet.setField(Attributes.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
-        dataSet.setField(Attributes.LAST_HIT_STAMP, new Date(getLastHitStamp()));
-        dataSet.setField(Attributes.COMMITS, getCommits());
-        dataSet.setField(Attributes.FIRST, getFirst());
-        dataSet.setField(Attributes.LAST, getLast());
-        dataSet.setField(Attributes.MIN, getMin());
-        dataSet.setField(Attributes.MAX, getMax());
-        dataSet.setField(Attributes.SUM, getSum());
+        dataSet.setField(DataSet.Field.HITS, getHits());
+        dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
+        dataSet.setField(DataSet.Field.LAST_HIT_STAMP, new Date(getLastHitStamp()));
+        dataSet.setField(DataSet.Field.COMMITS, getCommits());
+        dataSet.setField(DataSet.Field.FIRST, getFirst());
+        dataSet.setField(DataSet.Field.LAST, getLast());
+        dataSet.setField(DataSet.Field.MIN, getMin());
+        dataSet.setField(DataSet.Field.MAX, getMax());
+        dataSet.setField(DataSet.Field.SUM, getSum());
 
         for (DataCollector dataCollector : dataCollectors) {
             dataCollector.getData(this, dataSet);
@@ -282,6 +266,9 @@ public class ConcurrentStatsSession implements StatsSession {
         for (DataCollector dataCollector : dataCollectors) {
             dataCollector.clear();
         }
+
+        Stats.getEventManager()
+             .fireEvent(StatsEventType.SESSION_CLEARED, key, this, null);
     }
 
     @Override

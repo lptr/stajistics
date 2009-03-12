@@ -36,7 +36,12 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     public DefaultStatsConfigBuilder(final StatsKey key) {
         super(key);
 
-        //TODO
+        StatsConfig config = Stats.getConfig(key);
+        if (config != null) {
+            unit = config.getUnit();
+            trackerClass = config.getTrackerClass();
+            sessionClass = config.getSessionClass();
+        }
     }
 
     @Override
@@ -58,7 +63,6 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     public StatsConfigBuilder withAttribute(final String name, final Long value) {
         return (StatsConfigBuilder)super.withAttribute(name, value);
     }
-
 
     @Override
     public StatsConfigBuilder withSession(final Class<? extends StatsSession> sessionClass) {

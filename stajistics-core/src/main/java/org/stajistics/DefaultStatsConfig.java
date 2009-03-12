@@ -14,8 +14,6 @@
  */
 package org.stajistics;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 
@@ -27,7 +25,7 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class DefaultStatsConfig implements StatsConfig {
 
-    protected final AtomicBoolean enabled = new AtomicBoolean(true);
+    protected volatile boolean enabled = true;
 
     protected String unit;
     protected Class<? extends StatsTracker> trackerClass;
@@ -36,9 +34,7 @@ public class DefaultStatsConfig implements StatsConfig {
     public DefaultStatsConfig(final String unit,
                               final Class<? extends StatsTracker> trackerClass,
                               final Class<? extends StatsSession> sessionClass) {
-        if (unit == null) {
-            throw new NullPointerException("unit");
-        }
+
         if (trackerClass == null) {
             throw new NullPointerException("trackerClass");
         }
@@ -46,7 +42,7 @@ public class DefaultStatsConfig implements StatsConfig {
             throw new NullPointerException("sessionClass");
         }
 
-        this.unit = unit;
+        setUnit(unit);
         this.trackerClass = trackerClass;
         this.sessionClass = sessionClass;
     }
@@ -58,28 +54,41 @@ public class DefaultStatsConfig implements StatsConfig {
     }
 
     @Override
+    public String getUnit() {
+        return unit;
+    }
+
+    @Override
+    public void setUnit(final String unit) {
+        if (unit == null) {
+            throw new NullPointerException("unit");
+        }
+
+        if (unit.length() == 0) {
+            throw new IllegalArgumentException("empty unit");
+        }
+
+        this.unit = unit;
+    }
+
+    @Override
     public boolean isEnabled() {
-        return enabled.get();
+        return enabled;
     }
 
     @Override
     public void setEnabled(final boolean enabled) {
-        this.enabled.set(enabled);
+        this.enabled = enabled;
     }
 
     @Override
     public Class<? extends StatsSession> getSessionClass() {
-        return Constants.DEFAULT_SESSION_CLASS;
+        return sessionClass;
     }
 
     @Override
     public Class<? extends StatsTracker> getTrackerClass() {
-        return Constants.DEFAULT_TRACKER_CLASS;
-    }
-
-    @Override
-    public String getUnit() {
-        return Constants.DEFAULT_UNIT;
+        return trackerClass;
     }
 
 }

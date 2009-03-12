@@ -15,6 +15,7 @@
 package org.stajistics.session.collector;
 
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.data.DataSet;
 import org.stajistics.session.data.MutableDataSet;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
@@ -57,16 +58,16 @@ public class DistributionDataCollector implements DataCollector {
 
     @Override
     public void getData(final StatsSession session, final MutableDataSet dataSet) {
-        dataSet.setField(StatsSession.Attributes.ARITHMETIC_MEAN,
-                             getArithmeticMean(session));
-        dataSet.setField(StatsSession.Attributes.GEOMETRIC_MEAN,
-                             getGeometricMean(session));
-        dataSet.setField(StatsSession.Attributes.HARMONIC_MEAN,
-                             getHarmonicMean(session));
-        dataSet.setField(StatsSession.Attributes.QUADRATIC_MEAN,
-                             getQuadraticMean(session));
-        dataSet.setField(StatsSession.Attributes.STANDARD_DEVIATION,
-                             getStandardDeviation(session));
+        dataSet.setField(DataSet.Field.ARITHMETIC_MEAN,
+                         getArithmeticMean(session));
+        dataSet.setField(DataSet.Field.GEOMETRIC_MEAN,
+                         getGeometricMean(session));
+        dataSet.setField(DataSet.Field.HARMONIC_MEAN,
+                         getHarmonicMean(session));
+        dataSet.setField(DataSet.Field.QUADRATIC_MEAN,
+                         getQuadraticMean(session));
+        dataSet.setField(DataSet.Field.STANDARD_DEVIATION,
+                         getStandardDeviation(session));
     }
 
     @Override

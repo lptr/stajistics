@@ -34,64 +34,33 @@ public class ImmutableStatsSession implements StatsSession {
     private static final long serialVersionUID = -1491982324221671738L;
 
     private final StatsKey key;
-
-    private final long hits;
-    private final long firstHitStamp;
-    private final long lastHitStamp;
-    private final long commits;
-    private final double first;
-    private final double last;
-    private final double min;
-    private final double max;
-    private final double sum;
-
     private final DataSet dataSet;
 
     public ImmutableStatsSession(final StatsKey key) {
-        this(key, 0, 0, 0, 0, 0, 0, 0, 0, 0, NullDataSet.getInstance());
+        this(key, NullDataSet.getInstance());
     }
 
     public ImmutableStatsSession(final StatsSession copyFrom) {
         this(copyFrom.getKey(),
-             copyFrom.getHits(),
-             copyFrom.getFirstHitStamp(),
-             copyFrom.getLastHitStamp(),
-             copyFrom.getCommits(),
-             copyFrom.getFirst(),
-             copyFrom.getLast(),
-             copyFrom.getMin(),
-             copyFrom.getMax(),
-             copyFrom.getSum(),
              copyFrom.dataSet());
     }
 
     public ImmutableStatsSession(final StatsKey key,
-                                 final long hits,
-                                 final long firstHitStamp,
-                                 final long lastHitStamp,
-                                 final long commits,
-                                 final double first,
-                                 final double last,
-                                 final double min,
-                                 final double max,
-                                 final double sum,
                                  final DataSet dataSet) {
         if (key == null) {
             throw new NullPointerException("key");
         }
+        if (dataSet == null) {
+            throw new NullPointerException("dataSet");
+        }
 
         this.key = key;
-        this.hits = hits;
-        this.firstHitStamp = firstHitStamp;
-        this.lastHitStamp = lastHitStamp;
-        this.commits = commits;
-        this.first = first;
-        this.last = last;
-        this.min = min;
-        this.max = max;
-        this.sum = sum;
-
         this.dataSet = dataSet;
+    }
+
+    @Override
+    public StatsKey getKey() {
+        return key;
     }
 
     @Override
@@ -101,52 +70,47 @@ public class ImmutableStatsSession implements StatsSession {
 
     @Override
     public double getFirst() {
-        return first;
+        return (Double)dataSet.getField(DataSet.Field.FIRST);
     }
 
     @Override
     public long getFirstHitStamp() {
-        return firstHitStamp;
+        return (Long)dataSet.getField(DataSet.Field.FIRST_HIT_STAMP);
     }
 
     @Override
     public long getHits() {
-        return hits;
+        return (Long)dataSet.getField(DataSet.Field.HITS);
     }
 
     @Override
     public long getCommits() {
-        return commits;
-    }
-
-    @Override
-    public StatsKey getKey() {
-        return key;
+        return (Long)dataSet.getField(DataSet.Field.COMMITS);
     }
 
     @Override
     public double getLast() {
-        return last;
+        return (Double)dataSet.getField(DataSet.Field.LAST);
     }
 
     @Override
     public long getLastHitStamp() {
-        return lastHitStamp;
+        return (Long)dataSet.getField(DataSet.Field.LAST_HIT_STAMP);
     }
 
     @Override
     public double getMax() {
-        return max;
+        return (Double)dataSet.getField(DataSet.Field.MAX);
     }
 
     @Override
     public double getMin() {
-        return min;
+        return (Double)dataSet.getField(DataSet.Field.MIN);
     }
 
     @Override
     public double getSum() {
-        return sum;
+        return (Double)dataSet.getField(DataSet.Field.SUM);
     }
 
     @Override

@@ -28,4 +28,8 @@ public interface StatsConfigMBean {
 
     void setEnabled(boolean enabled) throws IOException;
 
+    String getUnit() throws IOException;
+
+    void setUnit(String unit) throws IOException;
+
 }

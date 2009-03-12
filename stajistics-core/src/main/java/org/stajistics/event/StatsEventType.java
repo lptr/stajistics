@@ -22,8 +22,14 @@ package org.stajistics.event;
  */
 public enum StatsEventType {
 
-    SESSION_STARTED,
-    SESSION_RESET,
+    CONFIG_CREATED,
+    CONFIG_CHANGED,
+    CONFIG_DESTROYED,
+
+    SESSION_CREATED,
+    SESSION_CLEARED,
+    SESSION_DESTROYED,
+
     TRACKER_OPENED,
     TRACKER_COMMITTED
 

@@ -14,6 +14,7 @@
  */
 package org.stajistics.event.alarm.threashold;
 
+import org.stajistics.StatsKey;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.event.alarm.AbstractAlarmCondition;
 import org.stajistics.event.alarm.AlarmHandler;
@@ -40,6 +41,7 @@ public class ThreasholdAlarmCondition extends AbstractAlarmCondition {
 
     @Override
     public void handleStatsEvent(final StatsEventType eventType,
+                                 final StatsKey key,
                                  final StatsSession session, 
                                  final StatsTracker tracker) {
 

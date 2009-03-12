@@ -35,10 +35,4 @@ public interface StatsKey extends Serializable {
 
     StatsKeyBuilder buildCopy();
 
-    @Override
-    boolean equals(Object obj);
-
-    @Override
-    int hashCode();
-
 }

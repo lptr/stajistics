@@ -14,13 +14,31 @@
  */
 package org.stajistics.management;
 
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.AttributeNotFoundException;
+import javax.management.DynamicMBean;
+import javax.management.InvalidAttributeValueException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
+import javax.management.MBeanOperationInfo;
+import javax.management.ReflectionException;
+
+import org.stajistics.Stats;
+import org.stajistics.session.data.DataSet;
+
 /**
  * 
  * 
  *
  * @author The Stajistics Project
  */
-public class StatsSession implements StatsSessionMBean {
+public class StatsSession implements StatsSessionMBean,DynamicMBean {
+
+    private static final String OP_CLEAR = "clear";
+    private static final String OP_DESTROY = "destroy";
+    private static final String OP_DUMP = "dump";
 
     private final org.stajistics.session.StatsSession session;
 
@@ -32,5 +50,99 @@ public class StatsSession implements StatsSessionMBean {
         this.session = session;
     }
 
-    
+    @Override
+    public Object getAttribute(final String attribute)
+            throws AttributeNotFoundException,MBeanException,ReflectionException {
+        DataSet dataSet = session.dataSet();
+        Object value = dataSet.getField(attribute);
+        if (value == null) {
+            throw new AttributeNotFoundException(attribute);
+        }
+        return value;
+    }
+
+    @Override
+    public AttributeList getAttributes(final String[] attributes) {
+        AttributeList attrList = new AttributeList();
+        DataSet dataSet = session.dataSet();
+        for (String name : attributes) {
+            attrList.add(new Attribute(name, dataSet.getField(name)));
+        }
+        return attrList;
+    }
+
+    @Override
+    public MBeanInfo getMBeanInfo() {
+        DataSet dataSet = session.dataSet();
+
+        MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.size()];
+
+        int i = 0;
+        for (String name : dataSet.getFieldNames()) {
+            Object value = dataSet.getField(name);
+            attrs[i++] = new MBeanAttributeInfo(name,
+                                                value.getClass().getName(),
+                                                "DataSet field " + name,
+                                                true,
+                                                false,
+                                                false);
+        }
+
+        MBeanOperationInfo[] ops = {
+            new MBeanOperationInfo(OP_CLEAR,
+                                   "Clear collected data",
+                                   null,
+                                   "void",
+                                   MBeanOperationInfo.ACTION),
+            new MBeanOperationInfo(OP_DESTROY,
+                                   "Destroy this session",
+                                   null,
+                                   "void",
+                                   MBeanOperationInfo.ACTION),
+            new MBeanOperationInfo(OP_DUMP,
+                                   "Dump session data to log",
+                                   null,
+                                   "void",
+                                   MBeanOperationInfo.ACTION)
+        };
+
+        return new MBeanInfo(getClass().getName(),
+                             StatsSessionMBean.class.getSimpleName(),
+                             attrs,
+                             null,
+                             ops,
+                             null);
+    }
+
+    @Override
+    public Object invoke(final String actionName, 
+                         final Object[] params, 
+                         final String[] signature)
+            throws MBeanException, ReflectionException {
+
+        if (actionName.equals(OP_CLEAR)) {
+            session.clear();
+
+        } else if (actionName.equals(OP_DESTROY)) {
+            Stats.getSessionManager().remove(session);
+
+        } else if (actionName.equals(OP_DUMP)) {
+            //TODO: dump session data to log
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setAttribute(final Attribute attribute)
+            throws AttributeNotFoundException,InvalidAttributeValueException,MBeanException,ReflectionException {
+
+    }
+
+    @Override
+    public AttributeList setAttributes(final AttributeList attributes) {
+        return null;
+    }
+
+
 }

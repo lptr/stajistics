@@ -22,7 +22,9 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.event.StatsEventType;
 
 /**
  * 
@@ -58,22 +60,26 @@ public class DefaultSessionManager implements StatsSessionManager {
             throw new NullPointerException("key");
         }
 
-        StatsSession statsSession = sessionMap.get(key);
+        StatsSession session = sessionMap.get(key);
 
-        if (statsSession == null) {
-            statsSession = createSession(key);
+        if (session == null) {
+            session = createSession(key);
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Created StatsSession for key: " + key);
             }
 
-            StatsSession existingSession = sessionMap.putIfAbsent(key, statsSession);
+            StatsSession existingSession = sessionMap.putIfAbsent(key, session);
             if (existingSession != null) {
-                statsSession = existingSession;
+                session = existingSession;
+
+            } else {
+                Stats.getEventManager()
+                     .fireEvent(StatsEventType.SESSION_CREATED, key, session, null);
             }
         }
 
-        return statsSession;
+        return session;
     }
 
     @Override
@@ -83,7 +89,14 @@ public class DefaultSessionManager implements StatsSessionManager {
 
     @Override
     public StatsSession remove(final StatsKey key) {
-        return sessionMap.remove(key);
+        StatsSession session = sessionMap.remove(key);
+
+        if (session != null) {
+            Stats.getEventManager()
+                 .fireEvent(StatsEventType.SESSION_DESTROYED, key, session, null);
+        }
+
+        return session; 
     }
 
     protected StatsSession createSession(final StatsKey key) {
@@ -92,7 +105,10 @@ public class DefaultSessionManager implements StatsSessionManager {
 
     @Override
     public void clear() {
-        sessionMap.clear();
+        Set<StatsKey> keySet = sessionMap.keySet();
+        for (StatsKey key : keySet) {
+            remove(key);
+        }
     }
 
     @Override
