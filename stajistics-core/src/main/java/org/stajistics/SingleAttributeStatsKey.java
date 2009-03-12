@@ -40,22 +40,8 @@ public class SingleAttributeStatsKey implements StatsKey {
             throw new NullPointerException("name");
         }
 
-        if (!Util.isValidKeyString(name)) {
-            throw new IllegalArgumentException("invalid name: " + name);
-        }
-
         if (attrName != null && attrValue == null) {
             throw new NullPointerException("attrValue");
-        }
-
-        if (!Util.isValidKeyString(attrName)) {
-            throw new IllegalArgumentException("invalid attrName: " + attrName);
-        }
-
-        if (attrValue.getClass() == String.class) {
-            if (!Util.isValidKeyString((String)attrValue)) {
-                throw new IllegalArgumentException("invalid attrValue: " + attrValue);
-            }
         }
 
         this.name = name;

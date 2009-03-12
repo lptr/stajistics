@@ -37,10 +37,6 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
             throw new NullPointerException("name");
         }
 
-        if (!Util.isValidKeyString(name)) {
-            throw new IllegalArgumentException("invalid name: " + name);
-        }
-
         this.name = name;
     }
 
@@ -50,10 +46,6 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         }
 
         this.name = template.getName();
-
-        if (!Util.isValidKeyString(name)) {
-            throw new IllegalArgumentException("invalid name: " + name);
-        }
 
         Map<String,Object> attrs = template.getAttributes();
         if (attrs != null && !attrs.isEmpty()) {
@@ -65,10 +57,6 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
                                      final Map<String, Object> attributes) {
         if (name == null) {
             throw new NullPointerException("name");
-        }
-
-        if (!Util.isValidKeyString(name)) {
-            throw new IllegalArgumentException("invalid name: " + name);
         }
 
         this.name = name;
@@ -107,16 +95,6 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
         if (value == null) {
             throw new NullPointerException("value for name: " + name);
-        }
-
-        if (!Util.isValidKeyString(name)) {
-            throw new IllegalArgumentException("invalid name: " + name);
-        }
-
-        if (value.getClass() == String.class) {
-            if (!Util.isValidKeyString((String)value)) {
-                throw new IllegalArgumentException("invalid value: " + value);
-            }
         }
 
         if (attributes == null) {

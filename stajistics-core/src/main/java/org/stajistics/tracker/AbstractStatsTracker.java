@@ -27,7 +27,7 @@ import org.stajistics.session.StatsSession;
  */
 public abstract class AbstractStatsTracker implements StatsTracker {
 
-    protected static final Logger logger = LoggerFactory.getLogger("org.stajistics.tracker");
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractStatsTracker.class.getPackage().getName());
 
     protected StatsSession session;
 
@@ -54,7 +54,11 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     public StatsTracker track() {
 
         if (tracking) {
-            throw new IllegalStateException("Already tracking");
+            if (logger.isWarnEnabled()) {
+                logger.warn("track() called when already tracking: " + this);
+            }
+
+            return this;
         }
 
         tracking = true;
@@ -74,7 +78,11 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     public StatsTracker commit() {
 
         if (!tracking) {
-            throw new IllegalStateException("Not tracking");
+            if (logger.isWarnEnabled()) {
+                logger.warn("commit() called when not tracking: " + this);
+            }
+
+            return this;
         }
 
         tracking = false;

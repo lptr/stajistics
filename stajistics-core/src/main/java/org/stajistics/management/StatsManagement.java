@@ -45,7 +45,13 @@ public class StatsManagement {
     private static final String CONFIG_TYPE = "config";
 
     private static final Pattern VALUE_ESCAPE_ASTERISK_PATTERN = Pattern.compile("[*]");
+    private static final String VALUE_ESCAPE_ASTERISK_REPLACEMENT = "\\\\*";
     private static final Pattern VALUE_ESCAPE_QUESTION_MARK_PATTERN = Pattern.compile("[?]");
+    private static final String VALUE_ESCAPE_QUESTION_MARK_REPLACEMENT = "\\\\?";
+    private static final Pattern VALUE_ESCAPE_DOUBLE_QUOTE_PATTERN = Pattern.compile("[\"]");
+    private static final String VALUE_ESCAPE_DOUBLE_QUOTE_REPLACEMENT = "\\\\\"";
+    private static final Pattern VALUE_ESCAPE_BACKSLASH_PATTERN = Pattern.compile("[\\\\]");
+    private static final String VALUE_ESCAPE_BACKSLASH_REPLACEMENT = "\\\\\\\\";
 
     private static StatsManagement instance = new StatsManagement();
 
@@ -100,9 +106,9 @@ public class StatsManagement {
             mbs.registerMBean(sessionManagerMBean, sessionManagerMBeanName);
 
         } catch (Exception e) {
-           logger.error("Failed to register " + SessionManagerMBean.class.getSimpleName(), e);
+            logger.error("Failed to register " + SessionManagerMBean.class.getSimpleName(), e);
 
-           return false;
+            return false;
         }
 
         return true;
@@ -114,7 +120,9 @@ public class StatsManagement {
             MBeanServer mbs = getMBeanServer();
 
             StatsConfigMBean configMBean = new StatsConfig(config);
-            ObjectName configMBeanName = new ObjectName(makeObjectName(key, CONFIG_TYPE, false));
+
+            String strName = makeObjectName(key, CONFIG_TYPE, false);
+            ObjectName configMBeanName = new ObjectName(strName);
 
             mbs.registerMBean(configMBean, configMBeanName);
 
@@ -123,7 +131,7 @@ public class StatsManagement {
             }
 
         } catch (Exception e) {
-            logger.error("Failed to register " + StatsConfigMBean.class.getSimpleName(), e);
+            logger.error("Failed to register " + StatsConfigMBean.class.getSimpleName() + ": " + key, e);
 
             return false;
         }
@@ -136,7 +144,9 @@ public class StatsManagement {
             MBeanServer mbs = getMBeanServer();
 
             StatsSessionMBean sessionMBean = new StatsSession(session);
-            ObjectName sessionMBeanName = new ObjectName(makeObjectName(session.getKey(), SESSION_TYPE, true));
+
+            String strName = makeObjectName(session.getKey(), SESSION_TYPE, true);
+            ObjectName sessionMBeanName = new ObjectName(strName);
 
             mbs.registerMBean(sessionMBean, sessionMBeanName);
 
@@ -145,7 +155,7 @@ public class StatsManagement {
             }
 
         } catch (Exception e) {
-            logger.error("Failed to register " + StatsSessionMBean.class.getSimpleName(), e);
+            logger.error("Failed to register " + StatsSessionMBean.class.getSimpleName() + ": " + session.getKey(), e);
 
             return false;
         }
@@ -166,7 +176,9 @@ public class StatsManagement {
             }
 
         } catch (Exception e) {
-            logger.error("Failed to unregister " + StatsSessionMBean.class.getSimpleName(), e);
+            logger.error("Failed to unregister " + StatsSessionMBean.class.getSimpleName() + ": " + session.getKey(), e);
+
+            return false;
         }
 
         return true;
@@ -184,33 +196,73 @@ public class StatsManagement {
         buf.append(type);
 
         buf.append(",name=");
-        buf.append(key.getName());
+        appendValue(buf, key.getName());
 
         if (includeAttributes) {
             for (Map.Entry<String,Object> entry : key.getAttributes().entrySet()) {
                 buf.append(',');
                 buf.append(entry.getKey());
-                buf.append("=\"");
-                buf.append(extractValue(entry.getValue()));
-                buf.append('"');
+                buf.append('=');
+
+                appendValue(buf, entry.getValue().toString());
             }
         }
 
         return buf.toString();
     }
 
-    protected String extractValue(final Object value) {
+    private void appendValue(final StringBuilder buf,
+                             final String value) {
 
-        if (value.getClass() == String.class) {
-            return escapeValue((String)value);
+        final boolean valueNeedsQuotes = valueNeedsQuotes(value);
+        if (valueNeedsQuotes) {
+            buf.append('"');
         }
 
-        return value.toString();
+        buf.append(escapeValue((String)value));
+
+        if (valueNeedsQuotes) {
+            buf.append('"');
+        }
+    }
+
+    protected boolean valueNeedsQuotes(final String name) {
+        if (name.indexOf(',') > -1) {
+            return true;
+        }
+
+        if (name.indexOf('=') > -1) {
+            return true;
+        }
+
+        if (name.indexOf(':') > -1) {
+            return true;
+        }
+
+        if (name.indexOf('"') > -1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected String escapeKey(String key) {
+        return key;
     }
 
     protected String escapeValue(String value) {
-        value = VALUE_ESCAPE_ASTERISK_PATTERN.matcher(value).replaceAll("\\*");
-        value = VALUE_ESCAPE_QUESTION_MARK_PATTERN.matcher(value).replaceAll("\\?");
+        value = VALUE_ESCAPE_ASTERISK_PATTERN.matcher(value)
+                                             .replaceAll(VALUE_ESCAPE_ASTERISK_REPLACEMENT);
+
+        value = VALUE_ESCAPE_QUESTION_MARK_PATTERN.matcher(value)
+                                                  .replaceAll(VALUE_ESCAPE_QUESTION_MARK_REPLACEMENT);
+
+        value = VALUE_ESCAPE_DOUBLE_QUOTE_PATTERN.matcher(value)
+                                                 .replaceAll(VALUE_ESCAPE_DOUBLE_QUOTE_REPLACEMENT);
+
+        value = VALUE_ESCAPE_BACKSLASH_PATTERN.matcher(value)
+                                              .replaceAll(VALUE_ESCAPE_BACKSLASH_REPLACEMENT);
+
         return value;
     }
 }

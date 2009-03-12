@@ -42,10 +42,6 @@ public class DefaultStatsKey implements StatsKey {
             throw new NullPointerException("attributes");
         }
 
-        if (!Util.isValidKeyString(name)) {
-            throw new IllegalArgumentException("invalid name: " + name);
-        }
-
         this.name = name;
         this.attributes = attributes;
 

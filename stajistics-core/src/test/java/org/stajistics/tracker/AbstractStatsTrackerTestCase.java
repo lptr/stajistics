@@ -34,6 +34,8 @@ import org.stajistics.session.StatsSession;
  * @author The Stajistics Project
  */
 public abstract class AbstractStatsTrackerTestCase {
+    
+    private static final double DELTA = 0.0000000000001;
 
     protected StatsSession mockSession;
 
@@ -151,7 +153,7 @@ public abstract class AbstractStatsTrackerTestCase {
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
-        assertEquals(value, tracker.getValue(), 0.0000000001);
+        assertEquals(value, tracker.getValue(), DELTA);
         assertEquals(timeStamp, tracker.getTimeStamp());
 
         mockery.assertIsSatisfied();
@@ -177,7 +179,7 @@ public abstract class AbstractStatsTrackerTestCase {
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
-        assertEquals(value, tracker.getValue(), 0.0000000001);
+        assertEquals(value, tracker.getValue(), DELTA);
         assertEquals(timeStamp, tracker.getTimeStamp());
 
         mockery.assertIsSatisfied();
@@ -198,7 +200,7 @@ public abstract class AbstractStatsTrackerTestCase {
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
-        assertEquals(value, tracker.getValue(), 0.0000000001);
+        assertEquals(value, tracker.getValue(), DELTA);
         assertEquals(timeStamp, tracker.getTimeStamp());
 
         tracker.track();
@@ -210,31 +212,28 @@ public abstract class AbstractStatsTrackerTestCase {
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
-        assertEquals(value, tracker.getValue(), 0.0000000001);
+        assertEquals(value, tracker.getValue(), DELTA);
         assertEquals(timeStamp, tracker.getTimeStamp());
 
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void testCommitWithoutOpen() {
+    public void testCommitWithoutTrack() {
 
         final StatsTracker tracker = createStatsTracker();
 
         // Expecting no calls to the session
 
-        try {
-            tracker.commit();
-            fail("Allowed unopened commit");
-        } catch (IllegalStateException ise) {
-            // Success
-        }
+        assertFalse(tracker.isTracking());
+        tracker.commit();
+        assertFalse(tracker.isTracking());
 
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void testOpenTwice() {
+    public void testTrackTwice() {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
@@ -246,12 +245,13 @@ public abstract class AbstractStatsTrackerTestCase {
 
         tracker.track();
 
-        try {
-            tracker.track();
-            fail("Allowed second open without commit");
-        } catch (IllegalStateException ise) {
-            // Success
-        }
+        assertTrue(tracker.isTracking());
+
+        long stamp = tracker.getTimeStamp();
+        tracker.track();
+
+        assertTrue(tracker.isTracking());
+        assertEquals(stamp, tracker.getTimeStamp());
 
         mockery.assertIsSatisfied();
     }
