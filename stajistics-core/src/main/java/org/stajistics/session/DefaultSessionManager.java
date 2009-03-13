@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
+import org.stajistics.StatsConfig;
 import org.stajistics.StatsKey;
 import org.stajistics.event.StatsEventType;
 
@@ -84,7 +85,7 @@ public class DefaultSessionManager implements StatsSessionManager {
 
     @Override
     public boolean remove(final StatsSession statsSession) {
-        return sessionMap.remove(statsSession.getKey()) != null;
+        return remove(statsSession.getKey()) != null;
     }
 
     @Override
@@ -100,7 +101,8 @@ public class DefaultSessionManager implements StatsSessionManager {
     }
 
     protected StatsSession createSession(final StatsKey key) {
-        return new ConcurrentStatsSession(key);
+        StatsConfig config = Stats.getConfig(key);
+        return config.getSessionFactory().createSession(key);
     }
 
     @Override

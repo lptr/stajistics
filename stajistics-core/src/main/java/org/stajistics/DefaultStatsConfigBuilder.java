@@ -14,7 +14,9 @@
  */
 package org.stajistics;
 
+import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -27,7 +29,7 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
 
     protected String unit;
     protected Class<? extends StatsTracker> trackerClass;
-    protected Class<? extends StatsSession> sessionClass;
+    protected StatsSessionFactory sessionFactory;
 
     public DefaultStatsConfigBuilder(final String name) {
         super(name);
@@ -40,7 +42,7 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
         if (config != null) {
             unit = config.getUnit();
             trackerClass = config.getTrackerClass();
-            sessionClass = config.getSessionClass();
+            sessionFactory = config.getSessionFactory();
         }
     }
 
@@ -65,12 +67,12 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     }
 
     @Override
-    public StatsConfigBuilder withSession(final Class<? extends StatsSession> sessionClass) {
-        if (sessionClass == null) {
-            throw new NullPointerException("sessionClass");
+    public StatsConfigBuilder withSessionFactory(final StatsSessionFactory sessionFactory) {
+        if (sessionFactory == null) {
+            throw new NullPointerException("sessionFactory");
         }
 
-        this.sessionClass = sessionClass;
+        this.sessionFactory = sessionFactory;
         return this;
     }
 
@@ -109,9 +111,9 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
             trackerClass = Constants.DEFAULT_TRACKER_CLASS;
         }
 
-        Class<? extends StatsSession> sessionClass = this.sessionClass;
-        if (sessionClass == null) {
-            sessionClass = Constants.DEFAULT_SESSION_CLASS;
+        StatsSessionFactory sessionFactory = this.sessionFactory;
+        if (sessionFactory == null) {
+            sessionFactory = DefaultSessionFactory.getInstance();
         }
 
         // Create StatsConfig
@@ -119,7 +121,7 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
         StatsConfigManager configManager = Stats.getInstance().getConfigManager();
         StatsConfig config = configManager.getConfig(key); 
         if (config == null) {
-            config = new DefaultStatsConfig(unit, trackerClass, sessionClass);
+            config = new DefaultStatsConfig(unit, trackerClass, sessionFactory);
             StatsConfig existingConfig = configManager.putConfigIfAbsent(key, config);
             if (existingConfig != null) {
                 config = existingConfig;

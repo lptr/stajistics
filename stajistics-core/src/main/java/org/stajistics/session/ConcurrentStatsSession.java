@@ -16,6 +16,8 @@ package org.stajistics.session;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -69,14 +71,28 @@ public class ConcurrentStatsSession implements StatsSession {
     protected final AtomicDouble max = new AtomicDouble(Double.MIN_VALUE);
     protected final AtomicDouble sum = new AtomicDouble(0);
 
-    protected final List<DataCollector> dataCollectors = new LinkedList<DataCollector>();
+    protected final List<DataCollector> dataCollectors;
 
     public ConcurrentStatsSession(final StatsKey key) {
+        this(key, (List<DataCollector>)null);
+    }
+
+    public ConcurrentStatsSession(final StatsKey key, final DataCollector... dataCollectors) {
+        this(key, Arrays.asList(dataCollectors));
+    }
+
+    public ConcurrentStatsSession(final StatsKey key, final List<DataCollector> dataCollectors) {
         if (key == null) {
             throw new NullPointerException("key");
         }
 
         this.key = key;
+
+        if (dataCollectors == null || dataCollectors.isEmpty()) {
+            this.dataCollectors = Collections.emptyList();
+        } else {
+            this.dataCollectors = new ArrayList<DataCollector>(dataCollectors);
+        }
     }
 
     @Override
@@ -269,26 +285,6 @@ public class ConcurrentStatsSession implements StatsSession {
 
         Stats.getEventManager()
              .fireEvent(StatsEventType.SESSION_CLEARED, key, this, null);
-    }
-
-    @Override
-    public StatsSession addDataCollector(final DataCollector dataCollector) {
-        if (dataCollector == null) {
-            throw new NullPointerException("dataCollector");
-        }
-
-        dataCollectors.add(dataCollector);
-
-        return this;
-    }
-
-    @Override
-    public void removeDataCollector(final DataCollector dataCollector) {
-        if (dataCollector == null) {
-            return;
-        }
-
-        dataCollectors.remove(dataCollector);
     }
 
     @Override

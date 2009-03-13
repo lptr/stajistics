@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -37,8 +35,6 @@ public abstract class AbstractStatsKeyTestCase {
     protected static final String TEST_NAME = "testName";
     protected static final String TEST_UNIT = "testUnit";
     protected static final Map<String,Object> TEST_ATTRIBUTES = new HashMap<String,Object>();
-    protected static final Class<? extends StatsTracker> TEST_TRACKER_CLASS = Constants.DEFAULT_TRACKER_CLASS;
-    protected static final Class<? extends StatsSession> TEST_SESSION_CLASS = Constants.DEFAULT_SESSION_CLASS;
 
     protected abstract StatsKey createStatsKey(String name,
                                                Map<String,Object> attributes);

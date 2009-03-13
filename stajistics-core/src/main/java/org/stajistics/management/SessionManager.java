@@ -29,7 +29,7 @@ import org.stajistics.session.StatsSession;
  */
 public class SessionManager implements SessionManagerMBean {
 
-    private static final String SESSION_DUMP_LOGGER_NAME = "stajistics.session.dump";
+    protected static final String SESSION_DUMP_LOGGER_NAME = "stajistics.session.dump";
 
     @Override
     public int getSessionCount() throws IOException {

@@ -93,6 +93,10 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
             throw new NullPointerException("name");
         }
 
+        if (!Util.isValidKeyAttributeName(name)) {
+            throw new IllegalArgumentException("invalid attribute name: " + name);
+        }
+
         if (value == null) {
             throw new NullPointerException("value for name: " + name);
         }
@@ -102,7 +106,7 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
                 firstAttrName = name;
                 firstAttrValue = value;
             } else {
-                attributes = new TreeMap<String, Object>();
+                attributes = new TreeMap<String,Object>();
                 attributes.put(firstAttrName, firstAttrValue);
             }
         } else {

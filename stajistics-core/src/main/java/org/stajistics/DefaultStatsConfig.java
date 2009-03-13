@@ -14,7 +14,8 @@
  */
 package org.stajistics;
 
-import org.stajistics.session.StatsSession;
+import org.stajistics.session.DefaultSessionFactory;
+import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -29,28 +30,29 @@ public class DefaultStatsConfig implements StatsConfig {
 
     protected String unit;
     protected Class<? extends StatsTracker> trackerClass;
-    protected Class<? extends StatsSession> sessionClass;
+
+    protected StatsSessionFactory sessionFactory;
 
     public DefaultStatsConfig(final String unit,
                               final Class<? extends StatsTracker> trackerClass,
-                              final Class<? extends StatsSession> sessionClass) {
+                              final StatsSessionFactory sessionFactory) {
 
         if (trackerClass == null) {
             throw new NullPointerException("trackerClass");
         }
-        if (sessionClass == null) {
-            throw new NullPointerException("sessionClass");
+        if (sessionFactory == null) {
+            throw new NullPointerException("sessionFactory");
         }
 
         setUnit(unit);
         this.trackerClass = trackerClass;
-        this.sessionClass = sessionClass;
+        this.sessionFactory = sessionFactory;
     }
 
     public static StatsConfig createDefaultConfig() {
         return new DefaultStatsConfig(Constants.DEFAULT_UNIT,
                                       Constants.DEFAULT_TRACKER_CLASS,
-                                      Constants.DEFAULT_SESSION_CLASS);
+                                      DefaultSessionFactory.getInstance());
     }
 
     @Override
@@ -82,8 +84,8 @@ public class DefaultStatsConfig implements StatsConfig {
     }
 
     @Override
-    public Class<? extends StatsSession> getSessionClass() {
-        return sessionClass;
+    public StatsSessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 
     @Override

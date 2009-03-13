@@ -24,8 +24,8 @@ final class Util {
 
     private Util() {}
 
-    public static boolean isValidKeyString(final String name) {
-        if (name.indexOf('*') > -1) {
+    public static boolean isValidKeyAttributeName(final String name) {
+        if (name.length() == 0) {
             return false;
         }
 
@@ -38,6 +38,10 @@ final class Util {
         }
 
         if (name.indexOf(':') > -1) {
+            return false;
+        }
+
+        if (name.indexOf('*') > -1) {
             return false;
         }
 

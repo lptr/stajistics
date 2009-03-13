@@ -22,7 +22,9 @@ import org.stajistics.event.alarm.AbstractAlarmCondition;
 import org.stajistics.event.alarm.AlarmCondition;
 import org.stajistics.event.alarm.AlarmHandler;
 import org.stajistics.management.StatsManagement;
+import org.stajistics.session.ConcurrentStatsSession;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.collector.DistributionDataCollector;
 import org.stajistics.session.collector.RangeDataCollector;
 import org.stajistics.tracker.ConcurrentAccessTracker;
@@ -44,34 +46,30 @@ class TestClient {
         StatsManagement.getInstance().initializeManagement();
     }
 
-    private final StatsKey key1 = Stats.newKey("Test");
-    {
-        Stats.getSessionManager()
-             .getSession(key1)
-             .addDataCollector(new DistributionDataCollector())
-             .addDataCollector(new RangeDataCollector(RangeList.build()
-                                                               .addRange(0, 5)
-                                                               .addRange(5, 10)
-                                                               .addRange(10, 20)
-                                                               .addRange(20, 40)
-                                                               .addRange(40, 80)
-                                                               .rangeList()));
-    }
+    private final StatsKey key1 = Stats.buildConfig("Test")
+                                       .withSessionFactory(new StatsSessionFactory() {
+                                            @Override
+                                            public StatsSession createSession(final StatsKey key) {
+                                                return new ConcurrentStatsSession(key,
+                                                            new DistributionDataCollector(),
+                                                            new RangeDataCollector(RangeList.build()
+                                                                                            .addRange(0, 5)
+                                                                                            .addRange(5, 10)
+                                                                                            .addRange(10, 20)
+                                                                                            .addRange(20, 40)
+                                                                                            .addRange(40, 80)
+                                                                                            .rangeList()));
+                                            }
+                                       }).newKey();
 
     private final StatsKey key2 = Stats.buildConfig("Test2")
                                        .withTracker(ConcurrentAccessTracker.class)
                                        .withUnit("accesses")
                                        .newKey();
 
-
     private final StatsKey key3 = Stats.buildConfig("Test3")
                                        .withTracker(HitFrequencyTracker.class)
                                        .newKey();
-    {
-        Stats.getSessionManager()
-             .getSession(key3)
-             .addDataCollector(new DistributionDataCollector());
-    }
 
     public TestClient() {
 

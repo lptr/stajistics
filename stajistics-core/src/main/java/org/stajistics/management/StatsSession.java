@@ -25,6 +25,8 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.session.data.DataSet;
 
@@ -127,7 +129,10 @@ public class StatsSession implements StatsSessionMBean,DynamicMBean {
             Stats.getSessionManager().remove(session);
 
         } else if (actionName.equals(OP_DUMP)) {
-            //TODO: dump session data to log
+            Logger logger = LoggerFactory.getLogger(SessionManager.SESSION_DUMP_LOGGER_NAME);
+            if (logger.isInfoEnabled()) {
+                logger.info(session.toString());
+            }
         }
 
         return null;

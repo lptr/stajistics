@@ -14,13 +14,8 @@
  */
 package org.stajistics.session;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.stajistics.StatsKey;
-import org.stajistics.session.collector.DataCollector;
-import org.stajistics.session.data.DataSet;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.session.collector.DistributionDataCollector;
 
 /**
  * 
@@ -28,38 +23,18 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public interface StatsSession extends Serializable {
+public class DefaultSessionFactory implements StatsSessionFactory {
 
-    StatsKey getKey();
+    private static DefaultSessionFactory instance = new DefaultSessionFactory();
 
-    List<DataCollector> getDataCollectors();
+    private DefaultSessionFactory() {}
 
-    long getHits();
+    public static DefaultSessionFactory getInstance() {
+        return instance;
+    }
 
-    long getFirstHitStamp();
-
-    long getLastHitStamp();
-
-    long getCommits();
-
-    double getFirst();
-
-    double getLast();
-
-    double getMin();
-
-    double getMax();
-
-    double getSum();
-
-    DataSet dataSet();
-
-    void open(StatsTracker tracker, long now);
-
-    void update(StatsTracker tracker, long now);
-
-    StatsSession snapshot();
-
-    void clear();
-
+    @Override
+    public StatsSession createSession(final StatsKey key) {
+        return new ConcurrentStatsSession(key, new DistributionDataCollector());
+    }
 }

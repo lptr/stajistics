@@ -14,8 +14,6 @@
  */
 package org.stajistics;
 
-import org.stajistics.session.ConcurrentStatsSession;
-import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.TimeDurationTracker;
 
@@ -29,6 +27,5 @@ public interface Constants {
 
     String DEFAULT_UNIT = "ms";
     Class<? extends StatsTracker> DEFAULT_TRACKER_CLASS = TimeDurationTracker.class;
-    Class<? extends StatsSession> DEFAULT_SESSION_CLASS = ConcurrentStatsSession.class;
 
 }

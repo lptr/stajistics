@@ -64,6 +64,11 @@ public class ImmutableStatsSession implements StatsSession {
     }
 
     @Override
+    public List<DataCollector> getDataCollectors() {
+        return Collections.emptyList();
+    }
+
+    @Override
     public DataSet dataSet() {
         return dataSet;
     }
@@ -130,17 +135,4 @@ public class ImmutableStatsSession implements StatsSession {
 
     @Override
     public void clear() {}
-
-    @Override
-    public StatsSession addDataCollector(DataCollector dataCollector) {
-        return this;
-    }
-
-    @Override
-    public void removeDataCollector(DataCollector dataCollector) {}
-
-    @Override
-    public List<DataCollector> getDataCollectors() {
-        return Collections.emptyList();
-    }
 }
