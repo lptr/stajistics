@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.slf4j.Logger;
@@ -39,10 +40,10 @@ public class StatsManagement {
 
     private static Logger logger = LoggerFactory.getLogger(StatsManagement.class);  
 
-    private static final String DOMAIN = org.stajistics.Stats.class.getPackage().getName();
+    static final String DOMAIN = org.stajistics.Stats.class.getPackage().getName();
 
-    private static final String SESSION_TYPE = "session";
-    private static final String CONFIG_TYPE = "config";
+    static final String SESSION_TYPE = "session";
+    static final String CONFIG_TYPE = "config";
 
     private static final Pattern VALUE_ESCAPE_BACKSLASH_PATTERN = Pattern.compile("[\\\\]");
     private static final String VALUE_ESCAPE_BACKSLASH_REPLACEMENT = "\\\\\\\\";
@@ -83,7 +84,7 @@ public class StatsManagement {
                     registerSessionMBean(session);
 
                 } else if (eventType == StatsEventType.SESSION_DESTROYED) {
-                    unregisterSessionMBean(session);
+                    unregisterSessionMBean(key);
 
                 } else if (eventType == StatsEventType.CONFIG_CREATED) {
                     org.stajistics.StatsConfig cfg = Stats.getConfig(key);
@@ -96,14 +97,16 @@ public class StatsManagement {
         });
     }
 
+    ObjectName createSessionManagerObjectName() throws MalformedObjectNameException {
+        return new ObjectName(DOMAIN + ":name=" + SessionManager.class.getSimpleName());
+    }
+
     public boolean registerSessionManagerMBean() {
         try {
             MBeanServer mbs = getMBeanServer();
 
             SessionManagerMBean sessionManagerMBean = new SessionManager();
-            ObjectName sessionManagerMBeanName = new ObjectName(DOMAIN + ":name=" + SessionManager.class.getSimpleName());
-
-            mbs.registerMBean(sessionManagerMBean, sessionManagerMBeanName);
+            mbs.registerMBean(sessionManagerMBean, createSessionManagerObjectName());
 
             if (logger.isInfoEnabled()) {
                 logger.info("Registered " + SessionManagerMBean.class.getSimpleName());
@@ -124,9 +127,7 @@ public class StatsManagement {
         try {
             MBeanServer mbs = getMBeanServer();
 
-            ObjectName sessionManagerMBeanName = new ObjectName(DOMAIN + ":name=" + SessionManager.class.getSimpleName());
-
-            mbs.unregisterMBean(sessionManagerMBeanName);
+            mbs.unregisterMBean(createSessionManagerObjectName());
 
             if (logger.isInfoEnabled()) {
                 logger.info("Unregistered " + SessionManagerMBean.class.getSimpleName());
@@ -153,7 +154,7 @@ public class StatsManagement {
 
             StatsConfigMBean configMBean = new StatsConfig(config);
 
-            strName = buildObjectNameString(key, CONFIG_TYPE, false);
+            strName = buildName(key, CONFIG_TYPE, false);
             ObjectName configMBeanName = new ObjectName(strName);
 
             mbs.registerMBean(configMBean, configMBeanName);
@@ -176,7 +177,7 @@ public class StatsManagement {
         try {
             MBeanServer mbs = getMBeanServer();
 
-            strName = buildObjectNameString(key, CONFIG_TYPE, false);
+            strName = buildName(key, CONFIG_TYPE, false);
             ObjectName configMBeanName = new ObjectName(strName);
 
             mbs.unregisterMBean(configMBeanName);
@@ -201,7 +202,7 @@ public class StatsManagement {
 
             StatsSessionMBean sessionMBean = new StatsSession(session);
 
-            strName = buildObjectNameString(session.getKey(), SESSION_TYPE, true);
+            strName = buildName(session.getKey(), SESSION_TYPE, true);
             ObjectName sessionMBeanName = new ObjectName(strName);
 
             mbs.registerMBean(sessionMBean, sessionMBeanName);
@@ -214,25 +215,25 @@ public class StatsManagement {
             return false;
         }
 
-        return false;
+        return true;
     }
 
-    public boolean unregisterSessionMBean(final org.stajistics.session.StatsSession session) {
+    public boolean unregisterSessionMBean(final StatsKey key) {
 
         String strName = null;
 
         try {
             MBeanServer mbs = getMBeanServer();
 
-            strName = buildObjectNameString(session.getKey(), SESSION_TYPE, true);
+            strName = buildName(key, SESSION_TYPE, true);
             ObjectName sessionMBeanName = new ObjectName(strName);
 
             mbs.unregisterMBean(sessionMBeanName);
 
-            logRegistrationSuccess(false, StatsSessionMBean.class, session.getKey(), sessionMBeanName);
+            logRegistrationSuccess(false, StatsSessionMBean.class, key, sessionMBeanName);
 
         } catch (Exception e) {
-            logRegistrationFailure(false, StatsSessionMBean.class, session.getKey(), strName, e);
+            logRegistrationFailure(false, StatsSessionMBean.class, key, strName, e);
 
             return false;
         }
@@ -240,9 +241,9 @@ public class StatsManagement {
         return true;
     }
 
-    protected String buildObjectNameString(final StatsKey key,
-                                           final String type,
-                                           final boolean includeAttributes) {
+    protected String buildName(final StatsKey key,
+                               final String type,
+                               final boolean includeAttributes) {
 
         StringBuilder buf = new StringBuilder(128);
 
