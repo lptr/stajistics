@@ -15,7 +15,6 @@
 package org.stajistics;
 
 import org.stajistics.session.DefaultSessionFactory;
-import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTracker;
 

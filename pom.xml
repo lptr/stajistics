@@ -129,6 +129,8 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>1.5.6</version>
+      <scope>runtime</scope>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -214,6 +216,7 @@
 
   <modules>
     <module>stajistics-core</module>
+    <module>stajistics-servlet</module>
   </modules>
 
   <properties>

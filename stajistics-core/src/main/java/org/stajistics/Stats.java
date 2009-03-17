@@ -18,10 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.SynchronousStatsEventManager;
+import org.stajistics.management.StatsManagement;
 import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.CompositeTracker;
+import org.stajistics.tracker.CompositeStatsTracker;
 import org.stajistics.tracker.DefaultStatsTrackerFactory;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
@@ -40,6 +41,10 @@ public abstract class Stats {
     private static volatile Stats instance = null;
 
     private static volatile boolean enabled = true;
+
+    static {
+        StatsManagement.getInstance().initializeManagement();
+    }
 
     protected StatsConfigManager configManager;
     protected StatsSessionManager sessionManager;
@@ -115,20 +120,18 @@ public abstract class Stats {
         return tracker;
     }
 
-    public static StatsTracker getTracker(final StatsKey firstKey, 
-                                          final StatsKey secondKey,
-                                          final StatsKey... otherKeys) {
-
-        final StatsTracker[] trackers = new StatsTracker[2 + otherKeys.length];
-
-        trackers[0] = getTracker(firstKey);
-        trackers[1] = getTracker(secondKey);
-
-        for (int i = 0; i < otherKeys.length; i++) {
-            trackers[i + 2] = getTracker(otherKeys[i]);
+    public static StatsTracker getTracker(final StatsKey... keys) {
+        if (keys.length == 1) {
+            return getTracker(keys[0]);
         }
 
-        return new CompositeTracker(trackers);
+        final StatsTracker[] trackers = new StatsTracker[keys.length];
+
+        for (int i = 0; i < keys.length; i++) {
+            trackers[i] = getTracker(keys[i]);
+        }
+
+        return new CompositeStatsTracker(trackers);
     }
 
     public static StatsTracker track(final String name) {
@@ -139,10 +142,8 @@ public abstract class Stats {
         return getTracker(key).track();
     }
 
-    public static StatsTracker track(final StatsKey firstKey,
-                                     final StatsKey secondKey,
-                                     final StatsKey... otherKeys) {
-        return getTracker(firstKey, secondKey, otherKeys).track();
+    public static StatsTracker track(final StatsKey... keys) {
+        return getTracker(keys).track();
     }
 
     public static StatsKey newKey(final String name) {

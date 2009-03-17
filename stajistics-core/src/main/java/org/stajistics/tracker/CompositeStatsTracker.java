@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.stajistics.session.StatsSession;
@@ -24,11 +26,11 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistic Project
  */
-public class CompositeTracker implements StatsTracker {
+public class CompositeStatsTracker implements StatsTracker {
 
     private final StatsTracker[] trackers;
 
-    public CompositeTracker(final StatsTracker... trackers) {
+    public CompositeStatsTracker(final StatsTracker... trackers) {
         if (trackers.length == 0) {
             throw new IllegalArgumentException("Must provide at least one tracker");
         }
@@ -36,8 +38,12 @@ public class CompositeTracker implements StatsTracker {
         this.trackers = trackers;
     }
 
-    public CompositeTracker(final List<StatsTracker> trackers) {
+    public CompositeStatsTracker(final List<StatsTracker> trackers) {
         this(trackers.toArray(new StatsTracker[trackers.size()]));
+    }
+
+    public List<StatsTracker> getTrackers() {
+        return Collections.unmodifiableList(Arrays.asList(trackers));
     }
 
     @Override

@@ -17,8 +17,7 @@ package org.stajistics.management;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.util.Collections;
+import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -55,98 +54,76 @@ public class StatsManagementTest {
         return StatsManagement.getInstance();
     }
 
-    private void buildStatsKeyExpectations(final String keyName) {
-        buildExpectations(keyName, null, null);
-    }
-
-    private void buildExpectations(final String keyName,
-                                   final String attrName,
-                                   final String attrValue) {
-        mockery.checking(new Expectations() {{
-            ignoring(mockKey).getName(); will(returnValue(keyName));
-            ignoring(mockKey).getAttribute(with((String)null)); will(returnValue(null));
-            if (attrName == null) {
-                ignoring(mockKey).getAttribute((String)with(anything())); will(returnValue(null));
-                ignoring(mockKey).getAttributeCount(); will(returnValue(0));
-                ignoring(mockKey).getAttributes(); will(returnValue(Collections.emptyMap()));
-            } else {
-                ignoring(mockKey).getAttribute(with(attrName)); will(returnValue(attrValue));
-                ignoring(mockKey).getAttributeCount(); will(returnValue(1));
-                ignoring(mockKey).getAttributes(); will(returnValue(Collections.singletonMap(attrName, attrValue)));
-            }
-        }});
-    }
-
     @Test
     public void testBuildNameDomain() {
-        buildStatsKeyExpectations(NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
         String name = getStatsManagement().buildName(mockKey, TEST_TYPE, true);
         assertTrue(name.startsWith(StatsManagement.DOMAIN));
     }
 
     @Test
     public void testBuildNameNormal() {
-        buildStatsKeyExpectations(NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNameWithQuestion() {
-        buildStatsKeyExpectations("with?question");
+        buildStatsKeyExpectations(mockery, mockKey, "with?question");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNameWithAsterisk() {
-        buildStatsKeyExpectations("with*asterisk");
+        buildStatsKeyExpectations(mockery, mockKey, "with*asterisk");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNameWithQuote() {
-        buildStatsKeyExpectations("with\"quote");
+        buildStatsKeyExpectations(mockery, mockKey, "with\"quote");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNameWithTwoQuotes() {
-        buildStatsKeyExpectations("with\"two\"quotes");
+        buildStatsKeyExpectations(mockery, mockKey, "with\"two\"quotes");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNameWithThreeQuotes() {
-        buildStatsKeyExpectations("with\"three\"awesome\"quotes");
+        buildStatsKeyExpectations(mockery, mockKey, "with\"three\"awesome\"quotes");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNameWithEquals() {
-        buildStatsKeyExpectations("with=equals");
+        buildStatsKeyExpectations(mockery, mockKey, "with=equals");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNameWithComma() {
-        buildStatsKeyExpectations("with,comma");
+        buildStatsKeyExpectations(mockery, mockKey, "with,comma");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNamePropNameValNormal() {
-        buildExpectations(NORMAL, NORMAL, NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, NORMAL);
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNamePropNameWithQuestion() {
-        buildExpectations(NORMAL, "with?question", NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, "with?question", NORMAL);
         assertInvalidObjectName();
     }
 
     @Test
     public void testBuildNamePropNameWithAsterisk() {
-        buildExpectations(NORMAL, "with*asterisk", NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, "with*asterisk", NORMAL);
         assertInvalidObjectName();
     }
 
@@ -163,55 +140,55 @@ public class StatsManagementTest {
 
     @Test
     public void testBuildNamePropNameWithEquals() {
-        buildExpectations(NORMAL, "with=equals", NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, "with=equals", NORMAL);
         assertInvalidObjectName();
     }
 
     @Test
     public void testBuildNamePropNameWithComma() {
-        buildExpectations(NORMAL, "with,comma", NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, "with,comma", NORMAL);
         assertInvalidObjectName();
     }
 
     @Test
     public void testBuildNamePropValWithQuestion() {
-        buildExpectations(NORMAL, NORMAL, "with?question");
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with?question");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNamePropValWithAsterisk() {
-        buildExpectations(NORMAL, NORMAL, "with*asterisk");
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with*asterisk");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNamePropValWithQuote() {
-        buildExpectations(NORMAL, NORMAL, "with\"quote");
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with\"quote");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNamePropValWithTwoQuotes() {
-        buildExpectations(NORMAL, NORMAL, "with\"two\"quotes");
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with\"two\"quotes");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNamePropValWithThreeQuotes() {
-        buildExpectations(NORMAL, NORMAL, "with\"three\"awesome\"quotes");
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with\"three\"awesome\"quotes");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNamePropValWithEquals() {
-        buildExpectations(NORMAL, NORMAL, "with=equals");
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with=equals");
         assertValidObjectName();
     }
 
     @Test
     public void testBuildNamePropValWithComma() {
-        buildExpectations(NORMAL, NORMAL, "with,comma");
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with,comma");
         assertValidObjectName();
     }
 
@@ -219,17 +196,17 @@ public class StatsManagementTest {
     public void testRegisterSessionManagerMBean() throws Exception {
         StatsManagement sm = getStatsManagement();
 
-        ObjectName name = sm.createSessionManagerObjectName();
+        ObjectName objectName = new ObjectName(sm.buildSessionManagerName());
         MBeanServer mBeanServer = sm.getMBeanServer();
 
         try {
-            assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
+            assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
             assertTrue(sm.registerSessionManagerMBean());
-            assertEquals(1, mBeanServer.queryMBeans(name, null).size());
+            assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
 
         } finally {
             try {
-                mBeanServer.unregisterMBean(name);
+                mBeanServer.unregisterMBean(objectName);
             } catch (Exception e) {}
         }
     }
@@ -238,18 +215,18 @@ public class StatsManagementTest {
     public void testUnregisterSessionManagerMBean() throws Exception {
         StatsManagement sm = getStatsManagement();
 
-        ObjectName name = sm.createSessionManagerObjectName();
+        ObjectName objectName = new ObjectName(sm.buildSessionManagerName());
         MBeanServer mBeanServer = sm.getMBeanServer();
 
         try {
-            mBeanServer.registerMBean(new SessionManager(), name);
+            mBeanServer.registerMBean(new SessionManager(), objectName);
 
             assertTrue(sm.unregisterSessionManagerMBean());
-            assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
+            assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
 
         } finally {
             try {
-                mBeanServer.unregisterMBean(name);
+                mBeanServer.unregisterMBean(objectName);
             } catch (Exception e) {}
         }
     }
@@ -257,7 +234,7 @@ public class StatsManagementTest {
     @Test
     public void testRegisterConfigMBean() throws Exception {
 
-        buildStatsKeyExpectations(NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
         final org.stajistics.StatsConfig mockConfig = mockery.mock(org.stajistics.StatsConfig.class);
 
@@ -288,7 +265,7 @@ public class StatsManagementTest {
     @Test
     public void testUnregisterConfigMBean() throws Exception {
 
-        buildStatsKeyExpectations(NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
         final org.stajistics.StatsConfig mockConfig = mockery.mock(org.stajistics.StatsConfig.class);
 
@@ -320,7 +297,7 @@ public class StatsManagementTest {
     @Test
     public void testRegisterSessionMBean() throws Exception {
 
-        buildStatsKeyExpectations(NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
         final org.stajistics.session.StatsSession mockSession = mockery.mock(org.stajistics.session.StatsSession.class);
 
@@ -352,7 +329,7 @@ public class StatsManagementTest {
     @Test
     public void testUnregisterSessionMBean() throws Exception {
 
-        buildStatsKeyExpectations(NORMAL);
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
         final org.stajistics.session.StatsSession mockSession = mockery.mock(org.stajistics.session.StatsSession.class);
 

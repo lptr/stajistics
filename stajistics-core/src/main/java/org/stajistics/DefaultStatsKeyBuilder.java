@@ -14,8 +14,8 @@
  */
 package org.stajistics;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * 
@@ -49,7 +49,7 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
         Map<String,Object> attrs = template.getAttributes();
         if (attrs != null && !attrs.isEmpty()) {
-            attributes = new TreeMap<String,Object>(attrs);
+            attributes = new LinkedHashMap<String,Object>(attrs);
         }
     }
 
@@ -106,8 +106,9 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
                 firstAttrName = name;
                 firstAttrValue = value;
             } else {
-                attributes = new TreeMap<String,Object>();
+                attributes = new LinkedHashMap<String,Object>(8);
                 attributes.put(firstAttrName, firstAttrValue);
+                attributes.put(name, value);
             }
         } else {
             attributes.put(name, value);
