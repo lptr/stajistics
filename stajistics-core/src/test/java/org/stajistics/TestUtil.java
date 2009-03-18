@@ -18,6 +18,7 @@ import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.junit.Ignore;
 
 /**
  * 
@@ -25,6 +26,7 @@ import org.jmock.Mockery;
  *
  * @author The Stajistics Project
  */
+@Ignore
 public class TestUtil {
 
     public static void buildStatsKeyExpectations(final Mockery mockery,
