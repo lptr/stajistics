@@ -34,7 +34,7 @@ public class StatsHttpSessionListener implements HttpSessionListener {
     private StatsKey key = Stats.newKey(getKeyName());
 
     protected String getKeyName() {
-        return HttpSessionListener.class.getSimpleName();
+        return getClass().getSimpleName();
     }
 
     @Override

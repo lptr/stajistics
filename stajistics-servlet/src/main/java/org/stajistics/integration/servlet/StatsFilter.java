@@ -15,6 +15,7 @@
 package org.stajistics.integration.servlet;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
-import org.stajistics.tracker.CompositeStatsTracker;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -44,11 +44,11 @@ public class StatsFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(StatsFilter.class);
 
     private static final String INIT_PARAM_KEY_NAME = "keyName";
-    private static final String INIT_PARAM_BIND_PARAMS = "bindParams";
+    private static final String INIT_PARAM_BIND_PARAMS = "bindParameters";
     private static final String INIT_PARAM_BIND_HEADERS = "bindHeaders";
 
     private static final String KEY_ATTR_BINDING = "binding";
-    private static final String KEY_ATTR_BINDING_PARAM = "param";
+    private static final String KEY_ATTR_BINDING_PARAM = "parameter";
     private static final String KEY_ATTR_BINDING_HEADER = "header";
 
     private StatsKey key;
@@ -59,7 +59,7 @@ public class StatsFilter implements Filter {
     public void init(final FilterConfig config) throws ServletException {
         String keyName = config.getInitParameter(INIT_PARAM_KEY_NAME);
         if (keyName == null) {
-            throw new ServletException("Missing required init parameter: " + INIT_PARAM_KEY_NAME); 
+            keyName = getClass().getName();
         }
 
         key = Stats.newKey(keyName);
@@ -98,31 +98,34 @@ public class StatsFilter implements Filter {
         }
     }
 
-    protected StatsTracker getTracker(final ServletRequest request) {
+    private StatsTracker getTracker(final ServletRequest request) {
 
         StatsTracker tracker;
         if (bindParams == null && bindHeaders == null) {
             tracker = Stats.getTracker(key);
-
         } else {
-            List<StatsTracker> subTrackerList = new LinkedList<StatsTracker>();
-            subTrackerList.add(Stats.getTracker(key));
-
-            if (bindParams != null) {
-                addParamBoundTrackers(request, subTrackerList);
-            }
-            if (bindHeaders != null) {
-                addHeaderBoundTrackers(request, subTrackerList);
-            }
-
-            tracker = new CompositeStatsTracker(subTrackerList);
+            tracker = Stats.getTracker(getStatsKeys(request));
         }
 
         return tracker;
     }
 
-    private void addParamBoundTrackers(final ServletRequest request,
-                                       final List<StatsTracker> trackerList) {
+    private StatsKey[] getStatsKeys(final ServletRequest request) {
+        List<StatsKey> keyList = new LinkedList<StatsKey>();
+        keyList.add(key);
+
+        if (bindParams != null) {
+            addParamBoundStatsKeys(request, keyList);
+        }
+        if (bindHeaders != null) {
+            addHeaderBoundStatsKeys(request, keyList);
+        }
+
+        return keyList.toArray(new StatsKey[keyList.size()]);
+    }
+
+    private void addParamBoundStatsKeys(final ServletRequest request,
+                                        final List<StatsKey> keyList) {
         String paramValue;
 
         for (String bindParam : bindParams) {
@@ -132,14 +135,19 @@ public class StatsFilter implements Filter {
                                        .withAttribute(KEY_ATTR_BINDING, KEY_ATTR_BINDING_PARAM)
                                        .withAttribute(bindParam, paramValue)
                                        .newKey();
-                trackerList.add(Stats.getTracker(paramKey));
+                keyList.add(paramKey);
             }
         }
     }
 
-    private void addHeaderBoundTrackers(final ServletRequest request,
-                                        final List<StatsTracker> trackerList) {
+    private void addHeaderBoundStatsKeys(final ServletRequest request,
+                                         final List<StatsKey> keyList) {
         if (!(request instanceof HttpServletRequest)) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Header bindings specified in filter init-params but not processing HTTP request: " + 
+                            Arrays.asList(bindHeaders));
+            }
+
             return;
         }
 
@@ -154,7 +162,7 @@ public class StatsFilter implements Filter {
                                         .withAttribute(KEY_ATTR_BINDING, KEY_ATTR_BINDING_HEADER)
                                         .withAttribute(bindHeader, headerValue)
                                         .newKey();
-                trackerList.add(Stats.getTracker(headerKey));
+                keyList.add(headerKey);
             }
         }
     }
@@ -163,7 +171,7 @@ public class StatsFilter implements Filter {
     public void doFilter(final ServletRequest request, 
                          final ServletResponse response,
                          final FilterChain chain)
-    throws IOException, ServletException {
+            throws IOException, ServletException {
 
         StatsTracker tracker = getTracker(request);
         tracker.track();
@@ -172,7 +180,6 @@ public class StatsFilter implements Filter {
             chain.doFilter(request, response);
 
         } finally {
-            //TODO: ignore certain response codes? i.e. 302
             tracker.commit();
         }
     }
