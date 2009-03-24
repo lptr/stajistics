@@ -27,7 +27,9 @@ import org.junit.Ignore;
  * @author The Stajistics Project
  */
 @Ignore
-public class TestUtil {
+public abstract class TestUtil {
+
+    private TestUtil() {}
 
     public static void buildStatsKeyExpectations(final Mockery mockery,
                                                  final StatsKey mockKey,

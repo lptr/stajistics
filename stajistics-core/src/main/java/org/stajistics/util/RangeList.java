@@ -159,6 +159,22 @@ public class RangeList implements Iterable<Range> {
         return -1;
     }
 
+    public Range rangeContaining(final double value) {
+        return rangeContaining(value, 0);
+    }
+
+    public Range rangeContaining(final double value,
+                                 final int fromIndex) {
+        Range range = null;
+
+        int index = indexOfRangeContaining(value, fromIndex);
+        if (index > -1) {
+            range = ranges[index];
+        }
+
+        return range;
+    }
+
     public boolean contains(final double value) {
         if (value < minBegin || value > maxEnd || (exclusiveRangeEnd && value == maxEnd)) {
             return false;

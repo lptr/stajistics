@@ -17,6 +17,8 @@ package org.stajistics.tracker;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -26,6 +28,8 @@ import org.stajistics.session.StatsSession;
  * @author The Stajistics Project
  */
 public class DefaultStatsTrackerFactory implements StatsTrackerFactory {
+
+    private static Logger logger = LoggerFactory.getLogger(DefaultStatsTrackerFactory.class);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -55,6 +59,22 @@ public class DefaultStatsTrackerFactory implements StatsTrackerFactory {
             return (T)new ManualTracker(session);
         }
 
+        if (trackerClass == ThreadBlockTimeTracker.class) {
+            return (T)new ThreadBlockTimeTracker(session);
+        }
+
+        if (trackerClass == ThreadCPUTimeTracker.class) {
+            return (T)new ThreadCPUTimeTracker(session);
+        }
+
+        if (trackerClass == ThreadWaitTimeTracker.class) {
+            return (T)new ThreadWaitTimeTracker(session);
+        }
+
+        if (trackerClass == GarbageCollectionTimeTracker.class) {
+            return (T)new GarbageCollectionTimeTracker(session);
+        }
+
         /* TODO: Creating trackers reflectively for client-defined types 
          * is unacceptable for performance. Figure something out.
          */
@@ -64,6 +84,11 @@ public class DefaultStatsTrackerFactory implements StatsTrackerFactory {
     @SuppressWarnings("unchecked")
     private <T extends StatsTracker> T createReflectively(final StatsSession session,
                                                           final Class<T> trackerClass) {
+
+        if (logger.isWarnEnabled()) {
+            logger.warn("Creating tracker reflectively, time for a new factory: " + trackerClass.getName());
+        }
+
         try {
             Constructor<StatsTracker> ctor = (Constructor<StatsTracker>)trackerClass.getConstructor(new Class[] { StatsSession.class });
 
