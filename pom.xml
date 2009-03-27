@@ -404,6 +404,10 @@
   </dependencyManagement>
 
   <distributionManagement>
+    <snapshotRepository>
+      <id>stajistics.org-snapshots</id>
+      <url>scp://stajistics.org/home/troyk/repository.stajistics.org/snapshots/</url>
+    </snapshotRepository>
     <site>
       <id>stajistics.org</id>
       <url>scp://stajistics.org/home/troyk/stajistics.org/</url>
