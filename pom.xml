@@ -407,6 +407,7 @@
     <snapshotRepository>
       <id>stajistics.org-snapshots</id>
       <url>scp://stajistics.org/home/troyk/repository.stajistics.org/snapshots/</url>
+      <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
     <site>
       <id>stajistics.org</id>
