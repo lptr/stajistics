@@ -76,7 +76,7 @@ public class DefaultSessionManager implements StatsSessionManager {
 
             } else {
                 Stats.getEventManager()
-                     .fireEvent(StatsEventType.SESSION_CREATED, key, session, null);
+                     .fireEvent(StatsEventType.SESSION_CREATED, key, session);
             }
         }
 
@@ -94,7 +94,7 @@ public class DefaultSessionManager implements StatsSessionManager {
 
         if (session != null) {
             Stats.getEventManager()
-                 .fireEvent(StatsEventType.SESSION_DESTROYED, key, session, null);
+                 .fireEvent(StatsEventType.SESSION_DESTROYED, key, session);
         }
 
         return session; 

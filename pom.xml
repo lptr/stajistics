@@ -329,8 +329,8 @@
 
   <modules>
     <module>stajistics-core</module>
-    <module>stajistics-servlet</module>
     <module>stajistics-examples</module>
+    <module>stajistics-servlet</module>
   </modules>
 
   <repositories>

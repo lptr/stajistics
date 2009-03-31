@@ -42,10 +42,6 @@ class TestClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestClient.class);
 
-    static {
-        StatsManagement.getInstance().initializeManagement();
-    }
-
     private final StatsKey key1 = Stats.buildConfig("Test")
                                        .withSessionFactory(new StatsSessionFactory() {
                                             @Override
@@ -79,8 +75,7 @@ class TestClient {
                     public void handleStatsEvent(
                             final StatsEventType eventType,
                             final StatsKey key,
-                            final StatsSession session,
-                            final StatsTracker tracker) {
+                            final Object target) {
                         LOGGER.info(eventType + " -> " + key);
                     }
                 });
@@ -97,10 +92,13 @@ class TestClient {
                     @Override
                     public void handleStatsEvent(final StatsEventType eventType,
                                                  final StatsKey key,
-                                                 final StatsSession session, 
-                                                 final StatsTracker tracker) {
-                        if (eventType == StatsEventType.TRACKER_COMMITTED && session.getLast() > 25) {
-                            getAlarmHandler().alarmTriggered(this, session, tracker);
+                                                 final Object target) {
+                        if (eventType == StatsEventType.TRACKER_COMMITTED) {
+                            StatsTracker tracker = (StatsTracker)target;
+                            StatsSession session = tracker.getSession();
+                            if (tracker.getSession().getLast() > 25) {
+                                getAlarmHandler().alarmTriggered(this, session, tracker);
+                            }
                         }
                     }
                 });

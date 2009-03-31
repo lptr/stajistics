@@ -63,7 +63,7 @@ public abstract class AbstractStatsTrackerTestCase {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            one(mockSession).open(with(tracker), with(any(long.class)));
+            one(mockSession).track(with(tracker), with(any(long.class)));
             ignoring(mockSession).getLastHitStamp();
         }});
 
@@ -79,7 +79,7 @@ public abstract class AbstractStatsTrackerTestCase {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            one(mockSession).open(with(tracker), with(any(long.class)));
+            one(mockSession).track(with(tracker), with(any(long.class)));
             between(0, 1).of(mockSession).update(with(tracker), with(any(long.class)));
             ignoring(mockSession).getHits();
             ignoring(mockSession).getLastHitStamp();
@@ -141,7 +141,7 @@ public abstract class AbstractStatsTrackerTestCase {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            ignoring(mockSession).open(with(tracker), with(any(long.class)));
+            ignoring(mockSession).track(with(tracker), with(any(long.class)));
             ignoring(mockSession).update(with(tracker), with(any(long.class)));
         }});
 
@@ -236,7 +236,7 @@ public abstract class AbstractStatsTrackerTestCase {
         final StatsTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            one(mockSession).open(with(tracker), with(any(long.class)));
+            one(mockSession).track(with(tracker), with(any(long.class)));
             ignoring(mockSession).getHits();
             ignoring(mockSession).getLastHitStamp();
             ignoring(mockSession).getCommits();

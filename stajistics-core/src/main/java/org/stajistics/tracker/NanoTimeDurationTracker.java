@@ -12,12 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.event.alarm.threashold;
+package org.stajistics.tracker;
 
-import org.stajistics.StatsKey;
-import org.stajistics.event.StatsEventType;
-import org.stajistics.event.alarm.AbstractAlarmCondition;
-import org.stajistics.event.alarm.AlarmHandler;
+import org.stajistics.session.StatsSession;
+
 
 /**
  * 
@@ -25,22 +23,26 @@ import org.stajistics.event.alarm.AlarmHandler;
  *
  * @author The Stajistics Project
  */
-public class ThreasholdAlarmCondition extends AbstractAlarmCondition {
+public class NanoTimeDurationTracker extends AbstractStatsTracker {
 
-    public ThreasholdAlarmCondition(final AlarmHandler alarmHandler) {
-        super(alarmHandler);
+    private long nanoTime;
+
+    public NanoTimeDurationTracker(final StatsSession session) {
+        super(session);
     }
 
     @Override
-    public AlarmHandler getAlarmHandler() {
-        // TODO Auto-generated method stub
-        return null;
+    protected void trackImpl(final long now) {
+        nanoTime = System.nanoTime();
+
+        super.trackImpl(now);
     }
 
     @Override
-    public void handleStatsEvent(final StatsEventType eventType,
-                                 final StatsKey key,
-                                 final Object target) {
+    protected void commitImpl(final long now) {
+        value = (System.nanoTime() - nanoTime) / 1000000d;
 
+        super.commitImpl(now);
     }
+
 }

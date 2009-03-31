@@ -95,8 +95,8 @@ public class ConcurrentStatsSession implements StatsSession {
     }
 
     @Override
-    public void open(final StatsTracker tracker, 
-                     long now) {
+    public void track(final StatsTracker tracker, 
+                      long now) {
         if (now < 0) {
             now = System.currentTimeMillis();
         }
@@ -109,16 +109,16 @@ public class ConcurrentStatsSession implements StatsSession {
         lastHitStamp.set(now);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Open: " + this);
+            logger.debug("Track: " + this);
         }
 
-        fireOpenEvent(this, tracker);
+        fireTrackingEvent(this, tracker);
     }
 
-    protected void fireOpenEvent(final StatsSession session,
-                                 final StatsTracker tracker) {
+    protected void fireTrackingEvent(final StatsSession session,
+                                     final StatsTracker tracker) {
         Stats.getEventManager()
-             .fireEvent(StatsEventType.TRACKER_OPENED, key, session, tracker);
+             .fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
     }
 
     @Override
@@ -148,9 +148,6 @@ public class ConcurrentStatsSession implements StatsSession {
 
     @Override
     public void update(final StatsTracker tracker, long now) {
-        if (now < 0) {
-            now = System.currentTimeMillis();
-        }
 
         final double currentValue = tracker.getValue();
         double tmp;
@@ -206,7 +203,7 @@ public class ConcurrentStatsSession implements StatsSession {
     protected void fireUpdateEvent(final StatsSession session,
                                    final StatsTracker tracker) {
         Stats.getEventManager()
-             .fireEvent(StatsEventType.TRACKER_COMMITTED, key, session, tracker);
+             .fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }
 
     @Override
@@ -283,7 +280,7 @@ public class ConcurrentStatsSession implements StatsSession {
         }
 
         Stats.getEventManager()
-             .fireEvent(StatsEventType.SESSION_CLEARED, key, this, null);
+             .fireEvent(StatsEventType.SESSION_CLEARED, key, this);
     }
 
     @Override

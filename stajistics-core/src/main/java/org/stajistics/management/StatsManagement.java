@@ -27,7 +27,6 @@ import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.event.StatsEventHandler;
 import org.stajistics.event.StatsEventType;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -84,17 +83,15 @@ public class StatsManagement {
             @Override
             public void handleStatsEvent(final StatsEventType eventType,
                                          final StatsKey key,
-                                         final org.stajistics.session.StatsSession session,
-                                         final StatsTracker tracker) {
+                                         final Object target) {
                 if (eventType == StatsEventType.SESSION_CREATED) {
-                    registerSessionMBean(session);
+                    registerSessionMBean((org.stajistics.session.StatsSession)target);
 
                 } else if (eventType == StatsEventType.SESSION_DESTROYED) {
                     unregisterSessionMBean(key);
 
                 } else if (eventType == StatsEventType.CONFIG_CREATED) {
-                    org.stajistics.StatsConfig cfg = Stats.getConfig(key);
-                    registerConfigMBean(key, cfg);
+                    registerConfigMBean(key, (org.stajistics.StatsConfig)target);
 
                 } else if (eventType == StatsEventType.CONFIG_DESTROYED) {
                     unregisterConfigMBean(key);

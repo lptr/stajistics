@@ -54,7 +54,7 @@ public interface StatsSession extends Serializable {
 
     DataSet dataSet();
 
-    void open(StatsTracker tracker, long now);
+    void track(StatsTracker tracker, long now);
 
     void update(StatsTracker tracker, long now);
 

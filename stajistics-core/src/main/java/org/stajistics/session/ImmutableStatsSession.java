@@ -119,7 +119,7 @@ public class ImmutableStatsSession implements StatsSession {
     }
 
     @Override
-    public void open(StatsTracker tracker, long now) {
+    public void track(StatsTracker tracker, long now) {
         throw new UnsupportedOperationException();
     }
 

@@ -14,7 +14,6 @@
  */
 package org.stajistics;
 
-import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTracker;
 
@@ -37,7 +36,9 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     public DefaultStatsConfigBuilder(final StatsKey key) {
         super(key);
 
-        StatsConfig config = Stats.getConfig(key);
+        StatsConfig config = Stats.getInstance()
+                                  .getConfigManager()
+                                  .getConfig(key);
         if (config != null) {
             unit = config.getUnit();
             trackerClass = config.getTrackerClass();
@@ -100,32 +101,16 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
 
         StatsKey key = super.newKey();
 
-        String unit = this.unit;
-        if (unit == null) {
-            unit = Constants.DEFAULT_UNIT;
-        }
-
-        Class<? extends StatsTracker> trackerClass = this.trackerClass;
-        if (trackerClass == null) {
-            trackerClass = Constants.DEFAULT_TRACKER_CLASS;
-        }
-
-        StatsSessionFactory sessionFactory = this.sessionFactory;
-        if (sessionFactory == null) {
-            sessionFactory = DefaultSessionFactory.getInstance();
-        }
-
         // Create StatsConfig
 
-        StatsConfigManager configManager = Stats.getInstance().getConfigManager();
-        StatsConfig config = configManager.getConfig(key); 
-        if (config == null) {
-            config = new DefaultStatsConfig(unit, trackerClass, sessionFactory);
-            StatsConfig existingConfig = configManager.putConfigIfAbsent(key, config);
-            if (existingConfig != null) {
-                config = existingConfig;
-            }
+        StatsConfig config = null;
+
+        if (unit != null || trackerClass != null || sessionFactory != null) {
+            config = DefaultStatsConfig.createDefaultConfig(unit, trackerClass, sessionFactory);
         }
+
+        StatsConfigManager configManager = Stats.getInstance().getConfigManager();
+        configManager.register(key, config);
 
         return key;
     }

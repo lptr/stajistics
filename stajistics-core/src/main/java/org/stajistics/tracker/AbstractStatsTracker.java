@@ -71,7 +71,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     }
 
     protected void trackImpl(final long now) {
-        session.open(this, now);
+        session.track(this, now);
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
         tracking = false;
 
-        commitImpl(System.currentTimeMillis());
+        commitImpl(-1);
 
         return this;
     }

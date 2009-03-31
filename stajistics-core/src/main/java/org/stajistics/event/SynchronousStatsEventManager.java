@@ -22,8 +22,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -127,8 +125,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     @Override
     public void fireEvent(final StatsEventType eventType, 
                           final StatsKey key,
-                          final StatsSession session,
-                          final StatsTracker tracker) {
+                          final Object target) {
 
         if (!enabled) {
             return;
@@ -140,20 +137,19 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
         List<StatsEventHandler> sessionEventHandlers = getSessionEventHandlers(key, false);
         if (sessionEventHandlers != null) {
-            fireEvent(sessionEventHandlers, eventType, key, session, tracker);
+            fireEvent(sessionEventHandlers, eventType, key, target);
         }
 
-        fireEvent(globalEventHandlers, eventType, key, session, tracker);
+        fireEvent(globalEventHandlers, eventType, key, target);
     }
 
     protected void fireEvent(final List<StatsEventHandler> handlers,
                              final StatsEventType eventType, 
                              final StatsKey key,
-                             final StatsSession session,
-                             final StatsTracker tracker) {
+                             final Object target) {
         for (StatsEventHandler handler : handlers) {
             try {
-                handler.handleStatsEvent(eventType, key, session, tracker);
+                handler.handleStatsEvent(eventType, key, target);
             } catch (Exception e) {
                 logger.error("Uncaught Exception in " + 
                                  StatsEventHandler.class.getSimpleName(), 

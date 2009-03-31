@@ -12,9 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
-
-import java.util.Set;
+package org.stajistics.tracker;
 
 /**
  * 
@@ -22,17 +20,11 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public interface StatsConfigManager {
+public class NanoTimeDurationTrackerTest extends AbstractStatsTrackerTestCase {
 
-    void clearConfigs();
+    @Override
+    protected StatsTracker createStatsTracker() {
+        return new NanoTimeDurationTracker(mockSession);
+    }
 
-    StatsConfig getRootConfig();
-
-    void setRootConfig(StatsConfig config);
-
-    Set<String> getKeyNames();
-
-    void register(StatsKey key, StatsConfig config);
-
-    StatsConfig getConfig(StatsKey key);
 }

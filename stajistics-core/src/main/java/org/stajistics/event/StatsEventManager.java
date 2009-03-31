@@ -15,8 +15,6 @@
 package org.stajistics.event;
 
 import org.stajistics.StatsKey;
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -48,7 +46,6 @@ public interface StatsEventManager {
 
     void fireEvent(StatsEventType eventType,
                    StatsKey key,
-                   StatsSession session,
-                   StatsTracker tracker);
+                   Object target);
 
 }

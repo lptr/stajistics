@@ -33,6 +33,12 @@ public class DefaultStatsConfig implements StatsConfig {
 
     protected StatsSessionFactory sessionFactory;
 
+    public DefaultStatsConfig(final StatsConfig template) {
+        this(template.getUnit(),
+             template.getTrackerClass(),
+             template.getSessionFactory());
+    }
+
     public DefaultStatsConfig(final String unit,
                               final Class<? extends StatsTracker> trackerClass,
                               final StatsSessionFactory sessionFactory) {
@@ -50,9 +56,25 @@ public class DefaultStatsConfig implements StatsConfig {
     }
 
     public static StatsConfig createDefaultConfig() {
-        return new DefaultStatsConfig(Constants.DEFAULT_UNIT,
-                                      Constants.DEFAULT_TRACKER_CLASS,
-                                      DefaultSessionFactory.getInstance());
+        return createDefaultConfig(null, null, null);
+    }
+
+    public static StatsConfig createDefaultConfig(String unit,
+                                                  Class<? extends StatsTracker> trackerClass,
+                                                  StatsSessionFactory sessionFactory) {
+        if (unit == null) {
+            unit = Constants.DEFAULT_UNIT;
+        }
+        if (trackerClass == null) {
+            trackerClass = Constants.DEFAULT_TRACKER_CLASS;
+        }
+        if (sessionFactory == null) {
+            sessionFactory = DefaultSessionFactory.getInstance();
+        }
+
+        return new DefaultStatsConfig(unit,
+                                      trackerClass,
+                                      sessionFactory);
     }
 
     @Override
@@ -93,4 +115,33 @@ public class DefaultStatsConfig implements StatsConfig {
         return trackerClass;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof StatsConfig) && equals((StatsConfig)obj);
+    }
+
+    public boolean equals(final StatsConfig other) {
+        if (other == null) {
+            return false;
+        }
+
+        if (!unit.equals(other.getUnit())) {
+            return false;
+        }
+        if (!trackerClass.equals(other.getTrackerClass())) {
+            return false;
+        }
+        if (!sessionFactory.equals(other.getSessionFactory())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return unit.hashCode() ^
+               trackerClass.hashCode() ^
+               sessionFactory.hashCode();
+    }
 }

@@ -147,16 +147,7 @@ public abstract class Stats {
     }
 
     public static StatsKey newKey(final String name) {
-        StatsKey key = new SimpleStatsKey(name);
-
-        StatsConfigManager configManager = getInstance().getConfigManager();
-        StatsConfig config = configManager.getConfig(key);
-        if (config == null) {
-            config = DefaultStatsConfig.createDefaultConfig();
-            configManager.putConfigIfAbsent(key, config);
-        }
-
-        return key;
+        return new SimpleStatsKey(name);
     }
 
     public static StatsConfigBuilder buildConfig(final String name) {

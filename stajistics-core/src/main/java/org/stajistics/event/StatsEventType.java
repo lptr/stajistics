@@ -22,15 +22,32 @@ package org.stajistics.event;
  */
 public enum StatsEventType {
 
-    CONFIG_CREATED,
-    CONFIG_CHANGED,
-    CONFIG_DESTROYED,
+    CONFIG_CREATED(0),
+    CONFIG_CHANGED(0),
+    CONFIG_DESTROYED(0),
 
-    SESSION_CREATED,
-    SESSION_CLEARED,
-    SESSION_DESTROYED,
+    SESSION_CREATED(1),
+    SESSION_CLEARED(1),
+    SESSION_DESTROYED(1),
 
-    TRACKER_OPENED,
-    TRACKER_COMMITTED
+    TRACKER_TRACKING(2),
+    TRACKER_COMMITTED(2);
 
+    private final int eventGroup;
+
+    private StatsEventType(final int eventGroup) {
+        this.eventGroup = eventGroup;
+    }
+
+    public boolean isConfigEvent() {
+        return eventGroup == 0;
+    }
+
+    public boolean isSessionEvent() {
+        return eventGroup == 1;
+    }
+
+    public boolean isTrackerEvent() {
+        return eventGroup == 2;
+    }
 }
