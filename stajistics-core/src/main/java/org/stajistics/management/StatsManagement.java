@@ -59,6 +59,8 @@ public class StatsManagement {
 
     protected static StatsManagement instance = new StatsManagement();
 
+    MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+
     protected StatsManagement() {}
 
     public static StatsManagement getInstance() {
@@ -66,7 +68,14 @@ public class StatsManagement {
     }
 
     protected MBeanServer getMBeanServer() {
-        return ManagementFactory.getPlatformMBeanServer();
+        return mBeanServer;
+    }
+
+    protected void setMBeanServer(final MBeanServer mBeanServer) {
+        if (mBeanServer == null) {
+            throw new NullPointerException("mBeanServer");
+        }
+        this.mBeanServer = mBeanServer;
     }
 
     public void initializeManagement() {
@@ -118,11 +127,9 @@ public class StatsManagement {
         String name = buildSessionManagerName();
 
         try {
-            MBeanServer mbs = getMBeanServer();
-
             SessionManagerMBean sessionManagerMBean = new SessionManager();
             ObjectName objectName = new ObjectName(name); 
-            mbs.registerMBean(sessionManagerMBean, objectName);
+            mBeanServer.registerMBean(sessionManagerMBean, objectName);
 
             logRegistrationSuccess(true, SessionManagerMBean.class, null, objectName);
 
@@ -140,10 +147,8 @@ public class StatsManagement {
         String name = buildSessionManagerName();
 
         try {
-            MBeanServer mbs = getMBeanServer();
-
             ObjectName objectName = new ObjectName(name);
-            mbs.unregisterMBean(objectName);
+            mBeanServer.unregisterMBean(objectName);
 
             logRegistrationSuccess(false, SessionManagerMBean.class, null, objectName);
 
@@ -162,12 +167,10 @@ public class StatsManagement {
         String name = buildName(key, TYPE_KEYS, SUBTYPE_CONFIG, false);
 
         try {
-            MBeanServer mbs = getMBeanServer();
-
             StatsConfigMBean configMBean = new StatsConfig(config);
             ObjectName objectName = new ObjectName(name);
 
-            mbs.registerMBean(configMBean, objectName);
+            mBeanServer.registerMBean(configMBean, objectName);
 
             logRegistrationSuccess(true, StatsConfigMBean.class, key, objectName);
 
@@ -185,10 +188,8 @@ public class StatsManagement {
         String name = buildName(key, TYPE_KEYS, SUBTYPE_CONFIG, false);
 
         try {
-            MBeanServer mbs = getMBeanServer();
-
             ObjectName objectName = new ObjectName(name);
-            mbs.unregisterMBean(objectName);
+            mBeanServer.unregisterMBean(objectName);
 
             logRegistrationSuccess(false, StatsConfigMBean.class, key, objectName);
 
@@ -206,12 +207,10 @@ public class StatsManagement {
         String name = buildName(session.getKey(), TYPE_KEYS, SUBTYPE_SESSION, true);
 
         try {
-            MBeanServer mbs = getMBeanServer();
-
             StatsSessionMBean sessionMBean = new StatsSession(session);
 
             ObjectName objectName = new ObjectName(name);
-            mbs.registerMBean(sessionMBean, objectName);
+            mBeanServer.registerMBean(sessionMBean, objectName);
 
             logRegistrationSuccess(true, StatsSessionMBean.class, session.getKey(), objectName);
 
@@ -229,10 +228,8 @@ public class StatsManagement {
         String name = buildName(key, TYPE_KEYS, SUBTYPE_SESSION, true);
 
         try {
-            MBeanServer mbs = getMBeanServer();
-
             ObjectName objectName = new ObjectName(name);
-            mbs.unregisterMBean(objectName);
+            mBeanServer.unregisterMBean(objectName);
 
             logRegistrationSuccess(false, StatsSessionMBean.class, key, objectName);
 

@@ -19,12 +19,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
+import java.lang.management.ManagementFactory;
+
 import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsKey;
@@ -47,8 +51,15 @@ public class StatsManagementTest {
 
     @Before
     public void setUp() {
+        getStatsManagement().setMBeanServer(MBeanServerFactory.newMBeanServer());
+
         mockery = new Mockery();
         mockKey = mockery.mock(StatsKey.class);
+    }
+
+    @After
+    public void tearDown() {
+        getStatsManagement().setMBeanServer(ManagementFactory.getPlatformMBeanServer());
     }
 
     private StatsManagement getStatsManagement() {
@@ -200,16 +211,9 @@ public class StatsManagementTest {
         ObjectName objectName = new ObjectName(sm.buildSessionManagerName());
         MBeanServer mBeanServer = sm.getMBeanServer();
 
-        try {
-            assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-            assertTrue(sm.registerSessionManagerMBean());
-            assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
-
-        } finally {
-            try {
-                mBeanServer.unregisterMBean(objectName);
-            } catch (Exception e) {}
-        }
+        assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
+        assertTrue(sm.registerSessionManagerMBean());
+        assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
     }
 
     @Test
@@ -219,17 +223,10 @@ public class StatsManagementTest {
         ObjectName objectName = new ObjectName(sm.buildSessionManagerName());
         MBeanServer mBeanServer = sm.getMBeanServer();
 
-        try {
-            mBeanServer.registerMBean(new SessionManager(), objectName);
+        mBeanServer.registerMBean(new SessionManager(), objectName);
 
-            assertTrue(sm.unregisterSessionManagerMBean());
-            assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-
-        } finally {
-            try {
-                mBeanServer.unregisterMBean(objectName);
-            } catch (Exception e) {}
-        }
+        assertTrue(sm.unregisterSessionManagerMBean());
+        assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
     }
 
     @Test
@@ -249,16 +246,9 @@ public class StatsManagementTest {
 
         ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_CONFIG, false));
 
-        try {
-            assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
-            assertTrue(sm.registerConfigMBean(mockKey, mockConfig));
-            assertEquals(1, mBeanServer.queryMBeans(name, null).size());
-
-        } finally {
-            try {
-                mBeanServer.unregisterMBean(name);
-            } catch (Exception e) {}
-        }
+        assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
+        assertTrue(sm.registerConfigMBean(mockKey, mockConfig));
+        assertEquals(1, mBeanServer.queryMBeans(name, null).size());
 
         mockery.assertIsSatisfied();
     }
@@ -280,17 +270,10 @@ public class StatsManagementTest {
 
         ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_CONFIG, false));
 
-        try {
-            mBeanServer.registerMBean(new StatsConfig(mockConfig), name);
+        mBeanServer.registerMBean(new StatsConfig(mockConfig), name);
 
-            assertTrue(sm.unregisterConfigMBean(mockKey));
-            assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
-
-        } finally {
-            try {
-                mBeanServer.unregisterMBean(name);
-            } catch (Exception e) {}
-        }
+        assertTrue(sm.unregisterConfigMBean(mockKey));
+        assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
 
         mockery.assertIsSatisfied();
     }
@@ -313,16 +296,9 @@ public class StatsManagementTest {
 
         ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_SESSION, false));
 
-        try {
-            assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
-            assertTrue(sm.registerSessionMBean(mockSession));
-            assertEquals(1, mBeanServer.queryMBeans(name, null).size());
-
-        } finally {
-            try {
-                mBeanServer.unregisterMBean(name);
-            } catch (Exception e) {}
-        }
+        assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
+        assertTrue(sm.registerSessionMBean(mockSession));
+        assertEquals(1, mBeanServer.queryMBeans(name, null).size());
 
         mockery.assertIsSatisfied();
     }
@@ -345,17 +321,10 @@ public class StatsManagementTest {
 
         ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_SESSION, false));
 
-        try {
-            mBeanServer.registerMBean(new StatsSession(mockSession), name);
+        mBeanServer.registerMBean(new StatsSession(mockSession), name);
 
-            assertTrue(sm.unregisterSessionMBean(mockKey));
-            assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
-
-        } finally {
-            try {
-                mBeanServer.unregisterMBean(name);
-            } catch (Exception e) {}
-        }
+        assertTrue(sm.unregisterSessionMBean(mockKey));
+        assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
 
         mockery.assertIsSatisfied();
     }
