@@ -405,7 +405,7 @@ final class KeyEntryConfigUpdater implements KeyEntry.Visitor {
 
     private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
     private final StatsConfig config;
-    private boolean first = false;
+    private boolean first = true;
 
     KeyEntryConfigUpdater(final StatsConfig config) {
         this.config = config;
