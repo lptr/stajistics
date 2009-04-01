@@ -32,4 +32,6 @@ public interface StatsConfigMBean {
 
     void setUnit(String unit) throws IOException;
 
+    String getDescription() throws IOException;
+
 }

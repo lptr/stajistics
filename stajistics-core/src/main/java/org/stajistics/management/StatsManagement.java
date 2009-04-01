@@ -42,9 +42,11 @@ public class StatsManagement {
 
     static final String DOMAIN = org.stajistics.Stats.class.getPackage().getName();
 
-    static final String MANAGER_TYPE = "manager";
-    static final String SESSION_TYPE = "session";
-    static final String CONFIG_TYPE = "config";
+    static final String TYPE_MANAGER = "manager";
+    static final String TYPE_KEYS = "keys";
+
+    static final String SUBTYPE_SESSION = "session";
+    static final String SUBTYPE_CONFIG = "config";
 
     private static final Pattern VALUE_ESCAPE_BACKSLASH_PATTERN = Pattern.compile("[\\\\]");
     private static final String VALUE_ESCAPE_BACKSLASH_REPLACEMENT = "\\\\\\\\";
@@ -104,7 +106,7 @@ public class StatsManagement {
         StringBuilder buf = new StringBuilder(128);
         buf.append(DOMAIN);
         buf.append(":type=");
-        buf.append(MANAGER_TYPE);
+        buf.append(TYPE_MANAGER);
         buf.append(",name=");
         buf.append(SessionManager.class.getSimpleName());
 
@@ -157,7 +159,7 @@ public class StatsManagement {
     public boolean registerConfigMBean(final StatsKey key,
                                        final org.stajistics.StatsConfig config) {
 
-        String name = buildName(key, CONFIG_TYPE, false);
+        String name = buildName(key, TYPE_KEYS, SUBTYPE_CONFIG, false);
 
         try {
             MBeanServer mbs = getMBeanServer();
@@ -180,7 +182,7 @@ public class StatsManagement {
 
     public boolean unregisterConfigMBean(final StatsKey key) {
 
-        String name = buildName(key, CONFIG_TYPE, false);
+        String name = buildName(key, TYPE_KEYS, SUBTYPE_CONFIG, false);
 
         try {
             MBeanServer mbs = getMBeanServer();
@@ -201,7 +203,7 @@ public class StatsManagement {
 
     public boolean registerSessionMBean(final org.stajistics.session.StatsSession session) {
 
-        String name = buildName(session.getKey(), SESSION_TYPE, true);
+        String name = buildName(session.getKey(), TYPE_KEYS, SUBTYPE_SESSION, true);
 
         try {
             MBeanServer mbs = getMBeanServer();
@@ -224,7 +226,7 @@ public class StatsManagement {
 
     public boolean unregisterSessionMBean(final StatsKey key) {
 
-        String name = buildName(key, SESSION_TYPE, true);
+        String name = buildName(key, TYPE_KEYS, SUBTYPE_SESSION, true);
 
         try {
             MBeanServer mbs = getMBeanServer();
@@ -245,6 +247,7 @@ public class StatsManagement {
 
     protected String buildName(final StatsKey key,
                                final String type,
+                               final String subtype,
                                final boolean includeAttributes) {
 
         StringBuilder buf = new StringBuilder(128);
@@ -265,6 +268,11 @@ public class StatsManagement {
 
                 appendValue(buf, entry.getValue().toString());
             }
+        }
+
+        if (subtype != null) {
+            buf.append(",subtype=");
+            buf.append(subtype);
         }
 
         return buf.toString();

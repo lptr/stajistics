@@ -44,7 +44,7 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testSetAndGetRootConfig() {
-        StatsConfig config = new DefaultStatsConfig("test", NullTracker.class, DefaultSessionFactory.getInstance());
+        StatsConfig config = new DefaultStatsConfig(NullTracker.class, DefaultSessionFactory.getInstance(), "test", null);
 
         configManager.setRootConfig(config);
         assertSame(config, configManager.getRootConfig());
@@ -56,17 +56,17 @@ public class DefaultStatsConfigManagerTest {
 
         StatsConfig rootConfig = configManager.getRootConfig();
 
-        configManager.register(key, null);
+        configManager.setConfig(key, null);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));
 
         key = new SimpleStatsKey("test.child");
-        configManager.register(key, null);
+        configManager.setConfig(key, null);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));
 
         key = new SimpleStatsKey("test.child.grandchild");
-        configManager.register(key, null);
+        configManager.setConfig(key, null);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));
     }
@@ -74,23 +74,23 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testRegister() {
         StatsKey key = new SimpleStatsKey("test");
-        StatsConfig config = new DefaultStatsConfig("test", NullTracker.class, DefaultSessionFactory.getInstance());
+        StatsConfig config = new DefaultStatsConfig(NullTracker.class, DefaultSessionFactory.getInstance(), "test", null);
 
         StatsConfig rootConfig = configManager.getRootConfig();
 
-        configManager.register(key, config);
+        configManager.setConfig(key, config);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config, configManager.getConfig(key));
 
         key = new SimpleStatsKey("test.child");
-        config = new DefaultStatsConfig("test2", NullTracker.class, DefaultSessionFactory.getInstance());
-        configManager.register(key, config);
+        config = new DefaultStatsConfig(NullTracker.class, DefaultSessionFactory.getInstance(), "test2", null);
+        configManager.setConfig(key, config);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config, configManager.getConfig(key));
 
         key = new SimpleStatsKey("test.child.grandchild");
-        config = new DefaultStatsConfig("test3", NullTracker.class, DefaultSessionFactory.getInstance());
-        configManager.register(key, config);
+        config = new DefaultStatsConfig(NullTracker.class, DefaultSessionFactory.getInstance(), "test3", null);
+        configManager.setConfig(key, config);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config, configManager.getConfig(key));
     }

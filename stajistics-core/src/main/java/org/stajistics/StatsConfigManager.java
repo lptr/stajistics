@@ -24,15 +24,17 @@ import java.util.Set;
  */
 public interface StatsConfigManager {
 
-    void clearConfigs();
-
     StatsConfig getRootConfig();
 
     void setRootConfig(StatsConfig config);
 
     Set<String> getKeyNames();
 
-    void register(StatsKey key, StatsConfig config);
+    void setConfig(StatsKey key, StatsConfig config);
 
     StatsConfig getConfig(StatsKey key);
+
+    void removeConfig(StatsKey key);
+
+    void clearConfigs();
 }

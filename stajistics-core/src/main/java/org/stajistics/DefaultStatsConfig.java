@@ -26,22 +26,25 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class DefaultStatsConfig implements StatsConfig {
 
-    protected volatile boolean enabled = true;
+    protected boolean enabled = true;
 
-    protected String unit;
     protected Class<? extends StatsTracker> trackerClass;
-
     protected StatsSessionFactory sessionFactory;
 
+    protected String unit;
+    protected String description;
+
     public DefaultStatsConfig(final StatsConfig template) {
-        this(template.getUnit(),
-             template.getTrackerClass(),
-             template.getSessionFactory());
+        this(template.getTrackerClass(),
+             template.getSessionFactory(),
+             template.getUnit(),
+             template.getDescription());
     }
 
-    public DefaultStatsConfig(final String unit,
-                              final Class<? extends StatsTracker> trackerClass,
-                              final StatsSessionFactory sessionFactory) {
+    public DefaultStatsConfig(final Class<? extends StatsTracker> trackerClass,
+                              final StatsSessionFactory sessionFactory,
+                              final String unit,
+                              final String description) {
 
         if (trackerClass == null) {
             throw new NullPointerException("trackerClass");
@@ -49,19 +52,27 @@ public class DefaultStatsConfig implements StatsConfig {
         if (sessionFactory == null) {
             throw new NullPointerException("sessionFactory");
         }
+        if (unit == null) {
+            throw new NullPointerException("unit");
+        }
+        if (unit.length() == 0) {
+            throw new IllegalArgumentException("empty unit");
+        }
 
-        setUnit(unit);
         this.trackerClass = trackerClass;
         this.sessionFactory = sessionFactory;
+        this.unit = unit;
+        this.description = description;
     }
 
     public static StatsConfig createDefaultConfig() {
-        return createDefaultConfig(null, null, null);
+        return createDefaultConfig(null, null, null, null);
     }
 
     public static StatsConfig createDefaultConfig(String unit,
                                                   Class<? extends StatsTracker> trackerClass,
-                                                  StatsSessionFactory sessionFactory) {
+                                                  StatsSessionFactory sessionFactory,
+                                                  String description) {
         if (unit == null) {
             unit = Constants.DEFAULT_UNIT;
         }
@@ -72,9 +83,10 @@ public class DefaultStatsConfig implements StatsConfig {
             sessionFactory = DefaultSessionFactory.getInstance();
         }
 
-        return new DefaultStatsConfig(unit,
-                                      trackerClass,
-                                      sessionFactory);
+        return new DefaultStatsConfig(trackerClass,
+                                      sessionFactory,
+                                      unit,
+                                      description);
     }
 
     @Override
@@ -83,26 +95,13 @@ public class DefaultStatsConfig implements StatsConfig {
     }
 
     @Override
-    public void setUnit(final String unit) {
-        if (unit == null) {
-            throw new NullPointerException("unit");
-        }
-
-        if (unit.length() == 0) {
-            throw new IllegalArgumentException("empty unit");
-        }
-
-        this.unit = unit;
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public boolean isEnabled() {
         return enabled;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
     }
 
     @Override
@@ -125,23 +124,25 @@ public class DefaultStatsConfig implements StatsConfig {
             return false;
         }
 
-        if (!unit.equals(other.getUnit())) {
-            return false;
-        }
         if (!trackerClass.equals(other.getTrackerClass())) {
             return false;
         }
         if (!sessionFactory.equals(other.getSessionFactory())) {
             return false;
         }
+        if (!unit.equals(other.getUnit())) {
+            return false;
+        }
+
+        // Description is not included in equality
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return unit.hashCode() ^
-               trackerClass.hashCode() ^
-               sessionFactory.hashCode();
+        return trackerClass.hashCode() ^
+               sessionFactory.hashCode() ^
+               unit.hashCode();
     }
 }

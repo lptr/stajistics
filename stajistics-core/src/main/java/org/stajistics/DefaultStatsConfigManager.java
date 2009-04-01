@@ -14,8 +14,11 @@
  */
 package org.stajistics;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -23,28 +26,105 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 
 /**
  * 
- * TODO: The current implementation is functional but does not support child key update notification
- * (i.e. if root config changes, all keys inheriting from it should have config_changed events fired.
  *
  * @author The Stajistics Project
  */
 public class DefaultStatsConfigManager implements StatsConfigManager {
+
     private ConcurrentMap<String,KeyEntry> keyMap = 
         new ConcurrentHashMap<String,KeyEntry>(128, 0.75f, 32);
 
-    private final KeyEntry rootKeyEntry = new KeyEntry(new SimpleStatsKey(""),
-                                                       null, 
-                                                       DefaultStatsConfig.createDefaultConfig());
+    private final KeyEntry rootKeyEntry;
 
     private final Lock updateLock = new ReentrantLock();
 
     public DefaultStatsConfigManager() {
-
+        this(DefaultStatsConfig.createDefaultConfig(), null);
     }
+
+    public DefaultStatsConfigManager(final StatsConfig rootConfig,
+                                     final Map<String,StatsConfig> configMap) {
+        if (rootConfig == null) {
+            throw new NullPointerException("rootConfig");
+        }
+
+        rootKeyEntry = new KeyEntry(new SimpleStatsKey(""),
+                                    null, 
+                                    rootConfig);
+
+        if (configMap != null) {
+            for (Map.Entry<String,StatsConfig> entry : configMap.entrySet()) {
+                setConfig(new SimpleStatsKey(entry.getKey()), entry.getValue());
+            }
+        }
+    }
+
+    @Override
+    public StatsConfig getRootConfig() {
+        return rootKeyEntry.getConfig();
+    }
+
+    @Override
+    public void setRootConfig(StatsConfig config) {
+        if (config == null) {
+            config = DefaultStatsConfig.createDefaultConfig();
+        }
+
+        updateEntry(rootKeyEntry, config, false);
+    }
+
+    @Override
+    public Set<String> getKeyNames() {
+        return keyMap.keySet();
+    }
+
+    @Override
+    public void setConfig(final StatsKey key, final StatsConfig config) {
+        if (key == null) {
+            throw new NullPointerException("key");
+        }
+
+        updateLock.lock();
+
+        KeyEntry entry = entryFor(key);
+        if (entry == null) {
+            createEntry(key, config, true, true);
+        } else {
+            updateEntry(entry, config, true);
+        }
+
+        // updateLock is unlock()ed by createEntry or updateEntry (before events are fired)
+    }
+
+    @Override
+    public StatsConfig getConfig(final StatsKey key) {
+        KeyEntry entry = entryFor(key);
+        if (entry == null) {
+            entry = createEntry(key, null, false, false);
+        }
+
+        return entry.getConfig();
+    }
+
+    @Override
+    public void removeConfig(final StatsKey key) {
+        KeyEntry entry = entryFor(key);
+        if (entry != null) {
+            destroyEntry(entry);
+        }
+    }
+
+    @Override
+    public void clearConfigs() {
+        destroyEntry(rootKeyEntry);
+    }
+
+    /* PRIVATE METHODS */
 
     private KeyEntry entryFor(final StatsKey key) {
         return keyMap.get(key.getName());
@@ -62,55 +142,12 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return parentKeyName;
     }
 
-    @Override
-    public void clearConfigs() {
-        updateLock.lock();
-        try {
-            keyMap.clear();
-
-        } finally {
-            updateLock.unlock();
-        }
-    }
-
-    @Override
-    public StatsConfig getRootConfig() {
-        return rootKeyEntry.getConfig();
-    }
-
-    @Override
-    public void setRootConfig(final StatsConfig config) {
-        rootKeyEntry.setConfig(config);
-
-        Stats.getEventManager()
-             .fireEvent(StatsEventType.CONFIG_CHANGED, rootKeyEntry.key, config);
-    }
-
-    @Override
-    public Set<String> getKeyNames() {
-        return keyMap.keySet();
-    }
-
-    @Override
-    public void register(final StatsKey key, final StatsConfig config) {
-        KeyEntry entry = keyMap.get(key.getName());
-        if (entry == null) {
-            doRegister(key, true, config);
-        } else {
-            if (entry.setConfig(config)) {
-                Stats.getEventManager()
-                     .fireEvent(StatsEventType.CONFIG_CHANGED, key, config);
-            }
-        }
-    }
-
-    private KeyEntry doRegister(final StatsKey key, final boolean updateConfig, final StatsConfig config) {
-
-        StatsConfig theConfig = config;
+    private KeyEntry createEntry(final StatsKey key, 
+                                 final StatsConfig config,
+                                 final boolean updateConfig, 
+                                 final boolean updateLocked) {
 
         boolean created = false;
-        boolean updated = false;
-
         boolean goingUp = true;
 
         String keyName = key.getName();
@@ -118,24 +155,24 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
         LinkedList<String> stack = new LinkedList<String>();
 
-        updateLock.lock();
+        if (!updateLocked) {
+            updateLock.lock();
+        }
+
         try {
             for (;;) {
                 if (goingUp) {
+                    entry = keyMap.get(keyName);
                     if (entry == null) {
                         String parentKeyName = parentKeyName(keyName);
                         stack.addLast(keyName);
                         keyName = parentKeyName;
                         if (keyName == null) {
+                            entry = rootKeyEntry;
                             goingUp = false;
                         }
 
                     } else {
-                        if (stack.isEmpty() && updateConfig) {
-                            // deepest entry exists, update it
-                            updated = entry.setConfig(theConfig);
-                        }
-
                         goingUp = false;
                     }
 
@@ -146,19 +183,18 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                         break;
                     }
 
-                    if (entry == null) {
-                        entry = rootKeyEntry;
+                    StatsConfig theConfig = null;
+                    if (stack.isEmpty()) {
+                        // Only set the real config on the deepest entry
+                        theConfig = config;
                     }
 
-                    // replace current entry with new child
-                    entry = new KeyEntry(new SimpleStatsKey(keyName), entry, theConfig);
+                    KeyEntry parentEntry = entry;
+                    entry = new KeyEntry(new SimpleStatsKey(keyName), parentEntry, theConfig);
+                    parentEntry.childEntries.add(entry);
+
                     keyMap.put(keyName, entry);
-
-                    if (updateConfig) {
-                        created = true;
-                    }
-
-                    theConfig = null; // only set the config on the deepest entry
+                    created = true;
                 }
             }
         } finally {
@@ -170,34 +206,76 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                  .fireEvent(StatsEventType.CONFIG_CREATED, key, config);
         }
 
-        if (updated) {
-            Stats.getEventManager()
-                 .fireEvent(StatsEventType.CONFIG_CHANGED, key, config);
-        }
-
         return entry;
     }
 
-    @Override
-    public StatsConfig getConfig(final StatsKey key) {
-        KeyEntry entry = entryFor(key);
-        if (entry == null) {
-            entry = doRegister(key, false, null);
+    private void updateEntry(KeyEntry entry, 
+                             final StatsConfig config,
+                             final boolean updateLocked) {
+        Iterator<KeyEntry> entryItr = null;
+
+        if (!updateLocked) {
+            updateLock.lock();
         }
 
-        return entry.getConfig();
+        try {
+            KeyEntryConfigUpdater configUpdater = new KeyEntryConfigUpdater(config);
+            configUpdater.visit(entry);
+            entryItr = configUpdater.iterator();
+
+        } finally {
+            updateLock.unlock();
+        }
+
+        if (entryItr != null) {
+            StatsEventManager eventManager = Stats.getEventManager();
+
+            while (entryItr.hasNext()) {
+                entry = entryItr.next();
+
+                eventManager.fireEvent(StatsEventType.CONFIG_CHANGED,
+                                       entry.getKey(), 
+                                       entry.getConfig());
+            }
+        }
+    }
+
+    private void destroyEntry(KeyEntry entry) {
+        Iterator<KeyEntry> entryItr;
+
+        updateLock.lock();
+        try {
+            KeyEntryDestroyer entryDestroyer = new KeyEntryDestroyer(keyMap);
+            entryDestroyer.visit(entry);
+            entryItr = entryDestroyer.iterator();
+
+        } finally {
+            updateLock.unlock();
+        }
+
+        StatsEventManager eventManager = Stats.getEventManager();
+
+        while (entryItr.hasNext()) {
+            entry = entryItr.next();
+
+            eventManager.fireEvent(StatsEventType.CONFIG_DESTROYED, 
+                                   entry.getKey(), 
+                                   entry.getConfig());
+        }
     }
 
 }
 
-class KeyEntry {
 
-    final StatsKey key;
-    private KeyEntry parentEntry;
+final class KeyEntry {
 
-    List<StatsKey> childKeys; //TODO: currently unused
+    private final StatsKey key;
 
-    // null means inherit parent config
+    KeyEntry parentEntry;
+
+    final List<KeyEntry> childEntries = new LinkedList<KeyEntry>();
+
+    private boolean configInherited;
     private final AtomicReference<StatsConfig> config = new AtomicReference<StatsConfig>(null);
 
     KeyEntry(final StatsKey key,
@@ -210,11 +288,28 @@ class KeyEntry {
 
         this.key = key;
         this.parentEntry = parentEntry;
-        this.config.set(config);
+
+        setConfig(config);
+    }
+
+    StatsKey getKey() {
+        return key;
+    }
+
+    void visit(final KeyEntry.Visitor visitor) {
+        if (visitor.visit(this)) {
+            for (KeyEntry childEntry : new ArrayList<KeyEntry>(childEntries)) {
+                childEntry.visit(visitor);
+            }
+        }
     }
 
     boolean isRoot() {
         return parentEntry == null;
+    }
+
+    boolean isConfigInherited() {
+        return configInherited;
     }
 
     /**
@@ -223,20 +318,29 @@ class KeyEntry {
      * @return <tt>true</tt> if the config changed;
      */
     boolean setConfig(final StatsConfig config) {
-        return (this.config.getAndSet(config).equals(config));
+        StatsConfig existingConfig = this.config.get();
+
+        if (config == null) {
+            this.config.set(findInheritedConfig());
+            configInherited = true;
+        } else {
+            this.config.set(config);
+            configInherited = false;
+        }
+
+        boolean changed = false;
+        if (existingConfig != null && !existingConfig.equals(this.config.get())) {
+            changed = true;
+        }
+
+        return changed;
     }
 
     StatsConfig getConfig() {
-        StatsConfig config = this.config.get();
-
-        if (config == null) {
-            config = findParentConfig();
-        }
-
-        return config;
+        return this.config.get();
     }
 
-    private StatsConfig findParentConfig() {
+    private StatsConfig findInheritedConfig() {
         StatsConfig result = null;
 
         KeyEntry entry = this.parentEntry;
@@ -249,7 +353,92 @@ class KeyEntry {
             entry = entry.parentEntry;
         }
 
+        if (result == null) {
+            throw new Error();
+        }
+
         return result;
     }
 
+    static interface Visitor {
+        boolean visit(KeyEntry entry);
+    }
+
 }
+
+
+final class KeyEntryDestroyer implements KeyEntry.Visitor {
+
+    private final Map<String,KeyEntry> keyMap;
+    private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
+
+    KeyEntryDestroyer(final Map<String,KeyEntry> keyMap) {
+        if (keyMap == null) {
+            throw new NullPointerException("keyMap");
+        }
+        this.keyMap = keyMap;
+    }
+
+    @Override
+    public boolean visit(final KeyEntry entry) {
+
+        keyMap.remove(entry.getKey().getName());
+
+        entryList.add(entry);
+
+        if (entry.parentEntry != null) {
+            entry.parentEntry.childEntries.remove(entry);
+        }
+
+        entry.parentEntry = null;
+
+        return true;
+    }
+
+    public Iterator<KeyEntry> iterator() {
+        return entryList.iterator();
+    }
+}
+
+
+final class KeyEntryConfigUpdater implements KeyEntry.Visitor {
+
+    private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
+    private final StatsConfig config;
+    private boolean first = false;
+
+    KeyEntryConfigUpdater(final StatsConfig config) {
+        this.config = config;
+    }
+
+    @Override
+    public boolean visit(final KeyEntry entry) {
+
+        // Only set the new config on the most shallow entry
+        if (first) {
+            if (!entry.setConfig(config)) {
+                // If the config hasn't changed, don't bother scanning/updating the children
+                return false;
+            }
+
+            entryList.add(entry);
+            first = false;
+
+            return true;
+        }
+
+        if (entry.isConfigInherited()) {
+            // Bubble down inherited config
+            if (entry.setConfig(null)) {
+                entryList.add(entry);
+            }
+        }
+
+        return true;
+    }
+
+    public Iterator<KeyEntry> iterator() {
+        return entryList.iterator();
+    }
+}
+

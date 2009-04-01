@@ -25,9 +25,10 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements StatsConfigBuilder {
 
-    protected String unit;
     protected Class<? extends StatsTracker> trackerClass;
     protected StatsSessionFactory sessionFactory;
+    protected String unit;
+    protected String description;
 
     public DefaultStatsConfigBuilder(final String name) {
         super(name);
@@ -40,9 +41,10 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
                                   .getConfigManager()
                                   .getConfig(key);
         if (config != null) {
-            unit = config.getUnit();
             trackerClass = config.getTrackerClass();
             sessionFactory = config.getSessionFactory();
+            unit = config.getUnit();
+            description = config.getDescription();
         }
     }
 
@@ -101,16 +103,17 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
 
         StatsKey key = super.newKey();
 
-        // Create StatsConfig
-
         StatsConfig config = null;
 
-        if (unit != null || trackerClass != null || sessionFactory != null) {
-            config = DefaultStatsConfig.createDefaultConfig(unit, trackerClass, sessionFactory);
+        if (trackerClass != null || sessionFactory != null || unit != null || description != null) {
+            config = DefaultStatsConfig.createDefaultConfig(unit, 
+                                                            trackerClass, 
+                                                            sessionFactory, 
+                                                            description);
         }
 
         StatsConfigManager configManager = Stats.getInstance().getConfigManager();
-        configManager.register(key, config);
+        configManager.setConfig(key, config);
 
         return key;
     }

@@ -37,7 +37,8 @@ import org.stajistics.StatsKey;
  */
 public class StatsManagementTest {
 
-    private static final String TEST_TYPE = "test";
+    private static final String TYPE_TEST = "test";
+    private static final String SUBTYPE_TEST = "test";
 
     private static final String NORMAL = "normal";
 
@@ -57,7 +58,7 @@ public class StatsManagementTest {
     @Test
     public void testBuildNameDomain() {
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
-        String name = getStatsManagement().buildName(mockKey, TEST_TYPE, true);
+        String name = getStatsManagement().buildName(mockKey, TYPE_TEST, SUBTYPE_TEST, true);
         assertTrue(name.startsWith(StatsManagement.DOMAIN));
     }
 
@@ -246,7 +247,7 @@ public class StatsManagementTest {
 
         MBeanServer mBeanServer = sm.getMBeanServer();
 
-        ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.CONFIG_TYPE, false));
+        ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_CONFIG, false));
 
         try {
             assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
@@ -277,7 +278,7 @@ public class StatsManagementTest {
 
         MBeanServer mBeanServer = sm.getMBeanServer();
 
-        ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.CONFIG_TYPE, false));
+        ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_CONFIG, false));
 
         try {
             mBeanServer.registerMBean(new StatsConfig(mockConfig), name);
@@ -310,7 +311,7 @@ public class StatsManagementTest {
 
         MBeanServer mBeanServer = sm.getMBeanServer();
 
-        ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.SESSION_TYPE, true));
+        ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_SESSION, false));
 
         try {
             assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
@@ -342,12 +343,12 @@ public class StatsManagementTest {
 
         MBeanServer mBeanServer = sm.getMBeanServer();
 
-        ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.CONFIG_TYPE, false));
+        ObjectName name = new ObjectName(sm.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_SESSION, false));
 
         try {
             mBeanServer.registerMBean(new StatsSession(mockSession), name);
 
-            assertTrue(sm.unregisterConfigMBean(mockKey));
+            assertTrue(sm.unregisterSessionMBean(mockKey));
             assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
 
         } finally {
@@ -361,7 +362,7 @@ public class StatsManagementTest {
 
     private void assertValidObjectName() {
 
-        String name = getStatsManagement().buildName(mockKey, TEST_TYPE, true);
+        String name = getStatsManagement().buildName(mockKey, TYPE_TEST, SUBTYPE_TEST, true);
 
         try {
             new ObjectName(name);
@@ -373,7 +374,7 @@ public class StatsManagementTest {
     }
 
     private void assertInvalidObjectName() {
-        String name = getStatsManagement().buildName(mockKey, TEST_TYPE, true);
+        String name = getStatsManagement().buildName(mockKey, TYPE_TEST, SUBTYPE_TEST, true);
 
         try {
             new ObjectName(name);

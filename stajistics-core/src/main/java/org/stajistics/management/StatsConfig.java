@@ -41,7 +41,7 @@ public class StatsConfig implements StatsConfigMBean {
 
     @Override
     public void setEnabled(final boolean enabled) throws IOException {
-        config.setEnabled(enabled);
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     @Override
@@ -51,6 +51,11 @@ public class StatsConfig implements StatsConfigMBean {
 
     @Override
     public void setUnit(final String unit) throws IOException {
-        config.setUnit(unit);
+        throw new UnsupportedOperationException("not yet implemented");
+    }
+
+    @Override
+    public String getDescription() throws IOException {
+        return config.getDescription();
     }
 }

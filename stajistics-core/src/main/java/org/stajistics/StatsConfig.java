@@ -27,14 +27,12 @@ public interface StatsConfig {
 
     boolean isEnabled();
 
-    void setEnabled(boolean enabled);
-
-    String getUnit();
-
-    void setUnit(String unit);
-
     Class<? extends StatsTracker> getTrackerClass();
 
     StatsSessionFactory getSessionFactory();
+
+    String getUnit();
+
+    String getDescription();
 
 }

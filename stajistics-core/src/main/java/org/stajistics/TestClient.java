@@ -21,7 +21,6 @@ import org.stajistics.event.StatsEventType;
 import org.stajistics.event.alarm.AbstractAlarmCondition;
 import org.stajistics.event.alarm.AlarmCondition;
 import org.stajistics.event.alarm.AlarmHandler;
-import org.stajistics.management.StatsManagement;
 import org.stajistics.session.ConcurrentStatsSession;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
