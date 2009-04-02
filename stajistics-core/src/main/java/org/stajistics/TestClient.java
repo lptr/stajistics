@@ -24,8 +24,8 @@ import org.stajistics.event.alarm.AlarmHandler;
 import org.stajistics.session.ConcurrentStatsSession;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
-import org.stajistics.session.collector.DistributionDataCollector;
-import org.stajistics.session.collector.RangeDataCollector;
+import org.stajistics.session.recorder.DistributionDataRecorder;
+import org.stajistics.session.recorder.RangeDataRecorder;
 import org.stajistics.tracker.ConcurrentAccessTracker;
 import org.stajistics.tracker.HitFrequencyTracker;
 import org.stajistics.tracker.StatsTracker;
@@ -46,14 +46,14 @@ class TestClient {
                                             @Override
                                             public StatsSession createSession(final StatsKey key) {
                                                 return new ConcurrentStatsSession(key,
-                                                            new DistributionDataCollector(),
-                                                            new RangeDataCollector(RangeList.build()
-                                                                                            .addRange(0, 5)
-                                                                                            .addRange(5, 10)
-                                                                                            .addRange(10, 20)
-                                                                                            .addRange(20, 40)
-                                                                                            .addRange(40, 80)
-                                                                                            .rangeList()));
+                                                            new DistributionDataRecorder(),
+                                                            new RangeDataRecorder(RangeList.build()
+                                                                                           .addRange(0, 5)
+                                                                                           .addRange(5, 10)
+                                                                                           .addRange(10, 20)
+                                                                                           .addRange(20, 40)
+                                                                                           .addRange(40, 80)
+                                                                                           .rangeList()));
                                             }
                                        }).newKey();
 

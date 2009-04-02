@@ -45,7 +45,7 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
         lock.lock();
         try {
             super.update(tracker, now);
-            snapshot = snapshot();
+            snapshot = new ImmutableStatsSession(this);
 
         } finally {
             lock.unlock();
@@ -59,21 +59,10 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
                                    final StatsTracker tracker) {}
 
     @Override
-    public StatsSession snapshot() {
+    public DataSet collectData() {
         lock.lock();
         try {
-            return super.snapshot();
-
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    @Override
-    public DataSet dataSet() {
-        lock.lock();
-        try {
-            return super.dataSet();
+            return super.collectData();
 
         } finally {
             lock.unlock();

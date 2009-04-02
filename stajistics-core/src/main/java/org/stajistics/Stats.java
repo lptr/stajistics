@@ -43,7 +43,8 @@ public abstract class Stats {
     private static volatile boolean enabled = true;
 
     static {
-        StatsManagement.getInstance().initializeManagement();
+        //TODO: this doesn't belong here
+        new StatsManagement().initializeManagement();
     }
 
     protected StatsConfigManager configManager;

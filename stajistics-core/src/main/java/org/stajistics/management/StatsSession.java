@@ -55,7 +55,7 @@ public class StatsSession implements StatsSessionMBean,DynamicMBean {
     @Override
     public Object getAttribute(final String attribute)
             throws AttributeNotFoundException,MBeanException,ReflectionException {
-        DataSet dataSet = session.dataSet();
+        DataSet dataSet = session.collectData();
         Object value = dataSet.getField(attribute);
         if (value == null) {
             throw new AttributeNotFoundException(attribute);
@@ -66,7 +66,7 @@ public class StatsSession implements StatsSessionMBean,DynamicMBean {
     @Override
     public AttributeList getAttributes(final String[] attributes) {
         AttributeList attrList = new AttributeList();
-        DataSet dataSet = session.dataSet();
+        DataSet dataSet = session.collectData();
         for (String name : attributes) {
             attrList.add(new Attribute(name, dataSet.getField(name)));
         }
@@ -75,7 +75,7 @@ public class StatsSession implements StatsSessionMBean,DynamicMBean {
 
     @Override
     public MBeanInfo getMBeanInfo() {
-        DataSet dataSet = session.dataSet();
+        DataSet dataSet = session.collectData();
 
         MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.size()];
 

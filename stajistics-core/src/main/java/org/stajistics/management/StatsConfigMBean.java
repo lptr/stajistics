@@ -34,4 +34,5 @@ public interface StatsConfigMBean {
 
     String getDescription() throws IOException;
 
+    void setDescription(String description) throws IOException;
 }

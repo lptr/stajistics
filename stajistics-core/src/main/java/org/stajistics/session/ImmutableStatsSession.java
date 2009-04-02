@@ -18,9 +18,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.stajistics.StatsKey;
-import org.stajistics.session.collector.DataCollector;
 import org.stajistics.session.data.DataSet;
 import org.stajistics.session.data.NullDataSet;
+import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -42,7 +42,7 @@ public class ImmutableStatsSession implements StatsSession {
 
     public ImmutableStatsSession(final StatsSession copyFrom) {
         this(copyFrom.getKey(),
-             copyFrom.dataSet());
+             copyFrom.collectData());
     }
 
     public ImmutableStatsSession(final StatsKey key,
@@ -64,12 +64,12 @@ public class ImmutableStatsSession implements StatsSession {
     }
 
     @Override
-    public List<DataCollector> getDataCollectors() {
+    public List<DataRecorder> getDataRecorders() {
         return Collections.emptyList();
     }
 
     @Override
-    public DataSet dataSet() {
+    public DataSet collectData() {
         return dataSet;
     }
 
@@ -126,11 +126,6 @@ public class ImmutableStatsSession implements StatsSession {
     @Override
     public void update(StatsTracker tracker, long now) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public StatsSession snapshot() {
-        return this;
     }
 
     @Override

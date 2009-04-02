@@ -18,8 +18,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.stajistics.StatsKey;
-import org.stajistics.session.collector.DataCollector;
 import org.stajistics.session.data.DataSet;
+import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -32,7 +32,7 @@ public interface StatsSession extends Serializable {
 
     StatsKey getKey();
 
-    List<DataCollector> getDataCollectors();
+    List<DataRecorder> getDataRecorders();
 
     long getHits();
 
@@ -52,13 +52,11 @@ public interface StatsSession extends Serializable {
 
     double getSum();
 
-    DataSet dataSet();
+    DataSet collectData();
 
     void track(StatsTracker tracker, long now);
 
     void update(StatsTracker tracker, long now);
-
-    StatsSession snapshot();
 
     void clear();
 

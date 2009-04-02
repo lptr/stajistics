@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.collector;
+package org.stajistics.session.recorder;
 
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.data.DataSet;
@@ -26,7 +26,7 @@ import org.stajistics.util.AtomicDouble;
  *
  * @author The Stajistics Project
  */
-public class DistributionDataCollector implements DataCollector {
+public class DistributionDataRecorder implements DataRecorder {
 
     protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
     protected final AtomicDouble sumOfInverses = new AtomicDouble(0); // For harmonic mean
@@ -57,7 +57,7 @@ public class DistributionDataCollector implements DataCollector {
     }
 
     @Override
-    public void getData(final StatsSession session, final MutableDataSet dataSet) {
+    public void collectData(final StatsSession session, final MutableDataSet dataSet) {
         dataSet.setField(DataSet.Field.ARITHMETIC_MEAN,
                          getArithmeticMean(session));
         dataSet.setField(DataSet.Field.GEOMETRIC_MEAN,
@@ -72,7 +72,7 @@ public class DistributionDataCollector implements DataCollector {
 
     @Override
     public void clear() {
-        product.set(0);
+        product.set(1);
         sumOfInverses.set(0);
         sumOfSquares.set(0);
     }

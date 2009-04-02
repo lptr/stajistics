@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.collector;
+package org.stajistics.session.recorder;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,19 +29,23 @@ import org.stajistics.util.RangeList;
  *
  * @author The Stajistics Project
  */
-public class RangeDataCollector implements DataCollector {
+public class RangeDataRecorder implements DataRecorder {
 
     private final RangeList rangeList;
     private final AtomicInteger[] hits;
 
-    public RangeDataCollector(final RangeList rangeList) {
+    public RangeDataRecorder(final RangeList rangeList) {
         if (rangeList == null) {
             throw new NullPointerException("rangeList");
         }
 
+        int size = rangeList.size();
+        if (size == 0) {
+            throw new IllegalArgumentException("rangeList is empty");
+        }
+
         this.rangeList = rangeList;
 
-        int size = rangeList.size();
         hits = new AtomicInteger[size];
         for (int i = 0; i < size; i++) {
             hits[i] = new AtomicInteger(0);
@@ -66,7 +70,7 @@ public class RangeDataCollector implements DataCollector {
     }
 
     @Override
-    public void getData(final StatsSession session, final MutableDataSet dataSet) {
+    public void collectData(final StatsSession session, final MutableDataSet dataSet) {
         List<Range> ranges = rangeList.getRanges();
         final int rangeCount = ranges.size();
         for (int i = 0; i < rangeCount; i++) {

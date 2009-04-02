@@ -18,7 +18,6 @@ import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Ignore;
 
 /**
  * 
@@ -26,7 +25,6 @@ import org.junit.Ignore;
  *
  * @author The Stajistics Project
  */
-@Ignore
 public abstract class TestUtil {
 
     private TestUtil() {}
@@ -57,6 +55,4 @@ public abstract class TestUtil {
             }
         }});
     }
-                                                     
-
 }

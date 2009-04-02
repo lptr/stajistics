@@ -57,21 +57,22 @@ public class StatsManagement {
     private static final Pattern VALUE_ESCAPE_DOUBLE_QUOTE_PATTERN = Pattern.compile("[\"]");
     private static final String VALUE_ESCAPE_DOUBLE_QUOTE_REPLACEMENT = "\\\\\"";
 
-    protected static StatsManagement instance = new StatsManagement();
+    private MBeanServer mBeanServer;
 
-    MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
-    protected StatsManagement() {}
-
-    public static StatsManagement getInstance() {
-        return instance;
+    public StatsManagement() {
+        this(ManagementFactory.getPlatformMBeanServer());
     }
 
-    protected MBeanServer getMBeanServer() {
+    public StatsManagement(final MBeanServer mBeanServer) {
+        setMBeanServer(mBeanServer);
+    }
+
+    public MBeanServer getMBeanServer() {
         return mBeanServer;
     }
 
-    protected void setMBeanServer(final MBeanServer mBeanServer) {
+    public void setMBeanServer(final MBeanServer mBeanServer) {
         if (mBeanServer == null) {
             throw new NullPointerException("mBeanServer");
         }
@@ -129,7 +130,8 @@ public class StatsManagement {
         try {
             SessionManagerMBean sessionManagerMBean = new SessionManager();
             ObjectName objectName = new ObjectName(name); 
-            mBeanServer.registerMBean(sessionManagerMBean, objectName);
+
+            registerMBean(sessionManagerMBean, objectName);
 
             logRegistrationSuccess(true, SessionManagerMBean.class, null, objectName);
 
@@ -170,7 +172,7 @@ public class StatsManagement {
             StatsConfigMBean configMBean = new StatsConfig(config);
             ObjectName objectName = new ObjectName(name);
 
-            mBeanServer.registerMBean(configMBean, objectName);
+            registerMBean(configMBean, objectName);
 
             logRegistrationSuccess(true, StatsConfigMBean.class, key, objectName);
 
@@ -210,7 +212,7 @@ public class StatsManagement {
             StatsSessionMBean sessionMBean = new StatsSession(session);
 
             ObjectName objectName = new ObjectName(name);
-            mBeanServer.registerMBean(sessionMBean, objectName);
+            registerMBean(sessionMBean, objectName);
 
             logRegistrationSuccess(true, StatsSessionMBean.class, session.getKey(), objectName);
 
@@ -240,6 +242,19 @@ public class StatsManagement {
         }
 
         return true;
+    }
+
+    private void registerMBean(final Object mBean,
+                               final ObjectName name) throws Exception {
+        if (mBeanServer.isRegistered(name)) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Replacing existing MBean: " + name);
+            }
+
+            mBeanServer.unregisterMBean(name);
+        }
+
+        mBeanServer.registerMBean(mBean, name);
     }
 
     protected String buildName(final StatsKey key,

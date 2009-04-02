@@ -58,4 +58,9 @@ public class StatsConfig implements StatsConfigMBean {
     public String getDescription() throws IOException {
         return config.getDescription();
     }
+
+    @Override
+    public void setDescription(String description) throws IOException {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
 }

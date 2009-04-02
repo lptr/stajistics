@@ -30,10 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.event.StatsEventType;
-import org.stajistics.session.collector.DataCollector;
 import org.stajistics.session.data.DataSet;
 import org.stajistics.session.data.DefaultDataSet;
 import org.stajistics.session.data.MutableDataSet;
+import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
 
@@ -70,27 +70,27 @@ public class ConcurrentStatsSession implements StatsSession {
     protected final AtomicDouble max = new AtomicDouble(Double.MIN_VALUE);
     protected final AtomicDouble sum = new AtomicDouble(0);
 
-    protected final List<DataCollector> dataCollectors;
+    protected final List<DataRecorder> dataRecorders;
 
     public ConcurrentStatsSession(final StatsKey key) {
-        this(key, (List<DataCollector>)null);
+        this(key, (List<DataRecorder>)null);
     }
 
-    public ConcurrentStatsSession(final StatsKey key, final DataCollector... dataCollectors) {
-        this(key, Arrays.asList(dataCollectors));
+    public ConcurrentStatsSession(final StatsKey key, final DataRecorder... dataRecorders) {
+        this(key, Arrays.asList(dataRecorders));
     }
 
-    public ConcurrentStatsSession(final StatsKey key, final List<DataCollector> dataCollectors) {
+    public ConcurrentStatsSession(final StatsKey key, final List<DataRecorder> dataRecorders) {
         if (key == null) {
             throw new NullPointerException("key");
         }
 
         this.key = key;
 
-        if (dataCollectors == null || dataCollectors.isEmpty()) {
-            this.dataCollectors = Collections.emptyList();
+        if (dataRecorders == null || dataRecorders.isEmpty()) {
+            this.dataRecorders = Collections.emptyList();
         } else {
-            this.dataCollectors = new ArrayList<DataCollector>(dataCollectors);
+            this.dataRecorders = new ArrayList<DataRecorder>(dataRecorders);
         }
     }
 
@@ -189,8 +189,8 @@ public class ConcurrentStatsSession implements StatsSession {
         // Sum
         sum.getAndAdd(currentValue);
 
-        for (DataCollector dataCollector : dataCollectors) {
-            dataCollector.update(this, tracker, now);
+        for (DataRecorder dataRecorder : dataRecorders) {
+            dataRecorder.update(this, tracker, now);
         }
 
         if (logger.isInfoEnabled()) {
@@ -237,7 +237,7 @@ public class ConcurrentStatsSession implements StatsSession {
     }
 
     @Override
-    public DataSet dataSet() {
+    public DataSet collectData() {
 
         MutableDataSet dataSet = new DefaultDataSet();
 
@@ -251,16 +251,11 @@ public class ConcurrentStatsSession implements StatsSession {
         dataSet.setField(DataSet.Field.MAX, getMax());
         dataSet.setField(DataSet.Field.SUM, getSum());
 
-        for (DataCollector dataCollector : dataCollectors) {
-            dataCollector.getData(this, dataSet);
+        for (DataRecorder dataRecorder : dataRecorders) {
+            dataRecorder.collectData(this, dataSet);
         }
 
         return dataSet;
-    }
-
-    @Override
-    public StatsSession snapshot() {
-        return new ImmutableStatsSession(this);
     }
 
     @Override
@@ -275,8 +270,8 @@ public class ConcurrentStatsSession implements StatsSession {
         max.set(0);
         sum.set(0);
 
-        for (DataCollector dataCollector : dataCollectors) {
-            dataCollector.clear();
+        for (DataRecorder dataRecorder : dataRecorders) {
+            dataRecorder.clear();
         }
 
         Stats.getEventManager()
@@ -284,8 +279,8 @@ public class ConcurrentStatsSession implements StatsSession {
     }
 
     @Override
-    public List<DataCollector> getDataCollectors() {
-        return Collections.unmodifiableList(dataCollectors);
+    public List<DataRecorder> getDataRecorders() {
+        return Collections.unmodifiableList(dataRecorders);
     }
 
     protected void appendStat(final StringBuilder buf,
@@ -310,7 +305,7 @@ public class ConcurrentStatsSession implements StatsSession {
         buf.append("[key=");
         buf.append(key);
 
-        DataSet dataSet = dataSet();
+        DataSet dataSet = collectData();
 
         for (String name : dataSet.getFieldNames()) {
             appendStat(buf, name, dataSet.getField(name));

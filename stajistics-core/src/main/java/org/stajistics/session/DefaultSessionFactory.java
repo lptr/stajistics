@@ -15,7 +15,7 @@
 package org.stajistics.session;
 
 import org.stajistics.StatsKey;
-import org.stajistics.session.collector.DistributionDataCollector;
+import org.stajistics.session.recorder.DistributionDataRecorder;
 
 /**
  * 
@@ -35,6 +35,6 @@ public class DefaultSessionFactory implements StatsSessionFactory {
 
     @Override
     public StatsSession createSession(final StatsKey key) {
-        return new ConcurrentStatsSession(key, new DistributionDataCollector());
+        return new ConcurrentStatsSession(key, new DistributionDataRecorder());
     }
 }
