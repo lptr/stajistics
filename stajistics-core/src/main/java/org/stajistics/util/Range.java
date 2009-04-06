@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
  */
 public class Range implements Iterable<Double> {
 
-    protected static boolean DEFAULT_EXCLUSIVE_RANGE_END = true;
+    protected static final boolean DEFAULT_EXCLUSIVE_RANGE_END = true;
 
     private static final DecimalFormat DECIMAL_FORMAT;
     static {

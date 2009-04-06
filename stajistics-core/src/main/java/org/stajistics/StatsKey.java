@@ -17,22 +17,113 @@ package org.stajistics;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.stajistics.session.StatsSession;
+
 /**
- * 
- * 
+ * A StatsKey acts as a handle for a single target for which statistics can be collected.
+ *
+ * <p>StatsKeys are composed of a name and, optionally, a set of attributes. One StatsKey
+ * is equal to another if the names are equal and the number, names, and values of their
+ * attributes are equal. A StatsKey of unique equality represents a single target to be tracked.
+ * StatsKeys are also used to address various entities in statistics collection that are associated
+ * with the key's target, such as, configuration ({@link StatsConfig}) and collected data
+ * ({@link StatsSession}). As StatsKeys are immutable, copies can be made using a 
+ * {@link StatsKeyBuilder}.</p>
+ *
+ * <dt>Naming and the Key Hierarchy</dt>
+ * <dd>
+ * <p>A key name is defined statically in the sense that it is not composed of runtime data. 
+ * A valid key name must be greater than zero length. There are no restrictions on which 
+ * characters can appear in a key name. Dot (.) characters, however, are interpreted as
+ * hierarchy delimiters.</p>
+ *
+ * <p>StatsKeys are organized into a hierarchy through the following naming convention. A key is
+ * the ancestor of another key if its name followed by a dot is a prefix of the descendant key name.
+ * A key is a parent of a child key if there are no ancestors between it and the descendant key.</p>
+ *
+ * <p>For example, a key named <tt>"foo"</tt> is the ancestor and parent of a key named 
+ * <tt>"foo.bar"</tt> and the ancestor of a key named <tt>"foo.bar.baz"</tt>. A key named 
+ * <tt>"foo.bar.baz"</tt> is the descendant and child of a key named <tt>"foo.bar"</tt> and the 
+ * descendant of a key named <tt>"foo"</tt>.</p>
+ *
+ * <p>The primary purpose of the key hierarchy is to discourage key naming clashes that may occur
+ * when separate modules using Stajistics, potentially created by different parties, are deployed
+ * to the same JVM. As such, it is recommended that key names be defined using the same 
+ * conventions as for 
+ * <a href="http://java.sun.com/docs/codeconv/html/CodeConventions.doc8.html">naming Java packages</a>.</p>
+ *
+ * <p>The secondary purpose of the key hierarchy is to allow more robust control over the 
+ * configuration of groups of related keys. See {@link StatsConfig} and {@link StatsConfigManager} 
+ * for details.</p>
+ * </dd>
+ *
+ * <dt>Attributes and Sub-Keys</dt>
+ * <dd>
+ * <p>Beyond the key hierarchy described above, there is the notion of sub-keys. Sub-keys 
+ * allow the client to conveniently refine the scope of another key.</p>
+ *
+ * <p>Sub-keys are defined by adding any number of attributes to a key. When a key has attributes, 
+ * it is said to be the sub-key of another key with the same name that does not have any attributes.
+ * Specifically, Key Y is a sub-key of key X if the two share the same name and key X has no 
+ * attributes. Since key X and Y are not equal, they can be assigned to different tracking targets.</p>
+ *
+ * <p>While the sub-key mechanism (and the key hierarchy mechanism) can be used in any way to 
+ * support various organizations of statistics tracking, the following is a useful example 
+ * usage of sub-keys:
+ * <blockquote>
+ *   A key named "com.acme.AnvilApp.http.sessions" is defined to track the total number of active 
+ *   HTTP sessions in a web application. A sub-key of this key that has an attribute "user" set to
+ *   the ID of the logged in user for the request. Using this configuration allows the tracking of 
+ *   data for all HTTP sessions as well as for HTTP sessions per user.
+ * </blockquote>
+ * </p>
+ *
+ * <p>TODO: Attribute naming restrictions/caveats</p>
+ * </dd>
+ *
+ * </dd>
+ *
+ * @see Stats
+ * @see StatsKeyBuilder
  *
  * @author The Stajistics Project
  */
 public interface StatsKey extends Serializable {
 
+    /**
+     * Get the key name.
+     *
+     * @return The name of this key.
+     */
     String getName();
 
+    /**
+     * Obtain the value of an attribute associated with this key by name.
+     *
+     * @param name The name of the attribute.
+     * @return The attribute value or <tt>null</tt> if the attribute does not exist.
+     */
     Object getAttribute(String name);
 
+    /**
+     * Obtain a {@link Map} of all attributes associated with this key.
+     *
+     * @return The {@link Map} of attribute names to values. The Map may be empty but never <tt>null</tt>.
+     */
     Map<String,Object> getAttributes();
 
+    /**
+     * Get the number of attributes associated with this key.
+     *
+     * @return The number of attributes associated with this key.
+     */
     int getAttributeCount();
 
+    /**
+     * Create another key instance using this instance as a template.
+     *
+     * @return A key builder initialized with this key's name and attributes.
+     */
     StatsKeyBuilder buildCopy();
 
 }

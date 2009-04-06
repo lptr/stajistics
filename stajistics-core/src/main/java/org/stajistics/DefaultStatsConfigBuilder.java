@@ -99,6 +99,12 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     }
 
     @Override
+    public StatsConfigBuilder withDescription(final String description) {
+        this.description = description;
+        return this;
+    }
+
+    @Override
     public StatsKey newKey() {
 
         StatsKey key = super.newKey();

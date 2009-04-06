@@ -25,6 +25,8 @@ import java.util.Set;
  */
 public final class NullDataSet implements DataSet {
 
+    private static final long serialVersionUID = 7206590288937897600L;
+
     private static final NullDataSet instance = new NullDataSet();
 
     private NullDataSet() {}

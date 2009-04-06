@@ -14,6 +14,7 @@
  */
 package org.stajistics.session.data;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -22,7 +23,7 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public interface DataSet {
+public interface DataSet extends Serializable {
 
     /**
      * Common field names

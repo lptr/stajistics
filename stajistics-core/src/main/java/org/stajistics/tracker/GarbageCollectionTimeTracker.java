@@ -28,8 +28,8 @@ import org.stajistics.session.StatsSession;
  */
 public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
 
-    private String[] startCGNames;
-    private long[] startGCTimes;
+    private String[] startCGNames = null;
+    private long[] startGCTimes = null;
 
     public GarbageCollectionTimeTracker(final StatsSession session) {
         super(session);

@@ -43,4 +43,6 @@ public interface StatsConfigBuilder extends StatsKeyBuilder {
 
     StatsConfigBuilder withSessionFactory(StatsSessionFactory sessionFactory);
 
+    StatsConfigBuilder withDescription(String description);
+
 }

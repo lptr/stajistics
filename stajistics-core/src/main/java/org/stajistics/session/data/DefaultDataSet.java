@@ -26,6 +26,8 @@ import java.util.Set;
  */
 public class DefaultDataSet implements MutableDataSet {
 
+    private static final long serialVersionUID = 3617870089402050877L;
+
     private Map<String,Object> data = createDataMap();
 
     public DefaultDataSet() {}
