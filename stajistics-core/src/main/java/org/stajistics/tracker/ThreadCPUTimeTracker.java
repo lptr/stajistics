@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -23,6 +25,8 @@ import org.stajistics.session.StatsSession;
  * @author The Stajistics Project
  */
 public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
+
+    public static final StatsTrackerFactory FACTORY = new Factory();
 
     private long startCPUTime; // nanos
 
@@ -42,13 +46,13 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     @Override
-    protected void commitImpl(final long now) {
+    protected void commitImpl() {
         if (isCPUTimeMonitoringEnabled()) {
             long endCPUTime = getThreadMXBean().getCurrentThreadCpuTime();
 
             value = (endCPUTime - startCPUTime) / 1000000d; // to millis
 
-            super.commitImpl(now);
+            session.update(this, -1);
         }
     }
 
@@ -59,5 +63,12 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
         startCPUTime = -1;
 
         return this;
+    }
+
+    public static class Factory implements StatsTrackerFactory {
+        @Override
+        public StatsTracker createTracker(final StatsKey key) {
+            return new ThreadCPUTimeTracker(Stats.getSessionManager().getSession(key));
+        }
     }
 }

@@ -27,7 +27,7 @@ import org.stajistics.session.StatsSession;
  */
 public abstract class AbstractStatsTracker implements StatsTracker {
 
-    protected static final Logger logger = LoggerFactory.getLogger(AbstractStatsTracker.class.getPackage().getName());
+    private static final Logger logger = LoggerFactory.getLogger(AbstractStatsTracker.class.getPackage().getName());
 
     protected StatsSession session;
 
@@ -87,13 +87,13 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
         tracking = false;
 
-        commitImpl(-1);
+        commitImpl();
 
         return this;
     }
 
-    protected void commitImpl(final long now) {
-        session.update(this, now);
+    protected void commitImpl() {
+        session.update(this, -1);
     }
 
     @Override

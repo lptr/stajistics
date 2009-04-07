@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -24,16 +26,23 @@ import org.stajistics.session.StatsSession;
  */
 public class ConcurrentAccessTracker extends AbstractStatsTracker {
 
+    public static final StatsTrackerFactory FACTORY = new Factory();
+
     public ConcurrentAccessTracker(final StatsSession statsSession) {
         super(statsSession);
     }
 
     @Override
-    protected void commitImpl(final long now) {
-        StatsSession session = getSession();
+    protected void commitImpl() {
         value = session.getHits() - session.getCommits();
 
-        super.commitImpl(now);
+        session.update(this, -1);
     }
 
+    public static class Factory implements StatsTrackerFactory {
+        @Override
+        public StatsTracker createTracker(final StatsKey key) {
+            return new ConcurrentAccessTracker(Stats.getSessionManager().getSession(key));
+        }
+    }
 }

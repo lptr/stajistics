@@ -15,7 +15,7 @@
 package org.stajistics;
 
 import org.stajistics.session.StatsSessionFactory;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -25,7 +25,7 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements StatsConfigBuilder {
 
-    protected Class<? extends StatsTracker> trackerClass;
+    protected StatsTrackerFactory trackerFactory;
     protected StatsSessionFactory sessionFactory;
     protected String unit;
     protected String description;
@@ -40,7 +40,7 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
         StatsConfig config = Stats.getConfigManager()
                                   .getConfig(key);
         if (config != null) {
-            trackerClass = config.getTrackerClass();
+            trackerFactory = config.getTrackerFactory();
             sessionFactory = config.getSessionFactory();
             unit = config.getUnit();
             description = config.getDescription();
@@ -78,12 +78,12 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     }
 
     @Override
-    public StatsConfigBuilder withTracker(final Class<? extends StatsTracker> trackerClass) {
-        if (trackerClass == null) {
-            throw new NullPointerException("trackerClass");
+    public StatsConfigBuilder withTrackerFactory(final StatsTrackerFactory trackerFactory) {
+        if (trackerFactory == null) {
+            throw new NullPointerException("trackerFactory");
         }
 
-        this.trackerClass = trackerClass;
+        this.trackerFactory = trackerFactory;
         return this;
     }
 
@@ -110,10 +110,10 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
 
         StatsConfig config = null;
 
-        if (trackerClass != null || sessionFactory != null || unit != null || description != null) {
-            config = DefaultStatsConfig.createDefaultConfig(unit, 
-                                                            trackerClass, 
+        if (trackerFactory != null || sessionFactory != null || unit != null || description != null) {
+            config = DefaultStatsConfig.createDefaultConfig(trackerFactory, 
                                                             sessionFactory, 
+                                                            unit, 
                                                             description);
         }
 

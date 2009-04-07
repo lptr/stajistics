@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 
@@ -24,6 +26,8 @@ import org.stajistics.session.StatsSession;
  * @author The Stajistics Project
  */
 public class NanoTimeDurationTracker extends AbstractStatsTracker {
+
+    public static final StatsTrackerFactory FACTORY = new Factory();
 
     private long nanoTime;
 
@@ -39,10 +43,16 @@ public class NanoTimeDurationTracker extends AbstractStatsTracker {
     }
 
     @Override
-    protected void commitImpl(final long now) {
+    protected void commitImpl() {
         value = (System.nanoTime() - nanoTime) / 1000000d;
 
-        super.commitImpl(now);
+        session.update(this, -1);
     }
 
+    public static class Factory implements StatsTrackerFactory {
+        @Override
+        public StatsTracker createTracker(final StatsKey key) {
+            return new NanoTimeDurationTracker(Stats.getSessionManager().getSession(key));
+        }
+    }
 }

@@ -16,7 +16,8 @@ package org.stajistics;
 
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 
@@ -28,26 +29,26 @@ public class DefaultStatsConfig implements StatsConfig {
 
     protected boolean enabled = true;
 
-    protected Class<? extends StatsTracker> trackerClass;
+    protected StatsTrackerFactory trackerFactory;
     protected StatsSessionFactory sessionFactory;
 
     protected String unit;
     protected String description;
 
     public DefaultStatsConfig(final StatsConfig template) {
-        this(template.getTrackerClass(),
+        this(template.getTrackerFactory(),
              template.getSessionFactory(),
              template.getUnit(),
              template.getDescription());
     }
 
-    public DefaultStatsConfig(final Class<? extends StatsTracker> trackerClass,
+    public DefaultStatsConfig(final StatsTrackerFactory trackerFactory,
                               final StatsSessionFactory sessionFactory,
                               final String unit,
                               final String description) {
 
-        if (trackerClass == null) {
-            throw new NullPointerException("trackerClass");
+        if (trackerFactory == null) {
+            throw new NullPointerException("trackerFactory");
         }
         if (sessionFactory == null) {
             throw new NullPointerException("sessionFactory");
@@ -59,7 +60,7 @@ public class DefaultStatsConfig implements StatsConfig {
             throw new IllegalArgumentException("empty unit");
         }
 
-        this.trackerClass = trackerClass;
+        this.trackerFactory = trackerFactory;
         this.sessionFactory = sessionFactory;
         this.unit = unit;
         this.description = description;
@@ -69,21 +70,21 @@ public class DefaultStatsConfig implements StatsConfig {
         return createDefaultConfig(null, null, null, null);
     }
 
-    public static StatsConfig createDefaultConfig(String unit,
-                                                  Class<? extends StatsTracker> trackerClass,
+    public static StatsConfig createDefaultConfig(StatsTrackerFactory trackerFactory,
                                                   StatsSessionFactory sessionFactory,
+                                                  String unit,
                                                   String description) {
-        if (unit == null) {
-            unit = Constants.DEFAULT_UNIT;
-        }
-        if (trackerClass == null) {
-            trackerClass = Constants.DEFAULT_TRACKER_CLASS;
+        if (trackerFactory == null) {
+            trackerFactory = TimeDurationTracker.FACTORY;
         }
         if (sessionFactory == null) {
             sessionFactory = DefaultSessionFactory.getInstance();
         }
+        if (unit == null) {
+            unit = Constants.DEFAULT_UNIT;
+        }
 
-        return new DefaultStatsConfig(trackerClass,
+        return new DefaultStatsConfig(trackerFactory,
                                       sessionFactory,
                                       unit,
                                       description);
@@ -110,8 +111,8 @@ public class DefaultStatsConfig implements StatsConfig {
     }
 
     @Override
-    public Class<? extends StatsTracker> getTrackerClass() {
-        return trackerClass;
+    public StatsTrackerFactory getTrackerFactory() {
+        return trackerFactory;
     }
 
     @Override
@@ -124,7 +125,7 @@ public class DefaultStatsConfig implements StatsConfig {
             return false;
         }
 
-        if (!trackerClass.equals(other.getTrackerClass())) {
+        if (!trackerFactory.equals(other.getTrackerFactory())) {
             return false;
         }
         if (!sessionFactory.equals(other.getSessionFactory())) {
@@ -141,7 +142,7 @@ public class DefaultStatsConfig implements StatsConfig {
 
     @Override
     public int hashCode() {
-        return trackerClass.hashCode() ^
+        return trackerFactory.hashCode() ^
                sessionFactory.hashCode() ^
                unit.hashCode();
     }

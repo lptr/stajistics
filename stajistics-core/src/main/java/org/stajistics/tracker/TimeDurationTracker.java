@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 
@@ -26,15 +28,25 @@ import org.stajistics.session.StatsSession;
  */
 public class TimeDurationTracker extends AbstractStatsTracker {
 
+    public static final StatsTrackerFactory FACTORY = new Factory();
+
     public TimeDurationTracker(final StatsSession session) {
         super(session);
     }
 
     @Override
-    protected void commitImpl(final long now) {
+    protected void commitImpl() {
+        final long now = System.currentTimeMillis(); 
         value = now - this.timeStamp;
 
-        super.commitImpl(now);
+        session.update(this, now);
+    }
+
+    public static class Factory implements StatsTrackerFactory {
+        @Override
+        public StatsTracker createTracker(final StatsKey key) {
+            return new TimeDurationTracker(Stats.getSessionManager().getSession(key));
+        }
     }
 
 }

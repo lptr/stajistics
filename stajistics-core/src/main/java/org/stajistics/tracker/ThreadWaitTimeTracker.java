@@ -16,6 +16,8 @@ package org.stajistics.tracker;
 
 import java.lang.management.ThreadInfo;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -25,6 +27,8 @@ import org.stajistics.session.StatsSession;
  * @author The Stajistics Project
  */
 public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
+
+    public static final StatsTrackerFactory FACTORY = new Factory();
 
     private long startWaitTime;
 
@@ -49,13 +53,13 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     @Override
-    protected void commitImpl(final long now) {
+    protected void commitImpl() {
         ThreadInfo threadInfo = getCurrentThreadInfo();
         if (threadInfo != null && startWaitTime > -1) {
             long endWaitTime = threadInfo.getWaitedTime();
             if (endWaitTime > -1) {
                 value = endWaitTime - startWaitTime;
-                super.commitImpl(now);
+                session.update(this, -1);
             }
         }
     }
@@ -67,5 +71,12 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
         startWaitTime = -1;
 
         return this;
+    }
+
+    public static class Factory implements StatsTrackerFactory {
+        @Override
+        public StatsTracker createTracker(final StatsKey key) {
+            return new ThreadWaitTimeTracker(Stats.getSessionManager().getSession(key));
+        }
     }
 }

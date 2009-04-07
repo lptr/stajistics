@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -23,6 +25,8 @@ import org.stajistics.session.StatsSession;
  * @author The Stajistics Project
  */
 public class ManualTracker extends AbstractStatsTracker {
+
+    public static final StatsTrackerFactory FACTORY = new Factory();
 
     public ManualTracker(final StatsSession statsSession) {
         super(statsSession);
@@ -38,4 +42,10 @@ public class ManualTracker extends AbstractStatsTracker {
         return this;
     }
 
+    public static class Factory implements StatsTrackerFactory {
+        @Override
+        public StatsTracker createTracker(final StatsKey key) {
+            return new ManualTracker(Stats.getSessionManager().getSession(key));
+        }
+    }
 }

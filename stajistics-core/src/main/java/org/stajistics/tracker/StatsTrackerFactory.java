@@ -14,7 +14,7 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.session.StatsSession;
+import org.stajistics.StatsKey;
 
 /**
  * 
@@ -24,7 +24,6 @@ import org.stajistics.session.StatsSession;
  */
 public interface StatsTrackerFactory {
 
-    <T extends StatsTracker> T createStatsTracker(StatsSession session,
-                                                  Class<T> trackerClass);
+    StatsTracker createTracker(StatsKey key);
 
 }

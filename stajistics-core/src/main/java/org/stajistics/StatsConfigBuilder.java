@@ -15,7 +15,7 @@
 package org.stajistics;
 
 import org.stajistics.session.StatsSessionFactory;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -37,11 +37,11 @@ public interface StatsConfigBuilder extends StatsKeyBuilder {
     @Override
     StatsConfigBuilder withAttribute(String name, Long value);
 
-    StatsConfigBuilder withUnit(String unit);
-
-    StatsConfigBuilder withTracker(Class<? extends StatsTracker> trackerClass);
+    StatsConfigBuilder withTrackerFactory(StatsTrackerFactory trackerFactory);
 
     StatsConfigBuilder withSessionFactory(StatsSessionFactory sessionFactory);
+
+    StatsConfigBuilder withUnit(String unit);
 
     StatsConfigBuilder withDescription(String description);
 

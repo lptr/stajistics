@@ -15,7 +15,7 @@
 package org.stajistics;
 
 import org.stajistics.session.StatsSessionFactory;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -27,7 +27,7 @@ public interface StatsConfig {
 
     boolean isEnabled();
 
-    Class<? extends StatsTracker> getTrackerClass();
+    StatsTrackerFactory getTrackerFactory();
 
     StatsSessionFactory getSessionFactory();
 

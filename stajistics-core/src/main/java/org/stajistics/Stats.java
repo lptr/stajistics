@@ -20,13 +20,10 @@ import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.SynchronousStatsEventManager;
 import org.stajistics.management.StatsManagement;
 import org.stajistics.session.DefaultSessionManager;
-import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.CompositeStatsTracker;
-import org.stajistics.tracker.DefaultStatsTrackerFactory;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -187,20 +184,15 @@ public abstract class Stats {
 
     public static class DefaultStats extends Stats {
 
-        //protected StatsTrackerStore trackerStore;
-        protected StatsTrackerFactory trackerFactory;
-
         public DefaultStats() {
             this(new DefaultStatsConfigManager(),
                  new DefaultSessionManager(),
-                 new SynchronousStatsEventManager(),
-                 new DefaultStatsTrackerFactory());
+                 new SynchronousStatsEventManager());
         }
 
         public DefaultStats(final StatsConfigManager configManager,
                             final StatsSessionManager sessionManager,
-                            final StatsEventManager eventManager,
-                            final StatsTrackerFactory trackerFactory) {
+                            final StatsEventManager eventManager) {
             if (configManager == null) {
                 throw new NullPointerException("configManager");
             }
@@ -210,14 +202,10 @@ public abstract class Stats {
             if (eventManager == null) {
                 throw new NullPointerException("eventManager");
             }
-            if (trackerFactory == null) {
-                throw new NullPointerException("trackerFactory");
-            }
 
             this.configManager = configManager;
             this.sessionManager = sessionManager;
             this.eventManager = eventManager;
-            this.trackerFactory = trackerFactory;
         }
 
         @Override
@@ -248,21 +236,11 @@ public abstract class Stats {
         @Override
         protected StatsTracker getTrackerImpl(final StatsKey key) {
 
-            StatsConfig config = configManager.getConfig(key);
-
-            StatsSession session = sessionManager.getSession(key);
-
-            /* Reusing StatsTrackers needs a lot more thought.
-             * Currently it is too complicated to bother with, so just
-             * create a new tracker every time.
-             */
-            //StatsTracker tracker = trackerStore.getTracker(statsSession);
-
             StatsTracker tracker = null;
 
+            StatsConfig config = configManager.getConfig(key);
             if (config.isEnabled()) {
-                tracker = trackerFactory.createStatsTracker(session, 
-                                                            config.getTrackerClass());
+                tracker = config.getTrackerFactory().createTracker(key);
             }
 
             return tracker;

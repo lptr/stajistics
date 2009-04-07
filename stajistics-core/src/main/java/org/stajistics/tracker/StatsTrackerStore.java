@@ -26,8 +26,4 @@ public interface StatsTrackerStore {
 
     StatsTracker getTracker(StatsSession session);
 
-    StatsTrackerFactory getTrackerFactory();
-
-    void setTrackerFactory(StatsTrackerFactory factory);
-
 }

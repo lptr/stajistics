@@ -58,12 +58,12 @@ class TestClient {
                                        }).newKey();
 
     private final StatsKey key2 = Stats.buildConfig("Test2")
-                                       .withTracker(ConcurrentAccessTracker.class)
+                                       .withTrackerFactory(ConcurrentAccessTracker.FACTORY)
                                        .withUnit("accesses")
                                        .newKey();
 
     private final StatsKey key3 = Stats.buildConfig("Test3")
-                                       .withTracker(HitFrequencyTracker.class)
+                                       .withTrackerFactory(HitFrequencyTracker.FACTORY)
                                        .newKey();
 
     public TestClient() {

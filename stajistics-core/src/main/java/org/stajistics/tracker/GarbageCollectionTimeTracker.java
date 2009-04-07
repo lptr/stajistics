@@ -18,6 +18,8 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -27,6 +29,8 @@ import org.stajistics.session.StatsSession;
  * @author The Stajistics Project
  */
 public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
+
+    public static final StatsTrackerFactory FACTORY = new Factory();
 
     private String[] startCGNames = null;
     private long[] startGCTimes = null;
@@ -52,7 +56,7 @@ public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
     }
 
     @Override
-    protected void commitImpl(final long now) {
+    protected void commitImpl() {
         List<GarbageCollectorMXBean> gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         if (gcMXBeans.size() == startCGNames.length) {
 
@@ -89,7 +93,7 @@ public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
 
             if (commit) {
                 value = totalGCTime;
-                super.commitImpl(now);
+                session.update(this, -1);
             }
         }
     }
@@ -102,5 +106,12 @@ public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
         startGCTimes = null;
 
         return this;
+    }
+
+    public static class Factory implements StatsTrackerFactory {
+        @Override
+        public StatsTracker createTracker(final StatsKey key) {
+            return new GarbageCollectionTimeTracker(Stats.getSessionManager().getSession(key));
+        }
     }
 }

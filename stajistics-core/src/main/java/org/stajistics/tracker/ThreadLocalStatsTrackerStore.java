@@ -33,12 +33,6 @@ public class ThreadLocalStatsTrackerStore implements StatsTrackerStore {
     private final ConcurrentMap<StatsKey,ThreadLocal<StatsTracker>> trackerMap =
         new ConcurrentHashMap<StatsKey,ThreadLocal<StatsTracker>>();
 
-    private StatsTrackerFactory factory;
-
-    public ThreadLocalStatsTrackerStore(final StatsTrackerFactory factory) {
-        setTrackerFactory(factory);
-    }
-
     @Override
     public StatsTracker getTracker(final StatsSession session) {
 
@@ -50,8 +44,7 @@ public class ThreadLocalStatsTrackerStore implements StatsTrackerStore {
                 @Override
                 protected StatsTracker initialValue() {
                     StatsConfig config = Stats.getConfigManager().getConfig(key);
-                    return factory.createStatsTracker(session,
-                                                      config.getTrackerClass());
+                    return config.getTrackerFactory().createTracker(key);
                 }
             };
 
@@ -62,20 +55,6 @@ public class ThreadLocalStatsTrackerStore implements StatsTrackerStore {
         }
 
         return trackerLocal.get();
-    }
-
-    @Override
-    public StatsTrackerFactory getTrackerFactory() {
-        return factory;
-    }
-
-    @Override
-    public void setTrackerFactory(final StatsTrackerFactory factory) {
-        if (factory == null) {
-            throw new NullPointerException("factory");
-        }
-
-        this.factory = factory;
     }
 
 }

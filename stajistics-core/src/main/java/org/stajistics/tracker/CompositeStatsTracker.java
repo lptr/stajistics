@@ -98,5 +98,4 @@ public class CompositeStatsTracker implements StatsTracker {
 
         return this;
     }
-
 }
