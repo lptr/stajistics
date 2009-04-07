@@ -49,7 +49,7 @@ public class ThreadLocalStatsTrackerStore implements StatsTrackerStore {
             trackerLocal = new ThreadLocal<StatsTracker>() {
                 @Override
                 protected StatsTracker initialValue() {
-                    StatsConfig config = Stats.getConfig(key);
+                    StatsConfig config = Stats.getConfigManager().getConfig(key);
                     return factory.createStatsTracker(session,
                                                       config.getTrackerClass());
                 }

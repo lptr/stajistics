@@ -37,8 +37,7 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     public DefaultStatsConfigBuilder(final StatsKey key) {
         super(key);
 
-        StatsConfig config = Stats.getInstance()
-                                  .getConfigManager()
+        StatsConfig config = Stats.getConfigManager()
                                   .getConfig(key);
         if (config != null) {
             trackerClass = config.getTrackerClass();
@@ -118,8 +117,7 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
                                                             description);
         }
 
-        StatsConfigManager configManager = Stats.getInstance().getConfigManager();
-        configManager.setConfig(key, config);
+        Stats.getConfigManager().setConfig(key, config);
 
         return key;
     }

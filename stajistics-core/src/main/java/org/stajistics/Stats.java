@@ -78,6 +78,10 @@ public abstract class Stats {
         return instance;
     }
 
+    public static StatsConfigManager getConfigManager() {
+        return getInstance().configManager;
+    }
+
     public static StatsSessionManager getSessionManager() {
         return getInstance().sessionManager;
     }
@@ -92,10 +96,6 @@ public abstract class Stats {
 
     public static void setEnabled(final boolean enabled) {
         Stats.enabled = enabled;
-    }
-
-    public static StatsConfig getConfig(final StatsKey key) {
-        return getInstance().getConfigManager().getConfig(key);
     }
 
     public static StatsTracker getTracker(final String name) {
@@ -147,13 +147,35 @@ public abstract class Stats {
         return getTracker(keys).track();
     }
 
+    public static void incident(final String name) {
+        getTracker(newKey(name)).track().commit();
+    }
+
+    public static void incident(final StatsKey key) {
+        getTracker(key).track().commit();
+    }
+
+    public static void incident(final StatsKey... keys) {
+        getTracker(keys).track().commit();
+    }
+
     public static StatsKey newKey(final String name) {
-        return new SimpleStatsKey(name);
+        return getInstance().createKey(name);
+    }
+
+    public static StatsKeyBuilder buildKey(final String name) {
+        return getInstance().createKeyBuilder(name);
     }
 
     public static StatsConfigBuilder buildConfig(final String name) {
         return getInstance().createConfigBuilder(name);
     }
+
+    protected abstract StatsKey createKey(String name);
+
+    protected abstract StatsKeyBuilder createKeyBuilder(String name);
+
+    protected abstract StatsKeyBuilder createKeyBuilder(StatsKey template);
 
     protected abstract StatsConfigBuilder createConfigBuilder(String name);
 
@@ -161,47 +183,56 @@ public abstract class Stats {
 
     protected abstract StatsTracker getTrackerImpl(StatsKey key);
 
-    protected StatsConfigManager getConfigManager() {
-        return configManager;
-    }
-
     /* NESTED CLASSES */
 
-    protected static class DefaultStats extends Stats {
+    public static class DefaultStats extends Stats {
 
         //protected StatsTrackerStore trackerStore;
         protected StatsTrackerFactory trackerFactory;
 
-        protected DefaultStats() {
-            super();
-
-            configManager = createConfigManager();
-            sessionManager = createSessionManager();
-            eventManager = createEventManager();
-            //trackerStore = createTrackerStore();
-            trackerFactory = createTrackerFactory();
+        public DefaultStats() {
+            this(new DefaultStatsConfigManager(),
+                 new DefaultSessionManager(),
+                 new SynchronousStatsEventManager(),
+                 new DefaultStatsTrackerFactory());
         }
 
-        protected StatsConfigManager createConfigManager() {
-            return new DefaultStatsConfigManager();
+        public DefaultStats(final StatsConfigManager configManager,
+                            final StatsSessionManager sessionManager,
+                            final StatsEventManager eventManager,
+                            final StatsTrackerFactory trackerFactory) {
+            if (configManager == null) {
+                throw new NullPointerException("configManager");
+            }
+            if (sessionManager == null) {
+                throw new NullPointerException("sessionManager");
+            }
+            if (eventManager == null) {
+                throw new NullPointerException("eventManager");
+            }
+            if (trackerFactory == null) {
+                throw new NullPointerException("trackerFactory");
+            }
+
+            this.configManager = configManager;
+            this.sessionManager = sessionManager;
+            this.eventManager = eventManager;
+            this.trackerFactory = trackerFactory;
         }
 
-        protected StatsSessionManager createSessionManager() {
-            return new DefaultSessionManager();
+        @Override
+        protected StatsKey createKey(final String name) {
+            return new SimpleStatsKey(name);
         }
 
-        protected StatsEventManager createEventManager() {
-            return new SynchronousStatsEventManager();
+        @Override
+        protected StatsKeyBuilder createKeyBuilder(final String name) {
+            return new DefaultStatsKeyBuilder(name);
         }
 
-        /*
-        protected StatsTrackerStore createTrackerStore() {
-            return new ThreadLocalStatsTrackerStore(new DefaultStatsTrackerFactory());
-        }
-        */
-
-        protected StatsTrackerFactory createTrackerFactory() {
-            return new DefaultStatsTrackerFactory();
+        @Override
+        protected StatsKeyBuilder createKeyBuilder(final StatsKey template) {
+            return new DefaultStatsKeyBuilder(template);
         }
 
         @Override

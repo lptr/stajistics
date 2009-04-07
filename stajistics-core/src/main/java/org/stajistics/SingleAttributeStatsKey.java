@@ -67,7 +67,7 @@ public class SingleAttributeStatsKey implements StatsKey {
 
     @Override
     public StatsKeyBuilder buildCopy() {
-        return Stats.getInstance().createConfigBuilder(this);
+        return Stats.getInstance().createKeyBuilder(this);
     }
 
     @Override

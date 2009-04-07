@@ -75,7 +75,7 @@ public class SimpleStatsKey implements StatsKey {
 
     @Override
     public StatsKeyBuilder buildCopy() {
-        return Stats.getInstance().createConfigBuilder(this);
+        return Stats.getInstance().createKeyBuilder(this);
     }
 
     @Override

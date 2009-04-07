@@ -101,7 +101,7 @@ public class DefaultSessionManager implements StatsSessionManager {
     }
 
     protected StatsSession createSession(final StatsKey key) {
-        StatsConfig config = Stats.getConfig(key);
+        StatsConfig config = Stats.getConfigManager().getConfig(key);
         return config.getSessionFactory().createSession(key);
     }
 
