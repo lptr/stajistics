@@ -81,7 +81,7 @@ public class DefaultStatsConfig implements StatsConfig {
             sessionFactory = DefaultSessionFactory.getInstance();
         }
         if (unit == null) {
-            unit = Constants.DEFAULT_UNIT;
+            unit = StatsConstants.DEFAULT_UNIT;
         }
 
         return new DefaultStatsConfig(trackerFactory,

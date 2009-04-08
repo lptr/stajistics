@@ -59,7 +59,7 @@ public class HitFrequencyTracker extends AbstractStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new HitFrequencyTracker(Stats.getSessionManager().getSession(key));
+            return new HitFrequencyTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }

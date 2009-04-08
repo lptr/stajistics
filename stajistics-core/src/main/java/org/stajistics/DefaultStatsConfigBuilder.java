@@ -48,6 +48,11 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
     }
 
     @Override
+    public StatsConfigBuilder withNameSuffix(String nameSuffix) {
+        return (StatsConfigBuilder)super.withNameSuffix(nameSuffix);
+    }
+
+    @Override
     public StatsConfigBuilder withAttribute(final String name, final String value) {
         return (StatsConfigBuilder)super.withAttribute(name, value);
     }

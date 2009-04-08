@@ -57,6 +57,11 @@ public class DefaultSessionManager implements StatsSessionManager {
 
     @Override
     public StatsSession getSession(final StatsKey key) {
+        return sessionMap.get(key);
+    }
+
+    @Override
+    public StatsSession getOrCreateSession(final StatsKey key) {
         if (key == null) {
             throw new NullPointerException("key");
         }

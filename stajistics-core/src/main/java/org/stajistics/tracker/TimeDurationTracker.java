@@ -45,7 +45,7 @@ public class TimeDurationTracker extends AbstractStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new TimeDurationTracker(Stats.getSessionManager().getSession(key));
+            return new TimeDurationTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 

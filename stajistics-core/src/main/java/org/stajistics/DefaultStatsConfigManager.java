@@ -203,7 +203,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
         if (created) {
             Stats.getEventManager()
-                 .fireEvent(StatsEventType.CONFIG_CREATED, key, config);
+                 .fireEvent(StatsEventType.CONFIG_CREATED, key, entry.getConfig());
         }
 
         return entry;

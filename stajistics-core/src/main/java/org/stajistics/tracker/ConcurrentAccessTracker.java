@@ -42,7 +42,7 @@ public class ConcurrentAccessTracker extends AbstractStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new ConcurrentAccessTracker(Stats.getSessionManager().getSession(key));
+            return new ConcurrentAccessTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }

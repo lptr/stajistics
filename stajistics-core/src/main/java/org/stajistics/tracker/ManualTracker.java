@@ -45,7 +45,7 @@ public class ManualTracker extends AbstractStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new ManualTracker(Stats.getSessionManager().getSession(key));
+            return new ManualTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }

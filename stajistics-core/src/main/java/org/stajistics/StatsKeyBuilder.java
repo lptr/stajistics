@@ -23,6 +23,8 @@ package org.stajistics;
  */
 public interface StatsKeyBuilder {
 
+    StatsKeyBuilder withNameSuffix(String nameSuffix);
+
     StatsKeyBuilder withAttribute(String name, String value);
 
     StatsKeyBuilder withAttribute(String name, Boolean value);

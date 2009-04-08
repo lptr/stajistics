@@ -76,7 +76,7 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new ThreadWaitTimeTracker(Stats.getSessionManager().getSession(key));
+            return new ThreadWaitTimeTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }

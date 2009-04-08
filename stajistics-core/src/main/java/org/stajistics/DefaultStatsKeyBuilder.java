@@ -64,6 +64,19 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
     }
 
     @Override
+    public StatsKeyBuilder withNameSuffix(final String nameSuffix) {
+        if (nameSuffix == null) {
+            throw new NullPointerException("nameSuffix");
+        }
+        if (nameSuffix.length() == 0) {
+            throw new IllegalArgumentException("nameSuffix is empty");
+        }
+
+        this.name += StatsConstants.KEY_HIERARCHY_DELIMITER + nameSuffix;
+        return this;
+    }
+
+    @Override
     public StatsKeyBuilder withAttribute(final String name, final String value) {
         putAttribute(name, value);
         return this;

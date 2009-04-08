@@ -111,7 +111,7 @@ public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new GarbageCollectionTimeTracker(Stats.getSessionManager().getSession(key));
+            return new GarbageCollectionTimeTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }

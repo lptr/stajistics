@@ -52,7 +52,7 @@ public class NanoTimeDurationTracker extends AbstractStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new NanoTimeDurationTracker(Stats.getSessionManager().getSession(key));
+            return new NanoTimeDurationTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }

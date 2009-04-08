@@ -14,8 +14,6 @@
  */
 package org.stajistics;
 
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 
@@ -23,9 +21,9 @@ import org.stajistics.tracker.TimeDurationTracker;
  *
  * @author The Stajistics Project
  */
-public interface Constants {
+public interface StatsConstants {
+
+    String KEY_HIERARCHY_DELIMITER = "."; 
 
     String DEFAULT_UNIT = "ms";
-    Class<? extends StatsTracker> DEFAULT_TRACKER_CLASS = TimeDurationTracker.class;
-
 }

@@ -35,6 +35,8 @@ public interface StatsSessionManager {
 
     StatsSession getSession(StatsKey key);
 
+    StatsSession getOrCreateSession(StatsKey key);
+
     StatsSession remove(StatsKey key);
 
     boolean remove(StatsSession statsSession);

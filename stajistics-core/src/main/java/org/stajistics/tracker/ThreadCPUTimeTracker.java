@@ -68,7 +68,7 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new ThreadCPUTimeTracker(Stats.getSessionManager().getSession(key));
+            return new ThreadCPUTimeTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }

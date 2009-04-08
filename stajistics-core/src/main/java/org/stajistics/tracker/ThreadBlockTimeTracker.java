@@ -76,7 +76,7 @@ public class ThreadBlockTimeTracker extends AbstractThreadInfoStatsTracker {
     public static class Factory implements StatsTrackerFactory {
         @Override
         public StatsTracker createTracker(final StatsKey key) {
-            return new ThreadBlockTimeTracker(Stats.getSessionManager().getSession(key));
+            return new ThreadBlockTimeTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }
