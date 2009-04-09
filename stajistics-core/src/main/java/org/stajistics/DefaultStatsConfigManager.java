@@ -220,7 +220,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
         try {
             KeyEntryConfigUpdater configUpdater = new KeyEntryConfigUpdater(config);
-            configUpdater.visit(entry);
+            entry.visit(configUpdater);
             entryItr = configUpdater.iterator();
 
         } finally {
@@ -246,7 +246,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         updateLock.lock();
         try {
             KeyEntryDestroyer entryDestroyer = new KeyEntryDestroyer(keyMap);
-            entryDestroyer.visit(entry);
+            entry.visit(entryDestroyer);
             entryItr = entryDestroyer.iterator();
 
         } finally {
