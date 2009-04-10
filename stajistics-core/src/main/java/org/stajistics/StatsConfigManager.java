@@ -32,9 +32,11 @@ public interface StatsConfigManager {
 
     void setConfig(StatsKey key, StatsConfig config);
 
+    boolean hasConfig(StatsKey key);
+
     StatsConfig getConfig(StatsKey key);
 
-    void removeConfig(StatsKey key);
+    StatsConfig removeConfig(StatsKey key);
 
     void clearConfigs();
 }

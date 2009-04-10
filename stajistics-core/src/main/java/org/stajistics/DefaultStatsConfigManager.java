@@ -102,6 +102,11 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     @Override
+    public boolean hasConfig(final StatsKey key) {
+        return entryFor(key) != null;
+    }
+
+    @Override
     public StatsConfig getConfig(final StatsKey key) {
         KeyEntry entry = entryFor(key);
         if (entry == null) {
@@ -112,11 +117,15 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     @Override
-    public void removeConfig(final StatsKey key) {
+    public StatsConfig removeConfig(final StatsKey key) {
         KeyEntry entry = entryFor(key);
         if (entry != null) {
+            StatsConfig config = entry.getConfig();
             destroyEntry(entry);
+            return config;
         }
+
+        return null;
     }
 
     @Override
