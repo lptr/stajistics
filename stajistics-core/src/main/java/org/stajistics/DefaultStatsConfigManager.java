@@ -28,6 +28,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
+import org.stajistics.session.DefaultSessionFactory;
+import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 
@@ -44,7 +46,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     private final Lock updateLock = new ReentrantLock();
 
     public DefaultStatsConfigManager() {
-        this(DefaultStatsConfig.createDefaultConfig(), null);
+        this(createDefaultConfig(), null);
     }
 
     public DefaultStatsConfigManager(final StatsConfig rootConfig,
@@ -64,6 +66,13 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         }
     }
 
+    private static StatsConfig createDefaultConfig() {
+        return new DefaultStatsConfig(TimeDurationTracker.FACTORY,
+                                      DefaultSessionFactory.getInstance(), 
+                                      StatsConstants.DEFAULT_UNIT,
+                                      null);
+    }
+
     @Override
     public StatsConfig getRootConfig() {
         return rootKeyEntry.getConfig();
@@ -72,7 +81,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     @Override
     public void setRootConfig(StatsConfig config) {
         if (config == null) {
-            config = DefaultStatsConfig.createDefaultConfig();
+            config = createDefaultConfig();
         }
 
         updateEntry(rootKeyEntry, config, false);
@@ -102,12 +111,17 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     @Override
-    public boolean hasConfig(final StatsKey key) {
-        return entryFor(key) != null;
+    public StatsConfig getConfig(final StatsKey key) {
+        KeyEntry entry = entryFor(key);
+        if (entry == null) {
+            return null;
+        }
+
+        return entry.getConfig();
     }
 
     @Override
-    public StatsConfig getConfig(final StatsKey key) {
+    public StatsConfig getOrCreateConfig(StatsKey key) {
         KeyEntry entry = entryFor(key);
         if (entry == null) {
             entry = createEntry(key, null, false, false);

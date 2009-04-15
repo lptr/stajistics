@@ -23,22 +23,7 @@ import org.stajistics.tracker.StatsTrackerFactory;
  *
  * @author The Stajistics Project
  */
-public interface StatsConfigBuilder extends StatsKeyBuilder {
-
-    @Override
-    StatsConfigBuilder withNameSuffix(String nameSuffix);
-
-    @Override
-    StatsConfigBuilder withAttribute(String name, String value);
-
-    @Override
-    StatsConfigBuilder withAttribute(String name, Boolean value);
-
-    @Override
-    StatsConfigBuilder withAttribute(String name, Integer value);
-
-    @Override
-    StatsConfigBuilder withAttribute(String name, Long value);
+public interface StatsConfigBuilder {
 
     StatsConfigBuilder withTrackerFactory(StatsTrackerFactory trackerFactory);
 
@@ -47,5 +32,9 @@ public interface StatsConfigBuilder extends StatsKeyBuilder {
     StatsConfigBuilder withUnit(String unit);
 
     StatsConfigBuilder withDescription(String description);
+
+    StatsConfig newConfig();
+
+    void set();
 
 }

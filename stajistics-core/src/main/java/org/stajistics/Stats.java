@@ -164,8 +164,8 @@ public abstract class Stats {
         return getInstance().createKeyBuilder(name);
     }
 
-    public static StatsConfigBuilder buildConfig(final String name) {
-        return getInstance().createConfigBuilder(name);
+    public static StatsConfigBuilder buildConfig(final StatsKey key) {
+        return getInstance().createConfigBuilder(key);
     }
 
     protected abstract StatsKey createKey(String name);
@@ -174,9 +174,7 @@ public abstract class Stats {
 
     protected abstract StatsKeyBuilder createKeyBuilder(StatsKey template);
 
-    protected abstract StatsConfigBuilder createConfigBuilder(String name);
-
-    protected abstract StatsConfigBuilder createConfigBuilder(StatsKey template);
+    protected abstract StatsConfigBuilder createConfigBuilder(StatsKey key);
 
     protected abstract StatsTracker getTrackerImpl(StatsKey key);
 
@@ -224,13 +222,8 @@ public abstract class Stats {
         }
 
         @Override
-        protected StatsConfigBuilder createConfigBuilder(final String name) {
-            return new DefaultStatsConfigBuilder(name);
-        }
-
-        @Override
-        protected StatsConfigBuilder createConfigBuilder(final StatsKey template) {
-            return new DefaultStatsConfigBuilder(template);
+        protected StatsConfigBuilder createConfigBuilder(final StatsKey key) {
+            return new DefaultStatsConfigBuilder(key);
         }
 
         @Override
@@ -238,7 +231,7 @@ public abstract class Stats {
 
             StatsTracker tracker = null;
 
-            StatsConfig config = configManager.getConfig(key);
+            StatsConfig config = configManager.getOrCreateConfig(key);
             if (config.isEnabled()) {
                 tracker = config.getTrackerFactory().createTracker(key);
             }

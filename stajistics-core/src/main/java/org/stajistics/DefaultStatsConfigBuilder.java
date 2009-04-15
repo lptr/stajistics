@@ -14,8 +14,10 @@
  */
 package org.stajistics;
 
+import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 
@@ -23,20 +25,16 @@ import org.stajistics.tracker.StatsTrackerFactory;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements StatsConfigBuilder {
+public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
+
+    protected StatsKey key;
 
     protected StatsTrackerFactory trackerFactory;
     protected StatsSessionFactory sessionFactory;
     protected String unit;
     protected String description;
 
-    public DefaultStatsConfigBuilder(final String name) {
-        super(name);
-    }
-
     public DefaultStatsConfigBuilder(final StatsKey key) {
-        super(key);
-
         StatsConfig config = Stats.getConfigManager()
                                   .getConfig(key);
         if (config != null) {
@@ -45,31 +43,6 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
             unit = config.getUnit();
             description = config.getDescription();
         }
-    }
-
-    @Override
-    public StatsConfigBuilder withNameSuffix(String nameSuffix) {
-        return (StatsConfigBuilder)super.withNameSuffix(nameSuffix);
-    }
-
-    @Override
-    public StatsConfigBuilder withAttribute(final String name, final String value) {
-        return (StatsConfigBuilder)super.withAttribute(name, value);
-    }
-
-    @Override
-    public StatsConfigBuilder withAttribute(final String name, final Boolean value) {
-        return (StatsConfigBuilder)super.withAttribute(name, value);
-    }
-
-    @Override
-    public StatsConfigBuilder withAttribute(final String name, final Integer value) {
-        return (StatsConfigBuilder)super.withAttribute(name, value);
-    }
-
-    @Override
-    public StatsConfigBuilder withAttribute(final String name, final Long value) {
-        return (StatsConfigBuilder)super.withAttribute(name, value);
     }
 
     @Override
@@ -108,22 +81,45 @@ public class DefaultStatsConfigBuilder extends DefaultStatsKeyBuilder implements
         return this;
     }
 
+    protected StatsTrackerFactory createDefaultTrackerFactory() {
+        return TimeDurationTracker.FACTORY;
+    }
+
+    protected StatsSessionFactory createDefaultSessionFactory() {
+        return DefaultSessionFactory.getInstance();
+    }
+
+    protected String createDefaultUnit() {
+        return StatsConstants.DEFAULT_UNIT;
+    }
+
     @Override
-    public StatsKey newKey() {
+    public StatsConfig newConfig() {
 
-        StatsKey key = super.newKey();
+        StatsTrackerFactory trackerFactory = this.trackerFactory;
+        StatsSessionFactory sessionFactory = this.sessionFactory;
+        String unit = this.unit;
 
-        StatsConfig config = null;
-
-        if (trackerFactory != null || sessionFactory != null || unit != null || description != null) {
-            config = DefaultStatsConfig.createDefaultConfig(trackerFactory, 
-                                                            sessionFactory, 
-                                                            unit, 
-                                                            description);
+        if (trackerFactory == null) {
+            trackerFactory = createDefaultTrackerFactory();
+        }
+        if (sessionFactory == null) {
+            sessionFactory = createDefaultSessionFactory();
+        }
+        if (unit == null) {
+            unit = createDefaultUnit();
         }
 
-        Stats.getConfigManager().setConfig(key, config);
-
-        return key;
+        return new DefaultStatsConfig(trackerFactory,
+                                      sessionFactory,
+                                      unit,
+                                      this.description);
     }
+
+    @Override
+    public void set() {
+        StatsConfig config = newConfig();
+        Stats.getConfigManager().setConfig(key, config);
+    }
+
 }

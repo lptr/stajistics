@@ -14,11 +14,9 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
@@ -151,14 +149,16 @@ public class DefaultStatsConfigManagerTest {
 
         // Level 0
         StatsConfig config0 = createConfig();
-        assertSame(rootConfig, configManager.getConfig(keys[0]));
+        assertNull(configManager.getConfig(keys[0]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
         configManager.setConfig(keys[0], config0);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
 
         // Level 1
         StatsConfig config1 = createConfig();
-        assertSame(config0, configManager.getConfig(keys[1]));
+        assertNull(configManager.getConfig(keys[1]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[1]));
         configManager.setConfig(keys[1], config1);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
@@ -166,7 +166,8 @@ public class DefaultStatsConfigManagerTest {
 
         // Level 2
         StatsConfig config2 = createConfig();
-        assertSame(config1, configManager.getConfig(keys[2]));
+        assertNull(configManager.getConfig(keys[2]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[2]));
         configManager.setConfig(keys[2], config2);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
@@ -175,7 +176,8 @@ public class DefaultStatsConfigManagerTest {
 
         // Level 3
         StatsConfig config3 = createConfig();
-        assertSame(config2, configManager.getConfig(keys[3]));
+        assertNull(configManager.getConfig(keys[3]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[3]));
         configManager.setConfig(keys[3], config3);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
@@ -228,67 +230,67 @@ public class DefaultStatsConfigManagerTest {
     }
 
     @Test
-    public void testGetRootConfigAscending() {
+    public void testGetOrCreateRootConfigAscending() {
 
         StatsKey[] keys = createKeyHierarchy();
 
         StatsConfig rootConfig = configManager.getRootConfig();
 
-        assertSame(rootConfig, configManager.getConfig(keys[0]));
-        assertSame(rootConfig, configManager.getConfig(keys[1]));
-        assertSame(rootConfig, configManager.getConfig(keys[2]));
-        assertSame(rootConfig, configManager.getConfig(keys[3]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[1]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[2]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[3]));
     }
 
     @Test
-    public void testGetRootConfigDescending() {
+    public void testGetOrCreateRootConfigDescending() {
 
         StatsKey[] keys = createKeyHierarchy();
 
         StatsConfig rootConfig = configManager.getRootConfig();
 
-        assertSame(rootConfig, configManager.getConfig(keys[3]));
-        assertSame(rootConfig, configManager.getConfig(keys[2]));
-        assertSame(rootConfig, configManager.getConfig(keys[1]));
-        assertSame(rootConfig, configManager.getConfig(keys[0]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[3]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[2]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[1]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
     }
 
     @Test
-    public void testGetLevel1SetLevel2GetLevel3SetLevel4() {
+    public void testGetOrCreate_GetLevel1_SetLevel2_GetLevel3_SetLevel4() {
 
         StatsKey[] keys = createKeyHierarchy();
 
         StatsConfig rootConfig = configManager.getRootConfig();
 
         // Get level 0
-        assertSame(rootConfig, configManager.getConfig(keys[0]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Set level 1
         StatsConfig config1 = createConfig();
         configManager.setConfig(keys[1], config1);
-        assertSame(config1, configManager.getConfig(keys[1]));
-        assertSame(rootConfig, configManager.getConfig(keys[0]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[1]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Get level 2
-        assertSame(config1, configManager.getConfig(keys[2]));
-        assertSame(config1, configManager.getConfig(keys[1]));
-        assertSame(rootConfig, configManager.getConfig(keys[0]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[2]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[1]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Set level 3
         StatsConfig config3 = createConfig();
         configManager.setConfig(keys[3], config3);
-        assertSame(config3, configManager.getConfig(keys[3]));
-        assertSame(config1, configManager.getConfig(keys[2]));
-        assertSame(config1, configManager.getConfig(keys[1]));
-        assertSame(rootConfig, configManager.getConfig(keys[0]));
+        assertSame(config3, configManager.getOrCreateConfig(keys[3]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[2]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[1]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
     }
 
     @Test
-    public void testSetLevel1GetLevel2SetLevel3GetLevel4() {
+    public void testGetOrCreate_SetLevel1_GetLevel2_SetLevel3_GetLevel4() {
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -297,62 +299,62 @@ public class DefaultStatsConfigManagerTest {
         // Set level 0
         StatsConfig config0 = createConfig();
         configManager.setConfig(keys[0], config0);
-        assertSame(config0, configManager.getConfig(keys[0]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Get level 1
-        assertSame(config0, configManager.getConfig(keys[1]));
-        assertSame(config0, configManager.getConfig(keys[0]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[1]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Set level 2
         StatsConfig config2 = createConfig();
         configManager.setConfig(keys[2], config2);
-        assertSame(config2, configManager.getConfig(keys[2]));
-        assertSame(config0, configManager.getConfig(keys[1]));
-        assertSame(config0, configManager.getConfig(keys[0]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[2]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[1]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Get level 3
-        assertSame(config2, configManager.getConfig(keys[3]));
-        assertSame(config2, configManager.getConfig(keys[2]));
-        assertSame(config0, configManager.getConfig(keys[1]));
-        assertSame(config0, configManager.getConfig(keys[0]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[3]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[2]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[1]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
     }
 
     @Test
-    public void testGetLevel4SetLevel3GetLevel2SetLevel1() {
+    public void testGetOrCreate_GetLevel4_SetLevel3_GetLevel2_SetLevel1() {
 
         StatsKey[] keys = createKeyHierarchy();
 
         StatsConfig rootConfig = configManager.getRootConfig();
 
         // Get level 3
-        assertSame(rootConfig, configManager.getConfig(keys[3]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[3]));
 
         // Set level 2
         StatsConfig config2 = createConfig();
         configManager.setConfig(keys[2], config2);
-        assertSame(config2, configManager.getConfig(keys[3]));
-        assertSame(config2, configManager.getConfig(keys[2]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[3]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[2]));
 
         // Get level 1
-        assertSame(rootConfig, configManager.getConfig(keys[1]));
-        assertSame(config2, configManager.getConfig(keys[3]));
-        assertSame(config2, configManager.getConfig(keys[2]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[1]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[3]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[2]));
 
         // Set level 0
         StatsConfig config0 = createConfig();
         configManager.setConfig(keys[0], config0);
-        assertSame(config0, configManager.getConfig(keys[0]));
-        assertSame(config0, configManager.getConfig(keys[1]));
-        assertSame(config2, configManager.getConfig(keys[2]));
-        assertSame(config2, configManager.getConfig(keys[3]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[0]));
+        assertSame(config0, configManager.getOrCreateConfig(keys[1]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[2]));
+        assertSame(config2, configManager.getOrCreateConfig(keys[3]));
     }
 
     @Test
-    public void testSetLevel4GetLevel3SetLevel2GetLevel1() {
+    public void testGetOrCreate_SetLevel4_GetLevel3_SetLevel2_GetLevel1() {
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -361,42 +363,42 @@ public class DefaultStatsConfigManagerTest {
         // Set level 3
         StatsConfig config3 = createConfig();
         configManager.setConfig(keys[3], config3);
-        assertSame(config3, configManager.getConfig(keys[3]));
+        assertSame(config3, configManager.getOrCreateConfig(keys[3]));
 
         // Get level 2
         assertSame(rootConfig, configManager.getConfig(keys[2]));
-        assertSame(config3, configManager.getConfig(keys[3]));
+        assertSame(config3, configManager.getOrCreateConfig(keys[3]));
 
         // Set level 1
         StatsConfig config1 = createConfig();
         configManager.setConfig(keys[1], config1);
-        assertSame(config1, configManager.getConfig(keys[1]));
-        assertSame(config1, configManager.getConfig(keys[2]));
-        assertSame(config3, configManager.getConfig(keys[3]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[1]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[2]));
+        assertSame(config3, configManager.getOrCreateConfig(keys[3]));
 
         // Get level 0
-        assertSame(rootConfig, configManager.getConfig(keys[0]));
-        assertSame(config1, configManager.getConfig(keys[1]));
-        assertSame(config1, configManager.getConfig(keys[2]));
-        assertSame(config3, configManager.getConfig(keys[3]));
+        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[1]));
+        assertSame(config1, configManager.getOrCreateConfig(keys[2]));
+        assertSame(config3, configManager.getOrCreateConfig(keys[3]));
     }
 
     @Test
-    public void testHasConfig() {
+    public void testGetConfig() {
 
         StatsKey[] keys = createKeyHierarchy();
 
         configManager.setConfig(keys[0], createConfig());
-        assertTrue(configManager.hasConfig(keys[0]));
+        assertNotNull(configManager.getConfig(keys[0]));
 
         configManager.setConfig(keys[1], createConfig());
-        assertTrue(configManager.hasConfig(keys[1]));
+        assertNotNull(configManager.getConfig(keys[1]));
 
         configManager.setConfig(keys[2], createConfig());
-        assertTrue(configManager.hasConfig(keys[2]));
+        assertNotNull(configManager.getConfig(keys[2]));
 
         configManager.setConfig(keys[3], createConfig());
-        assertTrue(configManager.hasConfig(keys[3]));
+        assertNotNull(configManager.getConfig(keys[3]));
     }
 
     @Test
@@ -415,10 +417,10 @@ public class DefaultStatsConfigManagerTest {
         configManager.setConfig(keys[3], config3);
 
         assertSame(config0, configManager.removeConfig(keys[0]));
-        assertFalse(configManager.hasConfig(keys[0]));
-        assertFalse(configManager.hasConfig(keys[1]));
-        assertFalse(configManager.hasConfig(keys[2]));
-        assertFalse(configManager.hasConfig(keys[3]));
+        assertNull(configManager.getConfig(keys[0]));
+        assertNull(configManager.getConfig(keys[1]));
+        assertNull(configManager.getConfig(keys[2]));
+        assertNull(configManager.getConfig(keys[3]));
         assertNull(configManager.removeConfig(keys[0]));
         assertNull(configManager.removeConfig(keys[1]));
         assertNull(configManager.removeConfig(keys[2]));
@@ -441,31 +443,31 @@ public class DefaultStatsConfigManagerTest {
         configManager.setConfig(keys[3], config3);
 
         assertSame(config3, configManager.removeConfig(keys[3]));
-        assertFalse(configManager.hasConfig(keys[3]));
-        assertTrue(configManager.hasConfig(keys[2]));
-        assertTrue(configManager.hasConfig(keys[1]));
-        assertTrue(configManager.hasConfig(keys[0]));
+        assertNull(configManager.getConfig(keys[3]));
+        assertNotNull(configManager.getConfig(keys[2]));
+        assertNotNull(configManager.getConfig(keys[1]));
+        assertNotNull(configManager.getConfig(keys[0]));
         assertNull(configManager.removeConfig(keys[3]));
 
         assertSame(config2, configManager.removeConfig(keys[2]));
-        assertFalse(configManager.hasConfig(keys[3]));
-        assertFalse(configManager.hasConfig(keys[2]));
-        assertTrue(configManager.hasConfig(keys[1]));
-        assertTrue(configManager.hasConfig(keys[0]));
+        assertNull(configManager.getConfig(keys[3]));
+        assertNull(configManager.getConfig(keys[2]));
+        assertNotNull(configManager.getConfig(keys[1]));
+        assertNotNull(configManager.getConfig(keys[0]));
         assertNull(configManager.removeConfig(keys[2]));
 
         assertSame(config1, configManager.removeConfig(keys[1]));
-        assertFalse(configManager.hasConfig(keys[3]));
-        assertFalse(configManager.hasConfig(keys[2]));
-        assertFalse(configManager.hasConfig(keys[1]));
-        assertTrue(configManager.hasConfig(keys[0]));
+        assertNull(configManager.getConfig(keys[3]));
+        assertNull(configManager.getConfig(keys[2]));
+        assertNull(configManager.getConfig(keys[1]));
+        assertNotNull(configManager.getConfig(keys[0]));
         assertNull(configManager.removeConfig(keys[1]));
 
         assertSame(config0, configManager.removeConfig(keys[0]));
-        assertFalse(configManager.hasConfig(keys[3]));
-        assertFalse(configManager.hasConfig(keys[2]));
-        assertFalse(configManager.hasConfig(keys[1]));
-        assertFalse(configManager.hasConfig(keys[0]));
+        assertNull(configManager.getConfig(keys[3]));
+        assertNull(configManager.getConfig(keys[2]));
+        assertNull(configManager.getConfig(keys[1]));
+        assertNull(configManager.getConfig(keys[0]));
         assertNull(configManager.removeConfig(keys[0]));
     }
 
@@ -485,10 +487,10 @@ public class DefaultStatsConfigManagerTest {
 
         configManager.clearConfigs();
 
-        assertFalse(configManager.hasConfig(keys[3]));
-        assertFalse(configManager.hasConfig(keys[2]));
-        assertFalse(configManager.hasConfig(keys[1]));
-        assertFalse(configManager.hasConfig(keys[0]));
+        assertNull(configManager.getConfig(keys[3]));
+        assertNull(configManager.getConfig(keys[2]));
+        assertNull(configManager.getConfig(keys[1]));
+        assertNull(configManager.getConfig(keys[0]));
     }
 
 }

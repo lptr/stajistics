@@ -14,10 +14,8 @@
  */
 package org.stajistics;
 
-import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
-import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * 
@@ -66,30 +64,6 @@ public class DefaultStatsConfig implements StatsConfig {
         this.description = description;
     }
 
-    public static StatsConfig createDefaultConfig() {
-        return createDefaultConfig(null, null, null, null);
-    }
-
-    public static StatsConfig createDefaultConfig(StatsTrackerFactory trackerFactory,
-                                                  StatsSessionFactory sessionFactory,
-                                                  String unit,
-                                                  String description) {
-        if (trackerFactory == null) {
-            trackerFactory = TimeDurationTracker.FACTORY;
-        }
-        if (sessionFactory == null) {
-            sessionFactory = DefaultSessionFactory.getInstance();
-        }
-        if (unit == null) {
-            unit = StatsConstants.DEFAULT_UNIT;
-        }
-
-        return new DefaultStatsConfig(trackerFactory,
-                                      sessionFactory,
-                                      unit,
-                                      description);
-    }
-
     @Override
     public String getUnit() {
         return unit;
@@ -134,16 +108,29 @@ public class DefaultStatsConfig implements StatsConfig {
         if (!unit.equals(other.getUnit())) {
             return false;
         }
-
-        // Description is not included in equality
+        if (!equalsNullAware(description, other.getDescription())) {
+            return false;
+        }
 
         return true;
+    }
+
+    private boolean equalsNullAware(final Object obj1, final Object obj2) {
+        if (obj1 == null) {
+            return obj2 == null;
+
+        } else if (obj2 == null) {
+            return false;
+        }
+
+        return obj1.equals(obj2);
     }
 
     @Override
     public int hashCode() {
         return trackerFactory.hashCode() ^
                sessionFactory.hashCode() ^
-               unit.hashCode();
+               unit.hashCode() ^
+               ((description == null) ? 0 : description.hashCode());
     }
 }
