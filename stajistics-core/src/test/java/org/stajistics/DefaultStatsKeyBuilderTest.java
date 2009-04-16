@@ -16,6 +16,7 @@ package org.stajistics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
 import org.jmock.Expectations;
@@ -183,5 +184,50 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals("value3", key.getAttributes().get("test3"));
 
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testCopyKeyWithoutAttribute1() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        StatsKey key = mockKey.buildCopy()
+                              .withoutAttribute("existing")
+                              .newKey();
+
+        assertEquals(0, key.getAttributeCount());
+        assertTrue(key.getAttributes().isEmpty());
+    }
+
+    @Test
+    public void testCopyKeyWithoutAttribute2() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        StatsKey key = mockKey.buildCopy()
+                              .withoutAttribute("existing")
+                              .withAttribute("new", "thing")
+                              .newKey();
+
+        assertEquals(1, key.getAttributeCount());
+        assertEquals(1, key.getAttributes().size());
+        assertNull(key.getAttribute("existing"));
+        assertEquals("thing", key.getAttribute("new"));
+    }
+
+    @Test
+    public void testCopyKeyWithoutAttribute3() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        StatsKey key = mockKey.buildCopy()
+                              .withAttribute("new", "thing")
+                              .withoutAttribute("existing")
+                              .newKey();
+
+        assertEquals(1, key.getAttributeCount());
+        assertEquals(1, key.getAttributes().size());
+        assertNull(key.getAttribute("existing"));
+        assertEquals("thing", key.getAttribute("new"));
     }
 }

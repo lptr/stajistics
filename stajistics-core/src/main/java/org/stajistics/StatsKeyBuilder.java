@@ -33,6 +33,8 @@ public interface StatsKeyBuilder {
 
     StatsKeyBuilder withAttribute(String name, Long value);
 
+    StatsKeyBuilder withoutAttribute(String name);
+
     StatsKey newKey();
 
 }

@@ -33,9 +33,9 @@ import org.stajistics.event.StatsEventType;
  *
  * @author The Stajistics Project
  */
-public class DefaultSessionManager implements StatsSessionManager {
+public class DefaultStatsSessionManager implements StatsSessionManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultSessionManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultStatsSessionManager.class);
 
     protected ConcurrentMap<StatsKey,StatsSession> sessionMap = 
         new ConcurrentHashMap<StatsKey,StatsSession>(128);

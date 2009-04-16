@@ -100,6 +100,23 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         return this;
     }
 
+    @Override
+    public StatsKeyBuilder withoutAttribute(final String name) {
+        if (name == null) {
+            return this;
+        }
+
+        if (attributes != null) {
+            attributes.remove(name);
+
+        } else if (firstAttrName != null && firstAttrName.equals(name)) {
+            firstAttrName = null;
+            firstAttrValue = null;
+        }
+
+        return this;
+    }
+
     protected void putAttribute(final String name, final Object value) {
 
         if (name == null) {
@@ -121,6 +138,9 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
             } else {
                 attributes = new LinkedHashMap<String,Object>(8);
                 attributes.put(firstAttrName, firstAttrValue);
+                firstAttrName = null;
+                firstAttrValue = null;
+
                 attributes.put(name, value);
             }
         } else {

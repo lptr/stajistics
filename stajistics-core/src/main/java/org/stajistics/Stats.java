@@ -17,12 +17,7 @@ package org.stajistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventManager;
-import org.stajistics.event.SynchronousStatsEventManager;
-import org.stajistics.management.StatsManagement;
-import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.CompositeStatsTracker;
-import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -31,105 +26,125 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public abstract class Stats {
+public final class Stats {
 
-    protected static final Logger logger = LoggerFactory.getLogger(Stats.class);
+    private static final Logger logger = LoggerFactory.getLogger(Stats.class);
 
-    private static volatile Stats instance = null;
+    private static StatsManager manager;
 
-    private static volatile boolean enabled = true;
-
-    static {
-        //TODO: this doesn't belong here
-        new StatsManagement().initializeManagement();
-    }
-
-    protected StatsConfigManager configManager;
-    protected StatsSessionManager sessionManager;
-    protected StatsEventManager eventManager;
-
-    public static void loadInstance(final Stats instance) {
-        if (instance == null) {
-            throw new NullPointerException("instance");
+    /**
+     * Specify the sole {@link StatsManager} instance, replacing any existing instance.
+     *
+     * @param manager The {@link StatsManager} instance to use.
+     * @see #getManager()
+     */
+    public static void loadManager(final StatsManager manager) {
+        if (manager == null) {
+            throw new NullPointerException("manager");
         }
 
-        if (Stats.instance != null) {
+        if (Stats.manager != null) {
             if (logger.isDebugEnabled()) {
-                logger.debug("A Stats instance has already been loaded. Replacing existing: " + 
-                             Stats.instance);
+                logger.debug("A Stats manager has already been loaded. Replacing existing: " + 
+                             Stats.manager);
             }
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Loaded Stats: " + instance);
+            logger.debug("Loaded: " + StatsManager.class.getSimpleName() + ": " + manager);
         }
 
-        Stats.instance = instance;
+        Stats.manager = manager;
     }
 
-    protected static final Stats getInstance() {
-        if (instance == null) {
-            loadInstance(new DefaultStats());
+    /**
+     * Obtain the sole {@link StatsManager} instance.
+     * The sole StatsManager instance can be specified using the {@link #loadManager(Stats)} method.
+     * If an instance has not previously been loaded, a call to this method will
+     * instantiate and load a {@link DefaultStatsManager}.
+     *
+     * @return A StatsManager instance. Never <tt>null</tt>. 
+     * @see #loadManager(Stats)
+     */
+    public static StatsManager getManager() {
+        if (manager == null) {
+            loadManager(loadDefaultStatsManager());
         }
 
-        return instance;
+        return manager;
     }
 
+    private static StatsManager loadDefaultStatsManager() {
+
+        StatsManager manager = null;
+
+        String managerClassName = System.getProperty(StatsManager.class.getName());
+        if (managerClassName != null) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<StatsManager> managerClass = (Class<StatsManager>)Class.forName(managerClassName);
+
+                manager = managerClass.newInstance();
+
+            } catch (Exception e) {
+                logger.error("Failed to load " + StatsManager.class.getSimpleName() + 
+                             ": " + managerClassName, e);
+            }
+        }
+
+        if (manager == null) {
+            manager = new DefaultStatsManager();
+        }
+
+        return manager;
+    }
+
+    /**
+     * Get the {@link StatsConfigManager}.
+     *
+     * @return The {@link StatsConfigManager}. Never <tt>null</tt>.
+     */
     public static StatsConfigManager getConfigManager() {
-        return getInstance().configManager;
+        return getManager().getConfigManager();
     }
 
+    /**
+     * Get the {@link StatsSessionManager}.
+     *
+     * @return The @link StatsSessionManager}. Never <tt>null</tt>.
+     */
     public static StatsSessionManager getSessionManager() {
-        return getInstance().sessionManager;
+        return getManager().getSessionManager();
     }
 
+    /**
+     * Get the {@link StatsEventManager}.
+     *
+     * @return The {@link StatsEventManager}. Never <tt>null</tt>.
+     */
     public static StatsEventManager getEventManager() {
-        return getInstance().eventManager;
+        return getManager().getEventManager();
     }
 
+    /**
+     * Determine if statistics collection is enabled.
+     *
+     * @return <tt>true</tt> if statistics collection is enabled, <tt>false</tt> otherwise.
+     */
     public static boolean isEnabled() {
-        return enabled;
-    }
-
-    public static void setEnabled(final boolean enabled) {
-        Stats.enabled = enabled;
+        return getManager().isEnabled();
     }
 
     public static StatsTracker getTracker(final String name) {
-        return getTracker(newKey(name));
+        return getManager().getTracker(newKey(name));
     }
 
     public static StatsTracker getTracker(final StatsKey key) {
-
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-
-        StatsTracker tracker = null;
-
-        if (enabled) {
-            tracker = getInstance().getTrackerImpl(key);
-        }
-
-        if (tracker == null) {
-            tracker = NullTracker.getInstance();
-        }
-
-        return tracker;
+        return getManager().getTracker(key);
     }
 
     public static StatsTracker getTracker(final StatsKey... keys) {
-        if (keys.length == 1) {
-            return getTracker(keys[0]);
-        }
-
-        final StatsTracker[] trackers = new StatsTracker[keys.length];
-
-        for (int i = 0; i < keys.length; i++) {
-            trackers[i] = getTracker(keys[i]);
-        }
-
-        return new CompositeStatsTracker(trackers);
+        return getManager().getTracker(keys);
     }
 
     public static StatsTracker track(final String name) {
@@ -157,87 +172,15 @@ public abstract class Stats {
     }
 
     public static StatsKey newKey(final String name) {
-        return getInstance().createKey(name);
+        return getManager().createKey(name);
     }
 
     public static StatsKeyBuilder buildKey(final String name) {
-        return getInstance().createKeyBuilder(name);
+        return getManager().createKeyBuilder(name);
     }
 
     public static StatsConfigBuilder buildConfig(final StatsKey key) {
-        return getInstance().createConfigBuilder(key);
+        return getManager().createConfigBuilder(key);
     }
 
-    protected abstract StatsKey createKey(String name);
-
-    protected abstract StatsKeyBuilder createKeyBuilder(String name);
-
-    protected abstract StatsKeyBuilder createKeyBuilder(StatsKey template);
-
-    protected abstract StatsConfigBuilder createConfigBuilder(StatsKey key);
-
-    protected abstract StatsTracker getTrackerImpl(StatsKey key);
-
-    /* NESTED CLASSES */
-
-    public static class DefaultStats extends Stats {
-
-        public DefaultStats() {
-            this(new DefaultStatsConfigManager(),
-                 new DefaultSessionManager(),
-                 new SynchronousStatsEventManager());
-        }
-
-        public DefaultStats(final StatsConfigManager configManager,
-                            final StatsSessionManager sessionManager,
-                            final StatsEventManager eventManager) {
-            if (configManager == null) {
-                throw new NullPointerException("configManager");
-            }
-            if (sessionManager == null) {
-                throw new NullPointerException("sessionManager");
-            }
-            if (eventManager == null) {
-                throw new NullPointerException("eventManager");
-            }
-
-            this.configManager = configManager;
-            this.sessionManager = sessionManager;
-            this.eventManager = eventManager;
-        }
-
-        @Override
-        protected StatsKey createKey(final String name) {
-            return new SimpleStatsKey(name);
-        }
-
-        @Override
-        protected StatsKeyBuilder createKeyBuilder(final String name) {
-            return new DefaultStatsKeyBuilder(name);
-        }
-
-        @Override
-        protected StatsKeyBuilder createKeyBuilder(final StatsKey template) {
-            return new DefaultStatsKeyBuilder(template);
-        }
-
-        @Override
-        protected StatsConfigBuilder createConfigBuilder(final StatsKey key) {
-            return new DefaultStatsConfigBuilder(key);
-        }
-
-        @Override
-        protected StatsTracker getTrackerImpl(final StatsKey key) {
-
-            StatsTracker tracker = null;
-
-            StatsConfig config = configManager.getOrCreateConfig(key);
-            if (config.isEnabled()) {
-                tracker = config.getTrackerFactory().createTracker(key);
-            }
-
-            return tracker;
-        }
-
-    }
 }
