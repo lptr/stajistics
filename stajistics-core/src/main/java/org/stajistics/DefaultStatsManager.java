@@ -20,6 +20,8 @@ import org.stajistics.management.StatsManagement;
 import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.CompositeStatsTracker;
+import org.stajistics.tracker.DefaultManualStatsTracker;
+import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
 
@@ -191,6 +193,20 @@ public class DefaultStatsManager implements StatsManager {
         }
 
         return new CompositeStatsTracker(trackers);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ManualStatsTracker getManualTracker(final StatsKey key) {
+        StatsTracker tracker = getTracker(key);
+
+        if (tracker instanceof ManualStatsTracker) {
+            return (ManualStatsTracker)tracker;
+        }
+
+        return DefaultManualStatsTracker.FACTORY.createTracker(key);
     }
 
 }

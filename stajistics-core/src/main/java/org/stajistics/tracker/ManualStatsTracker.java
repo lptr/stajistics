@@ -20,10 +20,10 @@ package org.stajistics.tracker;
  *
  * @author The Stajistics Project
  */
-public class ManualTrackerTest extends AbstractStatsTrackerTestCase {
+public interface ManualStatsTracker extends StatsTracker {
 
-    @Override
-    protected StatsTracker createStatsTracker() {
-        return new ManualTracker(mockSession);
-    }
+    StatsTracker update(double value);
+
+    StatsTracker setValue(double value);
+
 }

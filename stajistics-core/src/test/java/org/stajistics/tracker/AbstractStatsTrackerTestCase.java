@@ -34,7 +34,7 @@ import org.stajistics.session.StatsSession;
  */
 public abstract class AbstractStatsTrackerTestCase {
 
-    private static final double DELTA = 0.0000000000001;
+    protected static final double DELTA = 0.0000000000001;
 
     protected StatsSession mockSession;
 

@@ -24,19 +24,21 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class ManualTracker extends AbstractStatsTracker {
+public class DefaultManualStatsTracker extends AbstractStatsTracker implements ManualStatsTracker {
 
-    public static final StatsTrackerFactory FACTORY = new Factory();
+    public static final Factory FACTORY = new Factory();
 
-    public ManualTracker(final StatsSession statsSession) {
+    public DefaultManualStatsTracker(final StatsSession statsSession) {
         super(statsSession);
     }
 
+    @Override
     public StatsTracker update(final double value) {
         this.value += value;
         return this;
     }
 
+    @Override
     public StatsTracker setValue(final double value) {
         this.value = value;
         return this;
@@ -44,8 +46,8 @@ public class ManualTracker extends AbstractStatsTracker {
 
     public static class Factory implements StatsTrackerFactory {
         @Override
-        public StatsTracker createTracker(final StatsKey key) {
-            return new ManualTracker(Stats.getSessionManager().getOrCreateSession(key));
+        public ManualStatsTracker createTracker(final StatsKey key) {
+            return new DefaultManualStatsTracker(Stats.getSessionManager().getOrCreateSession(key));
         }
     }
 }

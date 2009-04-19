@@ -25,7 +25,7 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public final class NullTracker implements StatsTracker {
+public final class NullTracker implements StatsTracker,ManualStatsTracker {
 
     private static final NullTracker instance = new NullTracker();
 
@@ -73,4 +73,13 @@ public final class NullTracker implements StatsTracker {
         return session;
     }
 
+    @Override
+    public StatsTracker setValue(double value) {
+        return this;
+    }
+
+    @Override
+    public StatsTracker update(double value) {
+        return this;
+    }
 }

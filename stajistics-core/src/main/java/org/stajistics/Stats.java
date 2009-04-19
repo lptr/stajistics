@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -169,6 +170,14 @@ public final class Stats {
 
     public static void incident(final StatsKey... keys) {
         getTracker(keys).track().commit();
+    }
+
+    public static ManualStatsTracker manual(final String name) {
+        return getManager().getManualTracker(newKey(name));
+    }
+
+    public static ManualStatsTracker manual(final StatsKey key) {
+        return getManager().getManualTracker(key);
     }
 
     public static StatsKey newKey(final String name) {

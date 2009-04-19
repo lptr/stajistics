@@ -17,8 +17,10 @@ package org.stajistics;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.CompositeStatsTracker;
+import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -84,6 +86,16 @@ public interface StatsManager {
      * @see CompositeStatsTracker
      */
     StatsTracker getTracker(StatsKey... keys);
+
+    /**
+     * Obtain a {@link ManualStatsTracker} for a given {@link StatsKey} that can be used to
+     * receive manually collected data. Regardless of the given <tt>key</tt>s configured
+     * {@link StatsTrackerFactory}, a ManualStatsTracker instance is returned.
+     *
+     * @param key The {@link StatsKey} for which to return a manual tracker.
+     * @return A {@link ManualStatsTracker}. Never <tt>null</tt>.
+     */
+    ManualStatsTracker getManualTracker(StatsKey key);
 
     /**
      * Create a new {@link StatsKey} from the given <tt>name</tt>.
