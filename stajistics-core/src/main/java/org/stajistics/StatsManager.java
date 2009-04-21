@@ -89,7 +89,7 @@ public interface StatsManager {
 
     /**
      * Obtain a {@link ManualStatsTracker} for a given {@link StatsKey} that can be used to
-     * receive manually collected data. Regardless of the given <tt>key</tt>s configured
+     * report manually collected data. Regardless of the given <tt>key</tt>s configured
      * {@link StatsTrackerFactory}, a ManualStatsTracker instance is returned.
      *
      * @param key The {@link StatsKey} for which to return a manual tracker.

@@ -22,8 +22,8 @@ import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
- * 
+ * A facade to the Stajistics core API. Maintains a singleton instance of a {@link StatsManager}.
+ *
  *
  * @author The Stajistics Project
  */
@@ -104,6 +104,8 @@ public final class Stats {
      * Get the {@link StatsConfigManager}.
      *
      * @return The {@link StatsConfigManager}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getConfigManager()
      */
     public static StatsConfigManager getConfigManager() {
         return getManager().getConfigManager();
@@ -113,6 +115,8 @@ public final class Stats {
      * Get the {@link StatsSessionManager}.
      *
      * @return The @link StatsSessionManager}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getSessionManager()
      */
     public static StatsSessionManager getSessionManager() {
         return getManager().getSessionManager();
@@ -122,6 +126,8 @@ public final class Stats {
      * Get the {@link StatsEventManager}.
      *
      * @return The {@link StatsEventManager}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getEventManager()
      */
     public static StatsEventManager getEventManager() {
         return getManager().getEventManager();
@@ -131,63 +137,194 @@ public final class Stats {
      * Determine if statistics collection is enabled.
      *
      * @return <tt>true</tt> if statistics collection is enabled, <tt>false</tt> otherwise.
+     *
+     * @see StatsManager#isEnabled()
      */
     public static boolean isEnabled() {
         return getManager().isEnabled();
     }
 
+    /**
+     * Obtain a {@link StatsTracker} for the given key <tt>name</tt> that can be
+     * used to collect statistics. Equivalent to calling
+     * <tt>Stats.getTracker(Stats.newKey(name))</tt>.
+     *
+     * @param name The key name for which to return a tracker.
+     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     */
     public static StatsTracker getTracker(final String name) {
         return getManager().getTracker(newKey(name));
     }
 
+    /**
+     * Obtain a {@link StatsTracker} for the given <tt>key</tt> that can be
+     * used to collect statistics.
+     *
+     * @param key The {@link StatsKey} for which to return a tracker.
+     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getTracker(StatsKey)
+     */
     public static StatsTracker getTracker(final StatsKey key) {
         return getManager().getTracker(key);
     }
 
+    /**
+     * Obtain a {@link StatsTracker} for the given set of <tt>keys</tt> that can be used to
+     * collect statistics.
+     *
+     * @param keys The {@link StatsKey}s for which to return a tracker.
+     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getTracker(StatsKey...)
+     */
     public static StatsTracker getTracker(final StatsKey... keys) {
         return getManager().getTracker(keys);
     }
 
+    /**
+     * A convenience method equivalent to calling:
+     * <tt>Stats.getTracker(Stats.newKey(name).track()</tt>.
+     *
+     * @param name The key name for which to return a tracker.
+     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getTracker(StatsKey)
+     * @see StatsTracker#track()
+     */
     public static StatsTracker track(final String name) {
         return getTracker(newKey(name)).track();
     }
 
+    /**
+     * A convenience method equivalent to calling:
+     * <tt>Stats.getTracker(key).track()</tt>
+     *
+     * @param key The {@link StatsKey} for which to return a tracker.
+     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getTracker(StatsKey)
+     * @see StatsTracker#track()
+     */
     public static StatsTracker track(final StatsKey key) {
         return getTracker(key).track();
     }
 
+    /**
+     * A convenience method equivalent to calling:
+     * <tt>Stats.getTracker(keys).track()</tt>.
+     *
+     * @param keys The {@link StatsKey}s for which to return a tracker.
+     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getTracker(StatsKey...)
+     * @see StatsTracker#track()
+     */
     public static StatsTracker track(final StatsKey... keys) {
         return getTracker(keys).track();
     }
 
+    /**
+     * Report an incident. Equivalent to calling:
+     * <tt>Stats.getTracker(Stats.newKey(name)).track().commit()</tt>.
+     *
+     * @param name The key name for which to report an incident.
+     *
+     * @see StatsManager#getTracker(StatsKey...)
+     * @see StatsTracker#track()
+     * @see StatsTracker#commit()
+     */
     public static void incident(final String name) {
         getTracker(newKey(name)).track().commit();
     }
 
+    /**
+     * Report an incident. Equivalent to calling:
+     * <tt>Stats.getTracker(key).track().commit()</tt>.
+     *
+     * @param key The {@link StatsKey} for which to report an incident.
+     *
+     * @see StatsManager#getTracker(StatsKey...)
+     * @see StatsTracker#track()
+     * @see StatsTracker#commit()
+     */
     public static void incident(final StatsKey key) {
         getTracker(key).track().commit();
     }
 
+    /**
+     * Report an incident. Equivalent to calling:
+     * <tt>Stats.getTracker(keys).track().commit()</tt>.
+     *
+     * @param keys The {@link StatsKey}s for which to report an incident.
+     *
+     * @see StatsManager#getTracker(StatsKey...)
+     * @see StatsTracker#track()
+     * @see StatsTracker#commit()
+     */
     public static void incident(final StatsKey... keys) {
         getTracker(keys).track().commit();
     }
 
+    /**
+     * Obtain a {@link ManualStatsTracker} for the given key <tt>name</tt> that can be
+     * used to report manually collected statistics.
+     *
+     * @param name The key name for which to return a manual tracker.
+     * @return A {@link ManualStatsTracker}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getManualTracker(StatsKey)
+     */
     public static ManualStatsTracker manual(final String name) {
         return getManager().getManualTracker(newKey(name));
     }
 
+    /**
+     * Obtain a {@link ManualStatsTracker} for the given <tt>key</tt> that can be
+     * used to report manually collected statistics.
+     *
+     * @param name The {@link StatsKey} for which to return a manual tracker.
+     * @return A {@link ManualStatsTracker}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#getManualTracker(StatsKey)
+     */
     public static ManualStatsTracker manual(final StatsKey key) {
         return getManager().getManualTracker(key);
     }
 
+    /**
+     * Create a new {@link StatsKey} from the given <tt>name</tt>.
+     *
+     * @param name The name of the key to create.
+     * @return A new {@link StatsKey}. Never <tt>null</tt>.
+     *
+     * @see StatsManager#createKey(String)
+     */
     public static StatsKey newKey(final String name) {
         return getManager().createKey(name);
     }
 
+    /**
+     * Create a new {@link StatsKeyBuilder} which can create a new {@link StatsKey}
+     * for the given <tt>name</tt>.
+     *
+     * @param name The name of the key that the builder will create.
+     * @return A {@link StatsKeyBuilder} which can be used to define key attributes. Never <tt>null</tt>.
+     *
+     * @see StatsManager#createKeyBuilder(StatsKey)
+     */
     public static StatsKeyBuilder buildKey(final String name) {
         return getManager().createKeyBuilder(name);
     }
 
+    /**
+     * Build a new {@link StatsConfig} for the given <tt>key</tt> using a {@link StatsConfigBuilder}.
+     *
+     * @param key The key for which to build configuration.
+     * @return A {@link StatsKeyBuilder} which can be used to specify configuration. Never <tt>null</tt>.
+     *
+     * @see StatsManager#createConfigBuilder(StatsKey)
+     */
     public static StatsConfigBuilder buildConfig(final StatsKey key) {
         return getManager().createConfigBuilder(key);
     }
