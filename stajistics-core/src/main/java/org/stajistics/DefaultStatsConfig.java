@@ -18,8 +18,7 @@ import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
- * 
- * 
+ * The default implementation of {@link StatsConfig}.
  *
  * @author The Stajistics Project
  */
@@ -64,26 +63,41 @@ public class DefaultStatsConfig implements StatsConfig {
         this.description = description;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getUnit() {
         return unit;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDescription() {
         return description;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsSessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsTrackerFactory getTrackerFactory() {
         return trackerFactory;
@@ -108,22 +122,11 @@ public class DefaultStatsConfig implements StatsConfig {
         if (!unit.equals(other.getUnit())) {
             return false;
         }
-        if (!equalsNullAware(description, other.getDescription())) {
+        if (!Util.equalsNullAware(description, other.getDescription())) {
             return false;
         }
 
         return true;
-    }
-
-    private boolean equalsNullAware(final Object obj1, final Object obj2) {
-        if (obj1 == null) {
-            return obj2 == null;
-
-        } else if (obj2 == null) {
-            return false;
-        }
-
-        return obj1.equals(obj2);
     }
 
     @Override

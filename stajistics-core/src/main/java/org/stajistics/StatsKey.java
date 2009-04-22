@@ -26,7 +26,7 @@ import org.stajistics.session.StatsSession;
  * is equal to another if the names are equal and the number, names, and values of their
  * attributes are equal. A StatsKey of unique equality represents a single target to be tracked.
  * StatsKeys are also used to address various entities in statistics collection that are associated
- * with the key's target, such as, configuration ({@link StatsConfig}) and collected data
+ * with the keys target, such as, configuration ({@link StatsConfig}) and collected data
  * ({@link StatsSession}). As StatsKeys are immutable, copies can be made using a 
  * {@link StatsKeyBuilder}.</p>
  *
@@ -122,7 +122,7 @@ public interface StatsKey extends Serializable {
     /**
      * Create another key instance using this instance as a template.
      *
-     * @return A key builder initialized with this key's name and attributes.
+     * @return A key builder initialized with this keys name and attributes.
      */
     StatsKeyBuilder buildCopy();
 

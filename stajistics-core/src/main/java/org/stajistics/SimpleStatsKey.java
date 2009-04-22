@@ -18,8 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 
- * 
+ * A {@link StatsKey} implementation that does not store any attributes.
  *
  * @author The Stajistics Project
  */
@@ -37,6 +36,9 @@ public class SimpleStatsKey implements StatsKey {
         this.name = name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return name;
@@ -73,21 +75,33 @@ public class SimpleStatsKey implements StatsKey {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder buildCopy() {
         return Stats.getManager().createKeyBuilder(this);
     }
 
+    /**
+     * @return <tt>null</tt>.
+     */
     @Override
     public Object getAttribute(final String name) {
         return null;
     }
 
+    /**
+     * @return An empty {@link Map}.
+     */
     @Override
     public Map<String, Object> getAttributes() {
         return Collections.emptyMap();
     }
 
+    /**
+     * @return <tt>0</tt>.
+     */
     @Override
     public int getAttributeCount() {
         return 0;

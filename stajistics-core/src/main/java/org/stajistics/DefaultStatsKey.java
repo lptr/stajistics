@@ -18,8 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 
- * 
+ * A {@link StatsKey} implementation that stores attributes in a {@link Map}.
  *
  * @author The Stajistics Project
  */
@@ -54,26 +53,41 @@ public class DefaultStatsKey implements StatsKey {
                attributes.hashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder buildCopy() {
         return Stats.getManager().createKeyBuilder(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getAttribute(final String name) {
         return attributes.get(name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String,Object> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getAttributeCount() {
         return attributes.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return name;

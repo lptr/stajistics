@@ -18,8 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 
- * 
+ * The default implementation of {@link StatsKeyBuilder}.
  * 
  * @author The Stajistics Project
  */
@@ -63,6 +62,9 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         this.attributes = attributes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder withNameSuffix(final String nameSuffix) {
         if (nameSuffix == null) {
@@ -76,30 +78,45 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder withAttribute(final String name, final String value) {
         putAttribute(name, value);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder withAttribute(final String name, final Boolean value) {
         putAttribute(name, value);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder withAttribute(final String name, final Integer value) {
         putAttribute(name, value);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder withAttribute(final String name, final Long value) {
         putAttribute(name, value);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder withoutAttribute(final String name) {
         if (name == null) {
@@ -148,6 +165,9 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKey newKey() {
 

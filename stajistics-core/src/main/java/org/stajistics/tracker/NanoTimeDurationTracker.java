@@ -18,10 +18,11 @@ import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
-
 /**
- * 
- * 
+ * A tracker that tracks time duration with nanosecond precision (but not nanosecond accuracy).
+ * The value is stored as a fraction of milliseconds.
+ *
+ * @see System#nanoTime()
  *
  * @author The Stajistics Project
  */

@@ -23,8 +23,8 @@ import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
- * 
- * 
+ * Acts as an aggregator of other managers as well as a factory for various entities in
+ * statistics collection. 
  *
  * @author The Stajistics Project
  */
@@ -33,21 +33,21 @@ public interface StatsManager {
     /**
      * Get the {@link StatsConfigManager}.
      *
-     * @return The {@link StatsConfigManager}. Never <tt>null</tt>.
+     * @return The {@link StatsConfigManager}, never <tt>null</tt>.
      */
     StatsConfigManager getConfigManager();
 
     /**
      * Get the {@link StatsSessionManager}.
      *
-     * @return The @link StatsSessionManager}. Never <tt>null</tt>.
+     * @return The @link StatsSessionManager}, never <tt>null</tt>.
      */
     StatsSessionManager getSessionManager();
 
     /**
      * Get the {@link StatsEventManager}.
      *
-     * @return The {@link StatsEventManager}. Never <tt>null</tt>.
+     * @return The {@link StatsEventManager}, never <tt>null</tt>.
      */
     StatsEventManager getEventManager();
 
@@ -82,7 +82,7 @@ public interface StatsManager {
      * and all are wrapped in a {@link CompositeStatsTracker} instance.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
-     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     * @return A {@link StatsTracker}, never <tt>null</tt>.
      * @see CompositeStatsTracker
      */
     StatsTracker getTracker(StatsKey... keys);
@@ -93,7 +93,7 @@ public interface StatsManager {
      * {@link StatsTrackerFactory}, a ManualStatsTracker instance is returned.
      *
      * @param key The {@link StatsKey} for which to return a manual tracker.
-     * @return A {@link ManualStatsTracker}. Never <tt>null</tt>.
+     * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
      */
     ManualStatsTracker getManualTracker(StatsKey key);
 
@@ -101,7 +101,7 @@ public interface StatsManager {
      * Create a new {@link StatsKey} from the given <tt>name</tt>.
      *
      * @param name The name of the key to create.
-     * @return A new {@link StatsKey}. Never <tt>null</tt>. 
+     * @return A new {@link StatsKey}, never <tt>null</tt>.
      */
     StatsKey createKey(String name);
 
@@ -110,7 +110,7 @@ public interface StatsManager {
      * for the given <tt>name</tt>.
      *
      * @param name The name of the key that the builder will create.
-     * @return A {@link StatsKeyBuilder} which can be used to define key attributes. Never <tt>null</tt>.
+     * @return A {@link StatsKeyBuilder} which can be used to define key attributes, never <tt>null</tt>.
      */
     StatsKeyBuilder createKeyBuilder(String name);
 
@@ -120,16 +120,24 @@ public interface StatsManager {
      * <tt>template</tt>.
      *
      * @param template The key with which to initialize the {@link StatsKeyBuilder}.
-     * @return A {@link StatsKeyBuilder} which can be used to define key attributes. Never <tt>null</tt>.
+     * @return A {@link StatsKeyBuilder} which can be used to define key attributes, never <tt>null</tt>.
      */
     StatsKeyBuilder createKeyBuilder(StatsKey template);
 
     /**
-     * Build a new {@link StatsConfig} for the given <tt>key</tt> using a {@link StatsConfigBuilder}.
+     * Create a new {@link StatsConfigBuilder} which can assemble various configurations.
      *
-     * @param key The key for which to build configuration.
-     * @return A {@link StatsKeyBuilder} which can be used to specify configuration. Never <tt>null</tt>.
+     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
      */
-    StatsConfigBuilder createConfigBuilder(StatsKey key);
-   
+    StatsConfigBuilder createConfigBuilder();
+
+    /**
+     * Create a new {@link StatsConfigBuilder} which can assemble various configurations. The 
+     * builder is initialized from the given configuration <tt>template</tt>.
+     *
+     * @param template The configuration with which to initialize the builder.
+     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
+     */
+    StatsConfigBuilder createConfigBuilder(StatsConfig template);
+
 }

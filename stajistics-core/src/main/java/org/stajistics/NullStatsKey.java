@@ -18,8 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 
- * 
+ * A {@link StatsKey} implementation conforming to the null object pattern.
  *
  * @author The Stajistics Project
  */
@@ -31,40 +30,67 @@ public final class NullStatsKey implements StatsKey {
 
     private NullStatsKey() {}
 
+    /**
+     * Get the sole instance of NullStatsKey.
+     *
+     * @return The singleton NullStatsKey.
+     */
     public static NullStatsKey getInstance() {
         return instance;
     }
 
+    /**
+     * @return An empty String.
+     */
     @Override
     public String getName() {
-        return "null";
+        return "";
     }
 
+    /**
+     * @return <tt>null</tt>.
+     */
     @Override
     public Object getAttribute(final String name) {
         return null;
     }
 
+    /**
+     * @return An empty {@link Map}.
+     */
     @Override
     public Map<String, Object> getAttributes() {
         return Collections.emptyMap();
     }
 
+    /**
+     * @return <tt>0</tt>.
+     */
     @Override
     public int getAttributeCount() {
         return 0;
     }
 
+    /**
+     * @throws UnsupportedOperationException always.
+     */
     @Override
     public StatsKeyBuilder buildCopy() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * @return <tt>0</tt>.
+     */
     @Override
     public int hashCode() {
         return 0;
     }
 
+    /**
+     * @return <tt>true</tt> if <tt>obj</tt> is the same instance returned by 
+     *         {@link #getInstance()}, <tt>false</tt> otherwise.
+     */
     @Override
     public boolean equals(final Object obj) {
         return this == obj;

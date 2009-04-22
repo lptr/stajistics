@@ -32,7 +32,7 @@ import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.tracker.TimeDurationTracker;
 
 /**
- * 
+ * The default implementation of {@link StatsConfigManager}.
  *
  * @author The Stajistics Project
  */

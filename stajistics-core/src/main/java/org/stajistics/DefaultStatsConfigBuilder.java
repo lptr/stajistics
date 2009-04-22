@@ -20,23 +20,26 @@ import org.stajistics.tracker.StatsTrackerFactory;
 import org.stajistics.tracker.TimeDurationTracker;
 
 /**
- * 
- * 
+ * The default implementation of a {@link StatsConfigBuilder}. Do not instantiate this class
+ * directly. Instead use {@link StatsManager#createConfigBuilder()}.
  *
  * @author The Stajistics Project
  */
 public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
-
-    protected StatsKey key;
 
     protected StatsTrackerFactory trackerFactory;
     protected StatsSessionFactory sessionFactory;
     protected String unit;
     protected String description;
 
+    public DefaultStatsConfigBuilder() {}
+
     public DefaultStatsConfigBuilder(final StatsKey key) {
-        StatsConfig config = Stats.getConfigManager()
-                                  .getConfig(key);
+        this(Stats.getConfigManager()
+                  .getConfig(key));
+    }
+
+    public DefaultStatsConfigBuilder(final StatsConfig config) {
         if (config != null) {
             trackerFactory = config.getTrackerFactory();
             sessionFactory = config.getSessionFactory();
@@ -45,6 +48,9 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsConfigBuilder withSessionFactory(final StatsSessionFactory sessionFactory) {
         if (sessionFactory == null) {
@@ -55,6 +61,9 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsConfigBuilder withTrackerFactory(final StatsTrackerFactory trackerFactory) {
         if (trackerFactory == null) {
@@ -65,6 +74,9 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsConfigBuilder withUnit(final String unit) {
         if (unit == null) {
@@ -75,24 +87,45 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsConfigBuilder withDescription(final String description) {
         this.description = description;
         return this;
     }
 
+    /**
+     * A factory method for getting the default {@link StatsTrackerFactory}.
+     *
+     * @return The default {@link StatsTrackerFactory}, never <tt>null</tt>.
+     */
     protected StatsTrackerFactory createDefaultTrackerFactory() {
         return TimeDurationTracker.FACTORY;
     }
 
+    /**
+     * A factory method for getting the default {@link StatsSessionFactory}.
+     *
+     * @return The default {@link StatsSessionFactory}, never <tt>null</tt>.
+     */
     protected StatsSessionFactory createDefaultSessionFactory() {
         return DefaultSessionFactory.getInstance();
     }
 
+    /**
+     * A factory method for getting the default unit.
+     *
+     * @return The default unit, never <tt>null</tt>.
+     */
     protected String createDefaultUnit() {
         return StatsConstants.DEFAULT_UNIT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsConfig newConfig() {
 
@@ -116,10 +149,12 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
                                       this.description);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void set() {
-        StatsConfig config = newConfig();
-        Stats.getConfigManager().setConfig(key, config);
+    public void setConfigFor(final StatsKey key) {
+        Stats.getConfigManager().setConfig(key, newConfig());
     }
 
 }

@@ -52,4 +52,15 @@ final class Util {
         return true;
     }
 
+    public static boolean equalsNullAware(final Object obj1, final Object obj2) {
+        if (obj1 == null) {
+            return obj2 == null;
+
+        } else if (obj2 == null) {
+            return false;
+        }
+
+        return obj1.equals(obj2);
+    }
+
 }

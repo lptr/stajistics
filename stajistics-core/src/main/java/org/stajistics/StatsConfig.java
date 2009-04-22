@@ -14,25 +14,52 @@
  */
 package org.stajistics;
 
+import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
+import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
- * 
- * 
+ * Represents the configuration that can be applied to a single target for which statistics 
+ * can be collected. Implementations of this interface are immutable.
  *
  * @author The Stajistics Project
  */
 public interface StatsConfig {
 
+    /**
+     * Determine if statistics tracking for the associated target is enabled.
+     *
+     * @return <tt>true</tt> if statistics tracking is enabled, <tt>false</tt> otherwise.
+     */
     boolean isEnabled();
 
+    /**
+     * Obtain the factory that creates {@link StatsTracker}s for the associated target.
+     *
+     * @return A {@link StatsTrackerFactory} instance, never <tt>null</tt>.
+     */
     StatsTrackerFactory getTrackerFactory();
 
+    /**
+     * Obtain the factory that creates {@link StatsSession}s for the associated target.
+     *
+     * @return A {@link StatsSessionFactory} instance, never <tt>null</tt>.
+     */
     StatsSessionFactory getSessionFactory();
 
+    /**
+     * Get the unit applicable to the data that is collected for the associated target.
+     *
+     * @return The data unit, never <tt>null</tt>.
+     */
     String getUnit();
 
+    /**
+     * Get the description of the data being collected for the associated target.
+     *
+     * @return The description, or <tt>null</tt> if unspecified.
+     */
     String getDescription();
 
 }

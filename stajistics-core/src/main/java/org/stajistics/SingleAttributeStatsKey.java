@@ -18,8 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 
- * 
+ * A {@link StatsKey} implementation that can store only a single attribute.
  *
  * @author The Stajistics Project
  */
@@ -65,11 +64,17 @@ public class SingleAttributeStatsKey implements StatsKey {
         return h;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKeyBuilder buildCopy() {
         return Stats.getManager().createKeyBuilder(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getAttribute(final String name) {
         if (name.equals(attrName)) {
@@ -79,16 +84,25 @@ public class SingleAttributeStatsKey implements StatsKey {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String,Object> getAttributes() {
         return Collections.singletonMap(attrName, attrValue);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getAttributeCount() {
         return attrName == null ? 0 : 1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return name;

@@ -64,7 +64,7 @@ public final class Stats {
      * If an instance has not previously been loaded, a call to this method will
      * instantiate and load a {@link DefaultStatsManager}.
      *
-     * @return A StatsManager instance. Never <tt>null</tt>. 
+     * @return A StatsManager instance, never <tt>null</tt>.
      * @see #loadManager(Stats)
      */
     public static StatsManager getManager() {
@@ -103,7 +103,7 @@ public final class Stats {
     /**
      * Get the {@link StatsConfigManager}.
      *
-     * @return The {@link StatsConfigManager}. Never <tt>null</tt>.
+     * @return The {@link StatsConfigManager}, never <tt>null</tt>.
      *
      * @see StatsManager#getConfigManager()
      */
@@ -114,7 +114,7 @@ public final class Stats {
     /**
      * Get the {@link StatsSessionManager}.
      *
-     * @return The @link StatsSessionManager}. Never <tt>null</tt>.
+     * @return The @link StatsSessionManager}, never <tt>null</tt>.
      *
      * @see StatsManager#getSessionManager()
      */
@@ -125,7 +125,7 @@ public final class Stats {
     /**
      * Get the {@link StatsEventManager}.
      *
-     * @return The {@link StatsEventManager}. Never <tt>null</tt>.
+     * @return The {@link StatsEventManager}, never <tt>null</tt>.
      *
      * @see StatsManager#getEventManager()
      */
@@ -150,7 +150,7 @@ public final class Stats {
      * <tt>Stats.getTracker(Stats.newKey(name))</tt>.
      *
      * @param name The key name for which to return a tracker.
-     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     * @return A {@link StatsTracker}, never <tt>null</tt>.
      */
     public static StatsTracker getTracker(final String name) {
         return getManager().getTracker(newKey(name));
@@ -161,7 +161,7 @@ public final class Stats {
      * used to collect statistics.
      *
      * @param key The {@link StatsKey} for which to return a tracker.
-     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     * @return A {@link StatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getTracker(StatsKey)
      */
@@ -174,7 +174,7 @@ public final class Stats {
      * collect statistics.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
-     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     * @return A {@link StatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getTracker(StatsKey...)
      */
@@ -187,7 +187,7 @@ public final class Stats {
      * <tt>Stats.getTracker(Stats.newKey(name).track()</tt>.
      *
      * @param name The key name for which to return a tracker.
-     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     * @return A {@link StatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getTracker(StatsKey)
      * @see StatsTracker#track()
@@ -201,7 +201,7 @@ public final class Stats {
      * <tt>Stats.getTracker(key).track()</tt>
      *
      * @param key The {@link StatsKey} for which to return a tracker.
-     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     * @return A {@link StatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getTracker(StatsKey)
      * @see StatsTracker#track()
@@ -215,7 +215,7 @@ public final class Stats {
      * <tt>Stats.getTracker(keys).track()</tt>.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
-     * @return A {@link StatsTracker}. Never <tt>null</tt>.
+     * @return A {@link StatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getTracker(StatsKey...)
      * @see StatsTracker#track()
@@ -271,7 +271,7 @@ public final class Stats {
      * used to report manually collected statistics.
      *
      * @param name The key name for which to return a manual tracker.
-     * @return A {@link ManualStatsTracker}. Never <tt>null</tt>.
+     * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getManualTracker(StatsKey)
      */
@@ -284,7 +284,7 @@ public final class Stats {
      * used to report manually collected statistics.
      *
      * @param name The {@link StatsKey} for which to return a manual tracker.
-     * @return A {@link ManualStatsTracker}. Never <tt>null</tt>.
+     * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getManualTracker(StatsKey)
      */
@@ -296,7 +296,7 @@ public final class Stats {
      * Create a new {@link StatsKey} from the given <tt>name</tt>.
      *
      * @param name The name of the key to create.
-     * @return A new {@link StatsKey}. Never <tt>null</tt>.
+     * @return A new {@link StatsKey}, never <tt>null</tt>.
      *
      * @see StatsManager#createKey(String)
      */
@@ -309,7 +309,7 @@ public final class Stats {
      * for the given <tt>name</tt>.
      *
      * @param name The name of the key that the builder will create.
-     * @return A {@link StatsKeyBuilder} which can be used to define key attributes. Never <tt>null</tt>.
+     * @return A {@link StatsKeyBuilder} which can be used to define key attributes, never <tt>null</tt>.
      *
      * @see StatsManager#createKeyBuilder(StatsKey)
      */
@@ -318,15 +318,27 @@ public final class Stats {
     }
 
     /**
-     * Build a new {@link StatsConfig} for the given <tt>key</tt> using a {@link StatsConfigBuilder}.
+     * Create a new {@link StatsConfigBuilder} which can assemble various configurations.
      *
-     * @param key The key for which to build configuration.
-     * @return A {@link StatsKeyBuilder} which can be used to specify configuration. Never <tt>null</tt>.
+     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
      *
-     * @see StatsManager#createConfigBuilder(StatsKey)
+     * @see StatsManager#createConfigBuilder()
      */
-    public static StatsConfigBuilder buildConfig(final StatsKey key) {
-        return getManager().createConfigBuilder(key);
+    public static StatsConfigBuilder buildConfig() {
+        return getManager().createConfigBuilder();
+    }
+
+    /**
+     * Create a new {@link StatsConfigBuilder} which can assemble various configurations. The 
+     * builder is initialized from the given configuration <tt>template</tt>.
+     *
+     * @param template The configuration with which to initialize the builder.
+     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
+     *
+     * @see StatsManager#createConfigBuilder(StatsConfig)
+     */
+    public static StatsConfigBuilder buildConfig(final StatsConfig template) {
+        return getManager().createConfigBuilder(template);
     }
 
 }

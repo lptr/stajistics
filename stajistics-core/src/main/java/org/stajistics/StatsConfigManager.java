@@ -17,8 +17,13 @@ package org.stajistics;
 import java.util.Set;
 
 /**
- * 
- * 
+ * Manages associations of {@link StatsKey}s to {@link StatsConfig}s as well as configuration
+ * hierarchy.
+ *
+ * A StatsConfigManager has a root {@link StatsConfig} which takes effect when a {@link StatsConfig}
+ * has not been defined for a key.
+ *
+ * TODO: elaborate on the semantics of the configuration heirarchy.. adding, removing, updating, etc.
  *
  * @author The Stajistics Project
  */

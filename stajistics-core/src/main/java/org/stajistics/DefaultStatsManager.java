@@ -135,7 +135,7 @@ public class DefaultStatsManager implements StatsManager {
      * {@inheritDoc}
      */
     @Override
-    public StatsKeyBuilder createKeyBuilder(StatsKey template) {
+    public StatsKeyBuilder createKeyBuilder(final StatsKey template) {
         return new DefaultStatsKeyBuilder(template);
     }
 
@@ -143,8 +143,16 @@ public class DefaultStatsManager implements StatsManager {
      * {@inheritDoc}
      */
     @Override
-    public StatsConfigBuilder createConfigBuilder(final StatsKey key) {
-        return new DefaultStatsConfigBuilder(key);
+    public StatsConfigBuilder createConfigBuilder() {
+        return new DefaultStatsConfigBuilder();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StatsConfigBuilder createConfigBuilder(final StatsConfig template) {
+        return new DefaultStatsConfigBuilder(template);
     }
 
     /**

@@ -18,23 +18,60 @@ import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
- * 
- * 
+ * A builder for immutable {@link StatsConfig} instances.
  *
  * @author The Stajistics Project
  */
 public interface StatsConfigBuilder {
 
+    /**
+     * Build the configuration with the given {@link StatsTrackerFactory}.
+     *
+     * @param trackerFactory The {@link StatsTrackerFactory} instance use.
+     * @return <tt>this</tt>.
+     */
     StatsConfigBuilder withTrackerFactory(StatsTrackerFactory trackerFactory);
 
+    /**
+     * Build the configuration with the given {@link StatsSessionFactory}.
+     *
+     * @param sessionFactory The {@link StatsSessionFactory} instance use.
+     * @return <tt>this</tt>.
+     */
     StatsConfigBuilder withSessionFactory(StatsSessionFactory sessionFactory);
 
+    /**
+     * Build the configuration with the given <tt>unit</tt>.
+     *
+     * @param unit The unit to use.
+     * @return <tt>this</tt>.
+     */
     StatsConfigBuilder withUnit(String unit);
 
+    /**
+     * Build the configuration with the given <tt>description</tt>.
+     *
+     * @param description The description to use.
+     * @return <tt>this</tt>.
+     */
     StatsConfigBuilder withDescription(String description);
 
+    /**
+     * Create a new immutable {@link StatsConfig} instance based on the builders currently 
+     * configured state.
+     *
+     * @return A {@link StatsConfig} instance, never <tt>null</tt>.
+     */
     StatsConfig newConfig();
 
-    void set();
+    /**
+     * Set the result of {@link #newConfig()} with the given <tt>key</tt> on the
+     * {@link StatsConfigManager}.
+     *
+     * TODO: which StatsConfigManager?
+     *
+     * @param key The {@link StatsKey} to be associated with the new {@link StatsConfig}.
+     */
+    void setConfigFor(StatsKey key);
 
 }
