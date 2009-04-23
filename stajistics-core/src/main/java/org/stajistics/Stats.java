@@ -17,6 +17,7 @@ package org.stajistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventManager;
+import org.stajistics.management.StatsManagement;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.StatsTracker;
@@ -56,6 +57,9 @@ public final class Stats {
         }
 
         Stats.manager = manager;
+
+        //TODO: this doesn't belong here
+        new StatsManagement().initializeManagement();
     }
 
     /**

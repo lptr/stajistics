@@ -16,7 +16,6 @@ package org.stajistics;
 
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.SynchronousStatsEventManager;
-import org.stajistics.management.StatsManagement;
 import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.CompositeStatsTracker;
@@ -32,11 +31,6 @@ import org.stajistics.tracker.StatsTracker;
  * @author The Stajistics Project
  */
 public class DefaultStatsManager implements StatsManager {
-
-    static {
-        //TODO: this doesn't belong here
-        new StatsManagement().initializeManagement();   
-    }
 
     private volatile boolean enabled = true;
 
