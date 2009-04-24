@@ -27,6 +27,7 @@ import org.stajistics.tracker.TimeDurationTracker;
  */
 public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
 
+    protected boolean enabled = true;
     protected StatsTrackerFactory trackerFactory;
     protected StatsSessionFactory sessionFactory;
     protected String unit;
@@ -41,6 +42,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
 
     public DefaultStatsConfigBuilder(final StatsConfig config) {
         if (config != null) {
+            enabled = config.isEnabled();
             trackerFactory = config.getTrackerFactory();
             sessionFactory = config.getSessionFactory();
             unit = config.getUnit();
@@ -143,7 +145,8 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
             unit = createDefaultUnit();
         }
 
-        return new DefaultStatsConfig(trackerFactory,
+        return new DefaultStatsConfig(enabled,
+                                      trackerFactory,
                                       sessionFactory,
                                       unit,
                                       this.description);

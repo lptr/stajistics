@@ -15,9 +15,11 @@
 package org.stajistics;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -58,6 +60,7 @@ public class DefaultStatsConfigBuilderTest {
         final StatsSessionFactory sessionFactory = mockery.mock(StatsSessionFactory.class);
         final StatsConfig template = mockery.mock(StatsConfig.class);
         mockery.checking(new Expectations() {{
+            atLeast(1).of(template).isEnabled(); will(returnValue(true));
             atLeast(1).of(template).getTrackerFactory(); will(returnValue(trackerFactory));
             atLeast(1).of(template).getSessionFactory(); will(returnValue(sessionFactory));
             atLeast(1).of(template).getUnit(); will(returnValue("testUnit"));
@@ -66,6 +69,7 @@ public class DefaultStatsConfigBuilderTest {
 
         builder = new DefaultStatsConfigBuilder(template);
         StatsConfig config = builder.newConfig();
+        assertTrue(config.isEnabled());
         assertSame(trackerFactory, config.getTrackerFactory());
         assertSame(sessionFactory, config.getSessionFactory());
         assertEquals("testUnit", config.getUnit());
@@ -82,11 +86,31 @@ public class DefaultStatsConfigBuilderTest {
     }
 
     @Test
+    public void testWithNullTrackerFactory() {
+        try {
+            builder.withTrackerFactory(null);
+            fail("Allowed null StatsTrackerFactory");
+        } catch (NullPointerException npe) {
+            // expected
+        }
+    }
+
+    @Test
     public void testWithSessionFactory() {
         StatsSessionFactory sessionFactory = mockery.mock(StatsSessionFactory.class);
         builder.withSessionFactory(sessionFactory);
         assertSame(sessionFactory, builder.newConfig().getSessionFactory());
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testWithNullSessionFactory() {
+        try {
+            builder.withSessionFactory(null);
+            fail("Allowed null StatsSessionFactory");
+        } catch (NullPointerException npe) {
+            // expected
+        }
     }
 
     @Test
@@ -96,8 +120,24 @@ public class DefaultStatsConfigBuilderTest {
     }
 
     @Test
+    public void testWithNullUnit() {
+        try {
+            builder.withUnit(null);
+            fail("Allowed null unit");
+        } catch (NullPointerException npe) {
+            // expected
+        }
+    }
+
+    @Test
     public void testWithDescription() {
         builder.withDescription("test");
         assertEquals("test", builder.newConfig().getDescription());
+    }
+
+    @Test
+    public void testWithNullDescription() {
+        builder.withDescription(null);
+        assertNull(builder.newConfig().getDescription());
     }
 }

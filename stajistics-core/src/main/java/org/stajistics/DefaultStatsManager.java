@@ -39,15 +39,6 @@ public class DefaultStatsManager implements StatsManager {
     protected final StatsEventManager eventManager;
 
     /**
-     * Construct a DefaultStatsManager specifying the default set of managers.
-     */
-    public DefaultStatsManager() {
-        this(new DefaultStatsConfigManager(),
-             new DefaultStatsSessionManager(),
-             new SynchronousStatsEventManager());
-    }
-
-    /**
      * Construct a DefaultStatsManager using the given set of managers.
      *
      * @param configManager The {@link StatsConfigManager} to use.
@@ -70,6 +61,20 @@ public class DefaultStatsManager implements StatsManager {
         this.configManager = configManager;
         this.sessionManager = sessionManager;
         this.eventManager = eventManager;
+    }
+
+    /**
+     * Create an instance of DefaultStatsManager supplying the default manager implementations.
+     *
+     * @return A DefaultStatsManager instance, never <tt>null</tt>.
+     */
+    public static DefaultStatsManager createWithDefaults() {
+
+        StatsConfigManager configManager = new DefaultStatsConfigManager();
+        StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager);
+        StatsEventManager eventManager = new SynchronousStatsEventManager();
+
+        return new DefaultStatsManager(configManager, sessionManager, eventManager);
     }
 
     /**

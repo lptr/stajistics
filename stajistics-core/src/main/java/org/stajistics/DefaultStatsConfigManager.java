@@ -67,7 +67,8 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     private static StatsConfig createDefaultConfig() {
-        return new DefaultStatsConfig(TimeDurationTracker.FACTORY,
+        return new DefaultStatsConfig(true,
+                                      TimeDurationTracker.FACTORY,
                                       DefaultSessionFactory.getInstance(), 
                                       StatsConstants.DEFAULT_UNIT,
                                       null);

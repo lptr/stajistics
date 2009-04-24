@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsConfig;
+import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.event.StatsEventType;
 
@@ -39,6 +40,16 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
 
     protected ConcurrentMap<StatsKey,StatsSession> sessionMap = 
         new ConcurrentHashMap<StatsKey,StatsSession>(128);
+
+    protected final StatsConfigManager configManager;
+
+    public DefaultStatsSessionManager(final StatsConfigManager configManager) {
+        if (configManager == null) {
+            throw new NullPointerException("configManager");
+        }
+        
+        this.configManager = configManager;
+    }
 
     @Override
     public int getSessionCount() {
@@ -106,7 +117,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
     }
 
     protected StatsSession createSession(final StatsKey key) {
-        StatsConfig config = Stats.getConfigManager().getConfig(key);
+        StatsConfig config = configManager.getConfig(key);
         return config.getSessionFactory().createSession(key);
     }
 

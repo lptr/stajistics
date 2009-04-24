@@ -69,7 +69,7 @@ public final class Stats {
      * instantiate and load a {@link DefaultStatsManager}.
      *
      * @return A StatsManager instance, never <tt>null</tt>.
-     * @see #loadManager(Stats)
+     * @see #loadManager(StatsManager)
      */
     public static StatsManager getManager() {
         if (manager == null) {
@@ -98,7 +98,7 @@ public final class Stats {
         }
 
         if (manager == null) {
-            manager = new DefaultStatsManager();
+            manager = DefaultStatsManager.createWithDefaults();
         }
 
         return manager;
@@ -287,7 +287,7 @@ public final class Stats {
      * Obtain a {@link ManualStatsTracker} for the given <tt>key</tt> that can be
      * used to report manually collected statistics.
      *
-     * @param name The {@link StatsKey} for which to return a manual tracker.
+     * @param key The {@link StatsKey} for which to return a manual tracker.
      * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getManualTracker(StatsKey)
@@ -330,19 +330,6 @@ public final class Stats {
      */
     public static StatsConfigBuilder buildConfig() {
         return getManager().createConfigBuilder();
-    }
-
-    /**
-     * Create a new {@link StatsConfigBuilder} which can assemble various configurations. The 
-     * builder is initialized from the given configuration <tt>template</tt>.
-     *
-     * @param template The configuration with which to initialize the builder.
-     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
-     *
-     * @see StatsManager#createConfigBuilder(StatsConfig)
-     */
-    public static StatsConfigBuilder buildConfig(final StatsConfig template) {
-        return getManager().createConfigBuilder(template);
     }
 
 }

@@ -46,6 +46,10 @@ public class StatsFilter implements Filter {
     private static final String INIT_PARAM_KEY_NAME = "keyName";
     private static final String INIT_PARAM_BIND_PARAMS = "bindParameters";
     private static final String INIT_PARAM_BIND_HEADERS = "bindHeaders";
+    private static final String INIT_PARAM_EXCEPTION_INCIDENTS = "exceptionIncidents";
+    private static final String INIT_PARAM_EXCEPTION_KEY_NAME_SUFFIX = "exceptionKeyNameSuffix";
+
+    private static final String DEFAULT_PARAM_EXCEPTION_KEY_NAME_SUFFIX = "exception";
 
     private static final String KEY_ATTR_BINDING = "binding";
     private static final String KEY_ATTR_BINDING_PARAM = "parameter";
@@ -54,6 +58,8 @@ public class StatsFilter implements Filter {
     private StatsKey key;
     private String[] bindParams;
     private String[] bindHeaders;
+
+    private StatsKey exceptionKey;
 
     @Override
     public void init(final FilterConfig config) throws ServletException {
@@ -64,8 +70,23 @@ public class StatsFilter implements Filter {
 
         key = Stats.newKey(keyName);
 
+        // Binding parameters
         bindParams = parseBindings(config, INIT_PARAM_BIND_PARAMS);
         bindHeaders = parseBindings(config, INIT_PARAM_BIND_HEADERS);
+
+        // Exception parameters
+        boolean exceptionIncidents = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_EXCEPTION_INCIDENTS));
+        if (exceptionIncidents) {
+            String exceptionKeyNameSuffix = config.getInitParameter(INIT_PARAM_EXCEPTION_KEY_NAME_SUFFIX);
+            if (exceptionKeyNameSuffix == null || exceptionKeyNameSuffix.length() == 0) {
+                exceptionKeyNameSuffix = DEFAULT_PARAM_EXCEPTION_KEY_NAME_SUFFIX;
+            }
+
+            exceptionKey = key.buildCopy()
+                              .withNameSuffix(exceptionKeyNameSuffix)
+                              .newKey();
+
+        }
 
         if (logger.isInfoEnabled()) {
             logger.info(getClass().getSimpleName() + " initialized");
@@ -92,6 +113,8 @@ public class StatsFilter implements Filter {
         key = null;
         bindParams = null;
         bindHeaders = null;
+
+        exceptionKey = null;
 
         if (logger.isInfoEnabled()) {
             logger.info(getClass().getSimpleName() + " destroyed");
@@ -178,6 +201,26 @@ public class StatsFilter implements Filter {
 
         try {
             chain.doFilter(request, response);
+
+        } catch (Throwable t) {
+            if (exceptionKey != null) {
+                Stats.incident(exceptionKey);
+                Stats.incident(exceptionKey.buildCopy()
+                                           .withAttribute("className", t.getClass().getName())
+                                           .newKey());
+            }
+
+            if (t instanceof IOException) {
+                throw (IOException)t;
+            }
+            if (t instanceof ServletException) {
+                throw (ServletException)t;
+            }
+            if (t instanceof Error) {
+                throw (Error)t;
+            }
+
+            throw new RuntimeException(t);
 
         } finally {
             tracker.commit();

@@ -24,22 +24,24 @@ import org.stajistics.tracker.StatsTrackerFactory;
  */
 public class DefaultStatsConfig implements StatsConfig {
 
-    protected boolean enabled = true;
+    private final boolean enabled;
 
-    protected StatsTrackerFactory trackerFactory;
-    protected StatsSessionFactory sessionFactory;
+    private final StatsTrackerFactory trackerFactory;
+    private final StatsSessionFactory sessionFactory;
 
-    protected String unit;
-    protected String description;
+    private final String unit;
+    private final String description;
 
     public DefaultStatsConfig(final StatsConfig template) {
-        this(template.getTrackerFactory(),
+        this(template.isEnabled(),
+             template.getTrackerFactory(),
              template.getSessionFactory(),
              template.getUnit(),
              template.getDescription());
     }
 
-    public DefaultStatsConfig(final StatsTrackerFactory trackerFactory,
+    public DefaultStatsConfig(final boolean enabled,
+                              final StatsTrackerFactory trackerFactory,
                               final StatsSessionFactory sessionFactory,
                               final String unit,
                               final String description) {
@@ -57,6 +59,7 @@ public class DefaultStatsConfig implements StatsConfig {
             throw new IllegalArgumentException("empty unit");
         }
 
+        this.enabled = enabled;
         this.trackerFactory = trackerFactory;
         this.sessionFactory = sessionFactory;
         this.unit = unit;
@@ -113,6 +116,9 @@ public class DefaultStatsConfig implements StatsConfig {
             return false;
         }
 
+        if (enabled != other.isEnabled()) {
+            return false;
+        }
         if (!trackerFactory.equals(other.getTrackerFactory())) {
             return false;
         }
@@ -131,7 +137,8 @@ public class DefaultStatsConfig implements StatsConfig {
 
     @Override
     public int hashCode() {
-        return trackerFactory.hashCode() ^
+        return Boolean.valueOf(enabled).hashCode() ^
+               trackerFactory.hashCode() ^
                sessionFactory.hashCode() ^
                unit.hashCode() ^
                ((description == null) ? 0 : description.hashCode());

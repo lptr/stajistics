@@ -50,7 +50,8 @@ public class DefaultStatsConfigManagerTest {
     }
 
     private StatsConfig createConfig() {
-        return new DefaultStatsConfig(TimeDurationTracker.FACTORY, 
+        return new DefaultStatsConfig(true,
+                                      TimeDurationTracker.FACTORY, 
                                       DefaultSessionFactory.getInstance(), 
                                       "test", 
                                       null);
