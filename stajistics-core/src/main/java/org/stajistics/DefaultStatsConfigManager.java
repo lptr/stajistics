@@ -45,17 +45,26 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
     private final Lock updateLock = new ReentrantLock();
 
-    public DefaultStatsConfigManager() {
-        this(createDefaultConfig(), null);
+    private final StatsEventManager eventManager;
+
+    public DefaultStatsConfigManager(final StatsEventManager eventManager) {
+        this(eventManager, createDefaultConfig(), null);
     }
 
-    public DefaultStatsConfigManager(final StatsConfig rootConfig,
+    public DefaultStatsConfigManager(final StatsEventManager eventManager,
+                                     final StatsConfig rootConfig,
                                      final Map<String,StatsConfig> configMap) {
+        if (eventManager == null) {
+            throw new NullPointerException("eventManager");
+        }
+
         if (rootConfig == null) {
             throw new NullPointerException("rootConfig");
         }
 
-        rootKeyEntry = new KeyEntry(new SimpleStatsKey(""),
+        this.eventManager = eventManager;
+
+        rootKeyEntry = new KeyEntry(NullStatsKey.getInstance(),
                                     null, 
                                     rootConfig);
 
@@ -226,8 +235,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         }
 
         if (created) {
-            Stats.getEventManager()
-                 .fireEvent(StatsEventType.CONFIG_CREATED, key, entry.getConfig());
+            eventManager.fireEvent(StatsEventType.CONFIG_CREATED, key, entry.getConfig());
         }
 
         return entry;
@@ -252,8 +260,6 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         }
 
         if (entryItr != null) {
-            StatsEventManager eventManager = Stats.getEventManager();
-
             while (entryItr.hasNext()) {
                 entry = entryItr.next();
 
@@ -276,8 +282,6 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         } finally {
             updateLock.unlock();
         }
-
-        StatsEventManager eventManager = Stats.getEventManager();
 
         while (entryItr.hasNext()) {
             entry = entryItr.next();

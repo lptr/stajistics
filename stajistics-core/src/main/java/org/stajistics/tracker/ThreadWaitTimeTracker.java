@@ -16,9 +16,9 @@ package org.stajistics.tracker;
 
 import java.lang.management.ThreadInfo;
 
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -75,8 +75,9 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
 
     public static class Factory implements StatsTrackerFactory {
         @Override
-        public StatsTracker createTracker(final StatsKey key) {
-            return new ThreadWaitTimeTracker(Stats.getSessionManager().getOrCreateSession(key));
+        public StatsTracker createTracker(final StatsKey key,
+                                          final StatsSessionManager sessionManager) {
+            return new ThreadWaitTimeTracker(sessionManager.getOrCreateSession(key));
         }
     }
 }

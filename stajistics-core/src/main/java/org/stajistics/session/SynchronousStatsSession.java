@@ -22,8 +22,14 @@ import org.stajistics.session.data.DataSet;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
- * 
+ * An implementation of {@link StatsSession} that reads ands writes data fields atomically
+ * and locks calls to {@link #track(StatsTracker, long)}, {@link #update(StatsTracker, long)}, 
+ * {@link #collectData()}, and {@link #clear()}. This allows guaranteed consistency between the 
+ * values contained in the result of {@link #collectData()}, however, at the cost of increased 
+ * statistics collection overhead and reduced scalability.
+ *
+ * The other methods that are not mentioned above are not locked, but since this class 
+ * extends {@link ConcurrentStatsSession}, thread safety is retained.
  *
  * @author The Stajistics Project
  */
@@ -37,6 +43,23 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
         super(key);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void track(final StatsTracker tracker, final long now) {
+        lock.lock();
+        try {
+            super.track(tracker, now);
+
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update(final StatsTracker tracker, final long now) {
 
@@ -51,13 +74,18 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
             lock.unlock();
         }
 
+        // Fire the event outside of the lock
         super.fireUpdateEvent(snapshot, tracker);
     }
 
+    /* This no-op override prevents the event firing from within the locked scope */
     @Override
     protected void fireUpdateEvent(final StatsSession session,
                                    final StatsTracker tracker) {}
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataSet collectData() {
         lock.lock();
@@ -69,6 +97,9 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clear() {
         lock.lock();

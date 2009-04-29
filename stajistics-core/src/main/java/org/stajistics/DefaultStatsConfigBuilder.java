@@ -27,20 +27,26 @@ import org.stajistics.tracker.TimeDurationTracker;
  */
 public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
 
+    protected final StatsConfigManager configManager;
+
     protected boolean enabled = true;
     protected StatsTrackerFactory trackerFactory;
     protected StatsSessionFactory sessionFactory;
     protected String unit;
     protected String description;
 
-    public DefaultStatsConfigBuilder() {}
-
-    public DefaultStatsConfigBuilder(final StatsKey key) {
-        this(Stats.getConfigManager()
-                  .getConfig(key));
+    public DefaultStatsConfigBuilder(final StatsConfigManager configManager) {
+        this(configManager, null);
     }
 
-    public DefaultStatsConfigBuilder(final StatsConfig config) {
+    public DefaultStatsConfigBuilder(final StatsConfigManager configManager,
+                                     final StatsConfig config) {
+        if (configManager == null) {
+            throw new NullPointerException("configManager");
+        }
+
+        this.configManager = configManager;
+
         if (config != null) {
             enabled = config.isEnabled();
             trackerFactory = config.getTrackerFactory();
@@ -157,7 +163,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
      */
     @Override
     public void setConfigFor(final StatsKey key) {
-        Stats.getConfigManager().setConfig(key, newConfig());
+        configManager.setConfig(key, newConfig());
     }
 
 }

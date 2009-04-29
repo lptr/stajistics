@@ -37,12 +37,14 @@ import org.stajistics.tracker.StatsTrackerFactory;
 public class DefaultStatsConfigBuilderTest {
 
     private Mockery mockery;
+    private StatsConfigManager configManager;
     private StatsConfigBuilder builder;
 
     @Before
     public void setUp() {
         mockery = new Mockery();
-        builder = new DefaultStatsConfigBuilder();   
+        configManager = mockery.mock(StatsConfigManager.class);
+        builder = new DefaultStatsConfigBuilder(configManager);   
     }
 
     @Test
@@ -67,7 +69,7 @@ public class DefaultStatsConfigBuilderTest {
             atLeast(1).of(template).getDescription(); will(returnValue("testDescription"));
         }});
 
-        builder = new DefaultStatsConfigBuilder(template);
+        builder = new DefaultStatsConfigBuilder(configManager, template);
         StatsConfig config = builder.newConfig();
         assertTrue(config.isEnabled());
         assertSame(trackerFactory, config.getTrackerFactory());

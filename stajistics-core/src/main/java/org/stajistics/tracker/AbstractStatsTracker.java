@@ -51,7 +51,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     }
 
     @Override
-    public StatsTracker track() {
+    public final StatsTracker track() {
 
         if (tracking) {
             if (logger.isWarnEnabled()) {
@@ -75,7 +75,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     }
 
     @Override
-    public StatsTracker commit() {
+    public final StatsTracker commit() {
 
         if (!tracking) {
             if (logger.isWarnEnabled()) {

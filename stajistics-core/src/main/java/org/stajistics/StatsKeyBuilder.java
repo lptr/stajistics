@@ -79,7 +79,7 @@ public interface StatsKeyBuilder {
      * Create a new immutable {@link StatsKey} instance based on the builders currently 
      * configured state.
      *
-     * @return  A {@link StatsKey} instance, never <tt>null</tt>.
+     * @return A {@link StatsKey} instance, never <tt>null</tt>.
      */
     StatsKey newKey();
 

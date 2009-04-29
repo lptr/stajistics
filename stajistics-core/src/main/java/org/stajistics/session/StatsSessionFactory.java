@@ -17,13 +17,18 @@ package org.stajistics.session;
 import org.stajistics.StatsKey;
 
 /**
- * 
- * 
+ * A factory for {@link StatsSession} instances.
  *
  * @author The Stajistics Project
  */
 public interface StatsSessionFactory {
 
+    /**
+     * Create a {@link StatsSession} instance for the given <tt>key</tt>.
+     *
+     * @param key The key for which to create a {@link StatsSession}.
+     * @return A {@link StatsSession} instance, never <tt>null</tt>.
+     */
     StatsSession createSession(StatsKey key);
 
 }

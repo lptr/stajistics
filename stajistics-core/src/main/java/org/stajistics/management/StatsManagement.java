@@ -23,10 +23,11 @@ import javax.management.ObjectName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.event.StatsEventHandler;
 import org.stajistics.event.StatsEventType;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -79,7 +80,7 @@ public class StatsManagement {
         this.mBeanServer = mBeanServer;
     }
 
-    public void initializeManagement() {
+    public void initializeManagement(final StatsManager statsManager) {
 
         if (!Boolean.parseBoolean(System.getProperty(SYS_PROP_MANAGEMENT_ENABLED, "true"))) {
             return;
@@ -89,9 +90,9 @@ public class StatsManagement {
             logger.info("Initializing statistics management");
         }
 
-        registerSessionManagerMBean();
+        registerSessionManagerMBean(statsManager.getSessionManager());
 
-        Stats.getEventManager().addGlobalEventHandler(new StatsEventHandler() {
+        statsManager.getEventManager().addGlobalEventHandler(new StatsEventHandler() {
             @Override
             public void handleStatsEvent(final StatsEventType eventType,
                                          final StatsKey key,
@@ -123,12 +124,12 @@ public class StatsManagement {
         return buf.toString();
     }
 
-    public boolean registerSessionManagerMBean() {
+    public boolean registerSessionManagerMBean(final StatsSessionManager sessionManager) {
 
         String name = buildSessionManagerName();
 
         try {
-            SessionManagerMBean sessionManagerMBean = new SessionManager();
+            SessionManagerMBean sessionManagerMBean = new SessionManager(sessionManager);
             ObjectName objectName = new ObjectName(name); 
 
             registerMBean(sessionManagerMBean, objectName);

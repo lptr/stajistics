@@ -16,6 +16,7 @@ package org.stajistics;
 
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.SynchronousStatsEventManager;
+import org.stajistics.management.StatsManagement;
 import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.CompositeStatsTracker;
@@ -70,11 +71,16 @@ public class DefaultStatsManager implements StatsManager {
      */
     public static DefaultStatsManager createWithDefaults() {
 
-        StatsConfigManager configManager = new DefaultStatsConfigManager();
-        StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager);
         StatsEventManager eventManager = new SynchronousStatsEventManager();
+        StatsConfigManager configManager = new DefaultStatsConfigManager(eventManager);
+        StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager);
 
-        return new DefaultStatsManager(configManager, sessionManager, eventManager);
+        DefaultStatsManager mgr = new DefaultStatsManager(configManager, sessionManager, eventManager);
+
+        //TODO: where the hell does this belong?
+        new StatsManagement().initializeManagement(mgr);
+
+        return mgr;
     }
 
     /**
@@ -143,7 +149,7 @@ public class DefaultStatsManager implements StatsManager {
      */
     @Override
     public StatsConfigBuilder createConfigBuilder() {
-        return new DefaultStatsConfigBuilder();
+        return new DefaultStatsConfigBuilder(configManager);
     }
 
     /**
@@ -151,7 +157,7 @@ public class DefaultStatsManager implements StatsManager {
      */
     @Override
     public StatsConfigBuilder createConfigBuilder(final StatsConfig template) {
-        return new DefaultStatsConfigBuilder(template);
+        return new DefaultStatsConfigBuilder(configManager, template);
     }
 
     /**
@@ -168,7 +174,7 @@ public class DefaultStatsManager implements StatsManager {
         if (enabled) {
             StatsConfig config = configManager.getOrCreateConfig(key);
             if (config.isEnabled()) {
-                tracker = config.getTrackerFactory().createTracker(key);
+                tracker = config.getTrackerFactory().createTracker(key, sessionManager);
             }
         }
 
@@ -213,7 +219,7 @@ public class DefaultStatsManager implements StatsManager {
             return (ManualStatsTracker)tracker;
         }
 
-        return DefaultManualStatsTracker.FACTORY.createTracker(key);
+        return DefaultManualStatsTracker.FACTORY.createTracker(key, sessionManager);
     }
 
 }

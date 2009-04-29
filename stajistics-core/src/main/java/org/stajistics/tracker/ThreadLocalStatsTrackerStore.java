@@ -17,10 +17,10 @@ package org.stajistics.tracker;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.stajistics.Stats;
 import org.stajistics.StatsConfig;
+import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
-import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -34,17 +34,16 @@ public class ThreadLocalStatsTrackerStore implements StatsTrackerStore {
         new ConcurrentHashMap<StatsKey,ThreadLocal<StatsTracker>>();
 
     @Override
-    public StatsTracker getTracker(final StatsSession session) {
-
-        final StatsKey key = session.getKey();
-
+    public StatsTracker getTracker(final StatsKey key,
+                                   final StatsConfigManager configManager,
+                                   final StatsSessionManager sessionManager) {
         ThreadLocal<StatsTracker> trackerLocal = trackerMap.get(key);
         if (trackerLocal == null) {
             trackerLocal = new ThreadLocal<StatsTracker>() {
                 @Override
                 protected StatsTracker initialValue() {
-                    StatsConfig config = Stats.getConfigManager().getConfig(key);
-                    return config.getTrackerFactory().createTracker(key);
+                    StatsConfig config = configManager.getConfig(key);
+                    return config.getTrackerFactory().createTracker(key, sessionManager);
                 }
             };
 

@@ -15,8 +15,9 @@
 package org.stajistics;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
 import org.jmock.Expectations;
@@ -56,6 +57,35 @@ public class DefaultStatsKeyBuilderTest {
                               .newKey();
 
         assertTrue(key != null);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testCopyKeyWithNameSuffix1() {
+        buildStatsKeyExpectations(mockery, mockKey, "test");
+        buildStatsKeyBuildCopyExpectations();
+
+        StatsKey key = mockKey.buildCopy()
+                              .withNameSuffix("suffix")
+                              .newKey();
+
+        assertEquals("test.suffix", key.getName());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testCopyKeyWithNameSuffix2() {
+        buildStatsKeyExpectations(mockery, mockKey, "test");
+        buildStatsKeyBuildCopyExpectations();
+
+        StatsKey key = mockKey.buildCopy()
+                              .withNameSuffix("suffix1")
+                              .withNameSuffix("suffix2")
+                              .newKey();
+
+        assertEquals("test.suffix1.suffix2", key.getName());
 
         mockery.assertIsSatisfied();
     }
@@ -229,5 +259,116 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals(1, key.getAttributes().size());
         assertNull(key.getAttribute("existing"));
         assertEquals("thing", key.getAttribute("new"));
+    }
+
+    @Test
+    public void testPutAttributeWithNullName() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        try {
+            mockKey.buildCopy()
+                   .withAttribute(null, "value");
+            fail("Allowed withAttribute with null name");
+
+        } catch (NullPointerException npe) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testPutAttributeWithInvalidName() {
+
+        String[] invalidNames = { "*",   "?",   ",",   "=",   ":",
+                                  "a*",  "a?",  "a,",  "a=",  "a:",
+                                  "*a",  "?a",  ",a",  "=a",  ":a",
+                                  "*a*", "?a?", ",a,", "=a=", ":a:",
+                                  "a*a", "a?a", "a,a", "a=a", "a:a" };
+
+        for (String invalidName : invalidNames) {
+            setUp();
+
+            buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+            buildStatsKeyBuildCopyExpectations();
+
+            try {
+                mockKey.buildCopy()
+                       .withAttribute(invalidName, "value");
+                fail("Allowed withAttribute with invalid name: '" + invalidName + "'");
+
+            } catch (IllegalArgumentException iae) {
+                // expected
+            }
+
+            mockery.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testPutAttributeWithNullStringValue() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        try {
+            mockKey.buildCopy()
+                   .withAttribute("name", (String)null);
+            fail("Allowed withAttribute with null String value");
+
+        } catch (NullPointerException npe) {
+            // expected
+        }
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testPutAttributeWithNullBooleanValue() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        try {
+            mockKey.buildCopy()
+                   .withAttribute("name", (Boolean)null);
+            fail("Allowed withAttribute with null Boolean value");
+
+        } catch (NullPointerException npe) {
+            // expected
+        }
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testPutAttributeWithNullLongValue() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        try {
+            mockKey.buildCopy()
+                   .withAttribute("name", (Long)null);
+            fail("Allowed withAttribute with null Long value");
+
+        } catch (NullPointerException npe) {
+            // expected
+        }
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testPutAttributeWithNullIntegerValue() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        try {
+            mockKey.buildCopy()
+                   .withAttribute("name", (Integer)null);
+            fail("Allowed withAttribute with null Integer value");
+
+        } catch (NullPointerException npe) {
+            // expected
+        }
+
+        mockery.assertIsSatisfied();
     }
 }

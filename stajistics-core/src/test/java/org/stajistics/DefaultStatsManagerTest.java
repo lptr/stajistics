@@ -43,9 +43,7 @@ public class DefaultStatsManagerTest {
     }
 
     private DefaultStatsManager newDefaultStatsManager() {
-        DefaultStatsManager mgr = DefaultStatsManager.createWithDefaults();
-        Stats.loadManager(mgr); // TODO: this means we need more mocking/mockability
-        return mgr;
+        return DefaultStatsManager.createWithDefaults();
     }
 
     @Test

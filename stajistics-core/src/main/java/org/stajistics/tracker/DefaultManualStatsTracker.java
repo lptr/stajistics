@@ -14,9 +14,9 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -46,8 +46,9 @@ public class DefaultManualStatsTracker extends AbstractStatsTracker implements M
 
     public static class Factory implements StatsTrackerFactory {
         @Override
-        public ManualStatsTracker createTracker(final StatsKey key) {
-            return new DefaultManualStatsTracker(Stats.getSessionManager().getOrCreateSession(key));
+        public ManualStatsTracker createTracker(final StatsKey key,
+                                                final StatsSessionManager sessionManager) {
+            return new DefaultManualStatsTracker(sessionManager.getOrCreateSession(key));
         }
     }
 }

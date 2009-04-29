@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.stajistics.StatsKey;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -61,7 +62,8 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
     }
 
     @Override
-    public StatsTracker createTracker(final StatsKey key) {
+    public StatsTracker createTracker(final StatsKey key,
+                                      final StatsSessionManager sessionManager) {
 
         StatsTracker[] trackers = new StatsTracker[factories.length];
 
@@ -70,7 +72,7 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
                                    .withNameSuffix(nameSuffixes[i])
                                    .newKey();
 
-            trackers[i] = factories[i].createTracker(childKey);
+            trackers[i] = factories[i].createTracker(childKey, sessionManager);
         }
 
         return new CompositeStatsTracker(trackers);

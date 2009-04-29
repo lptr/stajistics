@@ -18,9 +18,9 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * TODO: This tracker currently depends on the ordering of ManagementFactory.getGarbageCollectorMXBeans(). Is that safe?
@@ -110,8 +110,9 @@ public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
 
     public static class Factory implements StatsTrackerFactory {
         @Override
-        public StatsTracker createTracker(final StatsKey key) {
-            return new GarbageCollectionTimeTracker(Stats.getSessionManager().getOrCreateSession(key));
+        public StatsTracker createTracker(final StatsKey key,
+                                          final StatsSessionManager sessionManager) {
+            return new GarbageCollectionTimeTracker(sessionManager.getOrCreateSession(key));
         }
     }
 }

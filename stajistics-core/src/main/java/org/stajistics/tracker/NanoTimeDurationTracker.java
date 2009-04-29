@@ -14,9 +14,9 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * A tracker that tracks time duration with nanosecond precision (but not nanosecond accuracy).
@@ -52,8 +52,9 @@ public class NanoTimeDurationTracker extends AbstractStatsTracker {
 
     public static class Factory implements StatsTrackerFactory {
         @Override
-        public StatsTracker createTracker(final StatsKey key) {
-            return new NanoTimeDurationTracker(Stats.getSessionManager().getOrCreateSession(key));
+        public StatsTracker createTracker(final StatsKey key,
+                                          final StatsSessionManager sessionManager) {
+            return new NanoTimeDurationTracker(sessionManager.getOrCreateSession(key));
         }
     }
 }

@@ -24,8 +24,7 @@ import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
- * 
+ * A {@link StatsSession} implementation which does not respond to updates.
  *
  * @author The Stajistics Project
  */
@@ -58,76 +57,117 @@ public class ImmutableStatsSession implements StatsSession {
         this.dataSet = dataSet;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKey getKey() {
         return key;
     }
 
+    /**
+     * @return An empty List.
+     */
     @Override
     public List<DataRecorder> getDataRecorders() {
         return Collections.emptyList();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataSet collectData() {
         return dataSet;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getFirst() {
         return (Double)dataSet.getField(DataSet.Field.FIRST);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getFirstHitStamp() {
         return (Long)dataSet.getField(DataSet.Field.FIRST_HIT_STAMP);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getHits() {
         return (Long)dataSet.getField(DataSet.Field.HITS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getCommits() {
         return (Long)dataSet.getField(DataSet.Field.COMMITS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getLast() {
         return (Double)dataSet.getField(DataSet.Field.LAST);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getLastHitStamp() {
         return (Long)dataSet.getField(DataSet.Field.LAST_HIT_STAMP);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getMax() {
         return (Double)dataSet.getField(DataSet.Field.MAX);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getMin() {
         return (Double)dataSet.getField(DataSet.Field.MIN);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getSum() {
         return (Double)dataSet.getField(DataSet.Field.SUM);
     }
 
+    /**
+     * Does nothing.
+     */
     @Override
-    public void track(StatsTracker tracker, long now) {
-        throw new UnsupportedOperationException();
-    }
+    public void track(StatsTracker tracker, long now) {}
 
+    /**
+     * Does nothing.
+     */
     @Override
-    public void update(StatsTracker tracker, long now) {
-        throw new UnsupportedOperationException();
-    }
+    public void update(StatsTracker tracker, long now) {}
 
+    /**
+     * Does nothing.
+     */
     @Override
     public void clear() {}
 }

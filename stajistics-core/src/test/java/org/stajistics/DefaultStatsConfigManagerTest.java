@@ -22,31 +22,33 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.After;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.tracker.TimeDurationTracker;
 
 /**
- * 
- * 
  *
  * @author The Stajistics Project
  */
 public class DefaultStatsConfigManagerTest {
 
+    // TODO: set up mock expectations for event firing
+
+    private Mockery mockery;
+    private StatsEventManager eventManager;
+
     private DefaultStatsConfigManager configManager;
 
     @Before
     public void setUp() {
-        Stats.getEventManager().setEnabled(false);
-        configManager = new DefaultStatsConfigManager();
-    }
+        mockery = new Mockery();
+        eventManager = mockery.mock(StatsEventManager.class);
 
-    @After
-    public void tearDown() {
-        Stats.getEventManager().setEnabled(true);
+        configManager = new DefaultStatsConfigManager(eventManager);
     }
 
     private StatsConfig createConfig() {
@@ -69,13 +71,13 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testConstructWithConfigs() {
 
-        StatsKey[] keys = createKeyHierarchy();
+        final StatsKey[] keys = createKeyHierarchy();
 
         StatsConfig rootConfig = createConfig();
-        StatsConfig config0 = createConfig();
-        StatsConfig config1 = createConfig();
-        StatsConfig config2 = createConfig();
-        StatsConfig config3 = createConfig();
+        final StatsConfig config0 = createConfig();
+        final StatsConfig config1 = createConfig();
+        final StatsConfig config2 = createConfig();
+        final StatsConfig config3 = createConfig();
 
         Map<String,StatsConfig> configMap = new HashMap<String,StatsConfig>();
 
@@ -84,7 +86,13 @@ public class DefaultStatsConfigManagerTest {
         configMap.put(keys[2].getName(), config2);
         configMap.put(keys[3].getName(), config3);
 
-        configManager = new DefaultStatsConfigManager(rootConfig, configMap);
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
+
+        configManager = new DefaultStatsConfigManager(eventManager, rootConfig, configMap);
+
+        mockery.assertIsSatisfied();
 
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
@@ -100,6 +108,10 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testSetAndGetRootConfig() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
+
         StatsConfig config = createConfig();
         configManager.setRootConfig(config);
         assertSame(config, configManager.getRootConfig());
@@ -123,6 +135,10 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testSetConfigWithNullConfig() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
+
         StatsKey key = new SimpleStatsKey("test");
 
         StatsConfig rootConfig = configManager.getRootConfig();
@@ -144,6 +160,10 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testSetConfigAscending() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
+
         StatsKey[] keys = createKeyHierarchy();
 
         StatsConfig rootConfig = configManager.getRootConfig();
@@ -189,6 +209,10 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testSetConfigDescending() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
+
         StatsKey[] keys = createKeyHierarchy();
 
         StatsConfig rootConfig = configManager.getRootConfig();
@@ -232,6 +256,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testGetOrCreateRootConfigAscending() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -245,6 +272,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testGetOrCreateRootConfigDescending() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -258,6 +288,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testGetOrCreate_GetLevel1_SetLevel2_GetLevel3_SetLevel4() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -292,6 +325,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testGetOrCreate_SetLevel1_GetLevel2_SetLevel3_GetLevel4() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -326,6 +362,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testGetOrCreate_GetLevel4_SetLevel3_GetLevel2_SetLevel1() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -356,6 +395,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testGetOrCreate_SetLevel4_GetLevel3_SetLevel2_GetLevel1() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -386,6 +428,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testGetConfig() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -404,6 +449,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testRemoveConfigAscending() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -430,6 +478,9 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testRemoveConfigDescending() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
 
         StatsKey[] keys = createKeyHierarchy();
 
@@ -474,6 +525,10 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testClearConfigs() {
+        mockery.checking(new Expectations() {{
+            ignoring(eventManager);
+        }});
+
         StatsKey[] keys = createKeyHierarchy();
 
         StatsConfig config0 = createConfig();

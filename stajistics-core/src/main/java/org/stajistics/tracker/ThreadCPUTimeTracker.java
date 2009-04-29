@@ -14,9 +14,9 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -67,8 +67,9 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
 
     public static class Factory implements StatsTrackerFactory {
         @Override
-        public StatsTracker createTracker(final StatsKey key) {
-            return new ThreadCPUTimeTracker(Stats.getSessionManager().getOrCreateSession(key));
+        public StatsTracker createTracker(final StatsKey key,
+                                          final StatsSessionManager sessionManager) {
+            return new ThreadCPUTimeTracker(sessionManager.getOrCreateSession(key));
         }
     }
 }

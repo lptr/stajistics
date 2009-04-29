@@ -14,9 +14,9 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 
 
@@ -44,8 +44,9 @@ public class TimeDurationTracker extends AbstractStatsTracker {
 
     public static class Factory implements StatsTrackerFactory {
         @Override
-        public StatsTracker createTracker(final StatsKey key) {
-            return new TimeDurationTracker(Stats.getSessionManager().getOrCreateSession(key));
+        public StatsTracker createTracker(final StatsKey key,
+                                          final StatsSessionManager sessionManager) {
+            return new TimeDurationTracker(sessionManager.getOrCreateSession(key));
         }
     }
 

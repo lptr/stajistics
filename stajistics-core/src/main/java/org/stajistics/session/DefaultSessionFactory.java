@@ -18,8 +18,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.recorder.DistributionDataRecorder;
 
 /**
- * 
- * 
+ * The default factory for creating {@link StatsSession} instances.
  *
  * @author The Stajistics Project
  */

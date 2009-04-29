@@ -38,8 +38,10 @@ import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
 
 /**
- * 
- * 
+ * An implementation of {@link StatsSession} that reads and writes data fields atomically
+ * without locking. This allows scalable updates that minimize the runtime overhead of statistics
+ * collection. However, the cost of using this implementation is that the result of 
+ * {@link #collectData()} may not contain values that are not consistent with one another.
  * 
  * @author The Stajistics Project
  */
@@ -60,14 +62,14 @@ public class ConcurrentStatsSession implements StatsSession {
     protected final StatsKey key;
 
     protected final AtomicLong hits = new AtomicLong(0);
-    protected final AtomicLong firstHitStamp = new AtomicLong(0);
-    protected final AtomicLong lastHitStamp = new AtomicLong(0);
+    protected final AtomicLong firstHitStamp = new AtomicLong(-1);
+    protected final AtomicLong lastHitStamp = new AtomicLong(-1);
     protected final AtomicLong commits = new AtomicLong(0);
 
     protected final AtomicReference<Double> first = new AtomicReference<Double>(null);
     protected final AtomicDouble last = new AtomicDouble(Double.NaN);
-    protected final AtomicDouble min = new AtomicDouble(Double.MAX_VALUE);
-    protected final AtomicDouble max = new AtomicDouble(Double.MIN_VALUE);
+    protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
+    protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
     protected final AtomicDouble sum = new AtomicDouble(0);
 
     protected final List<DataRecorder> dataRecorders;
@@ -94,6 +96,9 @@ public class ConcurrentStatsSession implements StatsSession {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void track(final StatsTracker tracker, 
                       long now) {
@@ -103,8 +108,8 @@ public class ConcurrentStatsSession implements StatsSession {
 
         hits.incrementAndGet();
 
-        if (firstHitStamp.get() == 0) {
-            firstHitStamp.compareAndSet(0, now);
+        if (firstHitStamp.get() == -1) {
+            firstHitStamp.compareAndSet(-1, now);
         }
         lastHitStamp.set(now);
 
@@ -121,31 +126,49 @@ public class ConcurrentStatsSession implements StatsSession {
              .fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getHits() {
         return hits.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getFirstHitStamp() {
         return firstHitStamp.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getLastHitStamp() {
         return lastHitStamp.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getCommits() {
         return commits.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsKey getKey() {
         return key;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update(final StatsTracker tracker, long now) {
 
@@ -206,6 +229,9 @@ public class ConcurrentStatsSession implements StatsSession {
              .fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getFirst() {
         Double firstValue = first.get();
@@ -217,25 +243,41 @@ public class ConcurrentStatsSession implements StatsSession {
         return firstValue.doubleValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getLast() {
         return this.last.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getMin() {
         return this.min.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getMax() {
         return this.max.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public double getSum() {
         return this.sum.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataSet collectData() {
 
@@ -258,11 +300,14 @@ public class ConcurrentStatsSession implements StatsSession {
         return dataSet;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clear() {
         hits.set(0);
-        firstHitStamp.set(0);
-        lastHitStamp.set(0);
+        firstHitStamp.set(-1);
+        lastHitStamp.set(-1);
         commits.set(0);
         first.set(null);
         last.set(0);
@@ -278,6 +323,9 @@ public class ConcurrentStatsSession implements StatsSession {
              .fireEvent(StatsEventType.SESSION_CLEARED, key, this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<DataRecorder> getDataRecorders() {
         return Collections.unmodifiableList(dataRecorders);

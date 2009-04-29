@@ -30,6 +30,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsKey;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -205,8 +206,10 @@ public class StatsManagementTest {
         ObjectName objectName = new ObjectName(statsManagement.buildSessionManagerName());
         MBeanServer mBeanServer = statsManagement.getMBeanServer();
 
+        StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
+
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-        assertTrue(statsManagement.registerSessionManagerMBean());
+        assertTrue(statsManagement.registerSessionManagerMBean(sessionManager));
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
     }
 
@@ -215,7 +218,9 @@ public class StatsManagementTest {
         ObjectName objectName = new ObjectName(statsManagement.buildSessionManagerName());
         MBeanServer mBeanServer = statsManagement.getMBeanServer();
 
-        mBeanServer.registerMBean(new SessionManager(), objectName);
+        StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
+
+        mBeanServer.registerMBean(new SessionManager(sessionManager), objectName);
 
         assertTrue(statsManagement.unregisterSessionManagerMBean());
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());

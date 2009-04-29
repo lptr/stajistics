@@ -20,28 +20,75 @@ import java.util.Set;
 import org.stajistics.StatsKey;
 
 /**
- * 
- * 
+ * Manages the lifecycle of StatsSession instances.
  *
  * @author The Stajistics Project
  */
 public interface StatsSessionManager {
 
+    /**
+     * Get the total number of {@link StatsSession} instance being managed.
+     *
+     * @return The number of {@link StatsSession} instances.
+     */
     int getSessionCount();
 
+    /**
+     * Get the Set of {@link StatsKey}s that are associated with the
+     * {@link StatsSession}s being managed.
+     *
+     * @return A Set of {@link StatsKey}s, or an empty Set if there are none.
+     */
     Set<StatsKey> getKeys();
 
+    /**
+     * Get all {@link StatsSession}s being managed.
+     *
+     * @return A Collection of {@link StatsSession}s, or an empty Collection if there are none.
+     */
     Collection<StatsSession> getSessions();
 
+    /**
+     * Get the {@link StatsSession} being managed for the given <tt>key</tt>.
+     *
+     * @param key The key for which to return the associated {@link StatsSession}.
+     * @return The {@link StatsSession} associated with the given <tt>key</tt> or <tt>null</tt>
+     *         if not found.
+     */
     StatsSession getSession(StatsKey key);
 
+    /**
+     * Get the {@link StatsSession} being managed for the given <tt>key</tt>, or if the session
+     * does not exist, create it and return it.
+     *
+     * @param key The key for which to return the associated {@link StatsSession}.
+     * @return The {@link StatsSession} associated with the given <tt>key</tt>, never <tt>null</tt>.
+     */
     StatsSession getOrCreateSession(StatsKey key);
 
+    /**
+     * Remove the {@link StatsSession} being managed that is associated with the given <tt>key</tt>.
+     *
+     * @param key The key for which to remove the {@link StatsSession}.
+     * @return The {@link StatsSession} instance that was removed, or <tt>null</tt> if not found.
+     */
     StatsSession remove(StatsKey key);
 
-    boolean remove(StatsSession statsSession);
+    /**
+     * Remove the given <tt>session</tt> instance from this manager.
+     *
+     * @param statsSession The {@link StatsSession} instance to remove.
+     * @return <tt>true</tt> if <tt>session</tt> was found and removed, <tt>false</tt> if not found.
+     */
+    boolean remove(StatsSession session);
 
+    /**
+     * Remove all {@link StatsSession} instances from this manager.
+     */
     void clear();
 
+    /**
+     * Call {@link StatsSession#clear()} on each {@link StatsSession} instance known to this manager.
+     */
     void clearAllSessions();
 }
