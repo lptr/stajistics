@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.data.DataSet;
 import org.stajistics.session.data.DefaultDataSet;
@@ -60,6 +60,7 @@ public class ConcurrentStatsSession implements StatsSession {
     }
 
     protected final StatsKey key;
+    protected final StatsEventManager eventManager;
 
     protected final AtomicLong hits = new AtomicLong(0);
     protected final AtomicLong firstHitStamp = new AtomicLong(-1);
@@ -74,20 +75,28 @@ public class ConcurrentStatsSession implements StatsSession {
 
     protected final List<DataRecorder> dataRecorders;
 
-    public ConcurrentStatsSession(final StatsKey key) {
-        this(key, (List<DataRecorder>)null);
+    public ConcurrentStatsSession(final StatsKey key, final StatsEventManager eventManager) {
+        this(key, eventManager, (List<DataRecorder>)null);
     }
 
-    public ConcurrentStatsSession(final StatsKey key, final DataRecorder... dataRecorders) {
-        this(key, Arrays.asList(dataRecorders));
+    public ConcurrentStatsSession(final StatsKey key, 
+                                  final StatsEventManager eventManager, 
+                                  final DataRecorder... dataRecorders) {
+        this(key, eventManager, Arrays.asList(dataRecorders));
     }
 
-    public ConcurrentStatsSession(final StatsKey key, final List<DataRecorder> dataRecorders) {
+    public ConcurrentStatsSession(final StatsKey key, 
+                                  final StatsEventManager eventManager, 
+                                  final List<DataRecorder> dataRecorders) {
         if (key == null) {
             throw new NullPointerException("key");
         }
+        if (eventManager == null) {
+            throw new NullPointerException("eventManager");
+        }
 
         this.key = key;
+        this.eventManager = eventManager;
 
         if (dataRecorders == null || dataRecorders.isEmpty()) {
             this.dataRecorders = Collections.emptyList();
@@ -122,8 +131,7 @@ public class ConcurrentStatsSession implements StatsSession {
 
     protected void fireTrackingEvent(final StatsSession session,
                                      final StatsTracker tracker) {
-        Stats.getEventManager()
-             .fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
+        eventManager.fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
     }
 
     /**
@@ -225,8 +233,7 @@ public class ConcurrentStatsSession implements StatsSession {
 
     protected void fireUpdateEvent(final StatsSession session,
                                    final StatsTracker tracker) {
-        Stats.getEventManager()
-             .fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
+        eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }
 
     /**
@@ -319,8 +326,7 @@ public class ConcurrentStatsSession implements StatsSession {
             dataRecorder.clear();
         }
 
-        Stats.getEventManager()
-             .fireEvent(StatsEventType.SESSION_CLEARED, key, this);
+        eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
     }
 
     /**

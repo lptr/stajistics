@@ -15,6 +15,7 @@
 package org.stajistics.session;
 
 import org.stajistics.StatsKey;
+import org.stajistics.event.StatsEventManager;
 
 /**
  * A factory for {@link StatsSession} instances.
@@ -27,8 +28,9 @@ public interface StatsSessionFactory {
      * Create a {@link StatsSession} instance for the given <tt>key</tt>.
      *
      * @param key The key for which to create a {@link StatsSession}.
+     * @param eventManager The event manager to pass into the new {@link StatsSession} instance.
      * @return A {@link StatsSession} instance, never <tt>null</tt>.
      */
-    StatsSession createSession(StatsKey key);
+    StatsSession createSession(StatsKey key, StatsEventManager eventManager);
 
 }

@@ -18,6 +18,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.stajistics.StatsKey;
+import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.data.DataSet;
 import org.stajistics.tracker.StatsTracker;
 
@@ -39,8 +40,9 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
 
     protected final Lock lock = new ReentrantLock();
 
-    public SynchronousStatsSession(final StatsKey key) {
-        super(key);
+    public SynchronousStatsSession(final StatsKey key,
+                                   final StatsEventManager eventManager) {
+        super(key, eventManager);
     }
 
     /**

@@ -50,7 +50,7 @@ public class SessionManager implements SessionManagerMBean {
     public void dumpAllSessions() throws IOException {
         Logger logger = LoggerFactory.getLogger(SESSION_DUMP_LOGGER_NAME);
         if (logger.isInfoEnabled()) {
-            for (StatsSession session : org.stajistics.Stats.getSessionManager().getSessions()) {
+            for (StatsSession session : sessionManager.getSessions()) {
                 logger.info(session.toString());
             }
         }

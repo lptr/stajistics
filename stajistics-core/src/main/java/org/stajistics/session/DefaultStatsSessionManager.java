@@ -22,10 +22,10 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
+import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 
 /**
@@ -42,13 +42,19 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
         new ConcurrentHashMap<StatsKey,StatsSession>(128);
 
     protected final StatsConfigManager configManager;
+    protected final StatsEventManager eventManager;
 
-    public DefaultStatsSessionManager(final StatsConfigManager configManager) {
+    public DefaultStatsSessionManager(final StatsConfigManager configManager,
+                                      final StatsEventManager eventManager) {
         if (configManager == null) {
             throw new NullPointerException("configManager");
         }
+        if (eventManager == null) {
+            throw new NullPointerException("eventManager");
+        }
 
         this.configManager = configManager;
+        this.eventManager = eventManager;
     }
 
     /**
@@ -106,8 +112,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
                 session = existingSession;
 
             } else {
-                Stats.getEventManager()
-                     .fireEvent(StatsEventType.SESSION_CREATED, key, session);
+                eventManager.fireEvent(StatsEventType.SESSION_CREATED, key, session);
             }
         }
 
@@ -130,8 +135,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
         StatsSession session = sessionMap.remove(key);
 
         if (session != null) {
-            Stats.getEventManager()
-                 .fireEvent(StatsEventType.SESSION_DESTROYED, key, session);
+            eventManager.fireEvent(StatsEventType.SESSION_DESTROYED, key, session);
         }
 
         return session; 
@@ -145,7 +149,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
      */
     protected StatsSession createSession(final StatsKey key) {
         StatsConfig config = configManager.getConfig(key);
-        return config.getSessionFactory().createSession(key);
+        return config.getSessionFactory().createSession(key, eventManager);
     }
 
     /**

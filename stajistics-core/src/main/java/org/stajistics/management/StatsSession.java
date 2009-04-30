@@ -126,7 +126,7 @@ public class StatsSession implements StatsSessionMBean,DynamicMBean {
             session.clear();
 
         } else if (actionName.equals(OP_DESTROY)) {
-            Stats.getSessionManager().remove(session);
+            Stats.getSessionManager().remove(session); //TODO: replace with StatsSessionManager instance
 
         } else if (actionName.equals(OP_DUMP)) {
             Logger logger = LoggerFactory.getLogger(SessionManager.SESSION_DUMP_LOGGER_NAME);

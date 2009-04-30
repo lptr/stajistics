@@ -73,7 +73,7 @@ public class DefaultStatsManager implements StatsManager {
 
         StatsEventManager eventManager = new SynchronousStatsEventManager();
         StatsConfigManager configManager = new DefaultStatsConfigManager(eventManager);
-        StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager);
+        StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager, eventManager);
 
         DefaultStatsManager mgr = new DefaultStatsManager(configManager, sessionManager, eventManager);
 

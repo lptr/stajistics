@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
+import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
@@ -35,11 +36,14 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class ConcurrentStatsSessionTest {
 
+    // TODO: set up mock expectations for event firing
+
     protected static final double DELTA = 0.0000000000001;
 
     private Mockery mockery;
     private StatsKey mockKey;
     private StatsTracker mockTracker;
+    private StatsEventManager mockEventManager;
 
     private StatsSession session;
 
@@ -51,17 +55,28 @@ public class ConcurrentStatsSessionTest {
         TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
 
         mockTracker = mockery.mock(StatsTracker.class);
+        mockEventManager = mockery.mock(StatsEventManager.class);
 
-        session = new ConcurrentStatsSession(mockKey);
+        session = new ConcurrentStatsSession(mockKey, mockEventManager);
     }
 
     @Test
     public void testConstructWithNullKey() {
         try {
-            new ConcurrentStatsSession(null, (List<DataRecorder>)null);
+            new ConcurrentStatsSession(null, mockEventManager, (List<DataRecorder>)null);
 
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("key", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithNullEventManager() {
+        try {
+            new ConcurrentStatsSession(mockKey, null, (List<DataRecorder>)null);
+
+        } catch (NullPointerException npe) {
+            assertEquals("eventManager", npe.getMessage());
         }
     }
 
@@ -80,6 +95,11 @@ public class ConcurrentStatsSessionTest {
 
     @Test
     public void testTrack() {
+
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+        }});
+
         final long firstNow = System.currentTimeMillis();
 
         session.track(mockTracker, firstNow);
@@ -115,6 +135,7 @@ public class ConcurrentStatsSessionTest {
     public void testUpdate() {
         mockery.checking(new Expectations() {{
             one(mockTracker).getValue(); will(returnValue(1.0));
+            ignoring(mockEventManager);
         }});
 
         long now = System.currentTimeMillis();
@@ -152,6 +173,7 @@ public class ConcurrentStatsSessionTest {
     public void testTrackAndUpdate() {
         mockery.checking(new Expectations() {{
             one(mockTracker).getValue(); will(returnValue(2.0));
+            ignoring(mockEventManager);
         }});
 
         final long firstNow = System.currentTimeMillis();
