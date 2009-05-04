@@ -35,16 +35,18 @@ public class DefaultStatsKeyBuilderTest {
 
     private Mockery mockery;
     private StatsKey mockKey;
+    private StatsKeyFactory mockKeyFactory;
 
     @Before
     public void setUp() {
         mockery = new Mockery();
         mockKey = mockery.mock(StatsKey.class);
+        mockKeyFactory = new DefaultStatsKeyFactory(); // TODO: actually mock this
     }
 
     private void buildStatsKeyBuildCopyExpectations() {
         mockery.checking(new Expectations() {{
-            ignoring(mockKey).buildCopy(); will(returnValue(new DefaultStatsKeyBuilder(mockKey)));
+            ignoring(mockKey).buildCopy(); will(returnValue(new DefaultStatsKeyBuilder(mockKey, mockKeyFactory)));
         }});
     }
 

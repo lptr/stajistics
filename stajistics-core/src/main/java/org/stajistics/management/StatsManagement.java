@@ -108,6 +108,10 @@ public class StatsManagement {
 
                 } else if (eventType == StatsEventType.CONFIG_DESTROYED) {
                     unregisterConfigMBean(key);
+
+                } else if (eventType == StatsEventType.CONFIG_CHANGED) {
+                    unregisterConfigMBean(key);
+                    registerConfigMBean(key, (org.stajistics.StatsConfig)target);
                 }
             }
         });

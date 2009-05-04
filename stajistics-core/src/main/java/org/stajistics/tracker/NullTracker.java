@@ -82,4 +82,9 @@ public final class NullTracker implements StatsTracker,ManualStatsTracker {
     public StatsTracker update(double value) {
         return this;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

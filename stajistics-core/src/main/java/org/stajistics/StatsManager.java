@@ -23,8 +23,8 @@ import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
- * Acts as an aggregator of other managers as well as a factory for various entities in
- * statistics collection. 
+ * Acts as an aggregator of other managers and factories. Maintains a master enabled switch for 
+ * statistics collection.
  *
  * @author The Stajistics Project
  */
@@ -50,6 +50,20 @@ public interface StatsManager {
      * @return The {@link StatsEventManager}, never <tt>null</tt>.
      */
     StatsEventManager getEventManager();
+
+    /**
+     * Get the {@link StatsKeyFactory}.
+     *
+     * @return The {@link StatsKeyFactory}, never <tt>null</tt>.
+     */
+    StatsKeyFactory getKeyFactory();
+
+    /**
+     * Get the {@link StatsConfigFactory}.
+     *
+     * @return The {@link StatsConfigFactory}, never <tt>null</tt>.
+     */
+    StatsConfigFactory getConfigFactory();
 
     /**
      * Determine if statistics collection is enabled.
@@ -96,48 +110,5 @@ public interface StatsManager {
      * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
      */
     ManualStatsTracker getManualTracker(StatsKey key);
-
-    /**
-     * Create a new {@link StatsKey} from the given <tt>name</tt>.
-     *
-     * @param name The name of the key to create.
-     * @return A new {@link StatsKey}, never <tt>null</tt>.
-     */
-    StatsKey createKey(String name);
-
-    /**
-     * Create a new {@link StatsKeyBuilder} which can create a new {@link StatsKey}
-     * for the given <tt>name</tt>.
-     *
-     * @param name The name of the key that the builder will create.
-     * @return A {@link StatsKeyBuilder} which can be used to define key attributes, never <tt>null</tt>.
-     */
-    StatsKeyBuilder createKeyBuilder(String name);
-
-    /**
-     * Create a new {@link StatsKeyBuilder} which can create a new {@link StatsKey}.
-     * The builder is initialized with the name and attributes of the given {@link StatsKey}
-     * <tt>template</tt>.
-     *
-     * @param template The key with which to initialize the {@link StatsKeyBuilder}.
-     * @return A {@link StatsKeyBuilder} which can be used to define key attributes, never <tt>null</tt>.
-     */
-    StatsKeyBuilder createKeyBuilder(StatsKey template);
-
-    /**
-     * Create a new {@link StatsConfigBuilder} which can assemble various configurations.
-     *
-     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
-     */
-    StatsConfigBuilder createConfigBuilder();
-
-    /**
-     * Create a new {@link StatsConfigBuilder} which can assemble various configurations. The 
-     * builder is initialized from the given configuration <tt>template</tt>.
-     *
-     * @param template The configuration with which to initialize the builder.
-     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
-     */
-    StatsConfigBuilder createConfigBuilder(StatsConfig template);
 
 }

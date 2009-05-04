@@ -22,54 +22,27 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public class SingleAttributeStatsKey implements StatsKey {
+public class SingleAttributeStatsKey extends AbstractStatsKey {
 
     private static final long serialVersionUID = -4220144422224946459L;
 
-    private final String name;
     private final String attrName;
     private final Object attrValue;
 
-    private final int hashCode;
-
     protected SingleAttributeStatsKey(final String name,
+                                      final StatsKeyFactory keyFactory,
                                       final String attrName,
                                       final Object attrValue) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
+        super(name, keyFactory);
 
         if (attrName != null && attrValue == null) {
             throw new NullPointerException("attrValue");
         }
 
-        this.name = name;
         this.attrName = attrName;
         this.attrValue = attrValue;
 
-        hashCode = hash();
-    }
-
-    protected int hash() {
-        int h = name.hashCode();
-
-        if (attrName != null) {
-            h ^= attrName.hashCode();
-
-            if (attrValue != null) {
-                h ^= attrValue.hashCode();
-            }
-        }
-
-        return h;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsKeyBuilder buildCopy() {
-        return Stats.getManager().createKeyBuilder(this);
+        setHashCode();
     }
 
     /**
@@ -89,6 +62,10 @@ public class SingleAttributeStatsKey implements StatsKey {
      */
     @Override
     public Map<String,Object> getAttributes() {
+        if (attrName == null) {
+            return Collections.emptyMap();
+        }
+
         return Collections.singletonMap(attrName, attrValue);
     }
 
@@ -100,64 +77,12 @@ public class SingleAttributeStatsKey implements StatsKey {
         return attrName == null ? 0 : 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return (obj instanceof StatsKey) && equals((StatsKey)obj);
-    }
-
-    public boolean equals(final StatsKey other) {
-        if (other == null) {
-            return false;
-        }
-
-        if (hashCode != other.hashCode()) {
-            return false;
-        }
-
-        return name.equals(other.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return hashCode;
-    }
-
-    @Override
-    public String toString() {
-
-        String attrValueStr = null;
-
-        int size = 20 + name.length();
-
-        if (attrName != null) {
-            attrValueStr = attrValue.toString();
-
-            size += attrName.length() + attrValueStr.length();
-        }
-
-        StringBuilder buf = new StringBuilder(size);
-
-        buf.append(StatsKey.class.getSimpleName());
-        buf.append("[name=");
-        buf.append(name);
-
-        if (attrName != null) {
-            buf.append(',');
-            buf.append(attrName);
-            buf.append('=');
-            buf.append(attrValueStr);
-        }
-
-        buf.append(']');
-
-        return buf.toString();
+    protected void appendAttributes(final StringBuilder buf) {
+        buf.append('{');
+        buf.append(attrName);
+        buf.append('=');
+        buf.append(attrValue);
+        buf.append('}');
     }
 }

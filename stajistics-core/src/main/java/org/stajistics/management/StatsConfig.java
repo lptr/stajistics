@@ -63,4 +63,15 @@ public class StatsConfig implements StatsConfigMBean {
     public void setDescription(String description) throws IOException {
         throw new UnsupportedOperationException("not yet implemented");
     }
+
+    @Override
+    public String getTrackerFactory() throws IOException {
+        return config.getTrackerFactory().toString();
+    }
+
+    @Override
+    public String getSessionFactory() throws IOException {
+        return config.getSessionFactory().toString();
+    }
+
 }

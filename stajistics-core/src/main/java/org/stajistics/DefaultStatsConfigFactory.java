@@ -14,29 +14,37 @@
  */
 package org.stajistics;
 
-import java.util.Map;
-
-import org.junit.Ignore;
-
 /**
  * 
  * 
  *
  * @author The Stajistics Project
  */
-public class SimpleStatsKeyTest extends AbstractStatsKeyTestCase {
+public class DefaultStatsConfigFactory implements StatsConfigFactory {
 
-    @Override
-    protected StatsKey createStatsKey(final String name, 
-                                      final Map<String, Object> attributes) {
-        return new SimpleStatsKey(name, mockKeyFactory);
+    protected final StatsConfigManager configManager;
+
+    public DefaultStatsConfigFactory(final StatsConfigManager configManager) {
+        if (configManager == null) {
+            throw new NullPointerException("configManager");
+        }
+
+        this.configManager = configManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @Ignore
-    public void testConstructWithNullAttributes() {}
+    public StatsConfigBuilder createConfigBuilder() {
+        return new DefaultStatsConfigBuilder(configManager);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @Ignore
-    public void testEqualsKeyWithDifferentAttributes() {}
+    public StatsConfigBuilder createConfigBuilder(final StatsConfig template) {
+        return new DefaultStatsConfigBuilder(configManager, template);
+    }
 }

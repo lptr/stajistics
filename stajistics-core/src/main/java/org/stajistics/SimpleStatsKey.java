@@ -22,65 +22,15 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public class SimpleStatsKey implements StatsKey {
+public class SimpleStatsKey extends AbstractStatsKey {
 
     private static final long serialVersionUID = -8631853852832561419L;
 
-    private final String name;
+    protected SimpleStatsKey(final String name,
+                             final StatsKeyFactory keyFactory) {
+        super(name, keyFactory);
 
-    protected SimpleStatsKey(final String name) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
-
-        this.name = name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return (obj instanceof StatsKey) && equals((StatsKey)obj);
-    }
-
-    public boolean equals(final StatsKey other) {
-
-        if (other == null) {
-            return false;
-        }
-
-        if (this == other) {
-            return true;
-        }
-
-        if (this.name.hashCode() != other.hashCode()) {
-            return false;
-        }
-
-        if (!this.name.equals(other.getName())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsKeyBuilder buildCopy() {
-        return Stats.getManager().createKeyBuilder(this);
+        setHashCode();
     }
 
     /**
@@ -105,17 +55,5 @@ public class SimpleStatsKey implements StatsKey {
     @Override
     public int getAttributeCount() {
         return 0;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder buf = new StringBuilder(name.length() + 16);
-
-        buf.append(StatsKey.class.getSimpleName());
-        buf.append("[name=");
-        buf.append(name);
-        buf.append(']');
-
-        return buf.toString();
     }
 }

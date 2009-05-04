@@ -98,4 +98,26 @@ public class CompositeStatsTracker implements StatsTracker {
 
         return this;
     }
+
+    @Override
+    public String toString() {
+        final int trackerCount = trackers.length;
+
+        StringBuilder buf = new StringBuilder(32 + (64 * trackerCount));
+
+        buf.append(getClass().getSimpleName());
+        buf.append('[');
+
+        for (int i = 0; i < trackerCount; i++) {
+            if (i > 0) {
+                buf.append(',');
+            }
+
+            buf.append(trackers[i]);
+        }
+
+        buf.append(']');
+
+        return buf.toString();
+    }
 }

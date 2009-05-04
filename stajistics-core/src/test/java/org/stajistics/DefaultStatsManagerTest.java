@@ -14,11 +14,14 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -26,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -59,10 +63,12 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(null,
                                     mockery.mock(StatsSessionManager.class),
-                                    mockery.mock(StatsEventManager.class));
+                                    mockery.mock(StatsEventManager.class),
+                                    mockery.mock(StatsKeyFactory.class),
+                                    mockery.mock(StatsConfigFactory.class));
             fail("Allowed null StatsConfigManager");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("configManager", npe.getMessage());
         }
     }
 
@@ -71,10 +77,12 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     null,
-                                    mockery.mock(StatsEventManager.class));
+                                    mockery.mock(StatsEventManager.class),
+                                    mockery.mock(StatsKeyFactory.class),
+                                    mockery.mock(StatsConfigFactory.class));
             fail("Allowed null StatsSessionManager");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("sessionManager", npe.getMessage());
         }
     }
 
@@ -83,10 +91,40 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
-                                    null);
+                                    null,
+                                    mockery.mock(StatsKeyFactory.class),
+                                    mockery.mock(StatsConfigFactory.class));
             fail("Allowed null StatsEventManager");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("eventManager", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithNullKeyFactory() {
+        try {
+            new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
+                                    mockery.mock(StatsSessionManager.class),
+                                    mockery.mock(StatsEventManager.class),
+                                    null,
+                                    mockery.mock(StatsConfigFactory.class));
+            fail("Allowed null StatsKeyFactory");
+        } catch (NullPointerException npe) {
+            assertEquals("keyFactory", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithNullConfigFactory() {
+        try {
+            new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
+                                    mockery.mock(StatsSessionManager.class),
+                                    mockery.mock(StatsEventManager.class),
+                                    mockery.mock(StatsKeyFactory.class),
+                                    null);
+            fail("Allowed null StatsConfigFactory");
+        } catch (NullPointerException npe) {
+            assertEquals("configFactory", npe.getMessage());
         }
     }
 
@@ -95,8 +133,14 @@ public class DefaultStatsManagerTest {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
         StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
+        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, sessionManager, eventManager);
+        StatsManager mgr = new DefaultStatsManager(configManager, 
+                                                   sessionManager, 
+                                                   eventManager,
+                                                   keyFactory,
+                                                   configFactory);
 
         assertSame(configManager, mgr.getConfigManager());
     }
@@ -106,8 +150,14 @@ public class DefaultStatsManagerTest {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
         StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
+        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, sessionManager, eventManager);
+        StatsManager mgr = new DefaultStatsManager(configManager, 
+                                                   sessionManager, 
+                                                   eventManager,
+                                                   keyFactory,
+                                                   configFactory);
 
         assertSame(sessionManager, mgr.getSessionManager());
     }
@@ -117,10 +167,50 @@ public class DefaultStatsManagerTest {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
         StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
+        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, sessionManager, eventManager);
+        StatsManager mgr = new DefaultStatsManager(configManager, 
+                                                   sessionManager, 
+                                                   eventManager,
+                                                   keyFactory,
+                                                   configFactory);
 
         assertSame(eventManager, mgr.getEventManager());
+    }
+
+    @Test
+    public void testGetKeyFactory() {
+        StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
+        StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
+        StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
+        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+
+        StatsManager mgr = new DefaultStatsManager(configManager, 
+                                                   sessionManager, 
+                                                   eventManager,
+                                                   keyFactory,
+                                                   configFactory);
+
+        assertSame(keyFactory, mgr.getKeyFactory());
+    }
+
+    @Test
+    public void testGetConfigFactory() {
+        StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
+        StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
+        StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
+        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+
+        StatsManager mgr = new DefaultStatsManager(configManager, 
+                                                   sessionManager, 
+                                                   eventManager,
+                                                   keyFactory,
+                                                   configFactory);
+
+        assertSame(configFactory, mgr.getConfigFactory());
     }
 
     @Test
@@ -134,76 +224,20 @@ public class DefaultStatsManagerTest {
     }
 
     @Test
-    public void testCreateKey() {
-        StatsManager mgr = newDefaultStatsManager();
-        assertNotNull(mgr.createKey("test"));
-    }
+    public void testGetTracker() {
+        final StatsKey key = mockery.mock(StatsKey.class);
 
-    @Test
-    public void testCreateKeyWithNullName() {
-        StatsManager mgr = newDefaultStatsManager();
-        try {
-            mgr.createKey(null);
-            fail("Allowed createKey with null name");
-        } catch (NullPointerException npe) {
-            // expected
-        }
-    }
-
-    @Test
-    public void testCreateKeyBuilder() {
-        StatsManager mgr = newDefaultStatsManager();
-        assertNotNull(mgr.createKey("test"));
-    }
-
-    @Test
-    public void testCreateKeyBuilderWithNullName() {
-        StatsManager mgr = newDefaultStatsManager();
-        try {
-            mgr.createKeyBuilder((String)null);
-            fail("Allowed createKeyBuilder with null name");
-        } catch (NullPointerException npe) {
-            // expected
-        }
-    }
-
-    @Test
-    public void testCreateKeyBuilderWithTemplate() {
-        StatsManager mgr = newDefaultStatsManager();
-        assertNotNull(mgr.createKeyBuilder(mgr.createKey("test")));
-    }
-
-    @Test
-    public void testCreateKeyBuilderWithNullTemplate() {
-        StatsManager mgr = newDefaultStatsManager();
-        try {
-            mgr.createKeyBuilder((StatsKey)null);
-            fail("Allowed createKeyBuilder with null template");
-        } catch (NullPointerException npe) {
-            // expected
-        }
-    }
-
-    @Test
-    public void testCreateConfigBuilder() {
-        StatsManager mgr = newDefaultStatsManager();
-        assertNotNull(mgr.createConfigBuilder());
-    }
-
-    @Test
-    public void testCreateConfigBuilderWithTemplate() {
-        final StatsConfig config = mockery.mock(StatsConfig.class);
         mockery.checking(new Expectations() {{
-            ignoring(config);
+            ignoring(key).getName(); will(returnValue("test"));
+            ignoring(key).getAttributes(); will(returnValue(Collections.emptyMap()));
         }});
 
         StatsManager mgr = newDefaultStatsManager();
-        assertNotNull(mgr.createConfigBuilder(config));
-    }
+        StatsTracker tracker = mgr.getTracker(key);
 
-    @Test
-    public void testGetTracker() {
-        StatsManager mgr = newDefaultStatsManager();
-        assertNotNull(mgr.getTracker(mgr.createKey("test")));
+        assertNotNull(tracker);
+        assertSame(key, tracker.getSession().getKey());
+
+        mockery.assertIsSatisfied();
     }
 }

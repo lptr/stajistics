@@ -301,7 +301,8 @@ public final class Stats {
      * @see StatsManager#createKey(String)
      */
     public static StatsKey newKey(final String name) {
-        return getManager().createKey(name);
+        return getManager().getKeyFactory()
+                           .createKey(name);
     }
 
     /**
@@ -314,7 +315,8 @@ public final class Stats {
      * @see StatsManager#createKeyBuilder(StatsKey)
      */
     public static StatsKeyBuilder buildKey(final String name) {
-        return getManager().createKeyBuilder(name);
+        return getManager().getKeyFactory()
+                           .createKeyBuilder(name);
     }
 
     /**
@@ -325,7 +327,8 @@ public final class Stats {
      * @see StatsManager#createConfigBuilder()
      */
     public static StatsConfigBuilder buildConfig() {
-        return getManager().createConfigBuilder();
+        return getManager().getConfigFactory()
+                           .createConfigBuilder();
     }
 
 }

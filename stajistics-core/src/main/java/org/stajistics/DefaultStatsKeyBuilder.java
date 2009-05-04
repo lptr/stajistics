@@ -24,6 +24,7 @@ import java.util.Map;
  */
 public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
+    protected StatsKeyFactory keyFactory;
     protected String name;
 
     protected String firstAttrName;
@@ -31,20 +32,30 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
     protected Map<String,Object> attributes;
 
-    public DefaultStatsKeyBuilder(final String name) {
+    public DefaultStatsKeyBuilder(final String name,
+                                  final StatsKeyFactory keyFactory) {
         if (name == null) {
             throw new NullPointerException("name");
         }
+        if (keyFactory == null) {
+            throw new NullPointerException("keyFactory");
+        }
 
         this.name = name;
+        this.keyFactory = keyFactory;
     }
 
-    public DefaultStatsKeyBuilder(final StatsKey template) {
+    public DefaultStatsKeyBuilder(final StatsKey template,
+                                  final StatsKeyFactory keyFactory) {
         if (template == null) {
             throw new NullPointerException("template");
         }
+        if (keyFactory == null) {
+            throw new NullPointerException("keyFactory");
+        }
 
         this.name = template.getName();
+        this.keyFactory = keyFactory;
 
         Map<String,Object> attrs = template.getAttributes();
         if (attrs != null && !attrs.isEmpty()) {
@@ -178,17 +189,18 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         if (attributes == null) {
             // If no attributes
             if (firstAttrName == null) {
-                return new SimpleStatsKey(name);
+                return new SimpleStatsKey(name, keyFactory);
             }
 
             // One attribute
             return new SingleAttributeStatsKey(name,
+                                               keyFactory, 
                                                firstAttrName, 
                                                firstAttrValue);
         }
 
         // Many attributes
-        return new DefaultStatsKey(name, attributes);
+        return new DefaultStatsKey(name, keyFactory, attributes);
     }
 
 }

@@ -22,43 +22,24 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsKey implements StatsKey {
+public class DefaultStatsKey extends AbstractStatsKey {
 
     private static final long serialVersionUID = -9052397460294109721L;
 
-    protected final String name;
     protected final Map<String,Object> attributes;
 
-    protected final int hashCode;
-
     protected DefaultStatsKey(final String name,
+                              final StatsKeyFactory keyFactory,
                               final Map<String,Object> attributes) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
+        super(name, keyFactory);
 
         if (attributes == null) {
             throw new NullPointerException("attributes");
         }
 
-        this.name = name;
         this.attributes = attributes;
 
-        this.hashCode = hash();
-    }
-
-    protected int hash() {
-        return name.hashCode() ^
-               attributes.size() ^ // This matters
-               attributes.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsKeyBuilder buildCopy() {
-        return Stats.getManager().createKeyBuilder(this);
+        setHashCode();
     }
 
     /**
@@ -85,61 +66,8 @@ public class DefaultStatsKey implements StatsKey {
         return attributes.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String getName() {
-        return name;
+    protected void appendAttributes(final StringBuilder buf) {
+        buf.append(attributes);
     }
-
-    @Override
-    public int hashCode() {
-        return hashCode;
-    }
-
-    @Override
-    public boolean equals(final Object other) {
-        return (other instanceof StatsKey) && equals((StatsKey)other);
-    }
-
-    public boolean equals(final StatsKey other) {
-
-        if (other == null) {
-            return false;
-        }
-
-        if (this == other) {
-            return true;
-        }
-
-        if (this.hashCode != other.hashCode()) {
-            return false;
-        }
-
-        if (!this.name.equals(other.getName())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder buf = new StringBuilder();
-
-        buf.append(StatsKey.class.getSimpleName());
-        buf.append("[name=");
-        buf.append(name);
-
-        if (!attributes.isEmpty()) {
-           buf.append(",attrs=");
-           buf.append(attributes);
-        }
-
-        buf.append(']');
-
-        return buf.toString();
-    }
-
 }

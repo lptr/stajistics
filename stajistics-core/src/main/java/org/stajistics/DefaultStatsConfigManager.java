@@ -16,10 +16,13 @@ package org.stajistics;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,31 +49,60 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     private final Lock updateLock = new ReentrantLock();
 
     private final StatsEventManager eventManager;
+    private final StatsKeyFactory keyFactory;
 
-    public DefaultStatsConfigManager(final StatsEventManager eventManager) {
-        this(eventManager, createDefaultConfig(), null);
+    /**
+     * Create a new DefaultStatsConfigManager instance containing no initial configurations.
+     *
+     * @param eventManager The {@link StatsEventManager} with which to fire configuration events.
+     * @param keyFactory The {@link StatsKeyFactory} with which to create keys.
+     */
+    public DefaultStatsConfigManager(final StatsEventManager eventManager,
+                                     final StatsKeyFactory keyFactory) {
+        this(eventManager, keyFactory, createDefaultConfig(), null);
     }
 
+    /**
+     * Create a new DefaultStatsConfigManager instance supplying initial configuration.
+     * If the passed <tt>configMap</tt> is neither a {@link SortedMap} nor a {@link LinkedHashMap},
+     * it is transferred into a {@link TreeMap} in order to ensure a predictable entry extraction order.
+     *
+     * @param eventManager The {@link StatsEventManager} with which to fire configuration events.
+     * @param keyFactory The {@link StatsKeyFactory} with which to create keys.
+     * @param rootConfig The root {@link StatsConfig} from which to inherit in the absence of configuration.
+     * @param configMap A Map of key names to configurations. May be <tt>null</tt>.
+     */
     public DefaultStatsConfigManager(final StatsEventManager eventManager,
+                                     final StatsKeyFactory keyFactory,
                                      final StatsConfig rootConfig,
-                                     final Map<String,StatsConfig> configMap) {
+                                     Map<String,StatsConfig> configMap) {
         if (eventManager == null) {
             throw new NullPointerException("eventManager");
         }
-
+        if (keyFactory == null) {
+            throw new NullPointerException("keyFactory");
+        }
         if (rootConfig == null) {
             throw new NullPointerException("rootConfig");
         }
 
         this.eventManager = eventManager;
+        this.keyFactory = keyFactory;
 
         rootKeyEntry = new KeyEntry(NullStatsKey.getInstance(),
                                     null, 
                                     rootConfig);
 
         if (configMap != null) {
+            // If the configMap is not already intentionally ordered, sort it to ensure 
+            // predictable extraction. This is important because it affects the kinds of events
+            // generated (i.e. CONFIG_CREATED vs. CONFIG_CHANGED)
+            if (!(configMap instanceof SortedMap) && !(configMap instanceof LinkedHashMap)) {
+                configMap = new TreeMap<String,StatsConfig>(configMap);
+            }
+
             for (Map.Entry<String,StatsConfig> entry : configMap.entrySet()) {
-                setConfig(new SimpleStatsKey(entry.getKey()), entry.getValue());
+                setConfig(keyFactory.createKey(entry.getKey()), entry.getValue());
             }
         }
     }
@@ -175,17 +207,20 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return parentKeyName;
     }
 
+    /*
+     * This is kind of a scary method. Needs some refactoring.
+     */
     private KeyEntry createEntry(final StatsKey key, 
-                                 final StatsConfig config,
+                                 StatsConfig config,
                                  final boolean updateConfig, 
                                  final boolean updateLocked) {
 
-        boolean created = false;
         boolean goingUp = true;
 
         String keyName = key.getName();
         KeyEntry entry = null;
 
+        LinkedList<KeyEntry> newEntries = new LinkedList<KeyEntry>();
         LinkedList<String> stack = new LinkedList<String>();
 
         if (!updateLocked) {
@@ -223,19 +258,24 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                     }
 
                     KeyEntry parentEntry = entry;
-                    entry = new KeyEntry(new SimpleStatsKey(keyName), parentEntry, theConfig);
+                    StatsKey newKey = keyFactory.createKey(keyName);
+                    entry = new KeyEntry(newKey, parentEntry, theConfig);
                     parentEntry.childEntries.add(entry);
 
+                    newEntries.add(entry);
                     keyMap.put(keyName, entry);
-                    created = true;
                 }
             }
         } finally {
             updateLock.unlock();
         }
 
-        if (created) {
-            eventManager.fireEvent(StatsEventType.CONFIG_CREATED, key, entry.getConfig());
+        if (!newEntries.isEmpty()) {
+            for (KeyEntry e : newEntries) {
+                eventManager.fireEvent(StatsEventType.CONFIG_CREATED, 
+                                       e.getKey(),
+                                       e.getConfig());
+            }
         }
 
         return entry;
@@ -275,7 +315,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
         updateLock.lock();
         try {
-            KeyEntryDestroyer entryDestroyer = new KeyEntryDestroyer(keyMap);
+            KeyEntryDestroyer entryDestroyer = new KeyEntryDestroyer(keyMap, rootKeyEntry);
             entry.visit(entryDestroyer);
             entryItr = entryDestroyer.iterator();
 
@@ -398,26 +438,35 @@ final class KeyEntry {
 final class KeyEntryDestroyer implements KeyEntry.Visitor {
 
     private final Map<String,KeyEntry> keyMap;
+    private final KeyEntry rootKeyEntry;
+
     private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
 
-    KeyEntryDestroyer(final Map<String,KeyEntry> keyMap) {
+    KeyEntryDestroyer(final Map<String,KeyEntry> keyMap,
+                      final KeyEntry rootKeyEntry) {
         if (keyMap == null) {
             throw new NullPointerException("keyMap");
         }
+        if (rootKeyEntry == null) {
+            throw new NullPointerException("rootKeyEntry");
+        }
+
         this.keyMap = keyMap;
+        this.rootKeyEntry = rootKeyEntry;
     }
 
     @Override
     public boolean visit(final KeyEntry entry) {
+        if (entry == rootKeyEntry) {
+            // Don't destroy the root entry
+            return true;
+        }
 
         keyMap.remove(entry.getKey().getName());
 
         entryList.add(entry);
 
-        if (entry.parentEntry != null) {
-            entry.parentEntry.childEntries.remove(entry);
-        }
-
+        entry.parentEntry.childEntries.remove(entry);
         entry.parentEntry = null;
 
         return true;

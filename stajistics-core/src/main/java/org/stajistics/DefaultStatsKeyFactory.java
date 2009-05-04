@@ -14,7 +14,6 @@
  */
 package org.stajistics;
 
-import java.util.Map;
 
 /**
  * 
@@ -22,12 +21,30 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsKeyTest extends AbstractStatsKeyTestCase {
+public class DefaultStatsKeyFactory implements StatsKeyFactory {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected StatsKey createStatsKey(final String name,
-                                      final Map<String,Object> attributes) {
-        return new DefaultStatsKey(name, mockKeyFactory, attributes);
+    public StatsKey createKey(final String name) {
+        return new SimpleStatsKey(name, this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StatsKeyBuilder createKeyBuilder(final String name) {
+        return new DefaultStatsKeyBuilder(name, this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StatsKeyBuilder createKeyBuilder(final StatsKey template) {
+        return new DefaultStatsKeyBuilder(template, this);
     }
 
 }

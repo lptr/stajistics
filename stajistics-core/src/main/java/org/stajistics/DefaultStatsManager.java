@@ -38,6 +38,8 @@ public class DefaultStatsManager implements StatsManager {
     protected final StatsConfigManager configManager;
     protected final StatsSessionManager sessionManager;
     protected final StatsEventManager eventManager;
+    protected final StatsKeyFactory keyFactory;
+    protected final StatsConfigFactory configFactory;
 
     /**
      * Construct a DefaultStatsManager using the given set of managers.
@@ -45,10 +47,14 @@ public class DefaultStatsManager implements StatsManager {
      * @param configManager The {@link StatsConfigManager} to use.
      * @param sessionManager The {@link StatsSessionManager} to use.
      * @param eventManager The {@link StatsEventManager} to use.
+     * @param keyFactory The {@link StatsKeyFactory} to use.
      */
     public DefaultStatsManager(final StatsConfigManager configManager,
                                final StatsSessionManager sessionManager,
-                               final StatsEventManager eventManager) {
+                               final StatsEventManager eventManager,
+                               final StatsKeyFactory keyFactory,
+                               final StatsConfigFactory configFactory) {
+
         if (configManager == null) {
             throw new NullPointerException("configManager");
         }
@@ -58,10 +64,18 @@ public class DefaultStatsManager implements StatsManager {
         if (eventManager == null) {
             throw new NullPointerException("eventManager");
         }
+        if (keyFactory == null) {
+            throw new NullPointerException("keyFactory");
+        }
+        if (configFactory == null) {
+            throw new NullPointerException("configFactory");
+        }
 
+        this.keyFactory = keyFactory;
         this.configManager = configManager;
         this.sessionManager = sessionManager;
         this.eventManager = eventManager;
+        this.configFactory = configFactory;
     }
 
     /**
@@ -71,11 +85,19 @@ public class DefaultStatsManager implements StatsManager {
      */
     public static DefaultStatsManager createWithDefaults() {
 
+        StatsKeyFactory keyFactory = new DefaultStatsKeyFactory();
+
         StatsEventManager eventManager = new SynchronousStatsEventManager();
-        StatsConfigManager configManager = new DefaultStatsConfigManager(eventManager);
+        StatsConfigManager configManager = new DefaultStatsConfigManager(eventManager, keyFactory);
         StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager, eventManager);
 
-        DefaultStatsManager mgr = new DefaultStatsManager(configManager, sessionManager, eventManager);
+        StatsConfigFactory configFactory = new DefaultStatsConfigFactory(configManager);
+
+        DefaultStatsManager mgr = new DefaultStatsManager(configManager,
+                                                          sessionManager,
+                                                          eventManager,
+                                                          keyFactory,
+                                                          configFactory);
 
         //TODO: where the hell does this belong?
         new StatsManagement().initializeManagement(mgr);
@@ -86,6 +108,7 @@ public class DefaultStatsManager implements StatsManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StatsConfigManager getConfigManager() {
         return configManager;
     }
@@ -93,6 +116,7 @@ public class DefaultStatsManager implements StatsManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StatsSessionManager getSessionManager() {
         return sessionManager;
     }
@@ -100,8 +124,25 @@ public class DefaultStatsManager implements StatsManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StatsEventManager getEventManager() {
         return eventManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StatsKeyFactory getKeyFactory() {
+        return keyFactory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StatsConfigFactory getConfigFactory() {
+        return configFactory;
     }
 
     /**
@@ -118,46 +159,6 @@ public class DefaultStatsManager implements StatsManager {
     @Override
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsKey createKey(final String name) {
-        return new SimpleStatsKey(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsKeyBuilder createKeyBuilder(final String name) {
-        return new DefaultStatsKeyBuilder(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsKeyBuilder createKeyBuilder(final StatsKey template) {
-        return new DefaultStatsKeyBuilder(template);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsConfigBuilder createConfigBuilder() {
-        return new DefaultStatsConfigBuilder(configManager);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsConfigBuilder createConfigBuilder(final StatsConfig template) {
-        return new DefaultStatsConfigBuilder(configManager, template);
     }
 
     /**
@@ -221,5 +222,4 @@ public class DefaultStatsManager implements StatsManager {
 
         return DefaultManualStatsTracker.FACTORY.createTracker(key, sessionManager);
     }
-
 }

@@ -17,11 +17,14 @@ package org.stajistics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jmock.Mockery;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -35,6 +38,15 @@ public abstract class AbstractStatsKeyTestCase {
     protected static final String TEST_NAME = "testName";
     protected static final String TEST_UNIT = "testUnit";
     protected static final Map<String,Object> TEST_ATTRIBUTES = new HashMap<String,Object>();
+
+    protected Mockery mockery;
+    protected StatsKeyFactory mockKeyFactory;
+
+    @Before
+    public void setUp() {
+        mockery = new Mockery();
+        mockKeyFactory = mockery.mock(StatsKeyFactory.class);
+    }
 
     protected abstract StatsKey createStatsKey(String name,
                                                Map<String,Object> attributes);
@@ -109,6 +121,12 @@ public abstract class AbstractStatsKeyTestCase {
     }
 
     @Test
+    public void testHashCodeNotZero() {
+        StatsKey key = createStatsKey(TEST_NAME);
+        assertFalse(0 == key.hashCode());
+    }
+
+    @Test
     public void testHashCodeWithSameName() {
         StatsKey key1 = createStatsKey(TEST_NAME);
         StatsKey key2 = createStatsKey(TEST_NAME);
@@ -120,5 +138,17 @@ public abstract class AbstractStatsKeyTestCase {
         StatsKey key1 = createStatsKey(TEST_NAME);
         StatsKey key2 = createStatsKey(TEST_NAME + "2");
         assertFalse(key1.hashCode() == key2.hashCode());
+    }
+
+    @Test
+    public void testToStringIsNotDefault() {
+        StatsKey key = createStatsKey(TEST_NAME);
+        assertFalse(key.toString().startsWith(key.getClass().getName() + "@"));
+    }
+
+    @Test
+    public void testToStringContainsName() {
+        StatsKey key = createStatsKey(TEST_NAME);
+        assertTrue(key.toString().contains("name=" + key.getName()));
     }
 }

@@ -27,6 +27,7 @@ import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.StatsEventType;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.tracker.TimeDurationTracker;
 
@@ -36,19 +37,19 @@ import org.stajistics.tracker.TimeDurationTracker;
  */
 public class DefaultStatsConfigManagerTest {
 
-    // TODO: set up mock expectations for event firing
-
     private Mockery mockery;
-    private StatsEventManager eventManager;
+    private StatsEventManager mockEventManager;
+    private StatsKeyFactory mockKeyFactory;
 
     private DefaultStatsConfigManager configManager;
 
     @Before
     public void setUp() {
         mockery = new Mockery();
-        eventManager = mockery.mock(StatsEventManager.class);
+        mockEventManager = mockery.mock(StatsEventManager.class);
+        mockKeyFactory = new DefaultStatsKeyFactory(); // TODO: actually mock this
 
-        configManager = new DefaultStatsConfigManager(eventManager);
+        configManager = new DefaultStatsConfigManager(mockEventManager, mockKeyFactory);
     }
 
     private StatsConfig createConfig() {
@@ -61,10 +62,10 @@ public class DefaultStatsConfigManagerTest {
 
     private StatsKey[] createKeyHierarchy() {
         return new StatsKey[] {
-            new SimpleStatsKey("test"),
-            new SimpleStatsKey("test.child"),
-            new SimpleStatsKey("test.child.grandchild"),
-            new SimpleStatsKey("test.child.grandchild.greatgrandchild")
+            new SimpleStatsKey("test", mockKeyFactory),
+            new SimpleStatsKey("test.child", mockKeyFactory),
+            new SimpleStatsKey("test.child.grandchild", mockKeyFactory),
+            new SimpleStatsKey("test.child.grandchild.greatgrandchild", mockKeyFactory)
         };
     }
 
@@ -87,10 +88,24 @@ public class DefaultStatsConfigManagerTest {
         configMap.put(keys[3].getName(), config3);
 
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[0]),
+                                            with(config0));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[1]),
+                                            with(config1));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[2]),
+                                            with(config2));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[3]),
+                                            with(config3));
         }});
 
-        configManager = new DefaultStatsConfigManager(eventManager, rootConfig, configMap);
+        configManager = new DefaultStatsConfigManager(mockEventManager, 
+                                                      mockKeyFactory,
+                                                      rootConfig, 
+                                                      configMap);
 
         mockery.assertIsSatisfied();
 
@@ -108,13 +123,19 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testSetAndGetRootConfig() {
+
+        final StatsConfig config = createConfig();
+
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CHANGED),
+                                            with(any(StatsKey.class)),
+                                            with(config));
         }});
 
-        StatsConfig config = createConfig();
         configManager.setRootConfig(config);
         assertSame(config, configManager.getRootConfig());
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -136,10 +157,10 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testSetConfigWithNullConfig() {
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            ignoring(mockEventManager);
         }});
 
-        StatsKey key = new SimpleStatsKey("test");
+        StatsKey key = new SimpleStatsKey("test", mockKeyFactory);
 
         StatsConfig rootConfig = configManager.getRootConfig();
 
@@ -147,12 +168,12 @@ public class DefaultStatsConfigManagerTest {
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));
 
-        key = new SimpleStatsKey("test.child");
+        key = new SimpleStatsKey("test.child", mockKeyFactory);
         configManager.setConfig(key, null);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));
 
-        key = new SimpleStatsKey("test.child.grandchild");
+        key = new SimpleStatsKey("test.child.grandchild", mockKeyFactory);
         configManager.setConfig(key, null);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));
@@ -160,35 +181,45 @@ public class DefaultStatsConfigManagerTest {
 
     @Test
     public void testSetConfigAscending() {
+
+        final StatsKey[] keys = createKeyHierarchy();
+
+        final StatsConfig rootConfig = configManager.getRootConfig();
+        final StatsConfig config0 = createConfig();
+        final StatsConfig config1 = createConfig();
+        final StatsConfig config2 = createConfig();
+        final StatsConfig config3 = createConfig();
+
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[0]), 
+                                            with(config0));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[1]), 
+                                            with(config1));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[2]), 
+                                            with(config2));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[3]), 
+                                            with(config3));
         }});
 
-        StatsKey[] keys = createKeyHierarchy();
-
-        StatsConfig rootConfig = configManager.getRootConfig();
-
         // Level 0
-        StatsConfig config0 = createConfig();
         assertNull(configManager.getConfig(keys[0]));
-        assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
         configManager.setConfig(keys[0], config0);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
 
         // Level 1
-        StatsConfig config1 = createConfig();
         assertNull(configManager.getConfig(keys[1]));
-        assertSame(config0, configManager.getOrCreateConfig(keys[1]));
         configManager.setConfig(keys[1], config1);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
         assertSame(config1, configManager.getConfig(keys[1]));
 
         // Level 2
-        StatsConfig config2 = createConfig();
         assertNull(configManager.getConfig(keys[2]));
-        assertSame(config1, configManager.getOrCreateConfig(keys[2]));
         configManager.setConfig(keys[2], config2);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
@@ -196,29 +227,53 @@ public class DefaultStatsConfigManagerTest {
         assertSame(config2, configManager.getConfig(keys[2]));
 
         // Level 3
-        StatsConfig config3 = createConfig();
         assertNull(configManager.getConfig(keys[3]));
-        assertSame(config2, configManager.getOrCreateConfig(keys[3]));
         configManager.setConfig(keys[3], config3);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
         assertSame(config1, configManager.getConfig(keys[1]));
         assertSame(config2, configManager.getConfig(keys[2]));
         assertSame(config3, configManager.getConfig(keys[3]));
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void testSetConfigDescending() {
+
+        final StatsKey[] keys = createKeyHierarchy();
+
+        final StatsConfig rootConfig = configManager.getRootConfig();
+        final StatsConfig config0 = createConfig();
+        final StatsConfig config1 = createConfig();
+        final StatsConfig config2 = createConfig();
+        final StatsConfig config3 = createConfig();
+
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED), 
+                                            with(keys[0]),
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED), 
+                                            with(keys[1]),
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED), 
+                                            with(keys[2]),
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED), 
+                                            with(keys[3]),
+                                            with(config3));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CHANGED), 
+                                            with(keys[2]),
+                                            with(config2));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CHANGED), 
+                                            with(keys[1]),
+                                            with(config1));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CHANGED), 
+                                            with(keys[0]),
+                                            with(config0));
         }});
 
-        StatsKey[] keys = createKeyHierarchy();
-
-        StatsConfig rootConfig = configManager.getRootConfig();
-
         // Level 3
-        StatsConfig config3 = createConfig();
         configManager.setConfig(keys[3], config3);
         assertSame(config3, configManager.getConfig(keys[3]));
         assertSame(rootConfig, configManager.getConfig(keys[2]));
@@ -227,7 +282,6 @@ public class DefaultStatsConfigManagerTest {
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Level 2
-        StatsConfig config2 = createConfig();
         configManager.setConfig(keys[2], config2);
         assertSame(config3, configManager.getConfig(keys[3]));
         assertSame(config2, configManager.getConfig(keys[2]));
@@ -236,7 +290,6 @@ public class DefaultStatsConfigManagerTest {
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Level 1
-        StatsConfig config1 = createConfig();
         configManager.setConfig(keys[1], config1);
         assertSame(config3, configManager.getConfig(keys[3]));
         assertSame(config2, configManager.getConfig(keys[2]));
@@ -245,51 +298,80 @@ public class DefaultStatsConfigManagerTest {
         assertSame(rootConfig, configManager.getRootConfig());
 
         // Level 0
-        StatsConfig config0 = createConfig();
         configManager.setConfig(keys[0], config0);
         assertSame(config3, configManager.getConfig(keys[3]));
         assertSame(config2, configManager.getConfig(keys[2]));
         assertSame(config1, configManager.getConfig(keys[1]));
         assertSame(config0, configManager.getConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void testGetOrCreateRootConfigAscending() {
+
+        final StatsKey[] keys = createKeyHierarchy();
+
+        final StatsConfig rootConfig = configManager.getRootConfig();
+
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[0]), 
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[1]), 
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[2]), 
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[3]), 
+                                            with(rootConfig));
         }});
-
-        StatsKey[] keys = createKeyHierarchy();
-
-        StatsConfig rootConfig = configManager.getRootConfig();
 
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[1]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[2]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[3]));
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void testGetOrCreateRootConfigDescending() {
+
+        final StatsKey[] keys = createKeyHierarchy();
+
+        final StatsConfig rootConfig = configManager.getRootConfig();
+
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[0]), 
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[1]), 
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[2]), 
+                                            with(rootConfig));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                            with(keys[3]), 
+                                            with(rootConfig));
         }});
-
-        StatsKey[] keys = createKeyHierarchy();
-
-        StatsConfig rootConfig = configManager.getRootConfig();
 
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[3]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[2]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[1]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void testGetOrCreate_GetLevel1_SetLevel2_GetLevel3_SetLevel4() {
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            ignoring(mockEventManager);
         }});
 
         StatsKey[] keys = createKeyHierarchy();
@@ -326,7 +408,7 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testGetOrCreate_SetLevel1_GetLevel2_SetLevel3_GetLevel4() {
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            ignoring(mockEventManager);
         }});
 
         StatsKey[] keys = createKeyHierarchy();
@@ -363,7 +445,7 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testGetOrCreate_GetLevel4_SetLevel3_GetLevel2_SetLevel1() {
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            ignoring(mockEventManager);
         }});
 
         StatsKey[] keys = createKeyHierarchy();
@@ -396,7 +478,7 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testGetOrCreate_SetLevel4_GetLevel3_SetLevel2_GetLevel1() {
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            ignoring(mockEventManager);
         }});
 
         StatsKey[] keys = createKeyHierarchy();
@@ -429,7 +511,9 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testGetConfig() {
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            exactly(4).of(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                                      with(any(StatsKey.class)),
+                                                      with(any(StatsConfig.class)));
         }});
 
         StatsKey[] keys = createKeyHierarchy();
@@ -445,20 +529,37 @@ public class DefaultStatsConfigManagerTest {
 
         configManager.setConfig(keys[3], createConfig());
         assertNotNull(configManager.getConfig(keys[3]));
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void testRemoveConfigAscending() {
+
+        final StatsKey[] keys = createKeyHierarchy();
+
+        final StatsConfig config0 = createConfig();
+        final StatsConfig config1 = createConfig();
+        final StatsConfig config2 = createConfig();
+        final StatsConfig config3 = createConfig();
+
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            ignoring(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                                 with(any(StatsKey.class)), 
+                                                 with(aNonNull(StatsConfig.class)));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[0]),
+                                            with(config0));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[1]),
+                                            with(config1));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[2]),
+                                            with(config2));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[3]),
+                                            with(config3));
         }});
-
-        StatsKey[] keys = createKeyHierarchy();
-
-        StatsConfig config0 = createConfig();
-        StatsConfig config1 = createConfig();
-        StatsConfig config2 = createConfig();
-        StatsConfig config3 = createConfig();
 
         configManager.setConfig(keys[0], config0);
         configManager.setConfig(keys[1], config1);
@@ -474,20 +575,37 @@ public class DefaultStatsConfigManagerTest {
         assertNull(configManager.removeConfig(keys[1]));
         assertNull(configManager.removeConfig(keys[2]));
         assertNull(configManager.removeConfig(keys[3]));
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void testRemoveConfigDescending() {
+
+        final StatsKey[] keys = createKeyHierarchy();
+
+        final StatsConfig config0 = createConfig();
+        final StatsConfig config1 = createConfig();
+        final StatsConfig config2 = createConfig();
+        final StatsConfig config3 = createConfig();
+
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            ignoring(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                                 with(any(StatsKey.class)), 
+                                                 with(aNonNull(StatsConfig.class)));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[3]),
+                                            with(config3));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[2]),
+                                            with(config2));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[1]),
+                                            with(config1));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[0]),
+                                            with(config0));
         }});
-
-        StatsKey[] keys = createKeyHierarchy();
-
-        StatsConfig config0 = createConfig();
-        StatsConfig config1 = createConfig();
-        StatsConfig config2 = createConfig();
-        StatsConfig config3 = createConfig();
 
         configManager.setConfig(keys[0], config0);
         configManager.setConfig(keys[1], config1);
@@ -521,20 +639,37 @@ public class DefaultStatsConfigManagerTest {
         assertNull(configManager.getConfig(keys[1]));
         assertNull(configManager.getConfig(keys[0]));
         assertNull(configManager.removeConfig(keys[0]));
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
     public void testClearConfigs() {
+
+        final StatsKey[] keys = createKeyHierarchy();
+
+        final StatsConfig config0 = createConfig();
+        final StatsConfig config1 = createConfig();
+        final StatsConfig config2 = createConfig();
+        final StatsConfig config3 = createConfig();
+
         mockery.checking(new Expectations() {{
-            ignoring(eventManager);
+            ignoring(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+                                                 with(any(StatsKey.class)), 
+                                                 with(aNonNull(StatsConfig.class)));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[0]),
+                                            with(config0));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[1]),
+                                            with(config1));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[2]),
+                                            with(config2));
+            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+                                            with(keys[3]),
+                                            with(config3));
         }});
-
-        StatsKey[] keys = createKeyHierarchy();
-
-        StatsConfig config0 = createConfig();
-        StatsConfig config1 = createConfig();
-        StatsConfig config2 = createConfig();
-        StatsConfig config3 = createConfig();
 
         configManager.setConfig(keys[0], config0);
         configManager.setConfig(keys[1], config1);
@@ -547,6 +682,8 @@ public class DefaultStatsConfigManagerTest {
         assertNull(configManager.getConfig(keys[2]));
         assertNull(configManager.getConfig(keys[1]));
         assertNull(configManager.getConfig(keys[0]));
+
+        mockery.assertIsSatisfied();
     }
 
 }
