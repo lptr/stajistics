@@ -29,6 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.tracker.CompositeStatsTracker;
+import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -47,7 +49,7 @@ public class DefaultStatsManagerTest {
     }
 
     private DefaultStatsManager newDefaultStatsManager() {
-        return DefaultStatsManager.createWithDefaults();
+        return DefaultStatsManager.createWithDefaults(); // TODO: mock the managers
     }
 
     @Test
@@ -239,5 +241,101 @@ public class DefaultStatsManagerTest {
         assertSame(key, tracker.getSession().getKey());
 
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testGetTrackerWithSizeOneKeyArray() {
+        final StatsKey key = mockery.mock(StatsKey.class);
+
+        mockery.checking(new Expectations() {{
+            ignoring(key).getName(); will(returnValue("test"));
+            ignoring(key).getAttributes(); will(returnValue(Collections.emptyMap()));
+        }});
+
+        StatsManager mgr = newDefaultStatsManager();
+        StatsTracker tracker = mgr.getTracker(new StatsKey[] { key });
+
+        assertNotNull(tracker);
+        assertFalse(tracker instanceof CompositeStatsTracker);
+        assertSame(key, tracker.getSession().getKey());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testGetTrackerWithSizeTwoKeyArray() {
+        final StatsKey key1 = mockery.mock(StatsKey.class, "StatsKey1");
+        final StatsKey key2 = mockery.mock(StatsKey.class, "StatsKey2");
+
+        mockery.checking(new Expectations() {{
+            ignoring(key1).getName(); will(returnValue("test1"));
+            ignoring(key1).getAttributes(); will(returnValue(Collections.emptyMap()));
+            ignoring(key2).getName(); will(returnValue("test2"));
+            ignoring(key2).getAttributes(); will(returnValue(Collections.emptyMap()));
+        }});
+
+        StatsManager mgr = newDefaultStatsManager();
+        StatsTracker tracker = mgr.getTracker(new StatsKey[] { key1, key2 });
+
+        assertNotNull(tracker);
+        assertTrue(tracker instanceof CompositeStatsTracker);
+
+        CompositeStatsTracker cTracker = (CompositeStatsTracker)tracker;
+        assertSame(key1, cTracker.getTrackers().get(0).getSession().getKey());
+        assertSame(key2, cTracker.getTrackers().get(1).getSession().getKey());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testGetTrackerWithNullKey() {
+        try {
+            newDefaultStatsManager().getTracker((StatsKey)null);
+            fail("Allowed getTracker with null StatsKey");
+
+        } catch (NullPointerException npe) {
+            assertEquals("key", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetTrackerWithNullKeys() {
+        try {
+            newDefaultStatsManager().getTracker((StatsKey[])null);
+            fail("Allowed getTracker with null StatsKey[]");
+
+        } catch (NullPointerException npe) {
+            assertEquals("keys", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetTrackerWhenDisabled() {
+        final StatsKey key = mockery.mock(StatsKey.class);
+
+        mockery.checking(new Expectations() {{
+            ignoring(key).getName(); will(returnValue("test"));
+            ignoring(key).getAttributes(); will(returnValue(Collections.emptyMap()));
+        }});
+
+        StatsManager mgr = newDefaultStatsManager();
+        mgr.setEnabled(false);
+
+        assertEquals(NullTracker.getInstance(), mgr.getTracker(key));
+    }
+
+    @Test
+    public void testGetManualTrackerWhenDisabled() {
+        final StatsKey key = mockery.mock(StatsKey.class);
+
+        mockery.checking(new Expectations() {{
+            ignoring(key).getName(); will(returnValue("test"));
+            ignoring(key).getAttributes(); will(returnValue(Collections.emptyMap()));
+        }});
+
+        StatsManager mgr = newDefaultStatsManager();
+        mgr.setEnabled(false);
+
+        assertEquals(NullTracker.getInstance(), mgr.getManualTracker(key));
     }
 }

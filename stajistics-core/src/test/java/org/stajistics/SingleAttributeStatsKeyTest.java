@@ -31,6 +31,7 @@ public class SingleAttributeStatsKeyTest extends AbstractStatsKeyTestCase {
 
     @Override
     protected StatsKey createStatsKey(final String name, 
+                                      final StatsKeyFactory keyFactory,
                                       final Map<String,Object> attributes) {
         String attrName = null;
         Object attrValue = null;
@@ -44,17 +45,14 @@ public class SingleAttributeStatsKeyTest extends AbstractStatsKeyTestCase {
         }
 
         return new SingleAttributeStatsKey(name,
-                                           mockKeyFactory,
+                                           keyFactory,
                                            attrName,
                                            attrValue);
     }
 
     @Test
     public void testConstructWithNullAttributes() {
-        StatsKey key = new SingleAttributeStatsKey(TEST_NAME,
-                                                   mockKeyFactory,
-                                                   null,
-                                                   null);
+        StatsKey key = createStatsKey(TEST_NAME, mockKeyFactory, null);
         assertEquals(0, key.getAttributeCount());
         assertTrue(key.getAttributes().isEmpty());
     }

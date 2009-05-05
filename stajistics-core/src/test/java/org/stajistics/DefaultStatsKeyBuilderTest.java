@@ -274,7 +274,7 @@ public class DefaultStatsKeyBuilderTest {
             fail("Allowed withAttribute with null name");
 
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("name", npe.getMessage());
         }
     }
 
@@ -317,7 +317,7 @@ public class DefaultStatsKeyBuilderTest {
             fail("Allowed withAttribute with null String value");
 
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("value for name: name", npe.getMessage());
         }
 
         mockery.assertIsSatisfied();
@@ -334,7 +334,7 @@ public class DefaultStatsKeyBuilderTest {
             fail("Allowed withAttribute with null Boolean value");
 
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("value for name: name", npe.getMessage());
         }
 
         mockery.assertIsSatisfied();

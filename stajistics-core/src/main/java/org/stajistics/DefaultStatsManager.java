@@ -192,6 +192,10 @@ public class DefaultStatsManager implements StatsManager {
     @Override
     public StatsTracker getTracker(final StatsKey... keys) {
 
+        if (keys == null) {
+            throw new NullPointerException("keys");
+        }
+
         if (!enabled) {
             return NullTracker.getInstance();
         }

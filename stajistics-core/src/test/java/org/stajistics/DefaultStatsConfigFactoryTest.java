@@ -15,6 +15,8 @@
 package org.stajistics;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -41,6 +43,17 @@ public class DefaultStatsConfigFactoryTest {
         mockConfigManager = mockery.mock(StatsConfigManager.class);
 
         configFactory = new DefaultStatsConfigFactory(mockConfigManager);
+    }
+
+    @Test
+    public void testConstructWithNullConfigManager() {
+        try {
+            new DefaultStatsConfigFactory(null);
+            fail("Allowed construction with null configManager");
+
+        } catch (NullPointerException npe) {
+            assertEquals("configManager", npe.getMessage());
+        }
     }
 
     @Test

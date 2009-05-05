@@ -315,7 +315,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
         updateLock.lock();
         try {
-            KeyEntryDestroyer entryDestroyer = new KeyEntryDestroyer(keyMap, rootKeyEntry);
+            KeyEntryDestroyer entryDestroyer = new KeyEntryDestroyer(keyMap);
             entry.visit(entryDestroyer);
             entryItr = entryDestroyer.iterator();
 
@@ -438,26 +438,20 @@ final class KeyEntry {
 final class KeyEntryDestroyer implements KeyEntry.Visitor {
 
     private final Map<String,KeyEntry> keyMap;
-    private final KeyEntry rootKeyEntry;
 
     private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
 
-    KeyEntryDestroyer(final Map<String,KeyEntry> keyMap,
-                      final KeyEntry rootKeyEntry) {
+    KeyEntryDestroyer(final Map<String,KeyEntry> keyMap) {
         if (keyMap == null) {
             throw new NullPointerException("keyMap");
         }
-        if (rootKeyEntry == null) {
-            throw new NullPointerException("rootKeyEntry");
-        }
 
         this.keyMap = keyMap;
-        this.rootKeyEntry = rootKeyEntry;
     }
 
     @Override
     public boolean visit(final KeyEntry entry) {
-        if (entry == rootKeyEntry) {
+        if (entry.isRoot()) {
             // Don't destroy the root entry
             return true;
         }

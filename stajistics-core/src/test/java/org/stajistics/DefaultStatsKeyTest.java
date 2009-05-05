@@ -26,8 +26,9 @@ public class DefaultStatsKeyTest extends AbstractStatsKeyTestCase {
 
     @Override
     protected StatsKey createStatsKey(final String name,
+                                      final StatsKeyFactory keyFactory,
                                       final Map<String,Object> attributes) {
-        return new DefaultStatsKey(name, mockKeyFactory, attributes);
+        return new DefaultStatsKey(name, keyFactory, attributes);
     }
 
 }

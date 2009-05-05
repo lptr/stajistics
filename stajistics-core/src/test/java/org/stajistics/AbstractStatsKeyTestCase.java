@@ -16,13 +16,15 @@ package org.stajistics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,10 +51,12 @@ public abstract class AbstractStatsKeyTestCase {
     }
 
     protected abstract StatsKey createStatsKey(String name,
+                                               StatsKeyFactory keyFactory,
                                                Map<String,Object> attributes);
 
     protected StatsKey createStatsKey(final String name) {
         return createStatsKey(name, 
+                              mockKeyFactory,
                               TEST_ATTRIBUTES);
     }
 
@@ -69,15 +73,40 @@ public abstract class AbstractStatsKeyTestCase {
     }
 
     @Test
+    public void testConstructWithNullKeyFactory() {
+        try {
+            createStatsKey(TEST_NAME, null, Collections.<String,Object>emptyMap());
+
+            fail("Allowed construction with null key factory");
+
+        } catch (NullPointerException npe) {
+            assertEquals("keyFactory", npe.getMessage());
+        }
+    }
+
+    @Test
     public void testConstructWithNullAttributes() {
         try {
-            createStatsKey(TEST_NAME, null);
+            createStatsKey(TEST_NAME, mockKeyFactory, null);
 
             fail("Allowed construction with null attributes");
 
         } catch (NullPointerException npe) {
             assertEquals("attributes", npe.getMessage());
         }
+    }
+
+    @Test
+    public void testBuildCopy() {
+
+        final StatsKey key = createStatsKey(TEST_NAME);
+        final StatsKeyBuilder builder = mockery.mock(StatsKeyBuilder.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockKeyFactory).createKeyBuilder(key); will(returnValue(builder));
+        }});
+
+        assertSame(builder, key.buildCopy());
     }
 
     @Test
@@ -114,8 +143,11 @@ public abstract class AbstractStatsKeyTestCase {
 
     @Test
     public void testEqualsKeyWithDifferentAttributes() {
-        StatsKey key1 = createStatsKey(TEST_NAME, TEST_ATTRIBUTES);
+        StatsKey key1 = createStatsKey(TEST_NAME, 
+                                       mockKeyFactory,
+                                       TEST_ATTRIBUTES);
         StatsKey key2 = createStatsKey(TEST_NAME, 
+                                       mockKeyFactory,
                                        Collections.<String,Object>singletonMap("test", "test"));
         assertFalse(key1.equals(key2));
     }
@@ -150,5 +182,13 @@ public abstract class AbstractStatsKeyTestCase {
     public void testToStringContainsName() {
         StatsKey key = createStatsKey(TEST_NAME);
         assertTrue(key.toString().contains("name=" + key.getName()));
+    }
+
+    @Test
+    public void testToStringContainsAttributes() {
+        StatsKey key = createStatsKey(TEST_NAME, 
+                                      mockKeyFactory, 
+                                      Collections.<String,Object>singletonMap("name", "value"));
+        assertTrue(key.toString().contains("name=value"));
     }
 }

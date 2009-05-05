@@ -28,8 +28,9 @@ public class SimpleStatsKeyTest extends AbstractStatsKeyTestCase {
 
     @Override
     protected StatsKey createStatsKey(final String name, 
+                                      final StatsKeyFactory keyFactory,
                                       final Map<String, Object> attributes) {
-        return new SimpleStatsKey(name, mockKeyFactory);
+        return new SimpleStatsKey(name, keyFactory);
     }
 
     @Override
@@ -39,4 +40,8 @@ public class SimpleStatsKeyTest extends AbstractStatsKeyTestCase {
     @Override
     @Ignore
     public void testEqualsKeyWithDifferentAttributes() {}
+
+    @Override
+    @Ignore
+    public void testToStringContainsAttributes() {}
 }

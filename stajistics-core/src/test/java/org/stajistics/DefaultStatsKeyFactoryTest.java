@@ -16,6 +16,7 @@ package org.stajistics;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +64,7 @@ public class DefaultStatsKeyFactoryTest {
             keyFactory.createKeyBuilder((String)null);
             fail("Allowed createKeyBuilder with null name");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("name", npe.getMessage());
         }
     }
 
@@ -78,7 +79,7 @@ public class DefaultStatsKeyFactoryTest {
             keyFactory.createKeyBuilder((StatsKey)null);
             fail("Allowed createKeyBuilder with null template");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("template", npe.getMessage());
         }
     }
     

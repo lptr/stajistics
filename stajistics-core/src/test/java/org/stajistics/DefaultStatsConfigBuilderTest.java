@@ -93,7 +93,7 @@ public class DefaultStatsConfigBuilderTest {
             builder.withTrackerFactory(null);
             fail("Allowed null StatsTrackerFactory");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("trackerFactory", npe.getMessage());
         }
     }
 
@@ -111,7 +111,7 @@ public class DefaultStatsConfigBuilderTest {
             builder.withSessionFactory(null);
             fail("Allowed null StatsSessionFactory");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("sessionFactory", npe.getMessage());
         }
     }
 
@@ -127,7 +127,7 @@ public class DefaultStatsConfigBuilderTest {
             builder.withUnit(null);
             fail("Allowed null unit");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("unit", npe.getMessage());
         }
     }
 

@@ -45,7 +45,7 @@ public class DefaultStatsConfigTest {
                                    "description");
             fail("Allowed construction with null StatsTrackerFactory");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("trackerFactory", npe.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class DefaultStatsConfigTest {
                                    "description");
             fail("Allowed construction with null StatsSessionFactory");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("sessionFactory", npe.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class DefaultStatsConfigTest {
                                    "description");
             fail("Allowed construction with null unit");
         } catch (NullPointerException npe) {
-            // expected
+            assertEquals("unit", npe.getMessage());
         }
     }
 
@@ -86,8 +86,8 @@ public class DefaultStatsConfigTest {
                                    "", 
                                    "description");
             fail("Allowed construction with empty unit");
-        } catch (IllegalArgumentException iia) {
-            // expected
+        } catch (IllegalArgumentException iae) {
+            assertEquals("empty unit", iae.getMessage());
         }
     }
 
