@@ -94,7 +94,7 @@
             <source>1.5</source>
             <target>1.5</target>
             <encoding>UTF-8</encoding>
-            <optimize>false</optimize>
+            <optimize>true</optimize>
             <debug>true</debug>
             <showDeprecation>true</showDeprecation>
           </configuration>
@@ -189,6 +189,17 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.1</version>
+          <configuration>
+            <descriptorId>bin</descriptorId>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -328,8 +339,10 @@
   </profiles>
 
   <modules>
+    <module>stajistics-aop</module>
     <module>stajistics-core</module>
     <module>stajistics-examples</module>
+    <module>stajistics-groovy</module>
     <module>stajistics-servlet</module>
   </modules>
 
@@ -371,7 +384,7 @@
       <dependency>
         <groupId>${pom.groupId}</groupId>
         <artifactId>stajistics</artifactId>
-        <version>${stajistics-version}</version>
+        <version>${pom.version}</version>
       </dependency>
 
       <dependency>
@@ -382,6 +395,13 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
+        <version>1.5.6</version>
+        <scope>runtime</scope>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-nop</artifactId>
         <version>1.5.6</version>
         <scope>runtime</scope>
         <optional>true</optional>
@@ -416,8 +436,6 @@
   </distributionManagement>
 
   <properties>
-    <stajistics-version>0.1-SNAPSHOT</stajistics-version>
-    <javassist-version>3.0</javassist-version>
     <junit-version>4.4</junit-version>
     <jmock-version>2.5.1</jmock-version>
   </properties>
