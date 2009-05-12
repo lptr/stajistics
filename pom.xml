@@ -341,6 +341,7 @@
   <modules>
     <module>stajistics-core</module>
     <module>stajistics-examples</module>
+    <module>stajistics-groovy</module>
     <module>stajistics-servlet</module>
   </modules>
 

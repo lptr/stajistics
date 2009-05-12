@@ -147,7 +147,7 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testSetConfigWithNullKey() {
         try {
-            configManager.setConfig(null, createConfig());
+            configManager.setConfig((StatsKey)null, createConfig());
             fail("Allowed setConfig with null key");
         } catch (NullPointerException npe) {
             // expected
