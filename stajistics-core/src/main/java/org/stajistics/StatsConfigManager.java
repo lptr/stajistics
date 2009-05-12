@@ -35,11 +35,15 @@ public interface StatsConfigManager {
 
     Set<String> getKeyNames();
 
+    void setConfig(String keyName, StatsConfig config);
+
     void setConfig(StatsKey key, StatsConfig config);
 
     StatsConfig getConfig(StatsKey key);
 
     StatsConfig getOrCreateConfig(StatsKey key);
+
+    StatsConfig removeConfig(String keyName);
 
     StatsConfig removeConfig(StatsKey key);
 

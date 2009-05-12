@@ -135,6 +135,11 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     @Override
+    public void setConfig(final String keyName, final StatsConfig config) {
+        setConfig(keyFactory.createKey(keyName), config);
+    }
+
+    @Override
     public void setConfig(final StatsKey key, final StatsConfig config) {
         if (key == null) {
             throw new NullPointerException("key");
@@ -170,6 +175,11 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         }
 
         return entry.getConfig();
+    }
+
+    @Override
+    public StatsConfig removeConfig(String keyName) {
+        return removeConfig(keyFactory.createKey(keyName));
     }
 
     @Override
