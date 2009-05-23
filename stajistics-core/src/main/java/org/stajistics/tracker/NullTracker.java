@@ -27,6 +27,8 @@ import org.stajistics.session.StatsSession;
  */
 public final class NullTracker implements StatsTracker,ManualStatsTracker {
 
+    private static final long serialVersionUID = -4347885685828741849L;
+
     private static final NullTracker instance = new NullTracker();
 
     private static final StatsSession session = 

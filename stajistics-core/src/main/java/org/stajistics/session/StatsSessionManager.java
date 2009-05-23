@@ -14,6 +14,7 @@
  */
 package org.stajistics.session;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ import org.stajistics.StatsKey;
  *
  * @author The Stajistics Project
  */
-public interface StatsSessionManager {
+public interface StatsSessionManager extends Serializable {
 
     /**
      * Get the total number of {@link StatsSession} instance being managed.

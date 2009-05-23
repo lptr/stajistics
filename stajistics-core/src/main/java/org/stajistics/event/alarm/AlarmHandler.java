@@ -14,6 +14,8 @@
  */
 package org.stajistics.event.alarm;
 
+import java.io.Serializable;
+
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 
@@ -23,7 +25,7 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public interface AlarmHandler {
+public interface AlarmHandler extends Serializable {
 
     void alarmTriggered(AlarmCondition condition,
                         StatsSession session,

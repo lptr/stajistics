@@ -36,6 +36,8 @@ import org.stajistics.event.StatsEventType;
  */
 public class DefaultStatsSessionManager implements StatsSessionManager {
 
+    private static final long serialVersionUID = 7815229695876668904L;
+
     private static final Logger logger = LoggerFactory.getLogger(DefaultStatsSessionManager.class);
 
     protected ConcurrentMap<StatsKey,StatsSession> sessionMap = 

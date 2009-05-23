@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import java.io.Serializable;
+
 
 /**
  * 
@@ -21,7 +23,7 @@ package org.stajistics;
  *
  * @author The Stajistics Project
  */
-public interface StatsKeyFactory {
+public interface StatsKeyFactory extends Serializable {
 
    /**
     * Create a new {@link StatsKey} from the given <tt>name</tt>.

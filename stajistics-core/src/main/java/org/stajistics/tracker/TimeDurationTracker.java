@@ -28,6 +28,8 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class TimeDurationTracker extends AbstractStatsTracker {
 
+    private static final long serialVersionUID = 4156520024679062924L;
+
     public static final StatsTrackerFactory FACTORY = new Factory();
 
     public TimeDurationTracker(final StatsSession session) {
@@ -43,6 +45,9 @@ public class TimeDurationTracker extends AbstractStatsTracker {
     }
 
     public static class Factory implements StatsTrackerFactory {
+
+        private static final long serialVersionUID = -3375825127543236566L;
+
         @Override
         public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {

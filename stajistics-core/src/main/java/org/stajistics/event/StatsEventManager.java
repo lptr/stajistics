@@ -14,6 +14,8 @@
  */
 package org.stajistics.event;
 
+import java.io.Serializable;
+
 import org.stajistics.StatsKey;
 
 /**
@@ -22,7 +24,7 @@ import org.stajistics.StatsKey;
  *
  * @author The Stajistics Project
  */
-public interface StatsEventManager {
+public interface StatsEventManager extends Serializable {
 
     boolean isEnabled();
 
@@ -30,19 +32,19 @@ public interface StatsEventManager {
 
     void addGlobalEventHandler(StatsEventHandler eventHandler);
 
-    void addSessionEventHandler(StatsKey key,
-                                StatsEventHandler eventHandler);
+    void addEventHandler(StatsKey key,
+                         StatsEventHandler eventHandler);
 
     void removeGlobalEventHandler(StatsEventHandler eventHandler);
 
-    void removeSessionEventHandler(StatsKey key,
-                                   StatsEventHandler eventHandler);
+    void removeEventHandler(StatsKey key,
+                            StatsEventHandler eventHandler);
 
-    void clearHandlers();
+    void clearAllEventHandlers();
 
     void clearGlobalEventHandlers();
 
-    void clearSessionEventHandlers();
+    void clearEventHandlers();
 
     void fireEvent(StatsEventType eventType,
                    StatsKey key,

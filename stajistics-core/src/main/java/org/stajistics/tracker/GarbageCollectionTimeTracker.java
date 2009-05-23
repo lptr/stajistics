@@ -30,6 +30,8 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
 
+    private static final long serialVersionUID = -1668165910427204823L;
+
     public static final StatsTrackerFactory FACTORY = new Factory();
 
     private String[] startCGNames = null;
@@ -109,6 +111,9 @@ public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
     }
 
     public static class Factory implements StatsTrackerFactory {
+
+        private static final long serialVersionUID = -4982332914285248619L;
+
         @Override
         public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {

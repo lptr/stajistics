@@ -14,6 +14,8 @@
  */
 package org.stajistics.session;
 
+import java.io.Serializable;
+
 import org.stajistics.StatsKey;
 import org.stajistics.event.StatsEventManager;
 
@@ -22,7 +24,7 @@ import org.stajistics.event.StatsEventManager;
  *
  * @author The Stajistics Project
  */
-public interface StatsSessionFactory {
+public interface StatsSessionFactory extends Serializable {
 
     /**
      * Create a {@link StatsSession} instance for the given <tt>key</tt>.

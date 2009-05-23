@@ -31,6 +31,8 @@ import org.stajistics.StatsKey;
  */
 public class SynchronousStatsEventManager implements StatsEventManager {
 
+    private static final long serialVersionUID = -1747663767850867849L;
+
     private static final Logger logger = LoggerFactory.getLogger(SynchronousStatsEventManager.class);
 
     private volatile boolean enabled = true;
@@ -64,8 +66,8 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     }
 
     @Override
-    public void addSessionEventHandler(final StatsKey key, 
-                                       final StatsEventHandler eventHandler) {
+    public void addEventHandler(final StatsKey key, 
+                                final StatsEventHandler eventHandler) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -74,7 +76,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
             throw new NullPointerException("eventHandler");
         }
 
-        List<StatsEventHandler> eventHandlers = getSessionEventHandlers(key, true);
+        List<StatsEventHandler> eventHandlers = getEventHandlers(key, true);
         eventHandlers.add(eventHandler);
     }
 
@@ -84,8 +86,8 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     }
 
     @Override
-    public void removeSessionEventHandler(StatsKey key, StatsEventHandler eventHandler) {
-        List<StatsEventHandler> eventHandlers = getSessionEventHandlers(key, false);
+    public void removeEventHandler(StatsKey key, StatsEventHandler eventHandler) {
+        List<StatsEventHandler> eventHandlers = getEventHandlers(key, false);
         if (eventHandlers != null) {
             eventHandlers.remove(eventHandler);
         }
@@ -97,19 +99,19 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     }
 
     @Override
-    public void clearSessionEventHandlers() {
+    public void clearEventHandlers() {
         //TODO: clear each List
         sessionEventHandlers.clear();
     }
 
     @Override
-    public void clearHandlers() {
+    public void clearAllEventHandlers() {
         clearGlobalEventHandlers();
-        clearSessionEventHandlers();
+        clearEventHandlers();
     }
 
-    private List<StatsEventHandler> getSessionEventHandlers(final StatsKey key,
-                                                            final boolean create) {
+    private List<StatsEventHandler> getEventHandlers(final StatsKey key,
+                                                     final boolean create) {
         List<StatsEventHandler> eventHandlers = sessionEventHandlers.get(key);
         if (eventHandlers == null && create) {
             eventHandlers = createEventHandlerList();
@@ -135,7 +137,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
             logger.debug("Firing event: " + eventType + ", key: " + key);
         }
 
-        List<StatsEventHandler> sessionEventHandlers = getSessionEventHandlers(key, false);
+        List<StatsEventHandler> sessionEventHandlers = getEventHandlers(key, false);
         if (sessionEventHandlers != null) {
             fireEvent(sessionEventHandlers, eventType, key, target);
         }

@@ -14,6 +14,7 @@
  */
 package org.stajistics.util;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Iterator;
@@ -26,7 +27,9 @@ import java.util.NoSuchElementException;
  *
  * @author The Stajistics Project
  */
-public class Range implements Iterable<Double> {
+public class Range implements Iterable<Double>,Serializable {
+
+    private static final long serialVersionUID = -8211762782354142278L;
 
     protected static final boolean DEFAULT_EXCLUSIVE_RANGE_END = true;
 

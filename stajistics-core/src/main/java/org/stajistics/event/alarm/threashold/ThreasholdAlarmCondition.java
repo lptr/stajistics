@@ -27,6 +27,8 @@ import org.stajistics.event.alarm.AlarmHandler;
  */
 public class ThreasholdAlarmCondition extends AbstractAlarmCondition {
 
+    private static final long serialVersionUID = -7063704180952155773L;
+
     public ThreasholdAlarmCondition(final AlarmHandler alarmHandler) {
         super(alarmHandler);
     }

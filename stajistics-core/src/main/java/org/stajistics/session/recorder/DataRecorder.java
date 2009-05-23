@@ -14,6 +14,8 @@
  */
 package org.stajistics.session.recorder;
 
+import java.io.Serializable;
+
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.data.MutableDataSet;
 import org.stajistics.tracker.StatsTracker;
@@ -24,7 +26,7 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public interface DataRecorder {
+public interface DataRecorder extends Serializable {
 
     void update(StatsSession session, StatsTracker tracker, long now);
 

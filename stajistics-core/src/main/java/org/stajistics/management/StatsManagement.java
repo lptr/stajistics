@@ -14,6 +14,7 @@
  */
 package org.stajistics.management;
 
+import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -35,7 +36,9 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public class StatsManagement {
+public class StatsManagement implements Serializable {
+
+    private static final long serialVersionUID = -9078257122643636861L;
 
     private static Logger logger = LoggerFactory.getLogger(StatsManagement.class);
 
@@ -93,6 +96,8 @@ public class StatsManagement {
         registerSessionManagerMBean(statsManager.getSessionManager());
 
         statsManager.getEventManager().addGlobalEventHandler(new StatsEventHandler() {
+            private static final long serialVersionUID = 7947550194934109138L;
+
             @Override
             public void handleStatsEvent(final StatsEventType eventType,
                                          final StatsKey key,

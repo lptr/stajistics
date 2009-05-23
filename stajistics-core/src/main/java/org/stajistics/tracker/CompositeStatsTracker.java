@@ -28,6 +28,8 @@ import org.stajistics.session.StatsSession;
  */
 public class CompositeStatsTracker implements StatsTracker {
 
+    private static final long serialVersionUID = -8066988741529163928L;
+
     private final StatsTracker[] trackers;
 
     public CompositeStatsTracker(final StatsTracker... trackers) {

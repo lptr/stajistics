@@ -14,6 +14,7 @@
  */
 package org.stajistics;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -27,7 +28,7 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public interface StatsConfigManager {
+public interface StatsConfigManager extends Serializable {
 
     StatsConfig getRootConfig();
 
