@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import java.io.Serializable;
+
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
 
@@ -23,7 +25,7 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public interface StatsTrackerFactory {
+public interface StatsTrackerFactory extends Serializable {
 
     StatsTracker createTracker(StatsKey key, StatsSessionManager sessionManager);
 

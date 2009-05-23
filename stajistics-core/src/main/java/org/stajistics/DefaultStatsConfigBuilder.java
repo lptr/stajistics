@@ -27,6 +27,8 @@ import org.stajistics.tracker.TimeDurationTracker;
  */
 public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
 
+    private static final long serialVersionUID = 7525771505477519104L;
+
     protected final StatsConfigManager configManager;
 
     protected boolean enabled = true;

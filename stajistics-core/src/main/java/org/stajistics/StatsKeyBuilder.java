@@ -14,13 +14,15 @@
  */
 package org.stajistics;
 
+import java.io.Serializable;
+
 
 /**
  * A builder for immutable {@link StatsKey} instances.
  *
  * @author The Stajistics Project
  */
-public interface StatsKeyBuilder {
+public interface StatsKeyBuilder extends Serializable {
 
     /**
      * Append a hierarchy suffix onto the name of the key being built.

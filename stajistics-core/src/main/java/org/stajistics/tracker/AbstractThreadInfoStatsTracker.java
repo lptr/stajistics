@@ -30,6 +30,8 @@ import org.stajistics.session.StatsSession;
  */
 public abstract class AbstractThreadInfoStatsTracker extends AbstractStatsTracker {
 
+    private static final long serialVersionUID = 5195519555074189812L;
+
     private static Logger logger = LoggerFactory.getLogger(AbstractThreadInfoStatsTracker.class);
 
     private static volatile boolean hasSetContentionMonitoringEnabled = false;

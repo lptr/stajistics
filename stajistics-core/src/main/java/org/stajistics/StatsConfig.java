@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import java.io.Serializable;
+
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTracker;
@@ -25,7 +27,7 @@ import org.stajistics.tracker.StatsTrackerFactory;
  *
  * @author The Stajistics Project
  */
-public interface StatsConfig {
+public interface StatsConfig extends Serializable {
 
     /**
      * Determine if statistics tracking for the associated target is enabled.

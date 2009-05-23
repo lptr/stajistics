@@ -33,6 +33,8 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class DefaultStatsManager implements StatsManager {
 
+    private static final long serialVersionUID = 6464098983922060895L;
+
     private volatile boolean enabled = true;
 
     protected final StatsConfigManager configManager;

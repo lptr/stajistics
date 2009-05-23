@@ -28,6 +28,8 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class ThreadBlockTimeTracker extends AbstractThreadInfoStatsTracker {
 
+    private static final long serialVersionUID = 5650216112677695939L;
+
     public static final StatsTrackerFactory FACTORY = new Factory();
 
     private long startBlockTime;
@@ -74,6 +76,9 @@ public class ThreadBlockTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     public static class Factory implements StatsTrackerFactory {
+
+        private static final long serialVersionUID = -5193134539484694370L;
+
         @Override
         public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {

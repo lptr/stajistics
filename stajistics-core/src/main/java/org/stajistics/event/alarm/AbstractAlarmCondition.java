@@ -23,6 +23,8 @@ package org.stajistics.event.alarm;
  */
 public abstract class AbstractAlarmCondition implements AlarmCondition {
 
+    private static final long serialVersionUID = -3982018615713636102L;
+
     private AlarmHandler alarmHandler;
 
     public AbstractAlarmCondition(final AlarmHandler alarmHandler) {

@@ -26,6 +26,8 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class HitFrequencyTracker extends AbstractStatsTracker {
 
+    private static final long serialVersionUID = -1521973662156082666L;
+
     public static final StatsTrackerFactory FACTORY = new Factory();
 
     private long lastHitStamp;
@@ -57,6 +59,9 @@ public class HitFrequencyTracker extends AbstractStatsTracker {
     }
 
     public static class Factory implements StatsTrackerFactory {
+
+        private static final long serialVersionUID = -8890462896053927987L;
+
         @Override
         public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {

@@ -14,6 +14,8 @@
  */
 package org.stajistics.event;
 
+import java.io.Serializable;
+
 import org.stajistics.StatsKey;
 
 /**
@@ -22,7 +24,7 @@ import org.stajistics.StatsKey;
  *
  * @author The Stajistics Project
  */
-public interface StatsEventHandler {
+public interface StatsEventHandler extends Serializable {
 
     void handleStatsEvent(StatsEventType eventType,
                           StatsKey key,

@@ -26,6 +26,8 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
 
+    private static final long serialVersionUID = 321485927262898420L;
+
     public static final StatsTrackerFactory FACTORY = new Factory();
 
     private long startCPUTime; // nanos
@@ -66,6 +68,9 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     public static class Factory implements StatsTrackerFactory {
+
+        private static final long serialVersionUID = 8381879914728970427L;
+
         @Override
         public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {

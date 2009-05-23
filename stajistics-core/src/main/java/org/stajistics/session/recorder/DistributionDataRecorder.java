@@ -28,6 +28,8 @@ import org.stajistics.util.AtomicDouble;
  */
 public class DistributionDataRecorder implements DataRecorder {
 
+    private static final long serialVersionUID = -3659348358082223974L;
+
     protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
     protected final AtomicDouble sumOfInverses = new AtomicDouble(0); // For harmonic mean
     protected final AtomicDouble sumOfSquares = new AtomicDouble(0); // For standard deviation and quadratic mean

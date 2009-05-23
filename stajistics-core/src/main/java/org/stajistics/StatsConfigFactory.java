@@ -14,13 +14,15 @@
  */
 package org.stajistics;
 
+import java.io.Serializable;
+
 /**
  * 
  * 
  *
  * @author The Stajistics Project
  */
-public interface StatsConfigFactory {
+public interface StatsConfigFactory extends Serializable {
 
     /**
      * Create a new {@link StatsConfigBuilder} which can assemble various configurations.

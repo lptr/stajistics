@@ -28,6 +28,8 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class NanoTimeDurationTracker extends AbstractStatsTracker {
 
+    private static final long serialVersionUID = 4797710237784883447L;
+
     public static final StatsTrackerFactory FACTORY = new Factory();
 
     private long nanoTime;
@@ -51,6 +53,9 @@ public class NanoTimeDurationTracker extends AbstractStatsTracker {
     }
 
     public static class Factory implements StatsTrackerFactory {
+
+        private static final long serialVersionUID = 3938040539764698610L;
+
         @Override
         public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {

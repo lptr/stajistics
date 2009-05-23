@@ -14,6 +14,7 @@
  */
 package org.stajistics.util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,7 +26,9 @@ import java.util.List;
  *
  * @author The Stajistics Project
  */
-public class RangeList implements Iterable<Range> {
+public class RangeList implements Iterable<Range>,Serializable {
+
+    private static final long serialVersionUID = -624182966963157184L;
 
     private final Range[] ranges;
 

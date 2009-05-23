@@ -26,6 +26,8 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class DefaultManualStatsTracker extends AbstractStatsTracker implements ManualStatsTracker {
 
+    private static final long serialVersionUID = -4086797856515196434L;
+
     public static final Factory FACTORY = new Factory();
 
     public DefaultManualStatsTracker(final StatsSession statsSession) {
@@ -45,6 +47,9 @@ public class DefaultManualStatsTracker extends AbstractStatsTracker implements M
     }
 
     public static class Factory implements StatsTrackerFactory {
+
+        private static final long serialVersionUID = 7771746449128030926L;
+
         @Override
         public ManualStatsTracker createTracker(final StatsKey key,
                                                 final StatsSessionManager sessionManager) {

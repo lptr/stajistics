@@ -14,6 +14,8 @@
  */
 package org.stajistics.event.alarm;
 
+import java.io.Serializable;
+
 import org.stajistics.event.StatsEventHandler;
 
 /**
@@ -22,7 +24,7 @@ import org.stajistics.event.StatsEventHandler;
  *
  * @author The Stajistics Project
  */
-public interface AlarmCondition extends StatsEventHandler {
+public interface AlarmCondition extends StatsEventHandler,Serializable {
 
     AlarmHandler getAlarmHandler();
 

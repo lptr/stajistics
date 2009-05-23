@@ -31,6 +31,8 @@ import org.stajistics.util.RangeList;
  */
 public class RangeDataRecorder implements DataRecorder {
 
+    private static final long serialVersionUID = 1219169573547396963L;
+
     private final RangeList rangeList;
     private final AtomicInteger[] hits;
 

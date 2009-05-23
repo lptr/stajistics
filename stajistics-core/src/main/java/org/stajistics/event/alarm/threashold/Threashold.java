@@ -14,13 +14,18 @@
  */
 package org.stajistics.event.alarm.threashold;
 
+import java.io.Serializable;
+
 /**
  * 
  * 
  *
  * @author The Stajistics Project
  */
-public class Threashold {
+public class Threashold implements Serializable {
+
+    private static final long serialVersionUID = 5904831715667273061L;
+
     private final ThreasholdType type;
     private final double value;
 

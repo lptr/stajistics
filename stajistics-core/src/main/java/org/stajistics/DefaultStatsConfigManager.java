@@ -14,6 +14,7 @@
  */
 package org.stajistics;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -40,6 +41,8 @@ import org.stajistics.tracker.TimeDurationTracker;
  * @author The Stajistics Project
  */
 public class DefaultStatsConfigManager implements StatsConfigManager {
+
+    private static final long serialVersionUID = -3448191567386279319L;
 
     private ConcurrentMap<String,KeyEntry> keyMap = 
         new ConcurrentHashMap<String,KeyEntry>(128, 0.75f, 32);
@@ -345,7 +348,9 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 }
 
 
-final class KeyEntry {
+final class KeyEntry implements Serializable {
+
+    private static final long serialVersionUID = -4512523435953782607L;
 
     private final StatsKey key;
 

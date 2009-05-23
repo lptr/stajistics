@@ -27,6 +27,8 @@ import org.stajistics.session.StatsSession;
  */
 public abstract class AbstractStatsTracker implements StatsTracker {
 
+    private static final long serialVersionUID = 7869543246230561742L;
+
     private static final Logger logger = LoggerFactory.getLogger(AbstractStatsTracker.class.getPackage().getName());
 
     protected StatsSession session;
