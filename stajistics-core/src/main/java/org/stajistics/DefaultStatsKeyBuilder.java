@@ -83,11 +83,11 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         if (nameSuffix == null) {
             throw new NullPointerException("nameSuffix");
         }
-        if (nameSuffix.length() == 0) {
-            throw new IllegalArgumentException("nameSuffix is empty");
+
+        if (nameSuffix.length() > 0) {
+            this.name += StatsConstants.KEY_HIERARCHY_DELIMITER + nameSuffix;
         }
 
-        this.name += StatsConstants.KEY_HIERARCHY_DELIMITER + nameSuffix;
         return this;
     }
 
