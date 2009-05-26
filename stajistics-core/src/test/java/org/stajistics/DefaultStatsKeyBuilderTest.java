@@ -16,6 +16,7 @@ package org.stajistics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.stajistics.TestUtil.buildStatsKeyExpectations;
@@ -51,6 +52,46 @@ public class DefaultStatsKeyBuilderTest {
     }
 
     @Test
+    public void testConstructWithNullName() {
+        try {
+            new DefaultStatsKeyBuilder((String)null, mockKeyFactory);
+
+        } catch (NullPointerException npe) {
+            assertEquals("name", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithNameAndNullKeyFactory() {
+        try {
+            new DefaultStatsKeyBuilder("test", null);
+
+        } catch (NullPointerException npe) {
+            assertEquals("keyFactory", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithNullTemplate() {
+        try {
+            new DefaultStatsKeyBuilder((StatsKey)null, mockKeyFactory);
+
+        } catch (NullPointerException npe) {
+            assertEquals("template", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithTemplateAndNullKeyFactory() {
+        try {
+            new DefaultStatsKeyBuilder(mockKey, null);
+
+        } catch (NullPointerException npe) {
+            assertEquals("keyFactory", npe.getMessage());
+        }
+    }
+
+    @Test
     public void testCopyKeyNotNull() {
         buildStatsKeyExpectations(mockery, mockKey, "test");
         buildStatsKeyBuildCopyExpectations();
@@ -59,6 +100,34 @@ public class DefaultStatsKeyBuilderTest {
                               .newKey();
 
         assertTrue(key != null);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testCopyKeyWithNullNameSuffix() {
+        buildStatsKeyExpectations(mockery, mockKey, "test");
+        buildStatsKeyBuildCopyExpectations();
+
+        try {
+            mockKey.buildCopy().withNameSuffix(null);
+            fail("Allowed null name suffix");
+
+        } catch (NullPointerException npe) {
+            assertEquals("nameSuffix", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testCopyKeyWithEmptyNameSuffix() {
+        buildStatsKeyExpectations(mockery, mockKey, "test");
+        buildStatsKeyBuildCopyExpectations();
+
+        StatsKey key = mockKey.buildCopy()
+                              .withNameSuffix("")
+                              .newKey();
+
+        assertEquals("test", key.getName());
 
         mockery.assertIsSatisfied();
     }
@@ -219,7 +288,7 @@ public class DefaultStatsKeyBuilderTest {
     }
 
     @Test
-    public void testCopyKeyWithoutAttribute1() {
+    public void testWithoutAttribute1() {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();
 
@@ -232,7 +301,7 @@ public class DefaultStatsKeyBuilderTest {
     }
 
     @Test
-    public void testCopyKeyWithoutAttribute2() {
+    public void testWithoutAttribute2() {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();
 
@@ -248,7 +317,7 @@ public class DefaultStatsKeyBuilderTest {
     }
 
     @Test
-    public void testCopyKeyWithoutAttribute3() {
+    public void testWithoutAttribute3() {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();
 
@@ -260,6 +329,21 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals(1, key.getAttributeCount());
         assertEquals(1, key.getAttributes().size());
         assertNull(key.getAttribute("existing"));
+        assertEquals("thing", key.getAttribute("new"));
+    }
+
+    @Test
+    public void testWithoutAttributeWithNullName() {
+        buildStatsKeyExpectations(mockery, mockKey, "test");
+        buildStatsKeyBuildCopyExpectations();
+
+        StatsKey key = mockKey.buildCopy()
+                              .withAttribute("new", "thing")
+                              .withoutAttribute(null)
+                              .newKey();
+
+        assertEquals(1, key.getAttributeCount());
+        assertEquals(1, key.getAttributes().size());
         assertEquals("thing", key.getAttribute("new"));
     }
 
@@ -372,5 +456,18 @@ public class DefaultStatsKeyBuilderTest {
         }
 
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testWithAttributeReturnsThis() {
+        buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
+        buildStatsKeyBuildCopyExpectations();
+
+        StatsKeyBuilder kb = mockKey.buildCopy();
+
+        assertSame(kb, kb.withAttribute("string", "string"));
+        assertSame(kb, kb.withAttribute("int", 0));
+        assertSame(kb, kb.withAttribute("boolean", false));
+        assertSame(kb, kb.withAttribute("long", 0L));
     }
 }

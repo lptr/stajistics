@@ -108,6 +108,18 @@ public class StatsProxy implements InvocationHandler {
         return (T) wrapper.target;
     }
 
+    public static boolean isProxy(final Object object) {
+        if (!Proxy.isProxyClass(object.getClass())) {
+            return false;
+        }
+
+        if (!(Proxy.getInvocationHandler(object) instanceof StatsProxy)) {
+            return false;
+        }
+
+        return true;
+    }
+
     protected static String getMethodString(final Method method) {
 
         String methodName = method.getName();

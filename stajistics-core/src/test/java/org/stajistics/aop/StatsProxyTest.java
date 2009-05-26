@@ -14,6 +14,9 @@
  */
 package org.stajistics.aop;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
@@ -92,7 +95,7 @@ public class StatsProxyTest {
             // expected
         }
     }
-    
+
     @Test
     public void testWrapWithKeyTargetInterfaceArray() {
         Service serviceImpl = new ServiceImpl();
@@ -185,6 +188,43 @@ public class StatsProxyTest {
         }
 
         mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testProxyEqualsProxy() {
+        Service serviceImpl = new ServiceImpl();
+        Service proxy1 = StatsProxy.wrap(key, serviceImpl);
+        Service proxy2 = StatsProxy.wrap(key, serviceImpl);
+        assertEquals(proxy1, proxy2);
+    }
+
+    @Test
+    public void testProxyEqualsNonProxy() {
+        Service serviceImpl = new ServiceImpl();
+        Service proxy = StatsProxy.wrap(key, serviceImpl);
+        assertEquals(proxy, serviceImpl);
+    }
+
+    @Test
+    public void testNonProxyEqualsProxy() {
+        Service serviceImpl = new ServiceImpl();
+        Service proxy = StatsProxy.wrap(key, serviceImpl);
+        assertFalse(serviceImpl.equals(proxy));
+    }
+
+    @Test
+    public void testUnwrapProxy() {
+        Service serviceImpl = new ServiceImpl();
+        Service proxy = StatsProxy.wrap(key, serviceImpl);
+        Service unwrappedServiceImpl = StatsProxy.unwrap(proxy);
+        assertSame(serviceImpl, unwrappedServiceImpl);
+    }
+
+    @Test
+    public void testUnwrapNonProxy() {
+        Service serviceImpl = new ServiceImpl();
+        Service unwrappedServiceImpl = StatsProxy.unwrap(serviceImpl);
+        assertSame(serviceImpl, unwrappedServiceImpl);
     }
 
     private interface Service {
