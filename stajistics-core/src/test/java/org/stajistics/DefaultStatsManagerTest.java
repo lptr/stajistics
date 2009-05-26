@@ -21,6 +21,12 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 
 import org.jmock.Expectations;
@@ -337,5 +343,38 @@ public class DefaultStatsManagerTest {
         mgr.setEnabled(false);
 
         assertEquals(NullTracker.getInstance(), mgr.getManualTracker(key));
+    }
+
+    @Test
+    public void testSerializeDeserialize() throws IOException,ClassNotFoundException {
+
+        StatsManager manager = newDefaultStatsManager();
+
+        // Populate the data structures a bit
+        StatsKey key1 = manager.getKeyFactory().createKey("test1");
+        manager.getTracker(key1).track().commit();
+        StatsKey key2 = manager.getKeyFactory().createKey("test2");
+        manager.getTracker(key2).track().commit();
+        StatsKey key3 = manager.getKeyFactory().createKey("test3");
+        manager.getTracker(key3).track().commit();
+
+        // Serialize/deserialize to/from file
+        File file = File.createTempFile(toString(), null);
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+            out.writeObject(manager);
+            out.close();
+
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            StatsManager serializedManager = (StatsManager)in.readObject();
+            in.close();
+
+            assertNotNull(serializedManager);
+
+            //TODO: more assertions
+
+        } finally {
+            file.delete();
+        }
     }
 }
