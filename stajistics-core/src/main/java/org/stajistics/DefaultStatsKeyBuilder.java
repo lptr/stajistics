@@ -65,16 +65,6 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         }
     }
 
-    protected DefaultStatsKeyBuilder(final String name, 
-                                     final Map<String, Object> attributes) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
-
-        this.name = name;
-        this.attributes = attributes;
-    }
-
     /**
      * {@inheritDoc}
      */
