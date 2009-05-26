@@ -76,6 +76,7 @@ public class StatsProxyTest {
     public void testWrapWithKeyTarget() {
         Service serviceImpl = new ServiceImpl();
         serviceImpl = StatsProxy.wrap(key, serviceImpl);
+        @SuppressWarnings("unused")
         Service2 service2 = (Service2)serviceImpl;
     }
 
@@ -84,6 +85,7 @@ public class StatsProxyTest {
         Service serviceImpl = new ServiceImpl();
         serviceImpl = StatsProxy.wrap(key, serviceImpl, Service.class);
         try {
+            @SuppressWarnings("unused")
             Service2 service2 = (Service2)serviceImpl;
             fail("Allowed cast to un-proxied interface");
         } catch (ClassCastException cce) {
@@ -97,9 +99,11 @@ public class StatsProxyTest {
         serviceImpl = StatsProxy.wrap(key, 
                                       serviceImpl, 
                                       new Class<?>[] { Service.class, Service2.class });
+        @SuppressWarnings("unused")
         Service2 service2 = (Service2)serviceImpl;
     }
 
+    @SuppressWarnings("serial")
     @Test
     public void testTrackMethodCall() {
 
@@ -132,6 +136,7 @@ public class StatsProxyTest {
         mockery.assertIsSatisfied();
     }
 
+    @SuppressWarnings("serial")
     @Test
     public void testTrackExceptionIncident() {
 
@@ -199,8 +204,4 @@ public class StatsProxyTest {
             throw new IllegalStateException();
         }
     }
-
-
-
-    
 }
