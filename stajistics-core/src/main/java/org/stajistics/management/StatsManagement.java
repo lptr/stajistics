@@ -14,6 +14,8 @@
  */
 package org.stajistics.management;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
@@ -61,7 +63,7 @@ public class StatsManagement implements Serializable {
     private static final Pattern VALUE_ESCAPE_DOUBLE_QUOTE_PATTERN = Pattern.compile("[\"]");
     private static final String VALUE_ESCAPE_DOUBLE_QUOTE_REPLACEMENT = "\\\\\"";
 
-    private MBeanServer mBeanServer;
+    private transient MBeanServer mBeanServer;
 
 
     public StatsManagement() {
@@ -405,4 +407,11 @@ public class StatsManagement implements Serializable {
         }
     }
 
+    /* Restore transient fields */
+    private void readObject(final ObjectInputStream in) 
+            throws IOException,ClassNotFoundException {
+        in.defaultReadObject();
+
+        mBeanServer = ManagementFactory.getPlatformMBeanServer();
+    }
 }
