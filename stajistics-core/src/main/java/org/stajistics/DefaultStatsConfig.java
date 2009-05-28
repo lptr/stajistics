@@ -145,4 +145,24 @@ public class DefaultStatsConfig implements StatsConfig {
                unit.hashCode() ^
                ((description == null) ? 0 : description.hashCode());
     }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+
+        buf.append(StatsConfig.class.getSimpleName());
+        buf.append("[enabled=");
+        buf.append(enabled);
+        buf.append(",trackerFactory=");
+        buf.append(trackerFactory);
+        buf.append(",sessionFactory=");
+        buf.append(sessionFactory);
+        buf.append(",unit=");
+        buf.append(unit);
+        buf.append(",description=");
+        buf.append(description);
+        buf.append(']');
+
+        return buf.toString();
+    }
 }

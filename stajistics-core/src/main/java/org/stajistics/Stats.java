@@ -22,7 +22,7 @@ import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * A facade to the Stajistics core API. Maintains a singleton instance of a {@link StatsManager}.
+ * A facade to the Stajistics core API. Maintains a singleton default instance of a {@link StatsManager}.
  *
  *
  * @author The Stajistics Project
@@ -34,7 +34,7 @@ public final class Stats {
     private static StatsManager manager;
 
     /**
-     * Specify the sole {@link StatsManager} instance, replacing any existing instance.
+     * Specify the sole default {@link StatsManager} instance, replacing any existing instance.
      *
      * @param manager The {@link StatsManager} instance to use.
      * @see #getManager()

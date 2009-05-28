@@ -16,12 +16,15 @@ package org.stajistics.management;
 
 import java.io.IOException;
 
+import javax.management.MXBean;
+
 /**
  * 
  * 
  *
  * @author The Stajistics Project
  */
+@MXBean
 public interface StatsConfigMBean {
 
     boolean getEnabled() throws IOException;
@@ -39,4 +42,5 @@ public interface StatsConfigMBean {
     String getTrackerFactory() throws IOException;
 
     String getSessionFactory() throws IOException;
+
 }

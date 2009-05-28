@@ -16,7 +16,7 @@ package org.stajistics.management;
 
 import java.io.IOException;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsConfigFactory;
 import org.stajistics.StatsKey;
 
 /**
@@ -25,13 +25,18 @@ import org.stajistics.StatsKey;
  *
  * @author The Stajistics Project
  */
-public class StatsConfig implements StatsConfigMBean {
+public class DefaultStatsConfigMBean implements StatsConfigMBean {
 
-    private final StatsKey key;
-    private final org.stajistics.StatsConfig config;
+    protected final StatsConfigFactory configFactory;
+    protected final StatsKey key;
+    protected final org.stajistics.StatsConfig config;
 
-    public StatsConfig(final StatsKey key, 
+    public DefaultStatsConfigMBean(final StatsConfigFactory configFactory,
+                       final StatsKey key, 
                        final org.stajistics.StatsConfig config) {
+        if (configFactory == null) {
+            throw new NullPointerException("configFactory");
+        }
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -39,6 +44,7 @@ public class StatsConfig implements StatsConfigMBean {
             throw new NullPointerException("config");
         }
 
+        this.configFactory = configFactory;
         this.key = key;
         this.config = config;
     }
@@ -54,11 +60,9 @@ public class StatsConfig implements StatsConfigMBean {
             return;
         }
 
-        Stats.getManager()
-             .getConfigFactory()
-             .createConfigBuilder(config)
-             .withEnabledState(enabled)
-             .setConfigFor(key);
+        configFactory.createConfigBuilder(config)
+                     .withEnabledState(enabled)
+                     .setConfigFor(key);
     }
 
     @Override
@@ -72,11 +76,9 @@ public class StatsConfig implements StatsConfigMBean {
             return;
         }
 
-        Stats.getManager()
-             .getConfigFactory()
-             .createConfigBuilder(config)
-             .withUnit(unit)
-             .setConfigFor(key);
+        configFactory.createConfigBuilder(config)
+                     .withUnit(unit)
+                     .setConfigFor(key);
     }
 
     @Override
@@ -90,11 +92,9 @@ public class StatsConfig implements StatsConfigMBean {
             return;
         }
 
-        Stats.getManager()
-             .getConfigFactory()
-             .createConfigBuilder(config)
-             .withDescription(description)
-             .setConfigFor(key);
+        configFactory.createConfigBuilder(config)
+                     .withDescription(description)
+                     .setConfigFor(key);
     }
 
     @Override

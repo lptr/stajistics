@@ -16,7 +16,9 @@ package org.stajistics;
 
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.SynchronousStatsEventManager;
+import org.stajistics.management.DefaultStatsManagement;
 import org.stajistics.management.StatsManagement;
+import org.stajistics.management.StatsManagementEventHandler;
 import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.CompositeStatsTracker;
@@ -34,6 +36,8 @@ import org.stajistics.tracker.StatsTracker;
 public class DefaultStatsManager implements StatsManager {
 
     private static final long serialVersionUID = 6464098983922060895L;
+
+    private static final String SYS_PROP_MANAGEMENT_ENABLED = StatsManagement.class.getName() + ".enabled";
 
     private volatile boolean enabled = true;
 
@@ -95,16 +99,22 @@ public class DefaultStatsManager implements StatsManager {
 
         StatsConfigFactory configFactory = new DefaultStatsConfigFactory(configManager);
 
-        DefaultStatsManager mgr = new DefaultStatsManager(configManager,
-                                                          sessionManager,
-                                                          eventManager,
-                                                          keyFactory,
-                                                          configFactory);
+        DefaultStatsManager manager = new DefaultStatsManager(configManager,
+                                                              sessionManager,
+                                                              eventManager,
+                                                              keyFactory,
+                                                              configFactory);
 
-        //TODO: where the hell does this belong?
-        new StatsManagement().initializeManagement(mgr);
+        if (Boolean.parseBoolean(System.getProperty(SYS_PROP_MANAGEMENT_ENABLED, "true"))) {
+            StatsManagement management = new DefaultStatsManagement();
+            management.registerConfigManagerMBean(manager, configManager);
+            management.registerSessionManagerMBean(manager, sessionManager);
 
-        return mgr;
+            StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(manager, management);
+            eventManager.addGlobalEventHandler(eventHandler);
+        }
+
+        return manager;
     }
 
     /**

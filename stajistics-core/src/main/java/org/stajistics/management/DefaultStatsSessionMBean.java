@@ -27,7 +27,7 @@ import javax.management.ReflectionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
+import org.stajistics.session.StatsSessionManager;
 import org.stajistics.session.data.DataSet;
 
 /**
@@ -36,19 +36,25 @@ import org.stajistics.session.data.DataSet;
  *
  * @author The Stajistics Project
  */
-public class StatsSession implements StatsSessionMBean,DynamicMBean {
+public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean {
 
-    private static final String OP_CLEAR = "clear";
-    private static final String OP_DESTROY = "destroy";
-    private static final String OP_DUMP = "dump";
+    protected static final String OP_CLEAR = "clear";
+    protected static final String OP_DESTROY = "destroy";
+    protected static final String OP_DUMP = "dump";
 
-    private final org.stajistics.session.StatsSession session;
+    protected final StatsSessionManager sessionManager;
+    protected final org.stajistics.session.StatsSession session;
 
-    public StatsSession(final org.stajistics.session.StatsSession session) {
+    public DefaultStatsSessionMBean(final StatsSessionManager sessionManager,
+                        final org.stajistics.session.StatsSession session) {
+        if (sessionManager == null) {
+            throw new NullPointerException("sessionManager");
+        }
         if (session == null) {
             throw new NullPointerException("session");
         }
 
+        this.sessionManager = sessionManager;
         this.session = session;
     }
 
@@ -126,10 +132,10 @@ public class StatsSession implements StatsSessionMBean,DynamicMBean {
             session.clear();
 
         } else if (actionName.equals(OP_DESTROY)) {
-            Stats.getSessionManager().remove(session); //TODO: replace with StatsSessionManager instance
+            sessionManager.remove(session);
 
         } else if (actionName.equals(OP_DUMP)) {
-            Logger logger = LoggerFactory.getLogger(SessionManager.SESSION_DUMP_LOGGER_NAME);
+            Logger logger = LoggerFactory.getLogger(DefaultStatsSessionManagerMBean.SESSION_DUMP_LOGGER_NAME);
             if (logger.isInfoEnabled()) {
                 logger.info(session.toString());
             }

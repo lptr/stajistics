@@ -14,7 +14,9 @@
  */
 package org.stajistics.management;
 
-import javax.management.MXBean;
+import java.io.IOException;
+
+import org.stajistics.StatsConfigManager;
 
 /**
  * 
@@ -22,9 +24,20 @@ import javax.management.MXBean;
  *
  * @author The Stajistics Project
  */
-@MXBean
-public interface StatsSessionMBean {
+public class DefaultStatsConfigManagerMBean implements StatsConfigManagerMBean {
 
-    
+    private final StatsConfigManager configManager;
 
+    public DefaultStatsConfigManagerMBean(final StatsConfigManager configManager) {
+        if (configManager == null) {
+            throw new NullPointerException("configManager");
+        }
+
+        this.configManager = configManager;
+    }
+
+    @Override
+    public String getImplementation() throws IOException {
+        return configManager.getClass().getName();
+    }
 }

@@ -27,18 +27,23 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public class SessionManager implements SessionManagerMBean {
+public class DefaultStatsSessionManagerMBean implements StatsSessionManagerMBean {
 
     protected static final String SESSION_DUMP_LOGGER_NAME = "stajistics.session.dump";
 
-    private final StatsSessionManager sessionManager;
+    protected final StatsSessionManager sessionManager;
 
-    public SessionManager(final StatsSessionManager sessionManager) {
+    public DefaultStatsSessionManagerMBean(final StatsSessionManager sessionManager) {
         if (sessionManager == null) {
             throw new NullPointerException("sessionManager");
         }
 
         this.sessionManager = sessionManager;
+    }
+
+    @Override
+    public String getImplementation() throws IOException {
+        return sessionManager.getClass().getName();
     }
 
     @Override
