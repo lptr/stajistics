@@ -62,6 +62,15 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
      * {@inheritDoc}
      */
     @Override
+    public StatsConfigBuilder withEnabledState(final boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public StatsConfigBuilder withSessionFactory(final StatsSessionFactory sessionFactory) {
         if (sessionFactory == null) {
             throw new NullPointerException("sessionFactory");

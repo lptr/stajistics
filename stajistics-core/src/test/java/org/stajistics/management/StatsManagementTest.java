@@ -263,7 +263,7 @@ public class StatsManagementTest {
 
         ObjectName name = new ObjectName(statsManagement.buildName(mockKey, StatsManagement.TYPE_KEYS, StatsManagement.SUBTYPE_CONFIG, false));
 
-        mBeanServer.registerMBean(new StatsConfig(mockConfig), name);
+        mBeanServer.registerMBean(new StatsConfig(mockKey, mockConfig), name);
 
         assertTrue(statsManagement.unregisterConfigMBean(mockKey));
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());

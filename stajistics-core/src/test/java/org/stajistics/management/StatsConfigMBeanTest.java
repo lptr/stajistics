@@ -23,6 +23,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.StatsKey;
 
 /**
  * 
@@ -33,15 +34,17 @@ import org.junit.Test;
 public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
 
     protected Mockery mockery = null;
+    protected StatsKey mockKey = null;
     protected org.stajistics.StatsConfig mockConfig = null;
 
     protected StatsConfigMBean createStatsConfigMBean(final org.stajistics.StatsConfig config) {
-        return new StatsConfig(config);
+        return new StatsConfig(mockKey, config);
     }
 
     @Before
     public void setUp() {
         mockery = new Mockery();
+        mockKey = mockery.mock(StatsKey.class);
         mockConfig = mockery.mock(org.stajistics.StatsConfig.class);
     }
 
