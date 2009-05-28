@@ -23,6 +23,9 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.StatsConfig;
+import org.stajistics.StatsConfigBuilder;
+import org.stajistics.StatsConfigFactory;
 import org.stajistics.StatsKey;
 
 /**
@@ -35,17 +38,19 @@ public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
 
     protected Mockery mockery = null;
     protected StatsKey mockKey = null;
-    protected org.stajistics.StatsConfig mockConfig = null;
+    protected StatsConfigFactory mockConfigFactory = null;
+    protected StatsConfig mockConfig = null;
 
-    protected StatsConfigMBean createStatsConfigMBean(final org.stajistics.StatsConfig config) {
-        return new StatsConfig(mockKey, config);
+    protected StatsConfigMBean createStatsConfigMBean(final StatsConfig config) {
+        return new DefaultStatsConfigMBean(mockConfigFactory, mockKey, config);
     }
 
     @Before
     public void setUp() {
         mockery = new Mockery();
         mockKey = mockery.mock(StatsKey.class);
-        mockConfig = mockery.mock(org.stajistics.StatsConfig.class);
+        mockConfigFactory = mockery.mock(StatsConfigFactory.class);
+        mockConfig = mockery.mock(StatsConfig.class);
     }
 
     @Test
@@ -61,6 +66,23 @@ public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         assertTrue(mBean.getEnabled());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testSetEnabled() throws Exception {
+        final StatsConfigBuilder configBuilder = mockery.mock(StatsConfigBuilder.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockConfig).isEnabled(); will(returnValue(true));
+            one(mockConfigFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
+            one(configBuilder).withEnabledState(with(false)); will(returnValue(configBuilder));
+            one(configBuilder).setConfigFor(mockKey);
+        }});
+
+        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        mBean.setEnabled(false);
 
         mockery.assertIsSatisfied();
     }
@@ -83,6 +105,23 @@ public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
     }
 
     @Test
+    public void testSetUnit() throws Exception {
+        final StatsConfigBuilder configBuilder = mockery.mock(StatsConfigBuilder.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockConfig).getUnit(); will(returnValue("unit1"));
+            one(mockConfigFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
+            one(configBuilder).withUnit(with("unit2")); will(returnValue(configBuilder));
+            one(configBuilder).setConfigFor(mockKey);
+        }});
+
+        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        mBean.setUnit("unit2");
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
     public void testGetDescription() throws Exception {
 
         mockery.checking(new Expectations() {{
@@ -95,6 +134,23 @@ public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         assertEquals("aDescription", mBean.getDescription());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void testSetDescription() throws Exception {
+        final StatsConfigBuilder configBuilder = mockery.mock(StatsConfigBuilder.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockConfig).getDescription(); will(returnValue("d1"));
+            one(mockConfigFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
+            one(configBuilder).withDescription(with("d2")); will(returnValue(configBuilder));
+            one(configBuilder).setConfigFor(mockKey);
+        }});
+
+        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        mBean.setDescription("d2");
 
         mockery.assertIsSatisfied();
     }

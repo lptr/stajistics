@@ -16,20 +16,17 @@ package org.stajistics.management;
 
 import java.io.IOException;
 
+import javax.management.MXBean;
+
 /**
  * 
  * 
  *
  * @author The Stajistics Project
  */
-public interface SessionManagerMBean {
+@MXBean
+public interface StatsConfigManagerMBean {
 
-    int getSessionCount() throws IOException;
-
-    void dumpAllSessions() throws IOException;
-
-    void clearAllSessions() throws IOException;
-
-    void destroyAllSessions() throws IOException;
+    String getImplementation() throws IOException;
 
 }
