@@ -181,7 +181,7 @@ public class StatsManagement implements Serializable {
         String name = buildName(key, TYPE_KEYS, SUBTYPE_CONFIG, false);
 
         try {
-            StatsConfigMBean configMBean = new StatsConfig(config);
+            StatsConfigMBean configMBean = new StatsConfig(key, config);
             ObjectName objectName = new ObjectName(name);
 
             registerMBean(configMBean, objectName);

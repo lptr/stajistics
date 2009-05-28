@@ -27,6 +27,14 @@ import org.stajistics.tracker.StatsTrackerFactory;
 public interface StatsConfigBuilder extends Serializable {
 
     /**
+     * Build the configuration with the given enabled state.
+     *
+     * @param enabled The enabled state to use.
+     * @return <tt>this</tt>
+     */
+    StatsConfigBuilder withEnabledState(boolean enabled);
+
+    /**
      * Build the configuration with the given {@link StatsTrackerFactory}.
      *
      * @param trackerFactory The {@link StatsTrackerFactory} instance use.

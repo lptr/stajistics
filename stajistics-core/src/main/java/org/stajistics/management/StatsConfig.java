@@ -16,6 +16,9 @@ package org.stajistics.management;
 
 import java.io.IOException;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+
 /**
  * 
  * 
@@ -24,13 +27,19 @@ import java.io.IOException;
  */
 public class StatsConfig implements StatsConfigMBean {
 
+    private final StatsKey key;
     private final org.stajistics.StatsConfig config;
 
-    public StatsConfig(final org.stajistics.StatsConfig config) {
+    public StatsConfig(final StatsKey key, 
+                       final org.stajistics.StatsConfig config) {
+        if (key == null) {
+            throw new NullPointerException("key");
+        }
         if (config == null) {
             throw new NullPointerException("config");
         }
 
+        this.key = key;
         this.config = config;
     }
 
@@ -41,7 +50,15 @@ public class StatsConfig implements StatsConfigMBean {
 
     @Override
     public void setEnabled(final boolean enabled) throws IOException {
-        throw new UnsupportedOperationException("not yet implemented");
+        if (enabled == config.isEnabled()) {
+            return;
+        }
+
+        Stats.getManager()
+             .getConfigFactory()
+             .createConfigBuilder(config)
+             .withEnabledState(enabled)
+             .setConfigFor(key);
     }
 
     @Override
@@ -51,7 +68,15 @@ public class StatsConfig implements StatsConfigMBean {
 
     @Override
     public void setUnit(final String unit) throws IOException {
-        throw new UnsupportedOperationException("not yet implemented");
+        if (unit.equals(config.getUnit())) {
+            return;
+        }
+
+        Stats.getManager()
+             .getConfigFactory()
+             .createConfigBuilder(config)
+             .withUnit(unit)
+             .setConfigFor(key);
     }
 
     @Override
@@ -60,8 +85,16 @@ public class StatsConfig implements StatsConfigMBean {
     }
 
     @Override
-    public void setDescription(String description) throws IOException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public void setDescription(final String description) throws IOException {
+        if (description.equals(config.getDescription())) {
+            return;
+        }
+
+        Stats.getManager()
+             .getConfigFactory()
+             .createConfigBuilder(config)
+             .withDescription(description)
+             .setConfigFor(key);
     }
 
     @Override
