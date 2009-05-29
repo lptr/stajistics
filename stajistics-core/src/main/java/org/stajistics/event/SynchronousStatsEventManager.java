@@ -35,8 +35,6 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SynchronousStatsEventManager.class);
 
-    private volatile boolean enabled = true;
-
     private final List<StatsEventHandler> globalEventHandlers = createEventHandlerList();
 
     private ConcurrentMap<StatsKey,List<StatsEventHandler>> sessionEventHandlers =
@@ -44,16 +42,6 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
     protected List<StatsEventHandler> createEventHandlerList() {
         return new CopyOnWriteArrayList<StatsEventHandler>();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
     }
 
     @Override
@@ -128,10 +116,6 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     public void fireEvent(final StatsEventType eventType, 
                           final StatsKey key,
                           final Object target) {
-
-        if (!enabled) {
-            return;
-        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("Firing event: " + eventType + ", key: " + key);

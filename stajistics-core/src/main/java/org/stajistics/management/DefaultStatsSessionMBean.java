@@ -38,9 +38,14 @@ import org.stajistics.session.data.DataSet;
  */
 public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean {
 
+    protected static final String ATTR_IMPLEMENTATION = "Implementation";
+    protected static final String ATTR_DATA_RECORDERS = "DataRecorders";
+
     protected static final String OP_CLEAR = "clear";
     protected static final String OP_DESTROY = "destroy";
     protected static final String OP_DUMP = "dump";
+
+    protected static final String FIELD_PREFIX = "_";
 
     protected final StatsSessionManager sessionManager;
     protected final org.stajistics.session.StatsSession session;
@@ -58,9 +63,32 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
         this.session = session;
     }
 
+    public String getImplementation() {
+        return session.getClass().getName();
+    }
+
+    public String getDataRecorders() {
+        return session.getDataRecorders().toString();
+    }
+
     @Override
-    public Object getAttribute(final String attribute)
+    public Object getAttribute(String attribute)
             throws AttributeNotFoundException,MBeanException,ReflectionException {
+
+        if (attribute.equals(ATTR_IMPLEMENTATION)) {
+            return getImplementation();
+        }
+
+        if (attribute.equals(ATTR_DATA_RECORDERS)) {
+            return getDataRecorders();
+        }
+
+        if (!attribute.startsWith(FIELD_PREFIX)) {
+            throw new AttributeNotFoundException(attribute);
+        }
+
+        attribute = attribute.substring(FIELD_PREFIX.length());
+
         DataSet dataSet = session.collectData();
         Object value = dataSet.getField(attribute);
         if (value == null) {
@@ -74,8 +102,21 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
         AttributeList attrList = new AttributeList();
         DataSet dataSet = session.collectData();
         for (String name : attributes) {
-            attrList.add(new Attribute(name, dataSet.getField(name)));
+            if (name.equals(ATTR_IMPLEMENTATION)) {
+                attrList.add(new Attribute(name, getImplementation()));
+
+            } else if (name.equals(ATTR_DATA_RECORDERS)) {
+                attrList.add(new Attribute(name, getDataRecorders()));
+
+            } else if (!name.startsWith(FIELD_PREFIX)) {
+                attrList.add(new Attribute(name, null));
+
+            } else {
+                name = name.substring(FIELD_PREFIX.length());
+                attrList.add(new Attribute(name, dataSet.getField(name)));
+            }
         }
+
         return attrList;
     }
 
@@ -83,12 +124,26 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     public MBeanInfo getMBeanInfo() {
         DataSet dataSet = session.collectData();
 
-        MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.size()];
+        MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.size() + 2];
 
         int i = 0;
+
+        attrs[i++] = new MBeanAttributeInfo(ATTR_IMPLEMENTATION,
+                                            String.class.getName(),
+                                            null,
+                                            true,
+                                            false,
+                                            false);
+        attrs[i++] = new MBeanAttributeInfo(ATTR_DATA_RECORDERS,
+                                            String.class.getName(),
+                                            null,
+                                            true,
+                                            false,
+                                            false);
+
         for (String name : dataSet.getFieldNames()) {
             Object value = dataSet.getField(name);
-            attrs[i++] = new MBeanAttributeInfo(name,
+            attrs[i++] = new MBeanAttributeInfo(FIELD_PREFIX + name,
                                                 value.getClass().getName(),
                                                 "DataSet field " + name,
                                                 true,

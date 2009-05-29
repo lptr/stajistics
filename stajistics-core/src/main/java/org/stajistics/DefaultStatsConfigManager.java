@@ -138,6 +138,11 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     @Override
+    public int getConfigCount() {
+        return keyMap.size();
+    }
+
+    @Override
     public void setConfig(final String keyName, final StatsConfig config) {
         setConfig(keyFactory.createKey(keyName), config);
     }
