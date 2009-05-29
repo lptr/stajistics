@@ -40,4 +40,9 @@ public class DefaultStatsConfigManagerMBean implements StatsConfigManagerMBean {
     public String getImplementation() throws IOException {
         return configManager.getClass().getName();
     }
+
+    @Override
+    public int getConfigCount() throws IOException {
+        return configManager.getConfigCount();
+    }
 }

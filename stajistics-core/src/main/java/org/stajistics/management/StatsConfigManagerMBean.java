@@ -29,4 +29,5 @@ public interface StatsConfigManagerMBean {
 
     String getImplementation() throws IOException;
 
+    int getConfigCount() throws IOException;
 }

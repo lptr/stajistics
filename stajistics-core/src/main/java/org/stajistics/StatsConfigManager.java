@@ -36,6 +36,8 @@ public interface StatsConfigManager extends Serializable {
 
     Set<String> getKeyNames();
 
+    int getConfigCount();
+
     void setConfig(String keyName, StatsConfig config);
 
     void setConfig(StatsKey key, StatsConfig config);

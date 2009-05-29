@@ -65,7 +65,7 @@ public abstract class AbstractMBeanTestCase {
                                   final Class<T> mBeanInterfaceClass) throws Exception {
 
         // Register with the local server
-        mBeanServer.registerMBean(new StandardMBean(mBean, mBeanInterfaceClass, false), name);
+        mBeanServer.registerMBean(mBean, name);
 
         // Create a proxy to the remote MBean
         T remoteMBean = JMX.newMBeanProxy(mBeanServerConnection, 

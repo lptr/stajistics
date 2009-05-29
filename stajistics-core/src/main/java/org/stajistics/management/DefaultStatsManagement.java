@@ -323,10 +323,8 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
             }
         }
 
-        if (subtype != null) {
-            buf.append(",subtype=");
-            buf.append(subtype);
-        }
+        buf.append(",subtype=");
+        buf.append(subtype);
 
         return buf.toString();
     }

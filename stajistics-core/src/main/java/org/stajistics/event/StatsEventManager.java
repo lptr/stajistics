@@ -26,10 +26,6 @@ import org.stajistics.StatsKey;
  */
 public interface StatsEventManager extends Serializable {
 
-    boolean isEnabled();
-
-    void setEnabled(boolean enabled);
-
     void addGlobalEventHandler(StatsEventHandler eventHandler);
 
     void addEventHandler(StatsKey key,

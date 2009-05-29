@@ -34,14 +34,14 @@ import org.stajistics.StatsKey;
  *
  * @author The Stajistics Project
  */
-public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
+public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
 
     protected Mockery mockery = null;
     protected StatsKey mockKey = null;
     protected StatsConfigFactory mockConfigFactory = null;
     protected StatsConfig mockConfig = null;
 
-    protected StatsConfigMBean createStatsConfigMBean(final StatsConfig config) {
+    protected DefaultStatsConfigMBean createStatsConfigMBean(final StatsConfig config) {
         return new DefaultStatsConfigMBean(mockConfigFactory, mockKey, config);
     }
 
@@ -82,6 +82,10 @@ public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
         }});
 
         StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        ObjectName name = new ObjectName(getClass().getName() + ":name=test");
+
+        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+
         mBean.setEnabled(false);
 
         mockery.assertIsSatisfied();
@@ -116,6 +120,10 @@ public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
         }});
 
         StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        ObjectName name = new ObjectName(getClass().getName() + ":name=test");
+
+        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+
         mBean.setUnit("unit2");
 
         mockery.assertIsSatisfied();
@@ -150,6 +158,10 @@ public class StatsConfigMBeanTest extends AbstractMBeanTestCase {
         }});
 
         StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        ObjectName name = new ObjectName(getClass().getName() + ":name=test");
+
+        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+
         mBean.setDescription("d2");
 
         mockery.assertIsSatisfied();
