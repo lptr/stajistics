@@ -15,8 +15,10 @@
 package org.stajistics.event;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
 
 /**
  * 
@@ -25,6 +27,12 @@ import org.stajistics.StatsKey;
  * @author The Stajistics Project
  */
 public interface StatsEventManager extends Serializable {
+    
+    Collection<StatsEventHandler> getGlobalEventHandlers();
+    
+    Collection<StatsEventHandler> getEventHandlers();
+
+    Collection<StatsEventHandler> getEventHandlers(StatsKeyMatcher keyMatcher);
 
     void addGlobalEventHandler(StatsEventHandler eventHandler);
 

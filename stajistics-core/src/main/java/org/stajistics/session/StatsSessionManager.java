@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
 
 /**
  * Manages the lifecycle of StatsSession instances.
@@ -48,6 +49,14 @@ public interface StatsSessionManager extends Serializable {
      * @return A Collection of {@link StatsSession}s, or an empty Collection if there are none.
      */
     Collection<StatsSession> getSessions();
+
+    /**
+     * Get any {@link StatsSession}s being managed where it's key is matched by the given matcher.
+     *
+     * @param keyMatcher The key matcher with which to select session keys.
+     * @return A Collection of {@link StatsSession}s, or an empty Collection if there are none.
+     */
+    Collection<StatsSession> getSessions(StatsKeyMatcher keyMatcher);
 
     /**
      * Get the {@link StatsSession} being managed for the given <tt>key</tt>.
