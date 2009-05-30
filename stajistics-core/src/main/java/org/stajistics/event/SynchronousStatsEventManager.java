@@ -14,7 +14,11 @@
  */
 package org.stajistics.event;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
 
 /**
  * 
@@ -43,6 +48,34 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     protected List<StatsEventHandler> createEventHandlerList() {
         return new CopyOnWriteArrayList<StatsEventHandler>();
     }
+    
+    @Override
+    public Collection<StatsEventHandler> getGlobalEventHandlers() {
+        return Collections.unmodifiableCollection(globalEventHandlers);
+    }
+
+    @Override
+    public Collection<StatsEventHandler> getEventHandlers() {
+        return getEventHandlers(StatsKeyMatcher.all());
+    }
+
+    @Override
+    public Collection<StatsEventHandler> getEventHandlers(final StatsKeyMatcher keyMatcher) {
+        if (keyMatcher.equals(StatsKeyMatcher.none())) {
+            return Collections.emptyList();
+        }
+
+        List<StatsEventHandler> matches = new LinkedList<StatsEventHandler>();
+
+        for (Map.Entry<StatsKey,List<StatsEventHandler>> entry : sessionEventHandlers.entrySet()) {
+            if (keyMatcher.matches(entry.getKey())) {
+                matches.addAll(entry.getValue());
+            }
+        }
+
+        return Collections.unmodifiableCollection(matches);
+    }
+    
 
     @Override
     public void addGlobalEventHandler(final StatsEventHandler eventHandler) {

@@ -23,7 +23,7 @@ package org.stajistics;
  */
 public interface StatsConstants {
 
-    String KEY_HIERARCHY_DELIMITER = "."; 
+    char KEY_HIERARCHY_DELIMITER = '.'; 
 
     String DEFAULT_UNIT = "ms";
 }

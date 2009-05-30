@@ -16,6 +16,8 @@ package org.stajistics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -200,6 +202,31 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         }
 
         return null;
+    }
+
+    @Override
+    public Map<StatsKey,StatsConfig> getConfigs() {
+        return getConfigs(StatsKeyMatcher.all());
+    }
+
+    @Override
+    public Map<StatsKey,StatsConfig> getConfigs(final StatsKeyMatcher matcher) {
+
+        if (matcher.equals(StatsKeyMatcher.none())) {
+            return Collections.emptyMap();
+        }
+
+        Map<StatsKey,StatsConfig> matches = new HashMap<StatsKey,StatsConfig>(keyMap.size() / 2);
+
+        StatsKey key;
+        for (KeyEntry entry : keyMap.values()) {
+            key = entry.getKey();
+            if (matcher.matches(key)) {
+                matches.put(key, entry.getConfig());
+            }
+        }
+
+        return Collections.unmodifiableMap(matches);
     }
 
     @Override

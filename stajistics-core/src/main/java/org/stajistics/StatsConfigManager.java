@@ -15,6 +15,7 @@
 package org.stajistics;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -49,6 +50,10 @@ public interface StatsConfigManager extends Serializable {
     StatsConfig removeConfig(String keyName);
 
     StatsConfig removeConfig(StatsKey key);
+
+    Map<StatsKey,StatsConfig> getConfigs();
+
+    Map<StatsKey,StatsConfig> getConfigs(StatsKeyMatcher matcher);
 
     void clearConfigs();
 }
