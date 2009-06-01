@@ -20,12 +20,15 @@ import java.util.Set;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
 
 /**
  * 
  * @author The Stajistics Project
  */
 public class GroovyStatsConfigManager implements StatsConfigManager {
+
+    private static final long serialVersionUID = 6528583012811270653L;
 
     private final StatsConfigManager delegate;
 
@@ -103,4 +106,15 @@ public class GroovyStatsConfigManager implements StatsConfigManager {
         delegate.setRootConfig(config);
     }
 
+    public int getConfigCount() {
+        return delegate.getConfigCount();
+    }
+
+    public Map<StatsKey, StatsConfig> getConfigs() {
+        return delegate.getConfigs();
+    }
+
+    public Map<StatsKey,StatsConfig> getConfigs(final StatsKeyMatcher matcher) {
+        return delegate.getConfigs(matcher);
+    }
 }
