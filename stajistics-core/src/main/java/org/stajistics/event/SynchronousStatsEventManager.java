@@ -14,9 +14,10 @@
  */
 package org.stajistics.event;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,25 +56,26 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     }
 
     @Override
-    public Collection<StatsEventHandler> getEventHandlers() {
+    public Map<StatsKey,Collection<StatsEventHandler>> getEventHandlers() {
         return getEventHandlers(StatsKeyMatcher.all());
     }
 
     @Override
-    public Collection<StatsEventHandler> getEventHandlers(final StatsKeyMatcher keyMatcher) {
+    public Map<StatsKey,Collection<StatsEventHandler>> getEventHandlers(final StatsKeyMatcher keyMatcher) {
         if (keyMatcher.equals(StatsKeyMatcher.none())) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
 
-        List<StatsEventHandler> matches = new LinkedList<StatsEventHandler>();
+        Map<StatsKey,Collection<StatsEventHandler>> matches = 
+            new HashMap<StatsKey,Collection<StatsEventHandler>>(sessionEventHandlers.size());
 
         for (Map.Entry<StatsKey,List<StatsEventHandler>> entry : sessionEventHandlers.entrySet()) {
             if (keyMatcher.matches(entry.getKey())) {
-                matches.addAll(entry.getValue());
+                matches.put(entry.getKey(), new ArrayList<StatsEventHandler>(entry.getValue()));
             }
         }
 
-        return Collections.unmodifiableCollection(matches);
+        return Collections.unmodifiableMap(matches);
     }
     
 
