@@ -16,8 +16,6 @@ package org.stajistics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -211,22 +209,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
     @Override
     public Map<StatsKey,StatsConfig> getConfigs(final StatsKeyMatcher matcher) {
-
-        if (matcher.equals(StatsKeyMatcher.none())) {
-            return Collections.emptyMap();
-        }
-
-        Map<StatsKey,StatsConfig> matches = new HashMap<StatsKey,StatsConfig>(keyMap.size() / 2);
-
-        StatsKey key;
-        for (KeyEntry entry : keyMap.values()) {
-            key = entry.getKey();
-            if (matcher.matches(key)) {
-                matches.put(key, entry.getConfig());
-            }
-        }
-
-        return Collections.unmodifiableMap(matches);
+        return matcher.filterToMap(keyMap.values());
     }
 
     @Override
@@ -380,7 +363,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 }
 
 
-final class KeyEntry implements Serializable {
+final class KeyEntry implements StatsKeyAssociation<StatsConfig>,Serializable {
 
     private static final long serialVersionUID = -4512523435953782607L;
 
@@ -407,8 +390,14 @@ final class KeyEntry implements Serializable {
         setConfig(config);
     }
 
-    StatsKey getKey() {
+    @Override
+    public StatsKey getKey() {
         return key;
+    }
+
+    @Override
+    public StatsConfig getValue() {
+        return getConfig();
     }
 
     void visit(final KeyEntry.Visitor visitor) {

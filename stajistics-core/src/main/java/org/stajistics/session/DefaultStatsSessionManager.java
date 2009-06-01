@@ -16,8 +16,6 @@ package org.stajistics.session;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -91,20 +89,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
      */
     @Override
     public Collection<StatsSession> getSessions(final StatsKeyMatcher keyMatcher) {
-
-        if (keyMatcher.equals(StatsKeyMatcher.none())) {
-            return Collections.emptyList();
-        }
-
-        List<StatsSession> matches = new LinkedList<StatsSession>();
-
-        for (StatsSession session : sessionMap.values()) {
-            if (keyMatcher.matches(session.getKey())) {
-                matches.add(session);
-            }
-        }
-
-        return Collections.unmodifiableCollection(matches);
+        return keyMatcher.filterToCollection(sessionMap);
     }
 
     /**

@@ -14,6 +14,7 @@
  */
 package org.stajistics;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +26,9 @@ import java.util.Map;
  * 
  * @author The Stajistics Project
  */
-public abstract class StatsKeyMatcher {
+public abstract class StatsKeyMatcher implements Serializable {
+
+    private static final long serialVersionUID = -1713747126597353487L;
 
     public static Builder build() {
         return new Builder();
@@ -42,24 +45,52 @@ public abstract class StatsKeyMatcher {
     public static StatsKeyMatcher not(final StatsKeyMatcher delegate) {
         return new NegationMatcher(delegate);
     }
-    
+
     public static StatsKeyMatcher prefix(final String prefix) {
-        return new PrefixMatcher(prefix);
+        return new PrefixMatcher(MatchTarget.KEY_NAME, prefix);
     }
 
+    public static StatsKeyMatcher attrNamePrefix(final String prefix) {
+        return new PrefixMatcher(MatchTarget.ATTR_NAME, prefix);
+    }
+
+    public static StatsKeyMatcher attrValuePrefix(final String prefix) {
+        return new PrefixMatcher(MatchTarget.ATTR_VALUE, prefix);
+    }
+    
     public static StatsKeyMatcher suffix(final String suffix) {
-        return new SuffixMatcher(suffix);
+        return new SuffixMatcher(MatchTarget.KEY_NAME, suffix);
+    }
+    
+    public static StatsKeyMatcher attrNameSuffix(final String suffix) {
+        return new SuffixMatcher(MatchTarget.ATTR_NAME, suffix);
     }
 
+    public static StatsKeyMatcher attrValueSuffix(final String suffix) {
+        return new SuffixMatcher(MatchTarget.ATTR_VALUE, suffix);
+    }
+    
     public static StatsKeyMatcher contains(final String string) {
-        return new ContainsMatcher(string);
+        return new ContainsMatcher(MatchTarget.KEY_NAME, string);
     }
 
+    public static StatsKeyMatcher attrNameContains(final String string) {
+        return new ContainsMatcher(MatchTarget.ATTR_NAME, string);
+    }
+
+    public static StatsKeyMatcher attrValueContains(final String string) {
+        return new ContainsMatcher(MatchTarget.ATTR_VALUE, string);
+    }
+    
     public static StatsKeyMatcher depth(final int depth) {
         return new DepthMatcher(depth);
     }
 
-    public Collection<StatsKey> filter(final Collection<StatsKey> keys) {
+    public static StatsKeyMatcher attributeCount(final int count) {
+        return new AttrCountMatcher(count);
+    }
+
+    public Collection<StatsKey> filterKeys(final Collection<StatsKey> keys) {
         List<StatsKey> filteredList = new ArrayList<StatsKey>(keys.size());
         for (StatsKey key : keys) {
             if (matches(key)) {
@@ -69,8 +100,30 @@ public abstract class StatsKeyMatcher {
         return Collections.unmodifiableCollection(filteredList);
     }
 
-    public <T> Map<StatsKey,T> filter(final Map<StatsKey,T> map) {
-        Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(map.size());
+    public <T> Collection<T> filterToCollection(final Map<StatsKey,T> map) {
+        List<T> filteredList = new ArrayList<T>(map.size() / 2);
+        for (Map.Entry<StatsKey,T> entry : map.entrySet()) {
+            if (matches(entry.getKey())) {
+                filteredList.add(entry.getValue());
+            }
+        }
+        return Collections.unmodifiableCollection(filteredList);
+    }
+
+    public <T> Collection<T> filterToCollection(final Collection<? extends StatsKeyAssociation<T>> associations) {
+        List<T> filteredList = new ArrayList<T>(associations.size() / 2);
+        StatsKey key;
+        for (StatsKeyAssociation<T> ka : associations) {
+            key = ka.getKey();
+            if (matches(key)) {
+                filteredList.add(ka.getValue());
+            }
+        }
+        return Collections.unmodifiableCollection(filteredList);
+    }
+
+    public <T> Map<StatsKey,T> filterToMap(final Map<StatsKey,T> map) {
+        Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(map.size() / 2);
         for (Map.Entry<StatsKey,T> entry : map.entrySet()) {
             if (matches(entry.getKey())) {
                 filteredMap.put(entry.getKey(), entry.getValue());
@@ -79,16 +132,44 @@ public abstract class StatsKeyMatcher {
         return Collections.unmodifiableMap(filteredMap);
     }
 
+    public <T> Map<StatsKey,T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
+        Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(associations.size() / 2);
+        StatsKey key;
+        for (StatsKeyAssociation<T> ka : associations) {
+            key = ka.getKey();
+            if (matches(key)) {
+                filteredMap.put(key, ka.getValue());
+            }
+        }
+        return Collections.unmodifiableMap(filteredMap);
+    }
+
     public abstract boolean matches(StatsKey key);
 
     @Override
-    public abstract boolean equals(Object obj);
+    public final boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }        
+
+        if (!getClass().equals(obj.getClass())) {
+            return false;
+        }
+
+        if (!(obj instanceof StatsKeyMatcher)) {
+            return false;
+        }
+        
+        return equals((StatsKeyMatcher)obj);
+    }
+
+    public abstract boolean equals(StatsKeyMatcher matcher);
 
     @Override
     public abstract int hashCode();
 
     /* NESTED CLASSES */
-    
+
     public static class Builder {
 
         private final List<StatsKeyMatcher> matchers = new ArrayList<StatsKeyMatcher>(4);
@@ -115,8 +196,28 @@ public abstract class StatsKeyMatcher {
             return this;
         }
 
+        public Builder withAttrNamePrefix(final String prefix) {
+            addMatcher(attrNamePrefix(prefix));
+            return this;
+        }
+
+        public Builder withAttValuePrefix(final String prefix) {
+            addMatcher(attrValuePrefix(prefix));
+            return this;
+        }
+
         public Builder withSuffix(final String suffix) {
             addMatcher(suffix(suffix));
+            return this;
+        }
+        
+        public Builder withAttrNameSuffix(final String suffix) {
+            addMatcher(attrNameSuffix(suffix));
+            return this;
+        }
+
+        public Builder withAttrValueSuffix(final String suffix) {
+            addMatcher(attrValueSuffix(suffix));
             return this;
         }
 
@@ -125,8 +226,23 @@ public abstract class StatsKeyMatcher {
             return this;
         }
 
+        public Builder attrNameContaining(final String string) {
+            addMatcher(attrNameContains(string));
+            return this;
+        }
+
+        public Builder attrValueContaining(final String string) {
+            addMatcher(attrValueContains(string));
+            return this;
+        }
+        
         public Builder atDepth(final int depth) {
             matchers.add(depth(depth));
+            return this;
+        }
+
+        public Builder withAttributeCountOf(final int count) {
+            matchers.add(attributeCount(count));
             return this;
         }
 
@@ -144,8 +260,16 @@ public abstract class StatsKeyMatcher {
         }
     }
 
+    private enum MatchTarget {
+        KEY_NAME,
+        ATTR_NAME,
+        ATTR_VALUE
+    }
+
     private static class NegationMatcher extends StatsKeyMatcher {
 
+        private static final long serialVersionUID = -4636379636104878297L;
+        
         private final StatsKeyMatcher delegate;
 
         NegationMatcher(final StatsKeyMatcher delegate) {
@@ -162,11 +286,7 @@ public abstract class StatsKeyMatcher {
         }
 
         @Override
-        public boolean equals(final Object other) {
-            if (!(other instanceof NegationMatcher)) {
-                return false;
-            }
-
+        public boolean equals(final StatsKeyMatcher other) {
             return delegate.equals(((NegationMatcher)other).delegate);
         }
 
@@ -178,6 +298,8 @@ public abstract class StatsKeyMatcher {
 
     private static class CompositeMatcher extends StatsKeyMatcher {
 
+        private static final long serialVersionUID = 8608713955660143865L;
+        
         private final List<StatsKeyMatcher> matchers;
 
         CompositeMatcher(final List<StatsKeyMatcher> matchers) {
@@ -204,11 +326,7 @@ public abstract class StatsKeyMatcher {
         }
 
         @Override
-        public boolean equals(final Object other) {
-            if (!(other instanceof CompositeMatcher)) {
-                return false;
-            }
-
+        public boolean equals(final StatsKeyMatcher other) {
             return matchers.equals(((CompositeMatcher)other).matchers);
         }
 
@@ -220,6 +338,8 @@ public abstract class StatsKeyMatcher {
 
     private static class AllMatcher extends StatsKeyMatcher {
 
+        private static final long serialVersionUID = 6746094078692655632L;
+
         private static final StatsKeyMatcher INSTANCE = new AllMatcher();
 
         @Override
@@ -228,7 +348,22 @@ public abstract class StatsKeyMatcher {
         }
 
         @Override
-        public boolean equals(final Object other) {
+        public Collection<StatsKey> filterKeys(final Collection<StatsKey> keys) {
+            return Collections.unmodifiableCollection(new ArrayList<StatsKey>(keys));
+        }
+
+        @Override
+        public <T> Collection<T> filterToCollection(final Map<StatsKey,T> map) {
+            return Collections.unmodifiableCollection(new ArrayList<T>(map.values()));
+        }
+        
+        @Override
+        public <T> Map<StatsKey,T> filterToMap(final Map<StatsKey,T> map) {
+            return Collections.unmodifiableMap(map);
+        }
+
+        @Override
+        public boolean equals(final StatsKeyMatcher other) {
             return other == INSTANCE;
         }
 
@@ -240,6 +375,8 @@ public abstract class StatsKeyMatcher {
 
     private static class NoneMatcher extends StatsKeyMatcher {
 
+        private static final long serialVersionUID = -4349112693642153977L;
+
         private static final StatsKeyMatcher INSTANCE = new NoneMatcher();
 
         @Override
@@ -248,7 +385,32 @@ public abstract class StatsKeyMatcher {
         }
 
         @Override
-        public boolean equals(final Object other) {
+        public Collection<StatsKey> filterKeys(final Collection<StatsKey> keys) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public <T> Collection<T> filterToCollection(final Map<StatsKey,T> map) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public <T> Collection<T> filterToCollection(final Collection<? extends StatsKeyAssociation<T>> associations) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public <T> Map<StatsKey, T> filterToMap(final Map<StatsKey,T> map) {
+            return Collections.emptyMap();
+        }
+        
+        @Override
+        public <T> Map<StatsKey,T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public boolean equals(final StatsKeyMatcher other) {
             return other == INSTANCE;
         }
 
@@ -259,30 +421,53 @@ public abstract class StatsKeyMatcher {
     }
 
     private static class PrefixMatcher extends StatsKeyMatcher {
+        private static final long serialVersionUID = -7895894285409549318L;
 
+        private final MatchTarget target;
         private final String prefix;
 
-        PrefixMatcher(final String prefix) {
+        PrefixMatcher(final MatchTarget target, final String prefix) {
+            if (target == null) {
+                throw new NullPointerException("target");
+            }
             if (prefix == null) {
                 throw new NullPointerException("prefix");
             }
 
+            this.target = target;
             this.prefix = prefix;
         }
 
         @Override
         public boolean matches(final StatsKey key) {
-            return key.getName().startsWith(prefix);
+            switch (target) {
+            case KEY_NAME:
+                return key.getName().startsWith(prefix);
+            case ATTR_NAME:
+                for (String attrName : key.getAttributes().keySet()) {
+                    if (attrName.startsWith(prefix)) {
+                        return true;
+                    }
+                }
+                break;
+            case ATTR_VALUE:
+                for (Object attrValue : key.getAttributes().values()) {
+                    if (attrValue.toString().startsWith(prefix)) {
+                        return true;
+                    }
+                }
+                break;
+            }
+
+            return false;
         }
 
         @Override
-        public boolean equals(final Object other) {
-            if (!(other instanceof PrefixMatcher)) {
-                return false;
-            }
-
-            return prefix.equals(((PrefixMatcher)other).prefix);
-        }
+        public boolean equals(final StatsKeyMatcher other) {
+            PrefixMatcher prefixMatcher = (PrefixMatcher)other;
+            return target == prefixMatcher.target &&
+                   prefix.equals(prefixMatcher.prefix);
+        }        
 
         @Override
         public int hashCode() {
@@ -292,28 +477,52 @@ public abstract class StatsKeyMatcher {
 
     private static class SuffixMatcher extends StatsKeyMatcher {
 
+        private static final long serialVersionUID = -1759972536606378962L;
+
+        private final MatchTarget target;
         private final String suffix;
 
-        SuffixMatcher(final String suffix) {
+        SuffixMatcher(final MatchTarget target, final String suffix) {
+            if (target == null) {
+                throw new NullPointerException("target");
+            }
             if (suffix == null) {
                 throw new NullPointerException("suffix");
             }
 
+            this.target = target;
             this.suffix = suffix;
         }
 
         @Override
         public boolean matches(final StatsKey key) {
-            return key.getName().endsWith(suffix);
+            switch (target) {
+            case KEY_NAME:
+                return key.getName().endsWith(suffix);
+            case ATTR_NAME:
+                for (String attrName : key.getAttributes().keySet()) {
+                    if (attrName.endsWith(suffix)) {
+                        return true;
+                    }
+                }
+                break;
+            case ATTR_VALUE:
+                for (Object attrValue : key.getAttributes().values()) {
+                    if (attrValue.toString().endsWith(suffix)) {
+                        return true;
+                    }
+                }
+                break;
+            }
+
+            return false;
         }
 
         @Override
-        public boolean equals(final Object other) {
-            if (!(other instanceof SuffixMatcher)) {
-                return false;
-            }
-
-            return suffix.equals(((SuffixMatcher)other).suffix);
+        public boolean equals(final StatsKeyMatcher other) {
+            SuffixMatcher suffixMatcher = (SuffixMatcher)other;
+            return target == suffixMatcher.target &&
+                   suffix.equals(suffixMatcher.suffix);
         }
 
         @Override
@@ -323,29 +532,53 @@ public abstract class StatsKeyMatcher {
     }
 
     private static class ContainsMatcher extends StatsKeyMatcher {
+        
+        private static final long serialVersionUID = -7458113352734576005L;
 
+        private final MatchTarget target;
         private final String string;
 
-        ContainsMatcher(final String string) {
+        ContainsMatcher(final MatchTarget target, final String string) {
+            if (target == null) {
+                throw new NullPointerException("target");
+            }
             if (string == null) {
                 throw new NullPointerException("string");
             }
 
+            this.target = target;
             this.string = string;
         }
 
         @Override
         public boolean matches(final StatsKey key) {
-            return key.getName().indexOf(string) > -1;
+            switch (target) {
+            case KEY_NAME:
+                return key.getName().indexOf(string) > -1;
+            case ATTR_NAME:
+                for (String attrName : key.getAttributes().keySet()) {
+                    if (attrName.indexOf(string) > -1) {
+                        return true;
+                    }
+                }
+                break;
+            case ATTR_VALUE:
+                for (Object attrValue : key.getAttributes().values()) {
+                    if (attrValue.toString().indexOf(string) > -1) {
+                        return true;
+                    }
+                }
+                break;
+            }
+
+            return false;
         }
 
         @Override
-        public boolean equals(final Object other) {
-            if (!(other instanceof ContainsMatcher)) {
-                return false;
-            }
-
-            return string.equals(((ContainsMatcher)other).string);
+        public boolean equals(final StatsKeyMatcher other) {
+            ContainsMatcher containsMatcher = (ContainsMatcher)other;
+            return target == containsMatcher.target &&
+                    string.equals(containsMatcher.string);
         }
 
         @Override
@@ -356,6 +589,8 @@ public abstract class StatsKeyMatcher {
 
     private static class DepthMatcher extends StatsKeyMatcher {
 
+        private static final long serialVersionUID = 8257312819320924383L;
+        
         private final int depth;
 
         DepthMatcher(int depth) {
@@ -385,11 +620,7 @@ public abstract class StatsKeyMatcher {
         }
 
         @Override
-        public boolean equals(final Object other) {
-            if (!(other instanceof DepthMatcher)) {
-                return false;
-            }
-
+        public boolean equals(final StatsKeyMatcher other) {
             return depth == ((DepthMatcher)other).depth;
         }
 
@@ -397,5 +628,40 @@ public abstract class StatsKeyMatcher {
         public int hashCode() {
             return getClass().hashCode() ^ depth;
         }
+    }
+
+    private static class AttrCountMatcher extends StatsKeyMatcher {
+
+        private static final long serialVersionUID = -3050588776658645358L;
+        
+        private final int count;
+
+        public AttrCountMatcher(int count) {
+            if (count < 0) {
+                count = 0;
+            }
+
+            this.count = count;
+        }
+
+        @Override
+        public boolean matches(final StatsKey key) {
+            return count == key.getAttributeCount();
+        }
+
+        @Override
+        public boolean equals(final StatsKeyMatcher other) {
+            if (!(other instanceof AttrCountMatcher)) {
+                return false;
+            }
+
+            return count == ((AttrCountMatcher)other).count;
+        }
+
+        @Override
+        public int hashCode() {
+            return getClass().hashCode() ^ count; 
+        }
+        
     }
 }
