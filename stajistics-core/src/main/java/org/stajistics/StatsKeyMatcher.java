@@ -260,7 +260,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
     }
 
-    private enum MatchTarget {
+    enum MatchTarget {
         KEY_NAME,
         ATTR_NAME,
         ATTR_VALUE
@@ -269,7 +269,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     private static class NegationMatcher extends StatsKeyMatcher {
 
         private static final long serialVersionUID = -4636379636104878297L;
-        
+
         private final StatsKeyMatcher delegate;
 
         NegationMatcher(final StatsKeyMatcher delegate) {
@@ -299,7 +299,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     private static class CompositeMatcher extends StatsKeyMatcher {
 
         private static final long serialVersionUID = 8608713955660143865L;
-        
+
         private final List<StatsKeyMatcher> matchers;
 
         CompositeMatcher(final List<StatsKeyMatcher> matchers) {
