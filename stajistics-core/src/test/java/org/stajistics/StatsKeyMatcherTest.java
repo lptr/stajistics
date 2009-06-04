@@ -14,9 +14,14 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.stajistics.StatsKeyMatcher.all;
+import static org.stajistics.StatsKeyMatcher.none;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,20 +49,42 @@ public class StatsKeyMatcherTest {
     }
 
     @Test
-    public void testAllMatcherMatches() {
-        StatsKeyMatcher all = StatsKeyMatcher.all();
-        assertTrue(all.matches(newKey("a")));
-        assertTrue(all.matches(newKey("a.1")));
-        assertTrue(all.matches(newKey("a.1.x")));
+    public void testFilterKeys() {
+        Collection<StatsKey> keys = new ArrayList<StatsKey>();
+        keys.add(newKey("a"));
+        keys.add(newKey("b"));
+        keys.add(newKey("c"));
+        keys = Collections.unmodifiableCollection(keys);
+
+        assertTrue(keys != all().filterKeys(keys));
+        assertEquals(3, all().filterKeys(keys).size());
+        assertTrue(none().filterKeys(keys).isEmpty());
     }
 
     @Test
-    public void testNoneMatcherMatches() {
-        StatsKeyMatcher none = StatsKeyMatcher.none();
-        assertFalse(none.matches(newKey("a")));
-        assertFalse(none.matches(newKey("a.1")));
-        assertFalse(none.matches(newKey("a.1.x")));
+    public void testFilterToCollectionWithMap() {
+        final Object o1 = new Object();
+        final Object o2 = new Object();
+
+        Map<StatsKey,Object> map = new HashMap<StatsKey,Object>(2);
+        map.put(newKey("a"), o1);
+        map.put(newKey("b"), o2);
+
+        assertEquals(2, all().filterToCollection(map).size());
+        assertTrue(none().filterToCollection(map).isEmpty());
     }
 
-	//TODO: way more tests
+    @Test
+    public void testFilterToMapWithMap() {
+        final Object o1 = new Object();
+        final Object o2 = new Object();
+
+        Map<StatsKey,Object> map = new HashMap<StatsKey,Object>(2);
+        map.put(newKey("a"), o1);
+        map.put(newKey("b"), o2);
+
+        assertTrue(map != all().filterToMap(map));
+        assertEquals(2, all().filterToCollection(map).size());
+        assertTrue(none().filterToCollection(map).isEmpty());
+    }
 }

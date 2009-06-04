@@ -16,11 +16,13 @@ package org.stajistics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -44,6 +46,14 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     public static StatsKeyMatcher not(final StatsKeyMatcher delegate) {
         return new NegationMatcher(delegate);
+    }
+
+    public static StatsKeyMatcher and(final StatsKeyMatcher... delegates) {
+        return new CompositeMatcher(CompositeMatcher.Op.AND, Arrays.asList(delegates));
+    }
+
+    public static StatsKeyMatcher or(final StatsKeyMatcher... delegates) {
+        return new CompositeMatcher(CompositeMatcher.Op.OR, Arrays.asList(delegates));
     }
 
     public static StatsKeyMatcher prefix(final String prefix) {
@@ -81,7 +91,43 @@ public abstract class StatsKeyMatcher implements Serializable {
     public static StatsKeyMatcher attrValueContains(final String string) {
         return new ContainsMatcher(MatchTarget.ATTR_VALUE, string);
     }
-    
+
+    public static StatsKeyMatcher length(final int length) {
+        return new LengthMatcher(MatchTarget.KEY_NAME, length);
+    }
+
+    public static StatsKeyMatcher attrNameLength(final int length) {
+        return new LengthMatcher(MatchTarget.ATTR_NAME, length);
+    }
+
+    public static StatsKeyMatcher attrValueLength(final int length) {
+        return new LengthMatcher(MatchTarget.ATTR_VALUE, length);
+    }
+
+    public static StatsKeyMatcher matchesRegEx(final String regEx) {
+        return matchesRegEx(Pattern.compile(regEx));
+    }
+
+    public static StatsKeyMatcher matchesRegEx(final Pattern pattern) {
+        return new RegExMatcher(MatchTarget.KEY_NAME, pattern);
+    }
+
+    public static StatsKeyMatcher attrNameMatchesRegEx(final String regEx) {
+        return attrNameMatchesRegEx(Pattern.compile(regEx));
+    }
+
+    public static StatsKeyMatcher attrNameMatchesRegEx(final Pattern pattern) {
+        return new RegExMatcher(MatchTarget.ATTR_NAME, pattern);
+    }
+
+    public static StatsKeyMatcher attrValueMatchesRegEx(final String regEx) {
+        return attrValueMatchesRegEx(Pattern.compile(regEx));
+    }
+
+    public static StatsKeyMatcher attrValueMatchesRegEx(final Pattern pattern) {
+        return new RegExMatcher(MatchTarget.ATTR_VALUE, pattern);
+    }
+
     public static StatsKeyMatcher depth(final int depth) {
         return new DepthMatcher(depth);
     }
@@ -159,7 +205,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         if (!(obj instanceof StatsKeyMatcher)) {
             return false;
         }
-        
+
         return equals((StatsKeyMatcher)obj);
     }
 
@@ -235,7 +281,7 @@ public abstract class StatsKeyMatcher implements Serializable {
             addMatcher(attrValueContains(string));
             return this;
         }
-        
+
         public Builder atDepth(final int depth) {
             matchers.add(depth(depth));
             return this;
@@ -256,7 +302,7 @@ public abstract class StatsKeyMatcher implements Serializable {
                 return matchers.get(0);
             }
 
-            return new CompositeMatcher(matchers);
+            return new CompositeMatcher(CompositeMatcher.Op.AND, matchers);
         }
     }
 
@@ -269,7 +315,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     private static class NegationMatcher extends StatsKeyMatcher {
 
         private static final long serialVersionUID = -4636379636104878297L;
-
+        
         private final StatsKeyMatcher delegate;
 
         NegationMatcher(final StatsKeyMatcher delegate) {
@@ -300,9 +346,19 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         private static final long serialVersionUID = 8608713955660143865L;
 
+        enum Op {
+            AND,
+            OR
+        }
+
+        private final Op op;
         private final List<StatsKeyMatcher> matchers;
 
-        CompositeMatcher(final List<StatsKeyMatcher> matchers) {
+        CompositeMatcher(final Op op,
+                         final List<StatsKeyMatcher> matchers) {
+            if (op == null) {
+                throw new NullPointerException("op");
+            }
             if (matchers == null) {
                 throw new NullPointerException("matchers");
             }
@@ -310,19 +366,32 @@ public abstract class StatsKeyMatcher implements Serializable {
                 throw new IllegalArgumentException("empty matchers");
             }
 
+            this.op = op;
             this.matchers = matchers;
         }
 
         @Override
         public boolean matches(final StatsKey key) {
             int size = matchers.size();
-            for (int i = 0; i < size; i++) {
-                if (!matchers.get(i).matches(key)) {
-                    return false;
-                }
-            }
 
-            return true;
+            switch (op) {
+            case AND:
+                for (int i = 0; i < size; i++) {
+                    if (!matchers.get(i).matches(key)) {
+                        return false;
+                    }
+                }
+                return true;
+            case OR:
+                for (int i = 0; i < size; i++) {
+                    if (matchers.get(i).matches(key)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            throw new Error();
         }
 
         @Override
@@ -471,7 +540,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ prefix.hashCode();
+            return getClass().hashCode() ^ target.hashCode() ^ prefix.hashCode();
         }
     }
 
@@ -527,7 +596,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ suffix.hashCode();
+            return getClass().hashCode() ^ target.hashCode() ^ suffix.hashCode();
         }
     }
 
@@ -583,7 +652,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ string.hashCode();
+            return getClass().hashCode() ^ target.hashCode() ^ string.hashCode();
         }
     }
 
@@ -602,7 +671,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public boolean matches(final StatsKey key) {
-            int count = countHeirarchyDelimiters(key.getName()) - 1;
+            int count = countHeirarchyDelimiters(key.getName()) + 1;
             return depth == count;
         }
 
@@ -662,6 +731,118 @@ public abstract class StatsKeyMatcher implements Serializable {
         public int hashCode() {
             return getClass().hashCode() ^ count; 
         }
+    }
+
+    private static class LengthMatcher extends StatsKeyMatcher {
+     
+        private static final long serialVersionUID = 6015505212005788047L;
+
+        private final MatchTarget target;
+        private final int length;
         
+        LengthMatcher(final MatchTarget target,
+                      int length) {
+            if (target == null) {
+                throw new NullPointerException("target");
+            }
+            if (length < 0) {
+                length = 0;
+            }
+
+            this.target = target;
+            this.length = length;
+        }
+        
+        @Override
+        public boolean matches(final StatsKey key) {
+            switch (target) {
+            case KEY_NAME:
+                return key.getName().length() == length;
+            case ATTR_NAME:
+                for (String attrName : key.getAttributes().keySet()) {
+                    if (attrName.length() == length) {
+                        return true;
+                    }
+                }
+                break;
+            case ATTR_VALUE:
+                for (Object attrValue : key.getAttributes().values()) {
+                    if (attrValue.toString().length() == length) {
+                        return true;
+                    }
+                }
+                break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean equals(final StatsKeyMatcher other) {
+            LengthMatcher lengthMatcher = (LengthMatcher)other;
+            return target == lengthMatcher.target &&
+                   length == lengthMatcher.length;
+        }
+
+        @Override
+        public int hashCode() {
+            return getClass().hashCode() ^ target.hashCode() ^ length;
+        }
+    }
+
+    private static class RegExMatcher extends StatsKeyMatcher {
+
+        private static final long serialVersionUID = -2528695735803677384L;
+        
+        private final MatchTarget target;
+        private final Pattern pattern;
+        
+        public RegExMatcher(final MatchTarget target,
+                            final Pattern pattern) {
+            if (target == null) {
+                throw new NullPointerException("target");
+            }
+            if (pattern == null) {
+                throw new NullPointerException("pattern");
+            }
+
+            this.target = target;
+            this.pattern = pattern;
+        }
+
+        @Override
+        public boolean matches(final StatsKey key) {
+            switch (target) {
+            case KEY_NAME:
+                return pattern.matcher(key.getName()).matches();
+            case ATTR_NAME:
+                for (String attrName : key.getAttributes().keySet()) {
+                    if (pattern.matcher(attrName).matches()) {
+                        return true;
+                    }
+                }
+                break;
+            case ATTR_VALUE:
+                for (Object attrValue : key.getAttributes().values()) {
+                    if (pattern.matcher(attrValue.toString()).matches()) {
+                        return true;
+                    }
+                }
+                break;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean equals(final StatsKeyMatcher other) {
+            RegExMatcher regExMatcher = (RegExMatcher)other;
+            return target == regExMatcher.target &&
+                   pattern.equals(regExMatcher.pattern);
+        }
+
+        @Override
+        public int hashCode() {
+            return getClass().hashCode() ^ target.hashCode() ^ pattern.hashCode();
+        }
     }
 }

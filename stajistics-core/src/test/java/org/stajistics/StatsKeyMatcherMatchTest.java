@@ -15,11 +15,25 @@
 package org.stajistics;
 
 import static org.stajistics.StatsKeyMatcher.all;
+import static org.stajistics.StatsKeyMatcher.and;
+import static org.stajistics.StatsKeyMatcher.attrNameContains;
+import static org.stajistics.StatsKeyMatcher.attrNameLength;
+import static org.stajistics.StatsKeyMatcher.attrNameMatchesRegEx;
 import static org.stajistics.StatsKeyMatcher.attrNamePrefix;
+import static org.stajistics.StatsKeyMatcher.attrNameSuffix;
+import static org.stajistics.StatsKeyMatcher.attrValueContains;
+import static org.stajistics.StatsKeyMatcher.attrValueLength;
+import static org.stajistics.StatsKeyMatcher.attrValueMatchesRegEx;
 import static org.stajistics.StatsKeyMatcher.attrValuePrefix;
+import static org.stajistics.StatsKeyMatcher.attrValueSuffix;
+import static org.stajistics.StatsKeyMatcher.attributeCount;
 import static org.stajistics.StatsKeyMatcher.contains;
+import static org.stajistics.StatsKeyMatcher.depth;
+import static org.stajistics.StatsKeyMatcher.length;
+import static org.stajistics.StatsKeyMatcher.matchesRegEx;
 import static org.stajistics.StatsKeyMatcher.none;
 import static org.stajistics.StatsKeyMatcher.not;
+import static org.stajistics.StatsKeyMatcher.or;
 import static org.stajistics.StatsKeyMatcher.prefix;
 import static org.stajistics.StatsKeyMatcher.suffix;
 
@@ -52,10 +66,32 @@ public class StatsKeyMatcherMatchTest extends TestCase {
         { not(all()), newKey("a.1"), false },
         { not(all()), newKey("a.1.b"), false },
 
+        // And
+        { and(all(), all()), newKey("and.a"), true },
+        { and(all(), none()), newKey("and.b"), false },
+        { and(none(), all()), newKey("and.c"), false },
+        { and(none(), none()), newKey("and.d"), false },
+        { and(all(), all(), all()), newKey("and.e"), true },
+        { and(all(), all(), none()), newKey("and.f"), false },
+        { and(all(), none(), none()), newKey("and.g"), false },
+        { and(none(), none(), none()), newKey("and.h"), false },
+
+        // Or
+        { or(all(), all()), newKey("or.a"), true },
+        { or(all(), none()), newKey("or.b"), true },
+        { or(none(), all()), newKey("or.c"), true },
+        { or(none(), none()), newKey("or.d"), false },
+        { or(all(), all(), all()), newKey("or.e"), true },
+        { or(all(), all(), none()), newKey("or.f"), true },
+        { or(all(), none(), none()), newKey("or.g"), true },
+        { or(none(), none(), none()), newKey("or.h"), false },
+
         // Prefix
         { prefix("a"), newKey("a"), true },
         { prefix("a"), newKey("a.1"), true },
+        { prefix("a."), newKey("a.2"), true },
         { prefix("a"), newKey("b"), false },
+        { prefix("b"), newKey("a.b.c"), false },
 
         // Attribute name prefix
         { attrNamePrefix("a"), newKey("a", "a", "x"), true },
@@ -74,12 +110,79 @@ public class StatsKeyMatcherMatchTest extends TestCase {
         { suffix("a"), newKey("b"), false },
         { suffix("b"), newKey("a.b.c"), false },
 
+        // Attribute name suffix
+        { attrNameSuffix("a"), newKey("a", "a", "x"), true },
+        { attrNameSuffix("b"), newKey("a", "ab", "x"), true },
+        { attrNameSuffix("b"), newKey("a", "ba", "x"), false },
+
+        // Attribute value suffix
+        { attrValueSuffix("a"), newKey("a", "x", "a"), true },
+        { attrValueSuffix("b"), newKey("a", "x", "ab"), true },
+        { attrValueSuffix("b"), newKey("a", "x", "ba"), false },
+
         // Contains
         { contains("a"), newKey("a"), true },
         { contains("1"), newKey("a.1"), true },
-        { contains(".2"), newKey("a.2"), true },
+        { contains("a"), newKey("a.2"), true },
         { contains("a"), newKey("b"), false },
         { contains("b"), newKey("a.b.c"), true },
+        { contains("a"), newKey("b.c.d"), false },
+
+        // Attribute name contains
+        { attrNameContains("a"), newKey("x", "a", "x"), true },
+        { attrNameContains("1"), newKey("x", "a.1", "x"), true },
+        { attrNameContains("a"), newKey("x", "a.2", "x"), true },
+        { attrNameContains("a"), newKey("x", "b", "x"), false },
+        { attrNameContains("b"), newKey("x", "a.b.c", "x"), true },
+        { attrNameContains("a"), newKey("x", "b.c.d", "x"), false },
+
+        // Attribute value contains
+        { attrValueContains("a"), newKey("x", "x", "a"), true },
+        { attrValueContains("1"), newKey("x", "x", "a.1"), true },
+        { attrValueContains("a"), newKey("x", "x", "a.2"), true },
+        { attrValueContains("a"), newKey("x", "x", "b"), false },
+        { attrValueContains("b"), newKey("x", "x", "a.b.c"), true },
+        { attrValueContains("a"), newKey("x", "x", "b.c.d"), false },
+
+        // Length
+        { length(1), newKey("a"), true },
+        { length(2), newKey("b"), false },
+        { length(1), newKey("ab"), false },
+
+        // Attribute name length
+        { attrNameLength(1), newKey("x", "a", "x"), true },
+        { attrNameLength(2), newKey("x", "b", "x"), false },
+        { attrNameLength(1), newKey("x", "ab", "x"), false },
+
+        // Attribute value length
+        { attrValueLength(1), newKey("x", "x", "a"), true },
+        { attrValueLength(2), newKey("x", "x", "b"), false },
+        { attrValueLength(1), newKey("x", "x", "ab"), false },
+
+        // Depth
+        { depth(1), newKey("a"), true },
+        { depth(2), newKey("a.b"), true },
+        { depth(3), newKey("a.b.c"), true },
+        { depth(1), newKey("b.c"), false },
+        { depth(2), newKey("b"), false },
+
+        // Attribute count
+        { attributeCount(0), newKey("a"), true },
+        { attributeCount(1), newKey("b", "k", "v"), true },
+        { attributeCount(0), newKey("c", "k", "v"), false },
+        { attributeCount(1), newKey("d"), false },
+
+        // Matches RegEx
+        { matchesRegEx("[a][b][c]"), newKey("abc"), true },
+        { matchesRegEx("[b][c][d]{2}"), newKey("bcd"), false },
+
+        // Attribute name matches RegEx
+        { attrNameMatchesRegEx("[a][b][c]"), newKey("x", "abc", "x"), true },
+        { attrNameMatchesRegEx("[b][c][d]{2}"), newKey("x", "bcd", "x"), false },
+
+        // Attribute value matches RegEx
+        { attrValueMatchesRegEx("[a][b][c]"), newKey("x", "x", "abc"), true },
+        { attrValueMatchesRegEx("[b][c][d]{2}"), newKey("x", "x", "bcd"), false },
     };
 
     private final StatsKeyMatcher matcher;
@@ -108,7 +211,6 @@ public class StatsKeyMatcherMatchTest extends TestCase {
             field.setAccessible(true);
             target = (StatsKeyMatcher.MatchTarget)field.get(matcher);
             field.setAccessible(oldAccessible);
-
         } catch (Exception e) {}
 
         if (target != null) {
@@ -150,6 +252,7 @@ public class StatsKeyMatcherMatchTest extends TestCase {
     @Override
     protected void runTest() throws Throwable {
         assertEquals(expectedResult, matcher.matches(key));
+        assertEquals(matcher, matcher);
     }
 
     private static StatsKey newKey(final String name) {
