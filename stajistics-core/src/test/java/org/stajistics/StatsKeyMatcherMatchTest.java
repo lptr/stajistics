@@ -14,6 +14,17 @@
  */
 package org.stajistics;
 
+import static org.stajistics.StatsKeyMatcher.all;
+import static org.stajistics.StatsKeyMatcher.attrNamePrefix;
+import static org.stajistics.StatsKeyMatcher.attrValuePrefix;
+import static org.stajistics.StatsKeyMatcher.contains;
+import static org.stajistics.StatsKeyMatcher.none;
+import static org.stajistics.StatsKeyMatcher.not;
+import static org.stajistics.StatsKeyMatcher.prefix;
+import static org.stajistics.StatsKeyMatcher.suffix;
+
+import java.lang.reflect.Field;
+
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
@@ -27,38 +38,48 @@ public class StatsKeyMatcherMatchTest extends TestCase {
 
     private static final Object[][] TEST_DATA = {
         // All
-        { StatsKeyMatcher.all(), newKey("a"), true },
-        { StatsKeyMatcher.all(), newKey("a.1"), true },
-        { StatsKeyMatcher.all(), newKey("a.1.b"), true },
+        { all(), newKey("a"), true },
+        { all(), newKey("a.1"), true },
+        { all(), newKey("a.1.b"), true },
 
         // None
-        { StatsKeyMatcher.none(), newKey("a"), false },
-        { StatsKeyMatcher.none(), newKey("a.1"), false },
-        { StatsKeyMatcher.none(), newKey("a.1.b"), false },
+        { none(), newKey("a"), false },
+        { none(), newKey("a.1"), false },
+        { none(), newKey("a.1.b"), false },
 
         // Not
-        { StatsKeyMatcher.not(StatsKeyMatcher.all()), newKey("a"), false },
-        { StatsKeyMatcher.not(StatsKeyMatcher.all()), newKey("a.1"), false },
-        { StatsKeyMatcher.not(StatsKeyMatcher.all()), newKey("a.1.b"), false },
+        { not(all()), newKey("a"), false },
+        { not(all()), newKey("a.1"), false },
+        { not(all()), newKey("a.1.b"), false },
 
         // Prefix
-        { StatsKeyMatcher.prefix("a"), newKey("a"), true },
-        { StatsKeyMatcher.prefix("a"), newKey("a.1"), true },
-        { StatsKeyMatcher.prefix("a"), newKey("b"), false },
+        { prefix("a"), newKey("a"), true },
+        { prefix("a"), newKey("a.1"), true },
+        { prefix("a"), newKey("b"), false },
+
+        // Attribute name prefix
+        { attrNamePrefix("a"), newKey("a", "a", "x"), true },
+        { attrNamePrefix("a"), newKey("a", "ab", "x"), true },
+        { attrNamePrefix("a"), newKey("a", "ba", "x"), false },
+
+        // Attribute value prefix
+        { attrValuePrefix("a"), newKey("a", "x", "a"), true },
+        { attrValuePrefix("a"), newKey("a", "x", "ab"), true },
+        { attrValuePrefix("a"), newKey("a", "x", "ba"), false },
 
         // Suffix
-        { StatsKeyMatcher.suffix("a"), newKey("a"), true },
-        { StatsKeyMatcher.suffix("1"), newKey("a.1"), true },
-        { StatsKeyMatcher.suffix(".1"), newKey("a.1"), true },
-        { StatsKeyMatcher.suffix("a"), newKey("b"), false },
-        { StatsKeyMatcher.suffix("b"), newKey("a.b.c"), false },
+        { suffix("a"), newKey("a"), true },
+        { suffix("1"), newKey("a.1"), true },
+        { suffix(".2"), newKey("a.2"), true },
+        { suffix("a"), newKey("b"), false },
+        { suffix("b"), newKey("a.b.c"), false },
 
         // Contains
-        { StatsKeyMatcher.contains("a"), newKey("a"), true },
-        { StatsKeyMatcher.contains("1"), newKey("a.1"), true },
-        { StatsKeyMatcher.contains(".1"), newKey("a.1"), true },
-        { StatsKeyMatcher.contains("a"), newKey("b"), false },
-        { StatsKeyMatcher.contains("b"), newKey("a.b.c"), true },
+        { contains("a"), newKey("a"), true },
+        { contains("1"), newKey("a.1"), true },
+        { contains(".2"), newKey("a.2"), true },
+        { contains("a"), newKey("b"), false },
+        { contains("b"), newKey("a.b.c"), true },
     };
 
     private final StatsKeyMatcher matcher;
@@ -68,10 +89,50 @@ public class StatsKeyMatcherMatchTest extends TestCase {
     public StatsKeyMatcherMatchTest(final StatsKeyMatcher matcher,
                                     final StatsKey key,
                                     final boolean expectedResult) {
-        super(matcher.getClass().getSimpleName() + " matches " + key);
+        super(buildTestName(matcher, key));
         this.matcher = matcher;
         this.key = key;
         this.expectedResult = expectedResult;
+    }
+
+    private static String buildTestName(final StatsKeyMatcher matcher,
+                                        final StatsKey key) {
+        StringBuilder buf = new StringBuilder(64);
+        buf.append(matcher.getClass().getSimpleName());
+
+        StatsKeyMatcher.MatchTarget target = null;
+
+        try {
+            Field field = matcher.getClass().getDeclaredField("target");
+            boolean oldAccessible = field.isAccessible();
+            field.setAccessible(true);
+            target = (StatsKeyMatcher.MatchTarget)field.get(matcher);
+            field.setAccessible(oldAccessible);
+
+        } catch (Exception e) {}
+
+        if (target != null) {
+            buf.append('_');
+            buf.append(target);
+            buf.append("_matches_");
+
+            switch (target) {
+            case KEY_NAME:
+                buf.append(key.getName());
+                break;
+            case ATTR_NAME:
+                buf.append(key.getAttributes().keySet().iterator().next());
+                break;
+            case ATTR_VALUE:
+                buf.append(key.getAttributes().values().iterator().next());
+                break;
+            }
+        } else {
+            buf.append("_matches_");
+            buf.append(key.getName());
+        }
+
+        return buf.toString();
     }
 
     public static TestSuite suite() {
@@ -88,14 +149,19 @@ public class StatsKeyMatcherMatchTest extends TestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        assertEquals(expectedResult, matcher.matches(key)); 
+        assertEquals(expectedResult, matcher.matches(key));
     }
 
     private static StatsKey newKey(final String name) {
-        Mockery mockery = new Mockery();
-        StatsKey mockKey = mockery.mock(StatsKey.class, name);
-        TestUtil.buildStatsKeyExpectations(mockery, mockKey, name);
-        return mockKey;
+        return newKey(name, null, null);
     }
 
+    private static StatsKey newKey(final String name, 
+                                   final String attrName, 
+                                   final String attrVaule) {
+        Mockery mockery = new Mockery();
+        StatsKey mockKey = mockery.mock(StatsKey.class, name);
+        TestUtil.buildStatsKeyExpectations(mockery, mockKey, name, attrName, attrVaule);
+        return mockKey;
+    }
 }
