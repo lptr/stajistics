@@ -49,7 +49,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     protected List<StatsEventHandler> createEventHandlerList() {
         return new CopyOnWriteArrayList<StatsEventHandler>();
     }
-    
+
     @Override
     public Collection<StatsEventHandler> getGlobalEventHandlers() {
         return Collections.unmodifiableCollection(globalEventHandlers);
@@ -77,7 +77,6 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
         return Collections.unmodifiableMap(matches);
     }
-    
 
     @Override
     public void addGlobalEventHandler(final StatsEventHandler eventHandler) {
@@ -123,7 +122,10 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
     @Override
     public void clearEventHandlers() {
-        //TODO: clear each List
+        for (Map.Entry<StatsKey,List<StatsEventHandler>> entry : sessionEventHandlers.entrySet()) {
+            entry.getValue().clear();
+        }
+
         sessionEventHandlers.clear();
     }
 
@@ -151,6 +153,15 @@ public class SynchronousStatsEventManager implements StatsEventManager {
     public void fireEvent(final StatsEventType eventType, 
                           final StatsKey key,
                           final Object target) {
+        if (eventType == null) {
+            throw new NullPointerException("eventType");
+        }
+        if (key == null) {
+            throw new NullPointerException("key");
+        }
+        if (target == null) {
+            throw new NullPointerException("target");
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("Firing event: " + eventType + ", key: " + key);

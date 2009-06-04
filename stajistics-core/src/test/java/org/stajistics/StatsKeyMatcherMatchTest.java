@@ -238,7 +238,7 @@ public class StatsKeyMatcherMatchTest extends TestCase {
     }
 
     public static TestSuite suite() {
-        TestSuite suite = new TestSuite();
+        TestSuite suite = new TestSuite(StatsKeyMatcherMatchTest.class.getName());
         for (int i = 0; i < TEST_DATA.length; i++) {
             StatsKeyMatcher matcher = (StatsKeyMatcher)TEST_DATA[i][0];
             StatsKey key = (StatsKey)TEST_DATA[i][1];
