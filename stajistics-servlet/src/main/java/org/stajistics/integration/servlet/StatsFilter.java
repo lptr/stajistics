@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,23 +44,27 @@ public class StatsFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(StatsFilter.class);
 
-    private static final String INIT_PARAM_KEY_NAME = "keyName";
-    private static final String INIT_PARAM_BIND_PARAMS = "bindParameters";
-    private static final String INIT_PARAM_BIND_HEADERS = "bindHeaders";
-    private static final String INIT_PARAM_EXCEPTION_INCIDENTS = "exceptionIncidents";
-    private static final String INIT_PARAM_EXCEPTION_KEY_NAME_SUFFIX = "exceptionKeyNameSuffix";
+    static final String INIT_PARAM_KEY_NAME = "keyName";
+    static final String INIT_PARAM_BIND_PARAMS = "bindParameters";
+    static final String INIT_PARAM_BIND_HEADERS = "bindHeaders";
+    static final String INIT_PARAM_TRACK_EXCEPTION_INCIDENTS = "trackExceptionIncidents";
+    static final String INIT_PARAM_EXCEPTION_KEY_NAME_SUFFIX = "exceptionKeyNameSuffix";
+    static final String INIT_PARAM_TRACK_RESPONSE_CODES = "trackResponseCodes";
+    static final String INIT_PARAM_RESPONSE_CODE_KEY_NAME_SUFFIX = "responseCodeKeyNameSuffix";
 
-    private static final String DEFAULT_PARAM_EXCEPTION_KEY_NAME_SUFFIX = "exception";
+    static final String DEFAULT_PARAM_EXCEPTION_KEY_NAME_SUFFIX = "exception";
+    static final String DEFAULT_PARAM_RESPONSE_CODE_KEY_NAME_SUFFIX = "responseCode";
 
-    private static final String KEY_ATTR_BINDING = "binding";
-    private static final String KEY_ATTR_BINDING_PARAM = "parameter";
-    private static final String KEY_ATTR_BINDING_HEADER = "header";
+    static final String KEY_ATTR_BINDING = "binding";
+    static final String KEY_ATTR_BINDING_PARAM = "parameter";
+    static final String KEY_ATTR_BINDING_HEADER = "header";
 
     private StatsKey key;
     private String[] bindParams;
     private String[] bindHeaders;
 
     private StatsKey exceptionKey;
+    private StatsKey responseCodeKey;
 
     @Override
     public void init(final FilterConfig config) throws ServletException {
@@ -75,7 +80,7 @@ public class StatsFilter implements Filter {
         bindHeaders = parseBindings(config, INIT_PARAM_BIND_HEADERS);
 
         // Exception parameters
-        boolean exceptionIncidents = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_EXCEPTION_INCIDENTS));
+        boolean exceptionIncidents = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_EXCEPTION_INCIDENTS));
         if (exceptionIncidents) {
             String exceptionKeyNameSuffix = config.getInitParameter(INIT_PARAM_EXCEPTION_KEY_NAME_SUFFIX);
             if (exceptionKeyNameSuffix == null || exceptionKeyNameSuffix.length() == 0) {
@@ -85,7 +90,19 @@ public class StatsFilter implements Filter {
             exceptionKey = key.buildCopy()
                               .withNameSuffix(exceptionKeyNameSuffix)
                               .newKey();
+        }
 
+        // Response codes
+        boolean responseCodes = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_RESPONSE_CODES));
+        if (responseCodes) {
+            String responseCodeKeyNameSuffix = config.getInitParameter(INIT_PARAM_RESPONSE_CODE_KEY_NAME_SUFFIX);
+            if (responseCodeKeyNameSuffix == null || responseCodeKeyNameSuffix.length() == 0) {
+                responseCodeKeyNameSuffix = DEFAULT_PARAM_RESPONSE_CODE_KEY_NAME_SUFFIX;
+            }
+
+            responseCodeKey = key.buildCopy()
+                                 .withNameSuffix(responseCodeKeyNameSuffix)
+                                 .newKey();
         }
 
         if (logger.isInfoEnabled()) {
@@ -192,7 +209,7 @@ public class StatsFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest request, 
-                         final ServletResponse response,
+                         ServletResponse response,
                          final FilterChain chain)
             throws IOException, ServletException {
 
@@ -200,13 +217,25 @@ public class StatsFilter implements Filter {
         tracker.track();
 
         try {
+            StatsHttpServletResponse statsResponse = null;
+            if (responseCodeKey != null && response instanceof HttpServletResponse) {
+                statsResponse = new StatsHttpServletResponse((HttpServletResponse)response);
+                response = statsResponse;
+            }
+
             chain.doFilter(request, response);
+
+            if (statsResponse != null) {
+                Stats.incident(responseCodeKey.buildCopy()
+                                              .withAttribute("code", statsResponse.getStatus())
+                                              .newKey());
+            }
 
         } catch (Throwable t) {
             if (exceptionKey != null) {
                 Stats.incident(exceptionKey);
                 Stats.incident(exceptionKey.buildCopy()
-                                           .withAttribute("className", t.getClass().getName())
+                                           .withAttribute("threw", t.getClass().getName())
                                            .newKey());
             }
 

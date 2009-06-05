@@ -14,6 +14,7 @@
  */
 package org.stajistics.integration.servlet.http;
 
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -35,21 +36,34 @@ public class StatsHttpSessionListener implements HttpSessionListener {
 
     private static final String ATTR_TRACKER = StatsHttpSessionListener.class.getName() + "_tracker";
 
-    private StatsKey key = Stats.newKey(getKeyName());
+    private final StatsKey key;
 
-    protected String getKeyName() {
-        return getClass().getSimpleName();
+    public StatsHttpSessionListener() {
+        key = Stats.newKey(getClass().getName());
     }
 
     @Override
     public void sessionCreated(final HttpSessionEvent event) {
-        StatsTracker tracker = Stats.track(key);
-        event.getSession().setAttribute(ATTR_TRACKER, tracker);
+
+        HttpSession session = event.getSession();
+
+        String servletContextName = session.getServletContext()
+                                           .getServletContextName();
+
+        StatsKey ctxKey = key.buildCopy()
+                             .withAttribute("servletContext", servletContextName)
+                             .newKey();
+
+        StatsTracker tracker = Stats.track(key, ctxKey);
+
+        event.getSession()
+             .setAttribute(ATTR_TRACKER, tracker);
     }
 
     @Override
     public void sessionDestroyed(final HttpSessionEvent event) {
-        StatsTracker tracker = (StatsTracker)event.getSession().getAttribute(ATTR_TRACKER);
+        StatsTracker tracker = (StatsTracker)event.getSession()
+                                                  .getAttribute(ATTR_TRACKER);
         if (tracker != null) {
             tracker.commit();
 
