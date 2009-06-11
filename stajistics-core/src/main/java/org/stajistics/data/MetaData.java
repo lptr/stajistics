@@ -12,28 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.recorder;
+package org.stajistics.data;
 
-import java.io.Serializable;
-
-import org.stajistics.data.DataSet;
-import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
+import java.util.Set;
 
 /**
  * 
- * 
- *
  * @author The Stajistics Project
  */
-public interface DataRecorder extends Serializable {
+public interface MetaData {
 
-    void update(StatsSession session, StatsTracker tracker, long now);
+    /**
+     * Common attribute names 
+     */
+    interface Attribute {
+        public static final String TYPE = "type";
+        public static final String GENERATED = "generated";
+    }
 
-    void restore(DataSet dataSet);
+    boolean isEmpty();
 
-    void collectData(StatsSession session, DataSet dataSet);
+    int size();
+
+    Set<String> getAttributeNames();
+
+    Object getAttribute(String name);
+
+    <T> T getAttribute(String name, Class<T> type);
+
+    void setAttribute(String name, Object value);
+
+    Object removeAttribute(String name);
 
     void clear();
-
 }

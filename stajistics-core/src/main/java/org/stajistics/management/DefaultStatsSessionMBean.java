@@ -27,8 +27,8 @@ import javax.management.ReflectionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.session.data.DataSet;
 
 /**
  * 

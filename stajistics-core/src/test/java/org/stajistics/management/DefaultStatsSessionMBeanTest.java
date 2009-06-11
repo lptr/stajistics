@@ -26,9 +26,9 @@ import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsKey;
+import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.session.data.DataSet;
 
 /**
  * 

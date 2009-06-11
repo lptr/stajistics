@@ -28,11 +28,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
+import org.stajistics.data.DataSet;
+import org.stajistics.data.DefaultDataSet;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
-import org.stajistics.session.data.DataSet;
-import org.stajistics.session.data.DefaultDataSet;
-import org.stajistics.session.data.MutableDataSet;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
@@ -288,7 +287,7 @@ public class ConcurrentStatsSession implements StatsSession {
     @Override
     public DataSet collectData() {
 
-        MutableDataSet dataSet = new DefaultDataSet();
+        DataSet dataSet = new DefaultDataSet();
 
         dataSet.setField(DataSet.Field.HITS, getHits());
         dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
@@ -305,6 +304,19 @@ public class ConcurrentStatsSession implements StatsSession {
         }
 
         return dataSet;
+    }
+
+    @Override
+    public void restore(final DataSet dataSet) {
+        hits.set(dataSet.getField(DataSet.Field.COMMITS, Long.class));
+        firstHitStamp.set(dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Date.class).getTime());
+        lastHitStamp.set(dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Date.class).getTime());
+        commits.set(dataSet.getField(DataSet.Field.COMMITS, Long.class));
+        first.set(dataSet.getField(DataSet.Field.FIRST, Double.class));
+        last.set(dataSet.getField(DataSet.Field.LAST, Double.class));
+        min.set(dataSet.getField(DataSet.Field.MIN, Double.class));
+        max.set(dataSet.getField(DataSet.Field.MAX, Double.class));
+        sum.set(dataSet.getField(DataSet.Field.SUM, Double.class));
     }
 
     /**

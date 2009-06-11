@@ -16,8 +16,7 @@ package org.stajistics;
 
 
 /**
- * 
- * 
+ * The default implementation of {@link StatsKeyFactory}.
  *
  * @author The Stajistics Project
  */

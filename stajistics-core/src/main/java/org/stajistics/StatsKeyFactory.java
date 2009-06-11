@@ -18,8 +18,7 @@ import java.io.Serializable;
 
 
 /**
- * 
- * 
+ * A factory for creating {@link StatsKey}s and {@link StatsKeyBuilder}s.
  *
  * @author The Stajistics Project
  */

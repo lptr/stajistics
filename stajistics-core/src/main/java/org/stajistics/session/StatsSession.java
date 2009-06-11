@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.stajistics.StatsKey;
-import org.stajistics.session.data.DataSet;
+import org.stajistics.data.DataSet;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
@@ -127,9 +127,12 @@ public interface StatsSession extends Serializable {
      *
      * @return A {@link DataSet} full of data, never <tt>null</tt>.
      *
-     * @see DataRecorder#collectData(StatsSession, org.stajistics.session.data.MutableDataSet)
+     * @see DataRecorder#collectData(StatsSession, org.stajistics.data.MutableDataSet)
      */
     DataSet collectData();
+
+    
+    void restore(DataSet dataSet);
 
     /**
      * Do not call directly. Normally called by a {@link StatsTracker} implementation.

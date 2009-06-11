@@ -14,9 +14,8 @@
  */
 package org.stajistics.session.recorder;
 
+import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
-import org.stajistics.session.data.DataSet;
-import org.stajistics.session.data.MutableDataSet;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
 
@@ -43,7 +42,7 @@ public class DistributionDataRecorder implements DataRecorder {
         double tmp;
 
         // Sum of squares (for standard deviation and quadratic mean calculation)
-        sumOfSquares.getAndAdd(currentValue * currentValue);
+        sumOfSquares.addAndGet(currentValue * currentValue);
 
         // Product (for geometric mean calculation)
         for (;;) {
@@ -55,20 +54,27 @@ public class DistributionDataRecorder implements DataRecorder {
         }
 
         // Sum of inverses (for harmonic mean calculation)
-        sumOfInverses.getAndAdd(1 / currentValue);
+        sumOfInverses.addAndGet(1 / currentValue);
     }
 
     @Override
-    public void collectData(final StatsSession session, final MutableDataSet dataSet) {
-        dataSet.setField(DataSet.Field.ARITHMETIC_MEAN,
+    public void restore(final DataSet dataSet) {
+        product.set(dataSet.getField(Field.PRODUCT,Double.class));
+        sumOfSquares.set(dataSet.getField(Field.SUM_OF_SQUARES, Double.class));
+        sumOfInverses.set(dataSet.getField(Field.SUM_OF_INVERSES, Double.class));
+    }
+
+    @Override
+    public void collectData(final StatsSession session, final DataSet dataSet) {
+        dataSet.setField(Field.ARITHMETIC_MEAN,
                          getArithmeticMean(session));
-        dataSet.setField(DataSet.Field.GEOMETRIC_MEAN,
+        dataSet.setField(Field.GEOMETRIC_MEAN,
                          getGeometricMean(session));
-        dataSet.setField(DataSet.Field.HARMONIC_MEAN,
+        dataSet.setField(Field.HARMONIC_MEAN,
                          getHarmonicMean(session));
-        dataSet.setField(DataSet.Field.QUADRATIC_MEAN,
+        dataSet.setField(Field.QUADRATIC_MEAN,
                          getQuadraticMean(session));
-        dataSet.setField(DataSet.Field.STANDARD_DEVIATION,
+        dataSet.setField(Field.STANDARD_DEVIATION,
                          getStandardDeviation(session));
     }
 
@@ -128,4 +134,17 @@ public class DistributionDataRecorder implements DataRecorder {
         return Math.sqrt(numerator / nMinus1);
     }
 
+    /* NESTED CLASSES */
+
+    public static interface Field {
+        public static final String PRODUCT = "product";
+        public static final String SUM_OF_INVERSES = "sumOfInverses";
+        public static final String SUM_OF_SQUARES = "sumOfSquares";
+
+        public static final String ARITHMETIC_MEAN = "aMean";
+        public static final String GEOMETRIC_MEAN = "gMean";
+        public static final String HARMONIC_MEAN = "hMean";
+        public static final String QUADRATIC_MEAN = "qMean";
+        public static final String STANDARD_DEVIATION = "stdDev";
+    }
 }

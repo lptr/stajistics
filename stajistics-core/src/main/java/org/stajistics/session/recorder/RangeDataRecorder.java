@@ -17,8 +17,8 @@ package org.stajistics.session.recorder;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
-import org.stajistics.session.data.MutableDataSet;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.Range;
 import org.stajistics.util.RangeList;
@@ -72,12 +72,17 @@ public class RangeDataRecorder implements DataRecorder {
     }
 
     @Override
-    public void collectData(final StatsSession session, final MutableDataSet dataSet) {
+    public void collectData(final StatsSession session, final DataSet dataSet) {
         List<Range> ranges = rangeList.getRanges();
         final int rangeCount = ranges.size();
         for (int i = 0; i < rangeCount; i++) {
             dataSet.setField(ranges.get(i).getName(), hits[i].get());
         }
+    }
+
+    @Override
+    public void restore(final DataSet dataSet) {
+        //TODO
     }
 
     @Override
