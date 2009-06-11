@@ -44,8 +44,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
     private static final long serialVersionUID = -3448191567386279319L;
 
-    private ConcurrentMap<String,KeyEntry> keyMap = 
-        new ConcurrentHashMap<String,KeyEntry>(128, 0.75f, 32);
+    private final ConcurrentMap<String,KeyEntry> keyMap = createKeyEntryMap();
 
     private final KeyEntry rootKeyEntry;
 
@@ -116,6 +115,10 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                                       DefaultSessionFactory.getInstance(), 
                                       StatsConstants.DEFAULT_UNIT,
                                       null);
+    }
+
+    protected ConcurrentMap<String,KeyEntry> createKeyEntryMap() {
+        return new ConcurrentHashMap<String,KeyEntry>(128, 0.75f, 32);
     }
 
     @Override
@@ -227,7 +230,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
         String parentKeyName = null;
 
-        int i = keyName.lastIndexOf('.');
+        int i = keyName.lastIndexOf(StatsConstants.KEY_HIERARCHY_DELIMITER);
         if (i > -1) {
             parentKeyName = keyName.substring(0, i);
         }

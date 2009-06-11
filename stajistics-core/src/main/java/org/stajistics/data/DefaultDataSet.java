@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.data;
+package org.stajistics.data;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,26 +24,55 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public class DefaultDataSet implements MutableDataSet {
+public class DefaultDataSet implements DataSet {
 
     private static final long serialVersionUID = 3617870089402050877L;
 
-    private Map<String,Object> data = createDataMap();
+    private Map<String,Object> dataMap = createDataMap();
+    private Map<String,Object> metaDataMap = null;
+
+    private MetaData metaData = null;
+    private MetaDataSet metaDataSet = null;
 
     public DefaultDataSet() {}
 
     protected Map<String,Object> createDataMap() {
-        return new LinkedHashMap<String,Object>();
+        return new HashMap<String,Object>();
+    }
+
+    private void ensureMetaDataInitialized() {
+        if (metaDataMap == null) {
+            metaDataMap = createDataMap();
+            metaData = new DefaultMetaData(metaDataMap, "");
+            metaDataSet = new DefaultMetaDataSet(metaDataMap);
+        }
+    }
+
+    @Override
+    public MetaData getMetaData() {
+        ensureMetaDataInitialized();
+        return metaData;
+    }
+
+    @Override
+    public MetaDataSet getFieldMetaDataSet() {
+        ensureMetaDataInitialized();
+        return metaDataSet;
     }
 
     @Override
     public Object getField(final String name) {
-        return data.get(name);
+        return dataMap.get(name);
+    }
+
+    @Override
+    public <T> T getField(final String name, final Class<T> type) {
+        return type.cast(getField(name));
     }
 
     @Override
     public Set<String> getFieldNames() {
-        return data.keySet();
+        return dataMap.keySet();
     }
 
     @Override
@@ -54,29 +83,32 @@ public class DefaultDataSet implements MutableDataSet {
         if (value == null) {
             throw new NullPointerException("value");
         }
+        if (name.length() == 0) {
+            throw new IllegalArgumentException("empty name");
+        }
 
-        data.put(name, value);
+        dataMap.put(name, value);
 
         return this;
     }
 
     @Override
     public Object removeField(final String name) {
-        return data.remove(name);
+        return dataMap.remove(name);
     }
 
     @Override
     public void clear() {
-        data.clear();
+        dataMap.clear();
     }
 
     @Override
     public int size() {
-        return data.size();
+        return dataMap.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return data.isEmpty();
+        return dataMap.isEmpty();
     }
 }

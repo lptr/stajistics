@@ -12,19 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.data;
+package org.stajistics.data;
 
 /**
  * 
- * 
- *
  * @author The Stajistics Project
  */
-public interface MutableDataSet extends DataSet {
+public interface MetaDataSet {
 
-    DataSet setField(String name, Object value);
-
-    Object removeField(String name);
+    MetaData getMetaData(String fieldName);
 
     void clear();
 }

@@ -15,8 +15,7 @@
 package org.stajistics;
 
 /**
- * 
- * 
+ * A factory for creating {@link StatsConfigBuilder}s.
  *
  * @author The Stajistics Project
  */

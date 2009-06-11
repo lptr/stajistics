@@ -17,8 +17,7 @@ package org.stajistics;
 import java.io.Serializable;
 
 /**
- * 
- * 
+ * A factory for creating {@link StatsConfigBuilder}s.
  *
  * @author The Stajistics Project
  */

@@ -12,47 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.data;
+package org.stajistics.data;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * 
- * 
- *
  * @author The Stajistics Project
  */
-public final class NullDataSet implements DataSet {
+class DefaultMetaDataSet implements MetaDataSet {
 
-    private static final long serialVersionUID = 7206590288937897600L;
+    private final Map<String,Object> metaDataMap;
 
-    private static final NullDataSet instance = new NullDataSet();
+    DefaultMetaDataSet(final Map<String,Object> metaDataMap) {
+        if (metaDataMap == null) {
+            throw new NullPointerException("metaDataMap");
+        }
 
-    private NullDataSet() {}
-
-    public static NullDataSet getInstance() {
-        return instance;
+        this.metaDataMap = metaDataMap;
     }
 
     @Override
-    public Object getField(String name) {
-        return null;
+    public MetaData getMetaData(final String fieldName) {
+        return new DefaultMetaData(metaDataMap, fieldName);
     }
 
     @Override
-    public Set<String> getFieldNames() {
-        return Collections.emptySet();
+    public void clear() {
+        metaDataMap.clear();
     }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    @Override
-    public int size() {
-        return 0;
-    }
-
 }

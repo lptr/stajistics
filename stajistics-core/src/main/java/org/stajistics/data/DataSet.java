@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.data;
+package org.stajistics.data;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -28,7 +28,7 @@ public interface DataSet extends Serializable {
     /**
      * Common field names
      */
-    public interface Field {
+    interface Field {
         public static final String HITS = "hits";
         public static final String FIRST_HIT_STAMP = "firstHitStamp";
         public static final String LAST_HIT_STAMP = "lastHitStamp";
@@ -38,19 +38,26 @@ public interface DataSet extends Serializable {
         public static final String MIN = "min";
         public static final String MAX = "max";
         public static final String SUM = "sum";
-        public static final String ARITHMETIC_MEAN = "aMean";
-        public static final String GEOMETRIC_MEAN = "gMean";
-        public static final String HARMONIC_MEAN = "hMean";
-        public static final String QUADRATIC_MEAN = "qMean";
-        public static final String STANDARD_DEVIATION = "stdDev";
     }
-
-    Object getField(String name);
-
-    Set<String> getFieldNames();
 
     int size();
 
     boolean isEmpty();
+
+    MetaData getMetaData();
+
+    MetaDataSet getFieldMetaDataSet();
+
+    Object getField(String name);
+
+    <T> T getField(String name, Class<T> type);
+
+    Set<String> getFieldNames();
+
+    DataSet setField(String name, Object value);
+
+    Object removeField(String name);
+
+    void clear();
 
 }

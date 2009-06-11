@@ -31,8 +31,7 @@ public abstract class AbstractStatsKey implements StatsKey {
     private int hashCode;
 
     protected AbstractStatsKey(final String name,
-                               final StatsKeyFactory keyFactory)
-    {
+                               final StatsKeyFactory keyFactory) {
         if (name == null) {
             throw new NullPointerException("name");
         }
@@ -80,6 +79,10 @@ public abstract class AbstractStatsKey implements StatsKey {
         }
 
         StatsKey otherKey = (StatsKey)other;
+
+        if (this.getAttributeCount() != otherKey.getAttributeCount()) {
+            return false;
+        }
 
         if (!this.name.equals(otherKey.getName())) {
             return false;

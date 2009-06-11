@@ -28,8 +28,7 @@ import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
- * 
+ * The default implementation of {@link StatsManager}.
  *
  * @author The Stajistics Project
  */
@@ -86,6 +85,7 @@ public class DefaultStatsManager implements StatsManager {
 
     /**
      * Create an instance of DefaultStatsManager supplying the default manager implementations.
+     * Initializes a {@link DefaultStatsManagement} and configures it in the default manner.
      *
      * @return A DefaultStatsManager instance, never <tt>null</tt>.
      */
