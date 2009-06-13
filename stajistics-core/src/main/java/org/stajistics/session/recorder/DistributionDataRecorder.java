@@ -66,6 +66,9 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void collectData(final StatsSession session, final DataSet dataSet) {
+        dataSet.setField(Field.PRODUCT, product.get());
+        dataSet.setField(Field.SUM_OF_SQUARES, sumOfSquares.get());
+        dataSet.setField(Field.SUM_OF_INVERSES, sumOfInverses.get());
         dataSet.setField(Field.ARITHMETIC_MEAN,
                          getArithmeticMean(session));
         dataSet.setField(Field.GEOMETRIC_MEAN,
