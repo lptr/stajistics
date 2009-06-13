@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
+import org.stajistics.data.DataSet;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
@@ -36,16 +37,14 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class ConcurrentStatsSessionTest {
 
-    // TODO: set up mock expectations for event firing
-
     protected static final double DELTA = 0.0000000000001;
 
-    private Mockery mockery;
-    private StatsKey mockKey;
-    private StatsTracker mockTracker;
-    private StatsEventManager mockEventManager;
+    protected Mockery mockery;
+    protected StatsKey mockKey;
+    protected StatsTracker mockTracker;
+    protected StatsEventManager mockEventManager;
 
-    private StatsSession session;
+    protected StatsSession session;
 
     @Before
     public void setUp() {
@@ -57,7 +56,11 @@ public class ConcurrentStatsSessionTest {
         mockTracker = mockery.mock(StatsTracker.class);
         mockEventManager = mockery.mock(StatsEventManager.class);
 
-        session = new ConcurrentStatsSession(mockKey, mockEventManager);
+        session = createStatsSession();
+    }
+
+    protected StatsSession createStatsSession() {
+        return new ConcurrentStatsSession(mockKey, mockEventManager);
     }
 
     @Test
@@ -214,6 +217,37 @@ public class ConcurrentStatsSessionTest {
 
         mockery.assertIsSatisfied();
     }
-    
-    
+
+    @Test
+    public void testRestore() {
+
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+            allowing(mockTracker).getValue(); will(returnValue(1.0));
+        }});
+
+        for (int i = 0; i < 10; i++) {
+            session.track(mockTracker, System.currentTimeMillis());
+            session.update(mockTracker, System.currentTimeMillis());
+        }
+
+        DataSet dataSet = session.collectData();
+
+        StatsSession anotherSession = createStatsSession();
+
+        anotherSession.restore(dataSet);
+
+        assertEquals(session.getHits(), anotherSession.getHits());
+        assertEquals(session.getFirstHitStamp(), anotherSession.getFirstHitStamp());
+        assertEquals(session.getLastHitStamp(), anotherSession.getLastHitStamp());
+        assertEquals(session.getCommits(), anotherSession.getCommits());
+        assertEquals(session.getFirst(), anotherSession.getFirst(), DELTA);
+        assertEquals(session.getMin(), anotherSession.getMin(), DELTA);
+        assertEquals(session.getMax(), anotherSession.getMax(), DELTA);
+        assertEquals(session.getLast(), anotherSession.getLast(), DELTA);
+        assertEquals(session.getSum(), anotherSession.getSum(), DELTA);
+
+        mockery.assertIsSatisfied();
+    }
+
 }

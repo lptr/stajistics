@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ss="http://www.stajistics.org/StatisticsSnapshot/"
+  targetNamespace="http://www.stajistics.org/StatisticsSnapshot/">
+  <element name="snapshot" type="ss:snapshotType"></element>
+  <complexType name="snapshotType">
+    <sequence>
+      <element name="schemaVersion" type="string" maxOccurs="1"
+        minOccurs="1"></element>
+      <element name="date" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+      <element name="environment" maxOccurs="1" minOccurs="1">
+        <complexType>
+          <sequence>
+            <element name="system" maxOccurs="1" minOccurs="1">
+              <complexType>
+                <sequence>
+                  <element name="name" type="string" maxOccurs="1"
+                    minOccurs="1">
+                  </element>
+                  <element name="properties" type="ss:propertiesType"
+                    maxOccurs="1" minOccurs="1">
+                  </element>
+                </sequence>
+              </complexType>
+            </element>
+            <element name="application" maxOccurs="1" minOccurs="1">
+              <complexType>
+                <sequence>
+                  <element name="name" type="string" maxOccurs="1"
+                    minOccurs="1">
+                  </element>
+                  <element name="instance" type="string" maxOccurs="1"
+                    minOccurs="0">
+                  </element>
+                  <element name="properties" type="string" maxOccurs="1"
+                    minOccurs="0">
+                  </element>
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="configurations">
+        <complexType>
+          <sequence>
+            <element name="configuration" maxOccurs="unbounded"
+              minOccurs="0">
+              <complexType>
+                <sequence>
+                  <element name="key" type="ss:keyType" maxOccurs="1"
+                    minOccurs="1"></element>
+                  <element name="trackerFactory" type="string"
+                    maxOccurs="1" minOccurs="1"></element>
+                  <element name="sessionFactory" type="string"
+                    maxOccurs="1" minOccurs="1"></element>
+                  <element name="unit" type="string" maxOccurs="1"
+                    minOccurs="1"></element>
+                  <element name="description" type="string" maxOccurs="1"
+                    minOccurs="0"></element>
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="sessions" maxOccurs="1" minOccurs="1">
+        <complexType>
+          <sequence>
+            <element name="session" maxOccurs="unbounded" minOccurs="0">
+              <complexType>
+                <sequence>
+                  <element name="key" type="ss:keyType" maxOccurs="1"
+                    minOccurs="1">
+                  </element>
+                  <element name="dataSet" type="ss:dataSetType"
+                    maxOccurs="1" minOccurs="1">
+                  </element>
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="propertiesType">
+    <sequence>
+      <element name="property" type="ss:propertyType" maxOccurs="unbounded"
+        minOccurs="1"></element>
+    </sequence>
+  </complexType>
+
+  <complexType name="propertyType">
+    <sequence>
+      <element name="name" type="string" maxOccurs="1" minOccurs="1"></element>
+      <element name="value" type="string" maxOccurs="1" minOccurs="1"></element>
+    </sequence>
+  </complexType>
+
+
+
+  <complexType name="keyType">
+    <sequence>
+      <element name="name" type="string" maxOccurs="1" minOccurs="1"></element>
+      <element name="attributes" type="ss:attributesType" maxOccurs="1"
+        minOccurs="0"></element>
+    </sequence>
+  </complexType>
+
+  <complexType name="attributesType">
+    <sequence>
+      <element name="attribute" type="ss:attributeType" maxOccurs="unbounded"
+        minOccurs="0"></element>
+    </sequence>
+  </complexType>
+
+  <complexType name="attributeType">
+    <sequence>
+      <element name="name" type="string" maxOccurs="1" minOccurs="1"></element>
+      <element name="value" type="string" maxOccurs="1" minOccurs="1"></element>
+    </sequence>
+  </complexType>
+
+  <complexType name="dataSetType">
+    <sequence>
+            <element name="meta" type="ss:attributesType" maxOccurs="1"
+              minOccurs="0">
+            </element>
+            <element name="field" type="ss:fieldType" maxOccurs="unbounded"
+        minOccurs="0">
+      </element>
+    </sequence>
+  </complexType>
+
+  <complexType name="fieldType">
+    <sequence>
+      <element name="name" type="string" maxOccurs="1" minOccurs="1"></element>
+      <element name="value" type="string" maxOccurs="1" minOccurs="1"></element>
+
+            <element name="meta" type="ss:attributesType" maxOccurs="1"
+        minOccurs="0">
+      </element>
+    </sequence>
+  </complexType>
+</schema>

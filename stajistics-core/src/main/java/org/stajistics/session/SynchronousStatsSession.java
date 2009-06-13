@@ -14,12 +14,14 @@
  */
 package org.stajistics.session;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.event.StatsEventManager;
+import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -40,9 +42,21 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
 
     protected final Lock lock = new ReentrantLock();
 
+    /**
+     * {@inheritDoc}
+     */
     public SynchronousStatsSession(final StatsKey key,
                                    final StatsEventManager eventManager) {
         super(key, eventManager);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SynchronousStatsSession(final StatsKey key, 
+                                   final StatsEventManager eventManager, 
+                                   final List<DataRecorder> dataRecorders) {
+        super(key, eventManager, dataRecorders);
     }
 
     /**

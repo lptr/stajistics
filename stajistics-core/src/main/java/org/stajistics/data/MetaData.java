@@ -14,13 +14,14 @@
  */
 package org.stajistics.data;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * 
  * @author The Stajistics Project
  */
-public interface MetaData {
+public interface MetaData extends Serializable {
 
     /**
      * Common attribute names 
