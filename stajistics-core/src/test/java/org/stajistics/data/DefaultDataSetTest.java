@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -97,5 +98,21 @@ public class DefaultDataSetTest {
         assertEquals(3.0, dataSet.getField("test1", Double.class), DELTA);
         dataSet.setField("test2", "value2");
         assertEquals("value2", dataSet.getField("test2", String.class));
+        try {
+            dataSet.getField("test1", String.class);
+            fail("Allowed cast from double to String");
+        } catch (ClassCastException cce) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testGetMetaData() {
+        assertNotNull(dataSet.getMetaData());
+    }
+
+    @Test
+    public void testGetFieldMetaDataSet() {
+        assertNotNull(dataSet.getFieldMetaDataSet());
     }
 }
