@@ -26,8 +26,9 @@ import org.jmock.Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.Stats;
+import org.stajistics.DefaultStatsManager;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
@@ -48,17 +49,16 @@ public class StatsProxyTest {
     }
 
     private Mockery mockery;
-    private StatsKey key;
+    private StatsManager mockStatsManager;
+    private StatsKey mockKey;
 
     @Before
     public void setUp() {
         mockery = new Mockery();
-        key = Stats.newKey("test");
-    }
 
-    @After
-    public void tearDown() {
-        Stats.getConfigManager().clearConfigs();
+        // TODO: these should be _actually_ mocked
+        mockStatsManager = DefaultStatsManager.createWithDefaults();
+        mockKey = mockStatsManager.getKeyFactory().createKey("test");
     }
 
     @Test
@@ -69,7 +69,7 @@ public class StatsProxyTest {
             one(service).query();
         }});
 
-        Service serviceProxy = StatsProxy.wrap(key, service);
+        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, service);
         serviceProxy.query();
 
         mockery.assertIsSatisfied();
@@ -78,7 +78,7 @@ public class StatsProxyTest {
     @Test
     public void testWrapWithKeyTarget() {
         Service serviceImpl = new ServiceImpl();
-        serviceImpl = StatsProxy.wrap(key, serviceImpl);
+        serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
         @SuppressWarnings("unused")
         Service2 service2 = (Service2)serviceImpl;
     }
@@ -86,7 +86,7 @@ public class StatsProxyTest {
     @Test
     public void testWrapWithKeyTargetInterface() {
         Service serviceImpl = new ServiceImpl();
-        serviceImpl = StatsProxy.wrap(key, serviceImpl, Service.class);
+        serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl, Service.class);
         try {
             @SuppressWarnings("unused")
             Service2 service2 = (Service2)serviceImpl;
@@ -99,7 +99,8 @@ public class StatsProxyTest {
     @Test
     public void testWrapWithKeyTargetInterfaceArray() {
         Service serviceImpl = new ServiceImpl();
-        serviceImpl = StatsProxy.wrap(key, 
+        serviceImpl = StatsProxy.wrap(mockStatsManager, 
+                                      mockKey, 
                                       serviceImpl, 
                                       new Class<?>[] { Service.class, Service2.class });
         @SuppressWarnings("unused")
@@ -110,7 +111,7 @@ public class StatsProxyTest {
     @Test
     public void testTrackMethodCall() {
 
-        StatsKey methodKey = key.buildCopy()
+        StatsKey methodKey = mockKey.buildCopy()
                                 .withAttribute("method", StatsProxy.getMethodString(SERVICE_FAIL_METHOD))
                                 .newKey();
 
@@ -121,18 +122,19 @@ public class StatsProxyTest {
             one(mockTracker).commit(); will(returnValue(mockTracker));
         }});
 
-        Stats.buildConfig()
-             .withTrackerFactory(new StatsTrackerFactory() {
-                @Override
-                public StatsTracker createTracker(final StatsKey key,
-                                                  final StatsSessionManager sessionManager) {
+        mockStatsManager.getConfigFactory()
+                        .createConfigBuilder()
+                        .withTrackerFactory(new StatsTrackerFactory() {
+            @Override
+            public StatsTracker createTracker(final StatsKey key,
+                                              final StatsSessionManager sessionManager) {
 
-                    return mockTracker;
-                }
-             })
-             .setConfigFor(methodKey);
+                return mockTracker;
+            }
+         })
+         .setConfigFor(methodKey);
 
-        Service serviceImpl = StatsProxy.wrap(key, new ServiceImpl()); 
+        Service serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, new ServiceImpl()); 
 
         serviceImpl.query();
 
@@ -143,7 +145,7 @@ public class StatsProxyTest {
     @Test
     public void testTrackExceptionIncident() {
 
-        final StatsKey methodKey = key.buildCopy()
+        final StatsKey methodKey = mockKey.buildCopy()
                                       .withAttribute("method", StatsProxy.getMethodString(SERVICE_FAIL_METHOD))
                                       .newKey();
         final StatsKey exceptionKey = methodKey.buildCopy()
@@ -160,25 +162,26 @@ public class StatsProxyTest {
             one(methodTracker).commit(); will(returnValue(methodTracker));
         }});
 
-        Stats.buildConfig()
-             .withTrackerFactory(new StatsTrackerFactory() {
-                 @Override
-                 public StatsTracker createTracker(final StatsKey key,
-                                                   final StatsSessionManager sessionManager) {
-                     if (key.equals(methodKey)) {
-                         return methodTracker;
-                     }
-
-                     if (key.equals(exceptionKey)) {
-                         return exceptionTracker;
-                     }
-
-                     throw new Error();
+        mockStatsManager.getConfigFactory()
+                        .createConfigBuilder()
+                        .withTrackerFactory(new StatsTrackerFactory() {
+             @Override
+             public StatsTracker createTracker(final StatsKey key,
+                                               final StatsSessionManager sessionManager) {
+                 if (key.equals(methodKey)) {
+                     return methodTracker;
                  }
-             })
-             .setConfigFor(methodKey);
+        
+                 if (key.equals(exceptionKey)) {
+                     return exceptionTracker;
+                 }
+        
+                 throw new Error();
+             }
+         })
+         .setConfigFor(methodKey);
 
-        Service2 serviceImpl = StatsProxy.wrap(key, new ServiceImpl()); 
+        Service2 serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, new ServiceImpl()); 
 
         try {
             serviceImpl.fail();
@@ -193,29 +196,29 @@ public class StatsProxyTest {
     @Test
     public void testProxyEqualsProxy() {
         Service serviceImpl = new ServiceImpl();
-        Service proxy1 = StatsProxy.wrap(key, serviceImpl);
-        Service proxy2 = StatsProxy.wrap(key, serviceImpl);
+        Service proxy1 = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
+        Service proxy2 = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
         assertEquals(proxy1, proxy2);
     }
 
     @Test
     public void testProxyEqualsNonProxy() {
         Service serviceImpl = new ServiceImpl();
-        Service proxy = StatsProxy.wrap(key, serviceImpl);
+        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
         assertEquals(proxy, serviceImpl);
     }
 
     @Test
     public void testNonProxyEqualsProxy() {
         Service serviceImpl = new ServiceImpl();
-        Service proxy = StatsProxy.wrap(key, serviceImpl);
+        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
         assertFalse(serviceImpl.equals(proxy));
     }
 
     @Test
     public void testUnwrapProxy() {
         Service serviceImpl = new ServiceImpl();
-        Service proxy = StatsProxy.wrap(key, serviceImpl);
+        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
         Service unwrappedServiceImpl = StatsProxy.unwrap(proxy);
         assertSame(serviceImpl, unwrappedServiceImpl);
     }

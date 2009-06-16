@@ -21,6 +21,7 @@ import java.lang.reflect.Proxy;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -41,11 +42,20 @@ public class StatsProxy implements InvocationHandler {
         }
     }
 
+    private final StatsManager statsManager;
     private final StatsKey key;
     private final Object target;
 
-    private StatsProxy(final StatsKey key,
+    private StatsProxy(final StatsManager statsManager,
+                       final StatsKey key,
                        final Object target) {
+
+        if (statsManager == null) {
+            this.statsManager = Stats.getManager();
+        } else {
+            this.statsManager = statsManager;
+        }
+
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -66,22 +76,25 @@ public class StatsProxy implements InvocationHandler {
      * @return 
      */
     @SuppressWarnings("unchecked")
-    public static <T> T wrap(final StatsKey key,
+    public static <T> T wrap(final StatsManager statsManager,
+                             final StatsKey key,
                              final T target) {
         Class<? super T>[] ifaces = (Class<? super T>[])target.getClass()
                                                               .getInterfaces();
-        return wrap(key, target, ifaces);
+        return wrap(statsManager, key, target, ifaces);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T,U extends T> T wrap(final StatsKey key,
+    public static <T,U extends T> T wrap(final StatsManager statsManager,
+                                         final StatsKey key,
                                          final U target,
                                          final Class<T> iface) {
-        return wrap(key, target, (Class<T>[])new Class[] { iface });
+        return wrap(statsManager, key, target, (Class<T>[])new Class[] { iface });
     }
 
     @SuppressWarnings("unchecked")
-    public static <T,U extends T> T wrap(final StatsKey key,
+    public static <T,U extends T> T wrap(final StatsManager statsManager,
+                                         final StatsKey key,
                                          final U target,
                                          final Class<?>[] ifaces) {
         ClassLoader classLoader = Thread.currentThread()
@@ -89,7 +102,7 @@ public class StatsProxy implements InvocationHandler {
 
         T proxy = (T) Proxy.newProxyInstance(classLoader, 
                                              ifaces, 
-                                             new StatsProxy(key, target));
+                                             new StatsProxy(statsManager, key, target));
         return proxy;
     }
 
@@ -147,7 +160,7 @@ public class StatsProxy implements InvocationHandler {
                                 .withAttribute("method", getMethodString(method))
                                 .newKey();
 
-        final StatsTracker tracker = Stats.track(methodKey);
+        final StatsTracker tracker = statsManager.getTracker(methodKey).track();
 
         try {
             if (method.equals(EQUALS_METHOD)) {
@@ -168,7 +181,7 @@ public class StatsProxy implements InvocationHandler {
                                              .withAttribute("threw", cause.getClass().getName())
                                              .newKey();
 
-            Stats.incident(exceptionKey);
+            statsManager.getTracker(exceptionKey).track().commit();
 
             throw cause;
 
