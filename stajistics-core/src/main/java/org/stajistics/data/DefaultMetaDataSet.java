@@ -22,6 +22,8 @@ import java.util.Map;
  */
 class DefaultMetaDataSet implements MetaDataSet {
 
+    private static final String PREFIX = "__" + DefaultMetaDataSet.class.getSimpleName() + "__";
+
     private final Map<String,Object> metaDataMap;
 
     DefaultMetaDataSet(final Map<String,Object> metaDataMap) {
@@ -32,9 +34,22 @@ class DefaultMetaDataSet implements MetaDataSet {
         this.metaDataMap = metaDataMap;
     }
 
+    private String keyFor(final String fieldName) {
+        StringBuilder buf = new StringBuilder(fieldName.length() + PREFIX.length());
+        buf.append(PREFIX);
+        buf.append(fieldName);
+        return buf.toString();
+    }
+
     @Override
     public MetaData getMetaData(final String fieldName) {
-        return new DefaultMetaData(metaDataMap, fieldName);
+        String key = keyFor(fieldName);
+        MetaData metaData = (MetaData)metaDataMap.get(key);
+        if (metaData == null) {
+            metaData = new DefaultMetaData(metaDataMap, fieldName);
+            metaDataMap.put(key, metaData);
+        }
+        return metaData;
     }
 
     @Override
