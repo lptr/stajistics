@@ -28,22 +28,22 @@ class DefaultMetaData implements MetaData {
 
     private static final long serialVersionUID = -6675695777952035296L;
 
-    private static final String DELIMITER = "__" + MetaData.class.hashCode() + "__";
+    private static final String DELIMITER = "__" + DefaultMetaData.class.getSimpleName() + "__";
 
     private final Map<String,Object> dataMap;
-    private final String keyPrefix;
+    private final String fieldName;
 
     private int size = 0;
 
     private Set<String> attributeNames = null;
 
-    DefaultMetaData(final Map<String,Object> dataMap, final String keyPrefix) {
-        if (keyPrefix == null) {
-            throw new NullPointerException("keyPrefix");
+    DefaultMetaData(final Map<String,Object> dataMap, final String fieldName) {
+        if (fieldName == null) {
+            throw new NullPointerException("fieldName");
         }
 
         this.dataMap = dataMap;
-        this.keyPrefix = keyPrefix;
+        this.fieldName = fieldName;
     }
 
     @Override
@@ -77,7 +77,7 @@ class DefaultMetaData implements MetaData {
 
     @Override
     public void clear() {
-        final String prefix = keyPrefix + DELIMITER;
+        final String prefix = fieldName + DELIMITER;
         for (Iterator<String> it = dataMap.keySet().iterator(); it.hasNext(); ) {
             if (it.next().startsWith(prefix)) {
                 it.remove();
@@ -103,15 +103,15 @@ class DefaultMetaData implements MetaData {
     }
 
     private String keyFor(final String attrName) {
-        StringBuilder buf = new StringBuilder(keyPrefix.length() + DELIMITER.length() + attrName.length());
-        buf.append(keyPrefix);
+        StringBuilder buf = new StringBuilder(fieldName.length() + DELIMITER.length() + attrName.length());
+        buf.append(fieldName);
         buf.append(DELIMITER);
         buf.append(attrName);
         return buf.toString();
     }
 
     private Set<String> findAttributeNames() {
-        final String prefix = keyPrefix + DELIMITER;
+        final String prefix = fieldName + DELIMITER;
         Set<String> attrNames = new HashSet<String>();
         for (Map.Entry<String,Object> entry : dataMap.entrySet()) {
             if (entry.getKey().startsWith(prefix)) {
