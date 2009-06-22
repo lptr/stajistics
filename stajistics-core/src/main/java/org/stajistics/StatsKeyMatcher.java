@@ -56,6 +56,22 @@ public abstract class StatsKeyMatcher implements Serializable {
         return new CompositeMatcher(CompositeMatcher.Op.OR, Arrays.asList(delegates));
     }
 
+    public static StatsKeyMatcher exactMatch(final StatsKey key) {
+        return new ExactMatcher(key);
+    }
+
+    public static StatsKeyMatcher equals(final String keyName) {
+        return new EqualsMatcher(MatchTarget.KEY_NAME, keyName);
+    }
+
+    public static StatsKeyMatcher attrNameEquals(final String attrName) {
+        return new EqualsMatcher(MatchTarget.ATTR_NAME, attrName);
+    }
+
+    public static StatsKeyMatcher attrValueEquals(final Object attrValue) {
+        return new EqualsMatcher(MatchTarget.ATTR_VALUE, attrValue);
+    }
+
     public static StatsKeyMatcher prefix(final String prefix) {
         return new PrefixMatcher(MatchTarget.KEY_NAME, prefix);
     }
@@ -486,6 +502,92 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public int hashCode() {
             return System.identityHashCode(this);
+        }
+    }
+
+    private static class ExactMatcher extends StatsKeyMatcher {
+
+        private static final long serialVersionUID = 245584307182832189L;
+
+        private final StatsKey testKey;
+
+        ExactMatcher(final StatsKey testKey) {
+            if (testKey == null) {
+                throw new NullPointerException("testKey");
+            }
+
+            this.testKey = testKey;
+        }
+
+        @Override
+        public boolean matches(final StatsKey key) {
+            return key.equals(testKey);
+        }
+
+        @Override
+        public boolean equals(final StatsKeyMatcher other) {
+            return testKey.equals(((ExactMatcher)other).testKey);
+        }
+
+        @Override
+        public int hashCode() {
+            return getClass().hashCode() ^ testKey.hashCode();
+        }
+    }
+
+    private static class EqualsMatcher extends StatsKeyMatcher {
+
+        private static final long serialVersionUID = 1535095975670889953L;
+
+        private final MatchTarget target;
+        private final Object test;
+
+        EqualsMatcher(final MatchTarget target, final Object test) {
+            if (target == null) {
+                throw new NullPointerException("target");
+            }
+            if (test == null) {
+                throw new NullPointerException("test");
+            }
+
+            this.target = target;
+            this.test = test;
+        }
+
+        @Override
+        public boolean matches(final StatsKey key) {
+            switch (target) {
+            case KEY_NAME:
+                return key.getName().equals(test);
+            case ATTR_NAME:
+                for (String attrName : key.getAttributes().keySet()) {
+                    if (attrName.equals(test)) {
+                        return true;
+                    }
+                }
+                break;
+            case ATTR_VALUE:
+                for (Object attrValue : key.getAttributes().values()) {
+                    if (attrValue.equals(test)) {
+                        return true;
+                    }
+                }
+                break;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean equals(final StatsKeyMatcher other) {
+            EqualsMatcher equalsMatcher = (EqualsMatcher)other;
+            return target == equalsMatcher.target &&
+                   test.equals(equalsMatcher.test);
+        }
+
+        @Override
+        public int hashCode() {
+            return getClass().hashCode() ^ target.hashCode() ^ test.hashCode();
         }
     }
 
