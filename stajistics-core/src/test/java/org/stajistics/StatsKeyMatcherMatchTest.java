@@ -17,11 +17,13 @@ package org.stajistics;
 import static org.stajistics.StatsKeyMatcher.all;
 import static org.stajistics.StatsKeyMatcher.and;
 import static org.stajistics.StatsKeyMatcher.attrNameContains;
+import static org.stajistics.StatsKeyMatcher.attrNameEquals;
 import static org.stajistics.StatsKeyMatcher.attrNameLength;
 import static org.stajistics.StatsKeyMatcher.attrNameMatchesRegEx;
 import static org.stajistics.StatsKeyMatcher.attrNamePrefix;
 import static org.stajistics.StatsKeyMatcher.attrNameSuffix;
 import static org.stajistics.StatsKeyMatcher.attrValueContains;
+import static org.stajistics.StatsKeyMatcher.attrValueEquals;
 import static org.stajistics.StatsKeyMatcher.attrValueLength;
 import static org.stajistics.StatsKeyMatcher.attrValueMatchesRegEx;
 import static org.stajistics.StatsKeyMatcher.attrValuePrefix;
@@ -29,6 +31,7 @@ import static org.stajistics.StatsKeyMatcher.attrValueSuffix;
 import static org.stajistics.StatsKeyMatcher.attributeCount;
 import static org.stajistics.StatsKeyMatcher.contains;
 import static org.stajistics.StatsKeyMatcher.depth;
+import static org.stajistics.StatsKeyMatcher.exactMatch;
 import static org.stajistics.StatsKeyMatcher.length;
 import static org.stajistics.StatsKeyMatcher.matchesRegEx;
 import static org.stajistics.StatsKeyMatcher.none;
@@ -85,6 +88,31 @@ public class StatsKeyMatcherMatchTest extends TestCase {
         { or(all(), all(), none()), newKey("or.f"), true },
         { or(all(), none(), none()), newKey("or.g"), true },
         { or(none(), none(), none()), newKey("or.h"), false },
+
+        // Exact match (these tests needs non-mocked keys for key.equals() to work)
+        { exactMatch(newRealKey("a")), newRealKey("a"), true },
+        { exactMatch(newRealKey("a")), newRealKey("b"), false },
+
+        // Equals
+        { StatsKeyMatcher.equals("a"), newKey("a"), true },
+        { StatsKeyMatcher.equals("a"), newKey("b"), false },
+        { StatsKeyMatcher.equals("a"), newKey("ab"), false },
+        { StatsKeyMatcher.equals("a"), newKey("bc"), false },
+        { StatsKeyMatcher.equals("a"), newKey("abc"), false },
+
+        // Attribute name equals
+        { attrNameEquals("a"), newKey("x", "a", "x"), true },
+        { attrNameEquals("a"), newKey("x", "b", "x"), false },
+        { attrNameEquals("a"), newKey("x", "ab", "x"), false },
+        { attrNameEquals("a"), newKey("x", "bc", "x"), false },
+        { attrNameEquals("a"), newKey("x", "abc", "x"), false },
+
+        // Attribute value equals
+        { attrValueEquals("a"), newKey("x", "x", "a"), true },
+        { attrValueEquals("a"), newKey("x", "x", "b"), false },
+        { attrValueEquals("a"), newKey("x", "x", "ab"), false },
+        { attrValueEquals("a"), newKey("x", "x", "bc"), false },
+        { attrValueEquals("a"), newKey("x", "x", "abc"), false },
 
         // Prefix
         { prefix("a"), newKey("a"), true },
@@ -252,7 +280,15 @@ public class StatsKeyMatcherMatchTest extends TestCase {
     @Override
     protected void runTest() throws Throwable {
         assertEquals(expectedResult, matcher.matches(key));
-        assertEquals(matcher, matcher);
+
+        assertEquals(matcher, matcher); // Yeah, not really part of the test, but convenient
+    }
+
+    /*
+     * Create a non-mock key, so that equals() and hashCode() work
+     */
+    private static StatsKey newRealKey(final String name) {
+        return new SimpleStatsKey(name, new Mockery().mock(StatsKeyFactory.class));
     }
 
     private static StatsKey newKey(final String name) {
