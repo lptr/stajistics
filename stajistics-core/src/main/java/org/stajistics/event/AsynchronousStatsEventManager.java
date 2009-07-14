@@ -18,9 +18,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 
 /**
@@ -31,7 +31,7 @@ public class AsynchronousStatsEventManager extends SynchronousStatsEventManager 
 
     private static final long serialVersionUID = 6326350529119061206L;
 
-    private static final Logger logger = LoggerFactory.getLogger(AsynchronousStatsEventManager.class);
+    private static final Logger logger = Logger.getLogger(AsynchronousStatsEventManager.class.getName());
 
     private ExecutorService executor;
 
@@ -55,7 +55,9 @@ public class AsynchronousStatsEventManager extends SynchronousStatsEventManager 
             executor.submit(new EventCallable(eventType, key, target));
 
         } catch (RejectedExecutionException ree) {
-            logger.error("Failed to fire event asynchronously, falling back on synchronous execution", ree);
+            logger.log(Level.SEVERE,
+                       "Failed to fire event asynchronously, falling back on synchronous execution", 
+                       ree);
             super.fireEvent(eventType, key, target);
         }
     }

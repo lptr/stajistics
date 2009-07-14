@@ -14,32 +14,31 @@
  */
 package org.stajistics.integration.servlet.http;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
- * 
  *
  * @author The Stajistics Project
  */
 public class StatsHttpSessionListener implements HttpSessionListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(StatsHttpSessionListener.class);
+    private static final Logger logger = Logger.getLogger(StatsHttpSessionListener.class.getName());
 
     private static final String ATTR_TRACKER = StatsHttpSessionListener.class.getName() + "_tracker";
 
     private final StatsKey key;
 
     public StatsHttpSessionListener() {
-        key = Stats.newKey(getClass().getName());
+        key = Stats.newKey(getClass().getSimpleName());
     }
 
     @Override
@@ -68,8 +67,8 @@ public class StatsHttpSessionListener implements HttpSessionListener {
             tracker.commit();
 
         } else {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Missing request attribute; cannot track statistics: " + ATTR_TRACKER);
+            if (logger.isLoggable(Level.WARNING)) {
+                logger.warning("Missing request attribute; cannot track statistics: " + ATTR_TRACKER);
             }
         }
     }
