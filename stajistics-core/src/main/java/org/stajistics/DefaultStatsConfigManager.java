@@ -99,7 +99,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
             // If the configMap is not already intentionally ordered, sort it to ensure 
             // predictable extraction. This is important because it affects the kinds of events
             // generated (i.e. CONFIG_CREATED vs. CONFIG_CHANGED)
-            if (!(configMap instanceof SortedMap) && !(configMap instanceof LinkedHashMap)) {
+            if (!(configMap instanceof SortedMap<?,?>) && !(configMap instanceof LinkedHashMap<?,?>)) {
                 configMap = new TreeMap<String,StatsConfig>(configMap);
             }
 

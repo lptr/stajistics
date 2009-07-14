@@ -47,17 +47,17 @@ class DefaultMetaData implements MetaData {
     }
 
     @Override
-    public Object getAttribute(final String name) {
+    public Object getField(final String name) {
         return dataMap.get(keyFor(name));
     }
 
     @Override
-    public <T> T getAttribute(final String name, final Class<T> type) {
-        return type.cast(getAttribute(name));
+    public <T> T getField(final String name, final Class<T> type) {
+        return type.cast(getField(name));
     }
 
     @Override
-    public Set<String> getAttributeNames() {
+    public Set<String> getFieldNames() {
         if (attributeNames == null) {
             attributeNames = findAttributeNames();
         }
@@ -87,7 +87,7 @@ class DefaultMetaData implements MetaData {
     }
 
     @Override
-    public Object removeAttribute(final String name) {
+    public Object removeField(final String name) {
         Object value = dataMap.remove(keyFor(name));
         if (value != null) {
             size--;
@@ -96,7 +96,7 @@ class DefaultMetaData implements MetaData {
     }
 
     @Override
-    public void setAttribute(final String name, final Object value) {
+    public void setField(final String name, final Object value) {
         if (dataMap.put(keyFor(name), value) == null) {
             size++;
         }

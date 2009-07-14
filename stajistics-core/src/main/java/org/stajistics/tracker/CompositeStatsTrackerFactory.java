@@ -14,6 +14,7 @@
  */
 package org.stajistics.tracker;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
 
     private static final long serialVersionUID = -423223606572241980L;
 
+    private final Map<String,StatsTrackerFactory> factoryMap;
     private final String[] nameSuffixes;
     private final StatsTrackerFactory[] factories;
 
@@ -39,6 +41,8 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
         if (factoryMap.isEmpty()) {
             throw new IllegalArgumentException("factoryMap is empty");
         }
+
+        this.factoryMap = factoryMap;
 
         int size = factoryMap.size();
 
@@ -57,6 +61,10 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
 
             i++;
         }
+    }
+
+    public Map<String,StatsTrackerFactory> getFactoryMap() {
+        return Collections.unmodifiableMap(factoryMap);
     }
 
     public static Builder build() {

@@ -12,22 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.data;
-
-import java.io.Serializable;
+package org.stajistics.snapshot;
 
 /**
  * 
+ * 
+ *
  * @author The Stajistics Project
  */
-public interface MetaData extends DataContainer,Serializable {
+public class SnapshotPersistenceException extends Exception {
 
-    /**
-     * Common attribute names 
-     */
-    interface Field {
-        public static final String TYPE = "type";
-        public static final String GENERATED = "generated";
+    private static final long serialVersionUID = 59978813690583156L;
+
+    public SnapshotPersistenceException(final String message) {
+        super(message);
     }
 
+    public SnapshotPersistenceException(final Throwable cause) {        
+        super(cause);
+    }
+
+    public SnapshotPersistenceException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

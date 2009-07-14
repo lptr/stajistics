@@ -137,6 +137,10 @@ public class DistributionDataRecorder implements DataRecorder {
         return Math.sqrt(numerator / nMinus1);
     }
 
+    public String toString() {
+        return getClass().getSimpleName();
+    }
+
     /* NESTED CLASSES */
 
     public static interface Field {

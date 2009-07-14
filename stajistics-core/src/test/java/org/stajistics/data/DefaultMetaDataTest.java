@@ -48,59 +48,59 @@ public class DefaultMetaDataTest {
     @Test
     public void testIsEmpty() {
         assertTrue(metaData.isEmpty());
-        metaData.setAttribute("test", "value");
+        metaData.setField("test", "value");
         assertFalse(metaData.isEmpty());
-        metaData.removeAttribute("test");
+        metaData.removeField("test");
         assertTrue(metaData.isEmpty());
     }
 
     @Test
     public void testSize() {
         assertEquals(0, metaData.size());
-        metaData.setAttribute("test1", "value1");
+        metaData.setField("test1", "value1");
         assertEquals(1, metaData.size());
-        metaData.setAttribute("test2", "value2");
+        metaData.setField("test2", "value2");
         assertEquals(2, metaData.size());
-        metaData.removeAttribute("test2");
+        metaData.removeField("test2");
         assertEquals(1, metaData.size());
-        metaData.removeAttribute("test1");
+        metaData.removeField("test1");
         assertEquals(0, metaData.size());
     }
 
     @Test
     public void testSetAndGetAttribute() {
-        assertNull(metaData.getAttribute("test"));
-        metaData.setAttribute("test", "value");
-        assertEquals("value", metaData.getAttribute("test"));
+        assertNull(metaData.getField("test"));
+        metaData.setField("test", "value");
+        assertEquals("value", metaData.getField("test"));
     }
 
     @Test
     public void testRemoveAttribute() {
-        metaData.setAttribute("test", "value");
-        assertEquals("value", metaData.removeAttribute("test"));
-        assertNull(metaData.removeAttribute("test"));
+        metaData.setField("test", "value");
+        assertEquals("value", metaData.removeField("test"));
+        assertNull(metaData.removeField("test"));
         assertTrue(metaData.isEmpty());
     }
 
     @Test
     public void testClear() {
-        metaData.setAttribute("test1", "value1");
-        metaData.setAttribute("test2", "value2");
+        metaData.setField("test1", "value1");
+        metaData.setField("test2", "value2");
         metaData.clear();
         assertTrue(metaData.isEmpty());
         assertEquals(0, metaData.size());
-        assertNull(metaData.getAttribute("test1"));
-        assertNull(metaData.getAttribute("test2"));
+        assertNull(metaData.getField("test1"));
+        assertNull(metaData.getField("test2"));
     }
 
     @Test
     public void testGetAttribueWithType() {
-        metaData.setAttribute("test1", 3.0);
-        assertEquals(3.0, metaData.getAttribute("test1", Double.class), DELTA);
-        metaData.setAttribute("test2", "value2");
-        assertEquals("value2", metaData.getAttribute("test2", String.class));
+        metaData.setField("test1", 3.0);
+        assertEquals(3.0, metaData.getField("test1", Double.class), DELTA);
+        metaData.setField("test2", "value2");
+        assertEquals("value2", metaData.getField("test2", String.class));
         try {
-            metaData.getAttribute("test1", String.class);
+            metaData.getField("test1", String.class);
             fail("Allowed cast from double to String");
         } catch (ClassCastException cce) {
             // expected

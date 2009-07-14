@@ -28,9 +28,9 @@ public class DefaultStatsKey extends AbstractStatsKey {
 
     protected final Map<String,Object> attributes;
 
-    protected DefaultStatsKey(final String name,
-                              final StatsKeyFactory keyFactory,
-                              final Map<String,Object> attributes) {
+    public DefaultStatsKey(final String name,
+                           final StatsKeyFactory keyFactory,
+                           final Map<String,Object> attributes) {
         super(name, keyFactory);
 
         if (attributes == null) {

@@ -42,6 +42,9 @@ public class StatsProxy implements InvocationHandler {
         }
     }
 
+    private static final String ATTR_METHOD = "method";
+    private static final String ATTR_EXCEPTION = "threw";
+
     private final StatsManager statsManager;
     private final StatsKey key;
     private final Object target;
@@ -157,7 +160,7 @@ public class StatsProxy implements InvocationHandler {
                          final Method method, 
                          final Object[] args) throws Throwable {
         StatsKey methodKey = key.buildCopy()
-                                .withAttribute("method", getMethodString(method))
+                                .withAttribute(ATTR_METHOD, getMethodString(method))
                                 .newKey();
 
         final StatsTracker tracker = statsManager.getTracker(methodKey).track();
@@ -178,7 +181,7 @@ public class StatsProxy implements InvocationHandler {
             }
 
             StatsKey exceptionKey = methodKey.buildCopy()
-                                             .withAttribute("threw", cause.getClass().getName())
+                                             .withAttribute(ATTR_EXCEPTION, cause.getClass().getName())
                                              .newKey();
 
             statsManager.getTracker(exceptionKey).track().commit();

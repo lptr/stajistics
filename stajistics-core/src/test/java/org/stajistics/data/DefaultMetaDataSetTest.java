@@ -68,12 +68,12 @@ public class DefaultMetaDataSetTest {
     @Test
     public void testClear() {
         MetaData metaData = metaDataSet.getMetaData("test");
-        metaData.setAttribute("test", "value");
-        assertEquals("value", metaData.getAttribute("test"));
+        metaData.setField("test", "value");
+        assertEquals("value", metaData.getField("test"));
         metaDataSet.clear();
-        assertNull(metaData.getAttribute("test"));
+        assertNull(metaData.getField("test"));
         metaData = metaDataSet.getMetaData("test");
-        assertNull(metaData.getAttribute("test"));
+        assertNull(metaData.getField("test"));
     }
     
 }

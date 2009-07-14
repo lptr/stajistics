@@ -14,20 +14,38 @@
  */
 package org.stajistics.data;
 
-import java.io.Serializable;
+import java.util.Set;
 
 /**
  * 
  * @author The Stajistics Project
  */
-public interface MetaData extends DataContainer,Serializable {
+public interface DataContainer {
 
-    /**
-     * Common attribute names 
-     */
-    interface Field {
-        public static final String TYPE = "type";
-        public static final String GENERATED = "generated";
+    int size();
+
+    boolean isEmpty();
+
+    Object getField(String name);
+
+    <T> T getField(String name, Class<T> type);
+
+    Set<String> getFieldNames();
+
+    void setField(String name, Object value);
+
+    Object removeField(String name);
+
+    void clear();
+
+    /* NESTED INTERFACES */
+
+    interface Entry {
+
+        String getName();
+
+        Object getValue();
+
+        <T> T getValue(Class<T> type);
     }
-
 }
