@@ -14,8 +14,9 @@
  */
 package org.stajistics;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.ManualStatsTracker;
@@ -29,7 +30,7 @@ import org.stajistics.tracker.StatsTracker;
  */
 public final class Stats {
 
-    private static final Logger logger = LoggerFactory.getLogger(Stats.class);
+    private static final Logger logger = Logger.getLogger(Stats.class.getName());
 
     private static StatsManager manager;
 
@@ -45,14 +46,14 @@ public final class Stats {
         }
 
         if (Stats.manager != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("A Stats manager has already been loaded. Replacing existing: " + 
-                             Stats.manager);
+            if (logger.isLoggable(Level.FINE)) {
+                logger.fine("A Stats manager has already been loaded. Replacing existing: " + 
+                            Stats.manager);
             }
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Loaded: " + StatsManager.class.getSimpleName() + ": " + manager);
+        if (logger.isLoggable(Level.FINE)) {
+            logger.fine("Loaded: " + StatsManager.class.getSimpleName() + ": " + manager);
         }
 
         Stats.manager = manager;
@@ -88,8 +89,10 @@ public final class Stats {
                 manager = managerClass.newInstance();
 
             } catch (Exception e) {
-                logger.error("Failed to load " + StatsManager.class.getSimpleName() + 
-                             ": " + managerClassName, e);
+                logger.log(Level.SEVERE,
+                           "Failed to load " + StatsManager.class.getSimpleName() + 
+                               ": " + managerClassName, 
+                           e);
             }
         }
 

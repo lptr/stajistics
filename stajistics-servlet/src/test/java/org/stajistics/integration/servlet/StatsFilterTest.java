@@ -64,6 +64,7 @@ public class StatsFilterTest {
         StatsSession session = Stats.getSessionManager().getSession(key);
 
         assertEquals(1, session.getHits());
+        assertEquals(1, session.getCommits());
     }
 
     @Test
@@ -82,8 +83,15 @@ public class StatsFilterTest {
         statsFilter.init(config);
         statsFilter.doFilter(req, res, chain);
 
-        assertEquals(1, Stats.getSessionManager().getSession(key).getHits());
-        assertEquals(1, Stats.getSessionManager().getSession(paramKey).getHits());
+        StatsSession session = Stats.getSessionManager().getSession(key);
+
+        assertEquals(1, session.getHits());
+        assertEquals(1, session.getCommits());
+
+        StatsSession paramSession = Stats.getSessionManager().getSession(paramKey);
+
+        assertEquals(1, paramSession.getHits());
+        assertEquals(1, paramSession.getCommits());
     }
 
     @Test
@@ -102,8 +110,15 @@ public class StatsFilterTest {
         statsFilter.init(config);
         statsFilter.doFilter(req, res, chain);
 
-        assertEquals(1, Stats.getSessionManager().getSession(key).getHits());
-        assertEquals(1, Stats.getSessionManager().getSession(headerKey).getHits());
+        StatsSession session = Stats.getSessionManager().getSession(key);
+
+        assertEquals(1, session.getHits());
+        assertEquals(1, session.getCommits());
+
+        StatsSession headerSession = Stats.getSessionManager().getSession(headerKey);
+
+        assertEquals(1, headerSession.getHits());
+        assertEquals(1, headerSession.getCommits());
     }
 
     // TODO: testExceptionIncidents

@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
@@ -48,7 +48,7 @@ public class ConcurrentStatsSession implements StatsSession {
 
     private static final long serialVersionUID = -5265957157097835416L;
 
-    private static final Logger logger = LoggerFactory.getLogger(ConcurrentStatsSession.class);
+    private static final Logger logger = Logger.getLogger(ConcurrentStatsSession.class.getName());
 
     private static final DecimalFormat DECIMAL_FORMAT;
     static {
@@ -121,8 +121,8 @@ public class ConcurrentStatsSession implements StatsSession {
         }
         lastHitStamp.set(now);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Track: " + this);
+        if (logger.isLoggable(Level.FINER)) {
+            logger.finer("Track: " + this);
         }
 
         fireTrackingEvent(this, tracker);
@@ -223,7 +223,7 @@ public class ConcurrentStatsSession implements StatsSession {
             dataRecorder.update(this, tracker, now);
         }
 
-        if (logger.isInfoEnabled()) {
+        if (logger.isLoggable(Level.INFO)) {
             logger.info("Commit: " + this);
         }
 

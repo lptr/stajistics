@@ -14,6 +14,9 @@
  */
 package org.stajistics.management;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -25,8 +28,6 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSessionManager;
 
@@ -190,8 +191,8 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
             sessionManager.remove(session);
 
         } else if (actionName.equals(OP_DUMP)) {
-            Logger logger = LoggerFactory.getLogger(DefaultStatsSessionManagerMBean.SESSION_DUMP_LOGGER_NAME);
-            if (logger.isInfoEnabled()) {
+            Logger logger = Logger.getLogger(DefaultStatsSessionManagerMBean.SESSION_DUMP_LOGGER_NAME);
+            if (logger.isLoggable(Level.INFO)) {
                 logger.info(session.toString());
             }
         }
