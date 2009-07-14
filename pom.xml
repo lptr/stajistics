@@ -359,15 +359,6 @@
   </repositories>
 
   <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-    </dependency>
-
     <!-- test scope -->
     <dependency>
       <groupId>junit</groupId>
@@ -385,26 +376,6 @@
         <groupId>${pom.groupId}</groupId>
         <artifactId>stajistics</artifactId>
         <version>${pom.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.5.6</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <version>1.5.6</version>
-        <scope>runtime</scope>
-        <optional>true</optional>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-nop</artifactId>
-        <version>1.5.6</version>
-        <scope>runtime</scope>
-        <optional>true</optional>
       </dependency>
 
       <!-- test dependencies -->
