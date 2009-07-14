@@ -24,6 +24,8 @@ import java.util.Set;
  */
 public class NullMetaData implements MetaData {
 
+    private static final long serialVersionUID = -1289847083902235009L;
+
     private static final NullMetaData INSTANCE = new NullMetaData();
 
     private NullMetaData() {}
@@ -33,17 +35,17 @@ public class NullMetaData implements MetaData {
     }
 
     @Override
-    public Object getAttribute(String name) {
+    public Object getField(String name) {
         return null;
     }
 
     @Override
-    public <T> T getAttribute(String name, Class<T> type) {
+    public <T> T getField(String name, Class<T> type) {
         return null;
     }
 
     @Override
-    public Set<String> getAttributeNames() {
+    public Set<String> getFieldNames() {
         return Collections.emptySet();
     }
 
@@ -61,11 +63,11 @@ public class NullMetaData implements MetaData {
     public void clear() {}
 
     @Override
-    public Object removeAttribute(String name) {
+    public Object removeField(String name) {
         return null;
     }
 
     @Override
-    public void setAttribute(String name, Object value) {}
+    public void setField(String name, Object value) {}
 
 }

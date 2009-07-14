@@ -15,7 +15,6 @@
 package org.stajistics.data;
 
 import java.io.Serializable;
-import java.util.Set;
 
 /**
  * 
@@ -23,7 +22,7 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public interface DataSet extends Serializable {
+public interface DataSet extends DataContainer,Serializable {
 
     /**
      * Common field names
@@ -40,24 +39,8 @@ public interface DataSet extends Serializable {
         public static final String SUM = "sum";
     }
 
-    int size();
-
-    boolean isEmpty();
-
     MetaData getMetaData();
 
     MetaDataSet getFieldMetaDataSet();
-
-    Object getField(String name);
-
-    <T> T getField(String name, Class<T> type);
-
-    Set<String> getFieldNames();
-
-    DataSet setField(String name, Object value);
-
-    Object removeField(String name);
-
-    void clear();
 
 }

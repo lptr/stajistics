@@ -74,13 +74,13 @@ public abstract class AbstractStatsKeyTestCase {
 
     @Test
     public void testConstructWithNullKeyFactory() {
+        StatsKey key = createStatsKey(TEST_NAME, null, Collections.<String,Object>emptyMap());
         try {
-            createStatsKey(TEST_NAME, null, Collections.<String,Object>emptyMap());
+            key.buildCopy();
+            fail("Allowed buildCopy() with null key factory");
 
-            fail("Allowed construction with null key factory");
-
-        } catch (NullPointerException npe) {
-            assertEquals("keyFactory", npe.getMessage());
+        } catch (UnsupportedOperationException uoe) {
+            // expected
         }
     }
 

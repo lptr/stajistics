@@ -93,4 +93,13 @@ public class RangeDataRecorder implements DataRecorder {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder(128);
+
+        buf.append(getClass().getSimpleName());
+        buf.append(rangeList.getRanges());
+
+        return buf.toString();
+    }
 }

@@ -89,8 +89,6 @@ public final class NullDataSet implements DataSet {
     }
 
     @Override
-    public DataSet setField(String name, Object value) {
-        return this;
-    }
+    public void setField(String name, Object value) {}
 
 }

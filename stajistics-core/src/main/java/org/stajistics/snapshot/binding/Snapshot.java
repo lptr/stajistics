@@ -12,22 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.data;
+package org.stajistics.snapshot.binding;
 
-import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
+
+import org.stajistics.StatsKey;
 
 /**
  * 
  * @author The Stajistics Project
+ *
  */
-public interface MetaData extends DataContainer,Serializable {
+public interface Snapshot {
 
-    /**
-     * Common attribute names 
-     */
-    interface Field {
-        public static final String TYPE = "type";
-        public static final String GENERATED = "generated";
-    }
+    String getSchemaVersion();
 
+    String getStajisticsVersion();
+
+    Date getStartTimeStamp();
+
+    Date getEndTimeStamp();
+
+    void setTimeStamp(Date timeStamp);
+
+    SystemEnvironment getSystemEnvironment();
+
+    ApplicationEnvironment getApplicationEnvironment();
+
+    Map<StatsKey,Session> getSessions();
 }

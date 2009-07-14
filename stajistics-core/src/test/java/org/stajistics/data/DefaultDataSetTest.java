@@ -49,7 +49,6 @@ public class DefaultDataSetTest {
         assertNull(dataSet.getField("test1"));
         assertNull(dataSet.getField("test2", Double.class));
         assertNull(dataSet.removeField("test3"));
-        assertEquals(dataSet, dataSet.setField("test4", 4.0));
     }
 
     @Test

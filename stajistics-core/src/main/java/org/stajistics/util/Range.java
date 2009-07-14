@@ -72,11 +72,9 @@ public class Range implements Iterable<Double>,Serializable {
     public static String defaultName(final double begin,
                                      final double end) {
         StringBuilder buf = new StringBuilder(32);
-        buf.append("range(");
         buf.append(DECIMAL_FORMAT.format(begin));
-        buf.append('-');
+        buf.append("..");
         buf.append(DECIMAL_FORMAT.format(end));
-        buf.append(')');
 
         return buf.toString();
     }

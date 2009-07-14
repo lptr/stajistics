@@ -35,9 +35,6 @@ public abstract class AbstractStatsKey implements StatsKey {
         if (name == null) {
             throw new NullPointerException("name");
         }
-        if (keyFactory == null) {
-            throw new NullPointerException("keyFactory");
-        }
 
         this.name = name;
         this.keyFactory = keyFactory;
@@ -45,6 +42,10 @@ public abstract class AbstractStatsKey implements StatsKey {
 
     @Override
     public final StatsKeyBuilder buildCopy() {
+        if (keyFactory == null) {
+            throw new UnsupportedOperationException(StatsKeyFactory.class.getSimpleName() + " unavailable");
+        }
+
         return keyFactory.createKeyBuilder(this);
     }
 

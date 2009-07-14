@@ -76,7 +76,7 @@ public class DefaultDataSet implements DataSet {
     }
 
     @Override
-    public DataSet setField(final String name, final Object value) {
+    public void setField(final String name, final Object value) {
         if (name == null) {
             throw new NullPointerException("name");
         }
@@ -88,8 +88,6 @@ public class DefaultDataSet implements DataSet {
         }
 
         dataMap.put(name, value);
-
-        return this;
     }
 
     @Override
