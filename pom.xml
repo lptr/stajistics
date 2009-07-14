@@ -343,6 +343,7 @@
     <module>stajistics-examples</module>
     <module>stajistics-groovy</module>
     <module>stajistics-servlet</module>
+    <module>stajistics-snapshot-xml</module>
   </modules>
 
   <repositories>
