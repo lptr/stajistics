@@ -25,44 +25,23 @@ import org.stajistics.snapshot.binding.ApplicationEnvironment;
  */
 public class ApplicationEnvironmentImpl implements ApplicationEnvironment {
 
-    private String applicationName;
-    private String version;
-    private String instanceId;
-
     private HashMap<String,String> properties = new HashMap<String,String>();
-
-    @Override
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    @Override
-    public void setApplicationName(final String applicationName) {
-        this.applicationName = applicationName;
-    }
-
-    @Override
-    public String getInstanceId() {
-        return instanceId;
-    }
-
-    @Override
-    public void setInstanceId(final String instanceId) {
-        this.instanceId = instanceId;
-    }
-
-    @Override
-    public String getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(final String version) {
-        this.version = version;
-    }
 
     @Override
     public Map<String,String> getProperties() {
         return properties;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof ApplicationEnvironmentImpl) && equals((ApplicationEnvironmentImpl)obj);
+    }
+
+    public boolean equals(final ApplicationEnvironmentImpl other) {
+        if ((properties == null || properties.isEmpty()) &&
+            (other.properties == null || other.properties.isEmpty())) {
+            return true;
+        }
+        return properties.equals(other.properties);
     }
 }

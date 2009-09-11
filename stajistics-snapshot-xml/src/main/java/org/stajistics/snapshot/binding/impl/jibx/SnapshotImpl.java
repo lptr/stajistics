@@ -20,9 +20,9 @@ import java.util.Map;
 
 import org.stajistics.Stajistics;
 import org.stajistics.StatsKey;
+import org.stajistics.snapshot.binding.AbstractSnapshot;
 import org.stajistics.snapshot.binding.ApplicationEnvironment;
-import org.stajistics.snapshot.binding.Session;
-import org.stajistics.snapshot.binding.Snapshot;
+import org.stajistics.snapshot.binding.SessionSnapshot;
 import org.stajistics.snapshot.binding.SystemEnvironment;
 
 /**
@@ -30,15 +30,15 @@ import org.stajistics.snapshot.binding.SystemEnvironment;
  * @author The Stajistics Project
  */
 @SuppressWarnings("unchecked")
-public class SnapshotImpl implements Snapshot {
+public class SnapshotImpl extends AbstractSnapshot {
 
     private String schemaVersion = "1.0";
     private String stajisticsVersion = Stajistics.getVersion();
     private Date startTimeStamp = new Date();
     private Date endTimeStamp = new Date();
 
-    private SystemEnvironmentImpl systemEnvironment = new SystemEnvironmentImpl();
     private ApplicationEnvironmentImpl applicationEnvironment = new ApplicationEnvironmentImpl();
+    private SystemEnvironmentImpl systemEnvironment = new SystemEnvironmentImpl();
 
     private HashMap sessions = new HashMap();
 
@@ -87,7 +87,7 @@ public class SnapshotImpl implements Snapshot {
         return applicationEnvironment;
     }
 
-    public Map<StatsKey,Session> getSessions() {
+    public Map<StatsKey,SessionSnapshot> getSessionSnapshots() {
         return sessions;
     }
 }

@@ -44,7 +44,7 @@
               <element name="system" maxOccurs="1" minOccurs="1">
                 <complexType>
                   <sequence>
-                    <element name="systemName" type="string"
+                    <element name="hostName" type="string"
                       maxOccurs="1" minOccurs="1">
                     </element>
                     <element name="properties" type="ss:propertiesType"
@@ -57,12 +57,6 @@
                 minOccurs="1">
                 <complexType>
                   <sequence>
-                    <element name="applicationName" type="string"
-                      maxOccurs="1" minOccurs="0">
-                    </element>
-                    <element name="instanceId" type="string"
-                      maxOccurs="1" minOccurs="0">
-                    </element>
                     <element name="properties" type="string"
                       maxOccurs="1" minOccurs="0">
                     </element>

@@ -40,5 +40,5 @@ public interface Snapshot {
 
     ApplicationEnvironment getApplicationEnvironment();
 
-    Map<StatsKey,Session> getSessions();
+    Map<StatsKey,SessionSnapshot> getSessionSnapshots();
 }

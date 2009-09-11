@@ -30,12 +30,10 @@
 
     <structure name="environment">
       <structure name="system" field="systemEnvironment">
-        <value name="systemName" field="systemName" usage="required" />
+        <value name="hostName" field="hostName" usage="required" />
         <structure field="properties" usage="optional" />
       </structure>
       <structure name="application" field="applicationEnvironment">
-        <value name="applicationName" field="applicationName" usage="optional" />
-        <value name="version" field="version" usage="optional" />
         <structure field="properties" usage="optional" />
       </structure>
     </structure>
@@ -54,7 +52,7 @@
       unmarshaller="org.stajistics.snapshot.binding.impl.jibx.PropertiesMapper" />
 
   <mapping name="session" 
-      class="org.stajistics.snapshot.binding.impl.jibx.SessionImpl">
+      class="org.stajistics.snapshot.binding.impl.jibx.SessionSnapshotImpl">
     <structure field="key" usage="required" />
     <value name="trackerFactory" field="trackerFactory" usage="required" />
     <value name="sessionFactory" field="sessionFactory" usage="required" />

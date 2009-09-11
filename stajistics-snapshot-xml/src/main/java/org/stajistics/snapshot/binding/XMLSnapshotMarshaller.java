@@ -28,20 +28,16 @@ import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
-import org.stajistics.Stats;
-import org.stajistics.StatsKey;
+import org.stajistics.snapshot.SnapshotMarshaller;
 import org.stajistics.snapshot.SnapshotPersistenceException;
-import org.stajistics.snapshot.SnapshotPersister;
-import org.stajistics.snapshot.binding.impl.jibx.SessionImpl;
 import org.stajistics.snapshot.binding.impl.jibx.SnapshotImpl;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
  * @author The Stajistics Project
  *
  */
-public class XMLSnapshotPersister implements SnapshotPersister {
+public class XMLSnapshotMarshaller implements SnapshotMarshaller {
 
     public static final String CONTENT_TYPE = "application/stajistics-snapshot+xml";
 
@@ -130,7 +126,7 @@ public class XMLSnapshotPersister implements SnapshotPersister {
 
     public static void main(final String[] args) throws Exception {
         if (args.length != 1) {
-            System.err.println("Usage: java " + XMLSnapshotPersister.class.getName() + " <file>");
+            System.err.println("Usage: java " + XMLSnapshotMarshaller.class.getName() + " <file>");
             System.exit(1);
         }
 
@@ -140,27 +136,15 @@ public class XMLSnapshotPersister implements SnapshotPersister {
             System.exit(2);
         }
 
-        XMLSnapshotPersister xmlPersister = new XMLSnapshotPersister();
+        XMLSnapshotMarshaller xmlMarshaller = new XMLSnapshotMarshaller();
 
-        Snapshot snapshot = new SnapshotImpl();
-        snapshot.getApplicationEnvironment().getProperties().put("a", "b");
+        System.out.println("Unmarshalling: " + file);
+        Snapshot snapshot = xmlMarshaller.unmarshal(new FileInputStream(file));
+        System.out.println("Done unmarshalling.");
 
-        StatsKey key1 = Stats.buildKey("test1")
-                             .withAttribute("attr1", false)
-                             .newKey();
-        Stats.incident(key1);
-        StatsKey key2 = Stats.newKey("test2");
-        StatsTracker tracker = Stats.track(key2);
-        snapshot.getSessions().put(key1,new SessionImpl(Stats.getSessionManager().getSession(key1)));
-        tracker.commit();
-        snapshot.getSessions().put(key2,new SessionImpl(Stats.getSessionManager().getSession(key2)));
-
-        System.out.println("Marshalling...");
-        xmlPersister.marshal(snapshot, new FileOutputStream(file));
-
-        System.out.println("Unmarshalling...");
-        snapshot = xmlPersister.unmarshal(new FileInputStream(file));
-
-        System.out.println(snapshot);
+        File outFile = new File(file.getPath() + ".out");
+        System.out.println("Marshalling: " + outFile);
+        xmlMarshaller.marshal(snapshot, new FileOutputStream(outFile));
+        System.out.println("Done marshalling.");
     }
 }

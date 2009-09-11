@@ -109,4 +109,45 @@ public class DefaultDataSet implements DataSet {
     public boolean isEmpty() {
         return dataMap.isEmpty();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = dataMap.hashCode();
+        if (metaDataMap != null) {
+            hash ^= metaDataMap.hashCode();
+            hash ^= metaData.hashCode();
+            hash ^= metaDataSet.hashCode();
+        }
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return (obj instanceof DataSet) && equals((DataSet)obj);
+    }
+
+    public boolean equals(final DataSet other) {
+
+        if (this.size() != other.size()) {
+            return false;
+        }
+
+        for (String fieldName : this.getFieldNames()) {
+            Object thisValue = this.getField(fieldName);
+            Object otherValue = other.getField(fieldName);
+
+            if (otherValue == null || !thisValue.equals(otherValue)) {
+                return false;
+            }
+        }
+
+        if (this.getMetaData().equals(other.getMetaData())) {
+            return false;
+        }
+        if (this.getFieldMetaDataSet().equals(other.getFieldMetaDataSet())) {
+            return false;
+        }
+
+        return true;
+    }
 }
