@@ -23,7 +23,7 @@ import org.stajistics.data.DataSet;
  * 
  * @author The Stajistics Project
  */
-public interface Session {
+public interface SessionSnapshot {
 
     StatsKey getKey();
 

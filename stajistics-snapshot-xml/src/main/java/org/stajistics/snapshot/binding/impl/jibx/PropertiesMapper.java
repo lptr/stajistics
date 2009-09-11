@@ -140,9 +140,6 @@ public class PropertiesMapper implements IMarshaller, IUnmarshaller, IAliasable 
             // value
             ctx.parsePastStartTag(uri, ELEMENT_VALUE);
             String value = ctx.accumulateText();
-            if (value != null) {
-                value = value.trim();
-            }
             map.put(key, value);
             ctx.parsePastEndTag(uri, ELEMENT_VALUE);
 

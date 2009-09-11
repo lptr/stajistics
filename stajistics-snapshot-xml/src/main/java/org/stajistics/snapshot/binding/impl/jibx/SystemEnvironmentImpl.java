@@ -14,9 +14,13 @@
  */
 package org.stajistics.snapshot.binding.impl.jibx;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.stajistics.snapshot.binding.SystemEnvironment;
 
@@ -27,11 +31,21 @@ import org.stajistics.snapshot.binding.SystemEnvironment;
  */
 public class SystemEnvironmentImpl implements SystemEnvironment {
 
-    private String systemName = ""; // TODO
+    private static Logger logger = Logger.getLogger(SystemEnvironmentImpl.class.getName());
+
+    private String hostName;
 
     private HashMap<String,String> properties;
 
     public SystemEnvironmentImpl() {
+        
+        try {
+            hostName = InetAddress.getLocalHost()
+                                  .getHostName();
+        } catch (UnknownHostException e) {
+            logger.log(Level.SEVERE, "Failed to get host name");
+        }
+
         Properties sysProps = System.getProperties();
 
         properties = new HashMap<String,String>(sysProps.size());
@@ -49,17 +63,43 @@ public class SystemEnvironmentImpl implements SystemEnvironment {
     }
 
     @Override
-    public String getSystemName() {
-        return systemName;
+    public String getHostName() {
+        return hostName;
     }
 
     @Override
-    public void setSystemName(final String systemName) {
-        this.systemName = systemName;
+    public void setHostName(final String hostName) {
+        this.hostName = hostName;
     }
 
     @Override
     public Map<String,String> getProperties() {
+        if (properties == null) {
+            properties = new HashMap<String,String>();
+        }
         return properties;
+    }
+
+    @Override
+    public int hashCode() {
+        return hostName.hashCode() ^
+            properties.hashCode();
+    }
+
+    public boolean equals(final Object obj) {
+        return (obj instanceof SystemEnvironmentImpl) && equals((SystemEnvironmentImpl)obj);
+    }
+
+    public boolean equals(final SystemEnvironmentImpl other) {
+        if (!hostName.equals(other.hostName)) {
+            return false;
+        }
+
+        if ((properties == null || properties.isEmpty()) &&
+            (other.properties == null || other.properties.isEmpty())) {
+            return true;
+        }
+
+        return properties.equals(other.properties);
     }
 }

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class StatsHttpServletResponse extends HttpServletResponseWrapper {
 
-    private int statusCode = HttpServletResponse.SC_OK;
+    private int statusCode = SC_OK;
 
     public StatsHttpServletResponse(final HttpServletResponse response) {
         super(response);
@@ -39,4 +39,9 @@ public class StatsHttpServletResponse extends HttpServletResponseWrapper {
         return statusCode;
     }
 
+    @Override
+    public void reset() {
+        super.reset();
+        this.statusCode = SC_OK;
+    }
 }

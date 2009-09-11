@@ -19,13 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.stajistics.DefaultStatsKey;
-import org.stajistics.Stats;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.recorder.DataRecorder;
-import org.stajistics.snapshot.binding.Session;
+import org.stajistics.snapshot.binding.AbstractSessionSnapshot;
 import org.stajistics.tracker.CompositeStatsTrackerFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
 
@@ -33,7 +32,7 @@ import org.stajistics.tracker.StatsTrackerFactory;
  * 
  * @author The Stajistics Project
  */
-public class SessionImpl implements Session {
+public class SessionSnapshotImpl extends AbstractSessionSnapshot {
 
 	private DefaultStatsKey key;
 
@@ -44,12 +43,12 @@ public class SessionImpl implements Session {
 
 	private DataSet dataSet;
 
-	public SessionImpl() {}
+	public SessionSnapshotImpl() {}
 
-	public SessionImpl(final StatsSession realSession) {
+	public SessionSnapshotImpl(final StatsSession realSession,
+	                   final StatsConfig config) {
 	    setKey(realSession.getKey());
 
-		StatsConfig config = Stats.getConfigManager().getConfig(key); //TODO: don't use Stats
 		trackerFactory = extractTrackerFactoryClassName(config.getTrackerFactory());
 		sessionFactory = config.getSessionFactory().getClass().getName();
 
@@ -142,4 +141,5 @@ public class SessionImpl implements Session {
     public void setDataSet(final DataSet dataSet) {
         this.dataSet = dataSet;
     }
+
 }

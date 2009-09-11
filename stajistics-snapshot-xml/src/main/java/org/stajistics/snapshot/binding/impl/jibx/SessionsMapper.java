@@ -75,7 +75,7 @@ public class SessionsMapper implements IMarshaller, IUnmarshaller, IAliasable {
         MarshallingContext ctx = (MarshallingContext)ictx;
 
         @SuppressWarnings("unchecked")
-        Map<String,SessionImpl> map = (Map<String,SessionImpl>)obj;
+        Map<String,SessionSnapshotImpl> map = (Map<String,SessionSnapshotImpl>)obj;
 
         ctx.startTagAttributes(index, name);
 
@@ -84,7 +84,7 @@ public class SessionsMapper implements IMarshaller, IUnmarshaller, IAliasable {
             ctx.attribute(index, ATTR_SIZE, map.size());
             ctx.closeStartContent();
 
-            for (Map.Entry<String,SessionImpl> entry : map.entrySet()) {
+            for (Map.Entry<String,SessionSnapshotImpl> entry : map.entrySet()) {
             	((IMarshallable)entry.getValue()).marshal(ctx);
             }
         }
@@ -109,15 +109,15 @@ public class SessionsMapper implements IMarshaller, IUnmarshaller, IAliasable {
         int size = ctx.attributeInt(uri, ATTR_SIZE, DEFAULT_SIZE);
 
         @SuppressWarnings("unchecked")
-        Map<StatsKey,SessionImpl> map = (Map<StatsKey,SessionImpl>)obj;
+        Map<StatsKey,SessionSnapshotImpl> map = (Map<StatsKey,SessionSnapshotImpl>)obj;
         if (map == null) {
-            map = new HashMap<StatsKey,SessionImpl>(size);
+            map = new HashMap<StatsKey,SessionSnapshotImpl>(size);
         }
 
         // process all entries present in document
         ctx.parsePastStartTag(uri, name);
         while (ctx.isAt(uri, ELEMENT_SESSION)) {
-            SessionImpl session = (SessionImpl)ctx.unmarshalElement();
+            SessionSnapshotImpl session = (SessionSnapshotImpl)ctx.unmarshalElement();
             map.put(session.getKey(), session);
         }
         ctx.parsePastEndTag(uri, name);

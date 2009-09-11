@@ -14,8 +14,21 @@
  */
 package org.stajistics.snapshot.binding;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Map;
+import java.util.Random;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.DefaultStatsManager;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
+import org.stajistics.snapshot.binding.impl.jibx.SessionSnapshotImpl;
+import org.stajistics.snapshot.binding.impl.jibx.SnapshotImpl;
+import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -23,15 +36,57 @@ import org.junit.Test;
  */
 public class XMLSnapshotPersisterTest {
 
-    private XMLSnapshotPersister persister;
+    private XMLSnapshotMarshaller persister;
 
     @Before
     public void setUp() {
-        persister = new XMLSnapshotPersister();
+        persister = new XMLSnapshotMarshaller();
     }
 
     @Test
-    public void test() {
-        // TODO
+    public void testMarshalUnmarshalEmptySnapshot() throws Exception {
+
+        Snapshot snapshot = new SnapshotImpl();
+
+        StringWriter out = new StringWriter();
+
+        persister.marshal(snapshot, out);
+
+        StringReader in = new StringReader(out.toString());
+
+        Snapshot snapshot2 = persister.unmarshal(in);
+
+        assertEquals(snapshot, snapshot2);
+    }
+
+    @Test
+    public void testMarshalUnmarshalPopulatedSnapshot() throws Exception {
+
+        Snapshot snapshot = new SnapshotImpl();
+        Map<StatsKey,SessionSnapshot> sessionSnapshots = snapshot.getSessionSnapshots();
+
+        StatsManager statsManager = DefaultStatsManager.createWithDefaults();
+        StatsKey key1 = statsManager.getKeyFactory()
+                                    .createKey("test1");
+        StatsTracker tracker1 = statsManager.getTracker(key1)
+                                            .track();
+        Thread.sleep(new Random().nextInt(100));
+        tracker1.commit();
+
+        sessionSnapshots.put(key1, new SessionSnapshotImpl(statsManager.getSessionManager()
+                                                                       .getSession(key1),
+                                                           statsManager.getConfigManager()
+                                                                       .getConfig(key1)));
+
+        StringWriter out = new StringWriter();
+
+        persister.marshal(snapshot, out);
+
+        StringReader in = new StringReader(out.toString());
+
+        Snapshot snapshot2 = persister.unmarshal(in);
+
+        assertEquals(snapshot, snapshot2);
+        
     }
 }

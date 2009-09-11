@@ -22,17 +22,5 @@ import java.util.Map;
  */
 public interface ApplicationEnvironment {
 
-    String getApplicationName();
-
-    void setApplicationName(String applicationName);
-
-    String getVersion();
-
-    void setVersion(String version);
-
-    String getInstanceId();
-
-    void setInstanceId(String instanceId);
-
     Map<String,String> getProperties();
 }

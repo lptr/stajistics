@@ -22,9 +22,9 @@ import java.util.Map;
  */
 public interface SystemEnvironment {
 
-    String getSystemName();
+    String getHostName();
 
-    void setSystemName(String systemName);
+    void setHostName(String systemName);
 
     Map<String,String> getProperties();
 }
