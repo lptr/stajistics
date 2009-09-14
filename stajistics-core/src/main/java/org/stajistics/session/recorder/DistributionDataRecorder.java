@@ -14,10 +14,14 @@
  */
 package org.stajistics.session.recorder;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
+import org.stajistics.util.Misc;
 
 /**
  * 
@@ -29,10 +33,18 @@ public class DistributionDataRecorder implements DataRecorder {
 
     private static final long serialVersionUID = -3659348358082223974L;
 
+    private static final Set<String> SUPPORTED_FIELD_NAMES = 
+        Collections.unmodifiableSet(Misc.getStaticFieldValues(Field.class, String.class));
+
     protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
     protected final AtomicDouble sumOfInverses = new AtomicDouble(0); // For harmonic mean
     protected final AtomicDouble sumOfSquares = new AtomicDouble(0); // For standard deviation and quadratic mean
 
+    @Override
+    public Set<String> getSupportedFieldNames() {
+        return SUPPORTED_FIELD_NAMES;
+    }
+    
     @Override
     public void update(final StatsSession session, 
                        final StatsTracker tracker, 

@@ -15,6 +15,7 @@
 package org.stajistics.session.recorder;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
@@ -27,6 +28,8 @@ import org.stajistics.tracker.StatsTracker;
  * @author The Stajistics Project
  */
 public interface DataRecorder extends Serializable {
+
+    Set<String> getSupportedFieldNames();
 
     void update(StatsSession session, StatsTracker tracker, long now);
 

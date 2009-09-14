@@ -26,6 +26,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
 import org.stajistics.data.DataSet;
 import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
@@ -97,6 +98,50 @@ public class ConcurrentStatsSessionTest {
     }
 
     @Test
+    public void testInitialDataEqualsClearedData() {
+
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+        }});
+
+        long hits = session.getHits();
+        long firstHitStamp = session.getFirstHitStamp();
+        long lastHitStamp  = session.getLastHitStamp();
+        long commits = session.getCommits();
+        double first = session.getFirst();
+        double min = session.getMin();
+        double max = session.getMax();
+        double last = session.getLast();
+        double sum = session.getSum();
+
+        session.clear();
+
+        assertEquals(hits, session.getHits());
+        assertEquals(firstHitStamp, session.getFirstHitStamp());
+        assertEquals(lastHitStamp, session.getLastHitStamp());
+        assertEquals(commits, session.getCommits());
+        assertEquals(first, session.getFirst(), DELTA);
+        assertEquals(min, session.getMin(), DELTA);
+        assertEquals(max, session.getMax(), DELTA);
+        assertEquals(last, session.getLast(), DELTA);
+        assertEquals(sum, session.getSum(), DELTA);
+    }
+
+    @Test
+    public void testClearFiresSessionClearedEvent() {
+
+        mockery.checking(new Expectations() {{
+            one(mockEventManager).fireEvent(with(StatsEventType.SESSION_CLEARED), 
+                                            with(mockKey), 
+                                            with(session));
+        }});
+
+        session.clear();
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
     public void testTrack() {
 
         mockery.checking(new Expectations() {{
@@ -135,6 +180,20 @@ public class ConcurrentStatsSessionTest {
     }
 
     @Test
+    public void testTrackFiresTrackerTrackingEvent() {
+
+        mockery.checking(new Expectations() {{
+            one(mockEventManager).fireEvent(with(StatsEventType.TRACKER_TRACKING), 
+                                            with(mockKey), 
+                                            with(mockTracker));
+        }});
+
+        session.track(mockTracker, 0L);
+
+        mockery.assertIsSatisfied();
+    }
+    
+    @Test
     public void testUpdate() {
         mockery.checking(new Expectations() {{
             one(mockTracker).getValue(); will(returnValue(1.0));
@@ -172,6 +231,21 @@ public class ConcurrentStatsSessionTest {
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void testUpdateFiresTrackerCommittedEvent() {
+
+        mockery.checking(new Expectations() {{
+            one(mockEventManager).fireEvent(with(StatsEventType.TRACKER_COMMITTED), 
+                                            with(mockKey), 
+                                            with(mockTracker));
+            ignoring(mockTracker).getValue(); will(returnValue(1.0));
+        }});
+
+        session.update(mockTracker, 0L);
+
+        mockery.assertIsSatisfied();
+    }
+    
     @Test
     public void testTrackAndUpdate() {
         mockery.checking(new Expectations() {{
