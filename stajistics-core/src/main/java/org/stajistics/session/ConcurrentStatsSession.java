@@ -63,11 +63,11 @@ public class ConcurrentStatsSession implements StatsSession {
 
     protected final AtomicLong hits = new AtomicLong(0);
     protected final AtomicLong firstHitStamp = new AtomicLong(-1);
-    protected final AtomicLong lastHitStamp = new AtomicLong(-1);
+    protected volatile long lastHitStamp = -1;
     protected final AtomicLong commits = new AtomicLong(0);
 
     protected final AtomicReference<Double> first = new AtomicReference<Double>(null);
-    protected final AtomicDouble last = new AtomicDouble(Double.NaN);
+    protected volatile double last = Double.NaN;
     protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
     protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
     protected final AtomicDouble sum = new AtomicDouble(0);
@@ -119,7 +119,7 @@ public class ConcurrentStatsSession implements StatsSession {
         if (firstHitStamp.get() == -1) {
             firstHitStamp.compareAndSet(-1, now);
         }
-        lastHitStamp.set(now);
+        lastHitStamp = now;
 
         if (logger.isLoggable(Level.FINER)) {
             logger.finer("Track: " + this);
@@ -154,7 +154,7 @@ public class ConcurrentStatsSession implements StatsSession {
      */
     @Override
     public long getLastHitStamp() {
-        return lastHitStamp.get();
+        return lastHitStamp;
     }
 
     /**
@@ -190,7 +190,7 @@ public class ConcurrentStatsSession implements StatsSession {
         }
 
         // Last
-        last.set(currentValue);
+        last = currentValue;
 
         // Min
         for (;;) {
@@ -217,7 +217,7 @@ public class ConcurrentStatsSession implements StatsSession {
         }
 
         // Sum
-        sum.getAndAdd(currentValue);
+        sum.addAndGet(currentValue);
 
         for (DataRecorder dataRecorder : dataRecorders) {
             dataRecorder.update(this, tracker, now);
@@ -254,7 +254,7 @@ public class ConcurrentStatsSession implements StatsSession {
      */
     @Override
     public double getLast() {
-        return this.last.get();
+        return this.last;
     }
 
     /**
@@ -310,10 +310,10 @@ public class ConcurrentStatsSession implements StatsSession {
     public void restore(final DataSet dataSet) {
         hits.set(dataSet.getField(DataSet.Field.COMMITS, Long.class));
         firstHitStamp.set(dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Date.class).getTime());
-        lastHitStamp.set(dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Date.class).getTime());
+        lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Date.class).getTime();
         commits.set(dataSet.getField(DataSet.Field.COMMITS, Long.class));
         first.set(dataSet.getField(DataSet.Field.FIRST, Double.class));
-        last.set(dataSet.getField(DataSet.Field.LAST, Double.class));
+        last = dataSet.getField(DataSet.Field.LAST, Double.class);
         min.set(dataSet.getField(DataSet.Field.MIN, Double.class));
         max.set(dataSet.getField(DataSet.Field.MAX, Double.class));
         sum.set(dataSet.getField(DataSet.Field.SUM, Double.class));
@@ -326,12 +326,12 @@ public class ConcurrentStatsSession implements StatsSession {
     public void clear() {
         hits.set(0);
         firstHitStamp.set(-1);
-        lastHitStamp.set(-1);
+        lastHitStamp = -1;
         commits.set(0);
         first.set(null);
-        last.set(0);
-        min.set(0);
-        max.set(0);
+        last = Double.NaN;
+        min.set(Double.POSITIVE_INFINITY);
+        max.set(Double.NEGATIVE_INFINITY);
         sum.set(0);
 
         for (DataRecorder dataRecorder : dataRecorders) {

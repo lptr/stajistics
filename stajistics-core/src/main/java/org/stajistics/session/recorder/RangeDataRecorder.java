@@ -14,8 +14,12 @@
  */
 package org.stajistics.session.recorder;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
@@ -34,7 +38,7 @@ public class RangeDataRecorder implements DataRecorder {
     private static final long serialVersionUID = 1219169573547396963L;
 
     private final RangeList rangeList;
-    private final AtomicInteger[] hits;
+    private final AtomicLong[] hits;
 
     public RangeDataRecorder(final RangeList rangeList) {
         if (rangeList == null) {
@@ -48,12 +52,22 @@ public class RangeDataRecorder implements DataRecorder {
 
         this.rangeList = rangeList;
 
-        hits = new AtomicInteger[size];
+        hits = new AtomicLong[size];
         for (int i = 0; i < size; i++) {
-            hits[i] = new AtomicInteger(0);
+            hits[i] = new AtomicLong(0);
         }
     }
 
+    @Override
+    public Set<String> getSupportedFieldNames() {
+        Set<String> result = new HashSet<String>(rangeList.size());
+
+        for (Range range : rangeList) {
+            result.add(range.getName());
+        }
+
+        return Collections.unmodifiableSet(result);
+    }
 
     @Override
     public void update(final StatsSession session,
@@ -82,7 +96,30 @@ public class RangeDataRecorder implements DataRecorder {
 
     @Override
     public void restore(final DataSet dataSet) {
-        //TODO
+
+        long[] values = new long[rangeList.size()];
+        
+        Range range;
+        Long value;
+        int i = 0;
+
+        for (Iterator<Range> itr = rangeList.iterator(); itr.hasNext(); i++) {
+            range = itr.next();
+            value = dataSet.getField(range.getName(), Long.class);
+
+            if (value == null) {
+                // The full range list is not present, so do not limp along with partial data
+                // TODO: log a message
+                return;
+            }
+
+            values[i] = value;
+        }
+
+        // The full range list is available, so restore it now
+        for (i = 0; i < values.length; i++) {
+            hits[i].set(values[i]);
+        }
     }
 
     @Override
