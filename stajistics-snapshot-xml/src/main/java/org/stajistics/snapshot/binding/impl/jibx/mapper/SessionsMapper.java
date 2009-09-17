@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.snapshot.binding.impl.jibx;
+package org.stajistics.snapshot.binding.impl.jibx.mapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,7 @@ import org.jibx.runtime.JiBXException;
 import org.jibx.runtime.impl.MarshallingContext;
 import org.jibx.runtime.impl.UnmarshallingContext;
 import org.stajistics.StatsKey;
+import org.stajistics.snapshot.binding.impl.jibx.XMLSessionSnapshot;
 
 /**
  * 
@@ -75,7 +76,7 @@ public class SessionsMapper implements IMarshaller, IUnmarshaller, IAliasable {
         MarshallingContext ctx = (MarshallingContext)ictx;
 
         @SuppressWarnings("unchecked")
-        Map<String,SessionSnapshotImpl> map = (Map<String,SessionSnapshotImpl>)obj;
+        Map<String,XMLSessionSnapshot> map = (Map<String,XMLSessionSnapshot>)obj;
 
         ctx.startTagAttributes(index, name);
 
@@ -84,7 +85,7 @@ public class SessionsMapper implements IMarshaller, IUnmarshaller, IAliasable {
             ctx.attribute(index, ATTR_SIZE, map.size());
             ctx.closeStartContent();
 
-            for (Map.Entry<String,SessionSnapshotImpl> entry : map.entrySet()) {
+            for (Map.Entry<String,XMLSessionSnapshot> entry : map.entrySet()) {
             	((IMarshallable)entry.getValue()).marshal(ctx);
             }
         }
@@ -109,15 +110,15 @@ public class SessionsMapper implements IMarshaller, IUnmarshaller, IAliasable {
         int size = ctx.attributeInt(uri, ATTR_SIZE, DEFAULT_SIZE);
 
         @SuppressWarnings("unchecked")
-        Map<StatsKey,SessionSnapshotImpl> map = (Map<StatsKey,SessionSnapshotImpl>)obj;
+        Map<StatsKey,XMLSessionSnapshot> map = (Map<StatsKey,XMLSessionSnapshot>)obj;
         if (map == null) {
-            map = new HashMap<StatsKey,SessionSnapshotImpl>(size);
+            map = new HashMap<StatsKey,XMLSessionSnapshot>(size);
         }
 
         // process all entries present in document
         ctx.parsePastStartTag(uri, name);
         while (ctx.isAt(uri, ELEMENT_SESSION)) {
-            SessionSnapshotImpl session = (SessionSnapshotImpl)ctx.unmarshalElement();
+            XMLSessionSnapshot session = (XMLSessionSnapshot)ctx.unmarshalElement();
             map.put(session.getKey(), session);
         }
         ctx.parsePastEndTag(uri, name);

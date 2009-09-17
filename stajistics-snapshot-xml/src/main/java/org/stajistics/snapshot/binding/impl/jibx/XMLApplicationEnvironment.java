@@ -23,7 +23,7 @@ import org.stajistics.snapshot.binding.ApplicationEnvironment;
  * 
  * @author The Stajistics Project
  */
-public class ApplicationEnvironmentImpl implements ApplicationEnvironment {
+public class XMLApplicationEnvironment implements ApplicationEnvironment {
 
     private HashMap<String,String> properties = new HashMap<String,String>();
 
@@ -34,10 +34,10 @@ public class ApplicationEnvironmentImpl implements ApplicationEnvironment {
 
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof ApplicationEnvironmentImpl) && equals((ApplicationEnvironmentImpl)obj);
+        return (obj instanceof XMLApplicationEnvironment) && equals((XMLApplicationEnvironment)obj);
     }
 
-    public boolean equals(final ApplicationEnvironmentImpl other) {
+    public boolean equals(final XMLApplicationEnvironment other) {
         if ((properties == null || properties.isEmpty()) &&
             (other.properties == null || other.properties.isEmpty())) {
             return true;

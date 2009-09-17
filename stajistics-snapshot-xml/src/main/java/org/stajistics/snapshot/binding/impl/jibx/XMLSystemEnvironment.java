@@ -29,15 +29,15 @@ import org.stajistics.snapshot.binding.SystemEnvironment;
  * @author The Stajistics Project
  *
  */
-public class SystemEnvironmentImpl implements SystemEnvironment {
+public class XMLSystemEnvironment implements SystemEnvironment {
 
-    private static Logger logger = Logger.getLogger(SystemEnvironmentImpl.class.getName());
+    private static Logger logger = Logger.getLogger(XMLSystemEnvironment.class.getName());
 
     private String hostName;
 
     private HashMap<String,String> properties;
 
-    public SystemEnvironmentImpl() {
+    public XMLSystemEnvironment() {
         
         try {
             hostName = InetAddress.getLocalHost()
@@ -54,12 +54,12 @@ public class SystemEnvironmentImpl implements SystemEnvironment {
         }
     }
 
-    private SystemEnvironmentImpl(boolean dummy) {
+    private XMLSystemEnvironment(boolean dummy) {
         //TODO: need to not overwrite unmarshalled properties with current system properties
     }
 
-    public static SystemEnvironmentImpl factory() {
-        return new SystemEnvironmentImpl(false);
+    public static XMLSystemEnvironment factory() {
+        return new XMLSystemEnvironment(false);
     }
 
     @Override
@@ -87,10 +87,10 @@ public class SystemEnvironmentImpl implements SystemEnvironment {
     }
 
     public boolean equals(final Object obj) {
-        return (obj instanceof SystemEnvironmentImpl) && equals((SystemEnvironmentImpl)obj);
+        return (obj instanceof XMLSystemEnvironment) && equals((XMLSystemEnvironment)obj);
     }
 
-    public boolean equals(final SystemEnvironmentImpl other) {
+    public boolean equals(final XMLSystemEnvironment other) {
         if (!hostName.equals(other.hostName)) {
             return false;
         }

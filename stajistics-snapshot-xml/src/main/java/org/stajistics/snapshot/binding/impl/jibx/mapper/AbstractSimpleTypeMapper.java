@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.snapshot.binding.impl.jibx;
+package org.stajistics.snapshot.binding.impl.jibx.mapper;
 
 import java.util.Date;
 import java.util.HashMap;

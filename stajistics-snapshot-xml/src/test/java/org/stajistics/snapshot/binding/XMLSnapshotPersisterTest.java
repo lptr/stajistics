@@ -26,8 +26,8 @@ import org.junit.Test;
 import org.stajistics.DefaultStatsManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
-import org.stajistics.snapshot.binding.impl.jibx.SessionSnapshotImpl;
-import org.stajistics.snapshot.binding.impl.jibx.SnapshotImpl;
+import org.stajistics.snapshot.binding.impl.jibx.XMLSessionSnapshot;
+import org.stajistics.snapshot.binding.impl.jibx.XMLStatsSnapshot;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -46,7 +46,7 @@ public class XMLSnapshotPersisterTest {
     @Test
     public void testMarshalUnmarshalEmptySnapshot() throws Exception {
 
-        Snapshot snapshot = new SnapshotImpl();
+        StatsSnapshot snapshot = new XMLStatsSnapshot();
 
         StringWriter out = new StringWriter();
 
@@ -54,7 +54,7 @@ public class XMLSnapshotPersisterTest {
 
         StringReader in = new StringReader(out.toString());
 
-        Snapshot snapshot2 = persister.unmarshal(in);
+        StatsSnapshot snapshot2 = persister.unmarshal(in);
 
         assertEquals(snapshot, snapshot2);
     }
@@ -62,7 +62,7 @@ public class XMLSnapshotPersisterTest {
     @Test
     public void testMarshalUnmarshalPopulatedSnapshot() throws Exception {
 
-        Snapshot snapshot = new SnapshotImpl();
+        StatsSnapshot snapshot = new XMLStatsSnapshot();
         Map<StatsKey,SessionSnapshot> sessionSnapshots = snapshot.getSessionSnapshots();
 
         StatsManager statsManager = DefaultStatsManager.createWithDefaults();
@@ -73,7 +73,7 @@ public class XMLSnapshotPersisterTest {
         Thread.sleep(new Random().nextInt(100));
         tracker1.commit();
 
-        sessionSnapshots.put(key1, new SessionSnapshotImpl(statsManager.getSessionManager()
+        sessionSnapshots.put(key1, new XMLSessionSnapshot(statsManager.getSessionManager()
                                                                        .getSession(key1),
                                                            statsManager.getConfigManager()
                                                                        .getConfig(key1)));
@@ -84,7 +84,7 @@ public class XMLSnapshotPersisterTest {
 
         StringReader in = new StringReader(out.toString());
 
-        Snapshot snapshot2 = persister.unmarshal(in);
+        StatsSnapshot snapshot2 = persister.unmarshal(in);
 
         assertEquals(snapshot, snapshot2);
         

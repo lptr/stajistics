@@ -20,7 +20,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
-import org.stajistics.snapshot.binding.Snapshot;
+import org.stajistics.snapshot.binding.StatsSnapshot;
 
 /**
  * 
@@ -49,7 +49,7 @@ public interface SnapshotMarshaller {
      * @throws IOException
      * @throws SnapshotPersistenceException
      */
-    void marshal(Snapshot snapshot, OutputStream out) throws IOException,SnapshotPersistenceException;
+    void marshal(StatsSnapshot snapshot, OutputStream out) throws IOException,SnapshotPersistenceException;
 
     /**
      * 
@@ -59,7 +59,7 @@ public interface SnapshotMarshaller {
      * @throws SnapshotPersistenceException
      * @throws UnsupportedOperationException If {@link #supportsCharacterStreams()} returns <tt>false</tt>.
      */
-    void marshal(Snapshot snapshot, Writer writer) throws IOException,SnapshotPersistenceException;
+    void marshal(StatsSnapshot snapshot, Writer writer) throws IOException,SnapshotPersistenceException;
 
     /**
      * 
@@ -68,7 +68,7 @@ public interface SnapshotMarshaller {
      * @throws IOException
      * @throws SnapshotPersistenceException
      */
-    Snapshot unmarshal(InputStream in) throws IOException,SnapshotPersistenceException;
+    StatsSnapshot unmarshal(InputStream in) throws IOException,SnapshotPersistenceException;
 
     /**
      * 
@@ -78,5 +78,5 @@ public interface SnapshotMarshaller {
      * @throws SnapshotPersistenceException
      * @throws UnsupportedOperationException If {@link #supportsCharacterStreams()} returns <tt>false</tt>.
      */
-    Snapshot unmarshal(Reader reader) throws IOException,SnapshotPersistenceException;
+    StatsSnapshot unmarshal(Reader reader) throws IOException,SnapshotPersistenceException;
 }
