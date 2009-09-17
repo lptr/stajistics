@@ -30,7 +30,7 @@ import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 import org.stajistics.snapshot.SnapshotMarshaller;
 import org.stajistics.snapshot.SnapshotPersistenceException;
-import org.stajistics.snapshot.binding.impl.jibx.SnapshotImpl;
+import org.stajistics.snapshot.binding.impl.jibx.XMLStatsSnapshot;
 
 /**
  * 
@@ -54,25 +54,25 @@ public class XMLSnapshotMarshaller implements SnapshotMarshaller {
     }
 
     @Override
-    public void marshal(final Snapshot snapshot, 
+    public void marshal(final StatsSnapshot snapshot, 
                         final OutputStream out)
             throws IOException, SnapshotPersistenceException {
         doMarshal(snapshot, out, null);
     }
 
     @Override
-    public void marshal(final Snapshot snapshot, 
+    public void marshal(final StatsSnapshot snapshot, 
                         final Writer writer)
             throws IOException, SnapshotPersistenceException {
         doMarshal(snapshot, null, writer);
     }
 
-    private void doMarshal(final Snapshot snapshot,
+    private void doMarshal(final StatsSnapshot snapshot,
                            final OutputStream os,
                            final Writer writer) throws SnapshotPersistenceException {
         try {
             IBindingFactory bfact = 
-                BindingDirectory.getFactory(SnapshotImpl.class);
+                BindingDirectory.getFactory(XMLStatsSnapshot.class);
 
             IMarshallingContext mctx = bfact.createMarshallingContext();
             mctx.setIndent(2);
@@ -91,28 +91,28 @@ public class XMLSnapshotMarshaller implements SnapshotMarshaller {
     }
 
     @Override
-    public Snapshot unmarshal(final InputStream in) throws IOException,SnapshotPersistenceException {
+    public StatsSnapshot unmarshal(final InputStream in) throws IOException,SnapshotPersistenceException {
         return doUnmarshal(in, null);
     }
 
     @Override
-    public Snapshot unmarshal(final Reader reader) throws IOException,SnapshotPersistenceException {
+    public StatsSnapshot unmarshal(final Reader reader) throws IOException,SnapshotPersistenceException {
         return doUnmarshal(null, reader);
     }
 
-    private Snapshot doUnmarshal(final InputStream is, final Reader reader)
+    private StatsSnapshot doUnmarshal(final InputStream is, final Reader reader)
             throws SnapshotPersistenceException {
-        Snapshot snapshot;
+        StatsSnapshot snapshot;
         try {
             IBindingFactory bfact = 
-                BindingDirectory.getFactory(SnapshotImpl.class);
+                BindingDirectory.getFactory(XMLStatsSnapshot.class);
 
             IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 
             if (is != null) {
-                snapshot = (Snapshot)uctx.unmarshalDocument(is, CHARSET);
+                snapshot = (StatsSnapshot)uctx.unmarshalDocument(is, CHARSET);
             } else if (reader != null) {
-                snapshot = (Snapshot)uctx.unmarshalDocument(reader);
+                snapshot = (StatsSnapshot)uctx.unmarshalDocument(reader);
             } else {
                 throw new InternalError();
             }
@@ -139,7 +139,7 @@ public class XMLSnapshotMarshaller implements SnapshotMarshaller {
         XMLSnapshotMarshaller xmlMarshaller = new XMLSnapshotMarshaller();
 
         System.out.println("Unmarshalling: " + file);
-        Snapshot snapshot = xmlMarshaller.unmarshal(new FileInputStream(file));
+        StatsSnapshot snapshot = xmlMarshaller.unmarshal(new FileInputStream(file));
         System.out.println("Done unmarshalling.");
 
         File outFile = new File(file.getPath() + ".out");

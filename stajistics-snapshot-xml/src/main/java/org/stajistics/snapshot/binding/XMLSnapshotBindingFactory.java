@@ -14,31 +14,29 @@
  */
 package org.stajistics.snapshot.binding;
 
-import java.util.Date;
-import java.util.Map;
-
-import org.stajistics.StatsKey;
+import org.stajistics.StatsConfig;
+import org.stajistics.session.StatsSession;
+import org.stajistics.snapshot.SnapshotBindingFactory;
+import org.stajistics.snapshot.binding.impl.jibx.XMLSessionSnapshot;
+import org.stajistics.snapshot.binding.impl.jibx.XMLStatsSnapshot;
 
 /**
  * 
  * @author The Stajistics Project
- *
  */
-public interface Snapshot {
+public class XMLSnapshotBindingFactory implements SnapshotBindingFactory {
 
-    String getSchemaVersion();
+    @Override
+    public SessionSnapshot createSessionSnapshot(final StatsSession session,
+                                                 final StatsConfig config) {
+        
+        return new XMLSessionSnapshot(session, config);
+    }
 
-    String getStajisticsVersion();
+    @Override
+    public StatsSnapshot createSnapshot() {
+        return new XMLStatsSnapshot();
+    }
 
-    Date getStartTimeStamp();
 
-    Date getEndTimeStamp();
-
-    void setTimeStamp(Date timeStamp);
-
-    SystemEnvironment getSystemEnvironment();
-
-    ApplicationEnvironment getApplicationEnvironment();
-
-    Map<StatsKey,SessionSnapshot> getSessionSnapshots();
 }

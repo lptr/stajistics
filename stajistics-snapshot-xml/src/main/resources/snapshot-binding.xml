@@ -18,7 +18,7 @@
   <namespace uri="http://www.stajistics.org/StatisticsSnapshot" default="none" prefix="ss" />
 
   <mapping name="snapshot" 
-      class="org.stajistics.snapshot.binding.impl.jibx.SnapshotImpl"
+      class="org.stajistics.snapshot.binding.impl.jibx.XMLStatsSnapshot"
       ns="http://www.stajistics.org/StatisticsSnapshot">
     <value name="schemaVersion" field="schemaVersion" usage="required" />
     <value name="stajisticsVersion" field="stajisticsVersion" usage="required" />
@@ -40,19 +40,19 @@
 
     <structure name="sessions" 
         field="sessions"
-        marshaller="org.stajistics.snapshot.binding.impl.jibx.SessionsMapper" 
-        unmarshaller="org.stajistics.snapshot.binding.impl.jibx.SessionsMapper"
+        marshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.SessionsMapper" 
+        unmarshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.SessionsMapper"
         usage="required" />
 
   </mapping>
 
   <mapping name="properties"
       class="java.util.HashMap"
-      marshaller="org.stajistics.snapshot.binding.impl.jibx.PropertiesMapper"
-      unmarshaller="org.stajistics.snapshot.binding.impl.jibx.PropertiesMapper" />
+      marshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.PropertiesMapper"
+      unmarshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.PropertiesMapper" />
 
   <mapping name="session" 
-      class="org.stajistics.snapshot.binding.impl.jibx.SessionSnapshotImpl">
+      class="org.stajistics.snapshot.binding.impl.jibx.XMLSessionSnapshot">
     <structure field="key" usage="required" />
     <value name="trackerFactory" field="trackerFactory" usage="required" />
     <value name="sessionFactory" field="sessionFactory" usage="required" />
@@ -68,11 +68,11 @@
 
   <mapping name="key"
       class="org.stajistics.DefaultStatsKey"
-      marshaller="org.stajistics.snapshot.binding.impl.jibx.StatsKeyMapper"
-      unmarshaller="org.stajistics.snapshot.binding.impl.jibx.StatsKeyMapper" />
+      marshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.StatsKeyMapper"
+      unmarshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.StatsKeyMapper" />
 
   <mapping name="dataSet"
       class="org.stajistics.data.DataSet" 
-      marshaller="org.stajistics.snapshot.binding.impl.jibx.DataSetMapper"
-      unmarshaller="org.stajistics.snapshot.binding.impl.jibx.DataSetMapper" />
+      marshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.DataSetMapper"
+      unmarshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.DataSetMapper" />
 </binding>

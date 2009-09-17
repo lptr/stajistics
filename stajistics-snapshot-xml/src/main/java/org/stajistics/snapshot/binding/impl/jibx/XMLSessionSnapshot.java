@@ -32,7 +32,7 @@ import org.stajistics.tracker.StatsTrackerFactory;
  * 
  * @author The Stajistics Project
  */
-public class SessionSnapshotImpl extends AbstractSessionSnapshot {
+public class XMLSessionSnapshot extends AbstractSessionSnapshot {
 
 	private DefaultStatsKey key;
 
@@ -43,9 +43,9 @@ public class SessionSnapshotImpl extends AbstractSessionSnapshot {
 
 	private DataSet dataSet;
 
-	public SessionSnapshotImpl() {}
+	public XMLSessionSnapshot() {}
 
-	public SessionSnapshotImpl(final StatsSession realSession,
+	public XMLSessionSnapshot(final StatsSession realSession,
 	                   final StatsConfig config) {
 	    setKey(realSession.getKey());
 

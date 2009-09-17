@@ -19,7 +19,7 @@ package org.stajistics.snapshot.binding;
  * @author The Stajistics Project
  *
  */
-public abstract class AbstractSnapshot implements Snapshot {
+public abstract class AbstractStatsSnapshot implements StatsSnapshot {
 
     @Override
     public int hashCode() {
@@ -34,10 +34,10 @@ public abstract class AbstractSnapshot implements Snapshot {
 
     @Override
     public final boolean equals(final Object obj) {
-        return (obj instanceof Snapshot) && equals((Snapshot)obj);
+        return (obj instanceof StatsSnapshot) && equals((StatsSnapshot)obj);
     }
 
-    public boolean equals(final Snapshot other) {
+    public boolean equals(final StatsSnapshot other) {
         if (!getSchemaVersion().equals(other.getSchemaVersion())) {
             return false;
         }
@@ -65,7 +65,7 @@ public abstract class AbstractSnapshot implements Snapshot {
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(128);
-        buf.append(Snapshot.class.getSimpleName());
+        buf.append(StatsSnapshot.class.getSimpleName());
         buf.append("[applicationEnvironment=");
         buf.append(getApplicationEnvironment());
         buf.append(",endTimeStamp=");
@@ -84,5 +84,5 @@ public abstract class AbstractSnapshot implements Snapshot {
         return buf.toString();
     }
 
-    
+
 }
