@@ -22,6 +22,7 @@ import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.snapshot.StatsSnapshotManager;
 
 /**
  * 
@@ -41,4 +42,6 @@ public interface StatsMBeanFactory extends Serializable {
 
     StatsSessionMBean createSessionMBean(StatsSessionManager sessionManager,
                                          StatsSession session);
+
+    StatsSnapshotMBean createSnapshotMBean(StatsSnapshotManager snapshotManager);
 }

@@ -20,6 +20,7 @@ import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.snapshot.StatsSnapshotManager;
 
 /**
  * 
@@ -52,5 +53,10 @@ public class DefaultStatsMBeanFactory implements StatsMBeanFactory {
     @Override
     public StatsSessionManagerMBean createSessionManagerMBean(final StatsSessionManager sessionManager) {
         return new DefaultStatsSessionManagerMBean(sessionManager);
+    }
+
+    @Override
+    public StatsSnapshotMBean createSnapshotMBean(final StatsSnapshotManager snapshotManager) {
+        return new DefaultStatsSnapshotMBean(snapshotManager);
     }
 }

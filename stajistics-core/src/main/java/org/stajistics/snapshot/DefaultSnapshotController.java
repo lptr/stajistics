@@ -21,6 +21,7 @@ import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.StatsProperties;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
@@ -48,11 +49,15 @@ public class DefaultSnapshotController implements SnapshotController {
     }
 
     private static SnapshotBindingFactory createDefaultSnapshotBindingFactory() {
+
+        final String factoryClassName = StatsProperties.getProperty(SnapshotBindingFactory.class.getName(),
+                                                                    DEFAULT_SNAPSHOT_BINDING_FACTORY_CLASS_NAME);
+
         SnapshotBindingFactory factory = null;
 
         Class<?> factoryClass;
         try {
-            factoryClass = Class.forName(DEFAULT_SNAPSHOT_BINDING_FACTORY_CLASS_NAME);
+            factoryClass = Class.forName(factoryClassName);
             factory = (SnapshotBindingFactory)factoryClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace(); // TODO: log this

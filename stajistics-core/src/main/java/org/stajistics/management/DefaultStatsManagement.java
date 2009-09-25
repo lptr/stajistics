@@ -55,6 +55,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
 
     static final String MANAGER_NAME_CONFIG = "ConfigManager";
     static final String MANAGER_NAME_SESSION = "SessionManager";
+    static final String MANAGER_NAME_SNAPSHOT = "SnapshotManager";
 
     private static final Pattern VALUE_ESCAPE_BACKSLASH_PATTERN = Pattern.compile("[\\\\]");
     private static final String VALUE_ESCAPE_BACKSLASH_REPLACEMENT = "\\\\\\\\";
@@ -278,6 +279,40 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
             logRegistrationFailure(false, StatsSessionMBean.class, key, name, e);
 
             throw new StatsManagementException(e);
+        }
+    }
+
+    @Override
+    public void registerSnapshotMBean(final StatsManager statsManager) {
+
+        String name = buildManagerName(statsManager, MANAGER_NAME_SNAPSHOT);
+
+        try {
+            StatsSnapshotMBean snapshotMBean = mBeanFactory.createSnapshotMBean(statsManager.getSnapshotManager());
+
+            ObjectName objectName = new ObjectName(name);
+            mBeanServer.registerMBean(snapshotMBean, objectName);
+
+            logRegistrationSuccess(true, StatsSnapshotMBean.class, null, objectName);
+
+        } catch (Exception e) {
+            logRegistrationFailure(true, StatsSnapshotMBean.class, null, name, e);
+        }
+    }
+
+    @Override
+    public void unregisterSnapshotMBean(final StatsManager statsManager) {
+
+        String name = buildManagerName(statsManager, MANAGER_NAME_SNAPSHOT);
+
+        try {
+            ObjectName objectName = new ObjectName(name);
+            mBeanServer.unregisterMBean(objectName);
+
+            logRegistrationSuccess(false, StatsSnapshotMBean.class, null, objectName);
+
+        } catch (Exception e) {
+            logRegistrationFailure(false, StatsSnapshotMBean.class, null, name, e);
         }
     }
 

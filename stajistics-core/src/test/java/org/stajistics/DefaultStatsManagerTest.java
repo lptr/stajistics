@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.snapshot.StatsSnapshotManager;
 import org.stajistics.tracker.CompositeStatsTracker;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
@@ -64,6 +65,7 @@ public class DefaultStatsManagerTest {
         assertNotNull(mgr.getConfigManager());
         assertNotNull(mgr.getSessionManager());
         assertNotNull(mgr.getEventManager());
+        assertNotNull(mgr.getSnapshotManager());
     }
 
     @Test
@@ -72,6 +74,7 @@ public class DefaultStatsManagerTest {
             new DefaultStatsManager(null,
                                     mockery.mock(StatsSessionManager.class),
                                     mockery.mock(StatsEventManager.class),
+                                    mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     mockery.mock(StatsConfigFactory.class));
             fail("Allowed null StatsConfigManager");
@@ -86,6 +89,7 @@ public class DefaultStatsManagerTest {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     null,
                                     mockery.mock(StatsEventManager.class),
+                                    mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     mockery.mock(StatsConfigFactory.class));
             fail("Allowed null StatsSessionManager");
@@ -100,6 +104,7 @@ public class DefaultStatsManagerTest {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
                                     null,
+                                    mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     mockery.mock(StatsConfigFactory.class));
             fail("Allowed null StatsEventManager");
@@ -114,6 +119,7 @@ public class DefaultStatsManagerTest {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
                                     mockery.mock(StatsEventManager.class),
+                                    mockery.mock(StatsSnapshotManager.class),
                                     null,
                                     mockery.mock(StatsConfigFactory.class));
             fail("Allowed null StatsKeyFactory");
@@ -128,6 +134,7 @@ public class DefaultStatsManagerTest {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
                                     mockery.mock(StatsEventManager.class),
+                                    mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     null);
             fail("Allowed null StatsConfigFactory");
@@ -141,12 +148,14 @@ public class DefaultStatsManagerTest {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
         StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsSnapshotManager snapshotManager = mockery.mock(StatsSnapshotManager.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager, 
                                                    sessionManager, 
                                                    eventManager,
+                                                   snapshotManager,
                                                    keyFactory,
                                                    configFactory);
 
@@ -158,12 +167,14 @@ public class DefaultStatsManagerTest {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
         StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsSnapshotManager snapshotManager = mockery.mock(StatsSnapshotManager.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager, 
                                                    sessionManager, 
                                                    eventManager,
+                                                   snapshotManager,
                                                    keyFactory,
                                                    configFactory);
 
@@ -175,12 +186,14 @@ public class DefaultStatsManagerTest {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
         StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsSnapshotManager snapshotManager = mockery.mock(StatsSnapshotManager.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager, 
                                                    sessionManager, 
                                                    eventManager,
+                                                   snapshotManager,
                                                    keyFactory,
                                                    configFactory);
 
@@ -192,12 +205,14 @@ public class DefaultStatsManagerTest {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
         StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsSnapshotManager snapshotManager = mockery.mock(StatsSnapshotManager.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager, 
                                                    sessionManager, 
                                                    eventManager,
+                                                   snapshotManager,
                                                    keyFactory,
                                                    configFactory);
 
@@ -209,12 +224,14 @@ public class DefaultStatsManagerTest {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
         StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        StatsSnapshotManager snapshotManager = mockery.mock(StatsSnapshotManager.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager, 
                                                    sessionManager, 
                                                    eventManager,
+                                                   snapshotManager,
                                                    keyFactory,
                                                    configFactory);
 

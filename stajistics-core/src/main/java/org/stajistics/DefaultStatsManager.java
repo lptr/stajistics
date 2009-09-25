@@ -21,6 +21,8 @@ import org.stajistics.management.StatsManagement;
 import org.stajistics.management.StatsManagementEventHandler;
 import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.snapshot.DefaultStatsSnapshotManager;
+import org.stajistics.snapshot.StatsSnapshotManager;
 import org.stajistics.tracker.CompositeStatsTracker;
 import org.stajistics.tracker.DefaultManualStatsTracker;
 import org.stajistics.tracker.ManualStatsTracker;
@@ -43,8 +45,10 @@ public class DefaultStatsManager implements StatsManager {
     protected final StatsConfigManager configManager;
     protected final StatsSessionManager sessionManager;
     protected final StatsEventManager eventManager;
+    protected final StatsSnapshotManager snapshotManager;
     protected final StatsKeyFactory keyFactory;
     protected final StatsConfigFactory configFactory;
+
 
     /**
      * Construct a DefaultStatsManager using the given set of managers.
@@ -57,6 +61,7 @@ public class DefaultStatsManager implements StatsManager {
     public DefaultStatsManager(final StatsConfigManager configManager,
                                final StatsSessionManager sessionManager,
                                final StatsEventManager eventManager,
+                               final StatsSnapshotManager snapshotManager,
                                final StatsKeyFactory keyFactory,
                                final StatsConfigFactory configFactory) {
 
@@ -69,6 +74,9 @@ public class DefaultStatsManager implements StatsManager {
         if (eventManager == null) {
             throw new NullPointerException("eventManager");
         }
+        if (snapshotManager == null) {
+            throw new NullPointerException("snapshotManager");
+        }
         if (keyFactory == null) {
             throw new NullPointerException("keyFactory");
         }
@@ -79,6 +87,7 @@ public class DefaultStatsManager implements StatsManager {
         this.keyFactory = keyFactory;
         this.configManager = configManager;
         this.sessionManager = sessionManager;
+        this.snapshotManager = snapshotManager;
         this.eventManager = eventManager;
         this.configFactory = configFactory;
     }
@@ -96,19 +105,22 @@ public class DefaultStatsManager implements StatsManager {
         StatsEventManager eventManager = new SynchronousStatsEventManager();
         StatsConfigManager configManager = new DefaultStatsConfigManager(eventManager, keyFactory);
         StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager, eventManager);
+        StatsSnapshotManager snapshotManager = DefaultStatsSnapshotManager.createWithDefaults();
 
         StatsConfigFactory configFactory = new DefaultStatsConfigFactory(configManager);
 
         DefaultStatsManager manager = new DefaultStatsManager(configManager,
                                                               sessionManager,
                                                               eventManager,
+                                                              snapshotManager,
                                                               keyFactory,
                                                               configFactory);
 
-        if (Boolean.parseBoolean(System.getProperty(SYS_PROP_MANAGEMENT_ENABLED, "true"))) {
+        if (StatsProperties.getBooleanProperty(SYS_PROP_MANAGEMENT_ENABLED, true)) {
             StatsManagement management = new DefaultStatsManagement();
             management.registerConfigManagerMBean(manager, configManager);
             management.registerSessionManagerMBean(manager, sessionManager);
+            management.registerSnapshotMBean(manager);
 
             StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(manager, management);
             eventManager.addGlobalEventHandler(eventHandler);
@@ -139,6 +151,14 @@ public class DefaultStatsManager implements StatsManager {
     @Override
     public StatsEventManager getEventManager() {
         return eventManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StatsSnapshotManager getSnapshotManager() {
+        return snapshotManager;
     }
 
     /**
