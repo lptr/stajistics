@@ -14,6 +14,8 @@
  */
 package org.stajistics.management;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,6 +47,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     protected static final String OP_CLEAR = "clear";
     protected static final String OP_DESTROY = "destroy";
     protected static final String OP_DUMP = "dump";
+    protected static final String OP_COLLECT_DATA = "collectData";
 
     protected static final String FIELD_PREFIX = "_";
 
@@ -167,6 +170,11 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
                                    "Dump session data to log",
                                    null,
                                    "void",
+                                   MBeanOperationInfo.ACTION),
+            new MBeanOperationInfo(OP_COLLECT_DATA,
+                                   "Query all data fields",
+                                   null,
+                                   "java.util.Map<String,Object>",
                                    MBeanOperationInfo.ACTION)
         };
 
@@ -195,6 +203,16 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
             if (logger.isLoggable(Level.INFO)) {
                 logger.info(session.toString());
             }
+
+        } else if (actionName.equals(OP_COLLECT_DATA)) {
+            DataSet dataSet = session.collectData();
+            Map<String,Object> result = new HashMap<String,Object>(dataSet.size());
+            for (String fieldName : dataSet.getFieldNames())
+            {
+                result.put(fieldName, dataSet.getField(fieldName));
+            }
+
+            return result;
         }
 
         return null;
