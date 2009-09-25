@@ -56,4 +56,8 @@ public interface StatsManagement {
     void unregisterSessionMBean(StatsManager statsManager,
                                 StatsKey key);
 
+    void registerSnapshotMBean(StatsManager statsManager);
+
+    void unregisterSnapshotMBean(StatsManager statsManager);
+
 }

@@ -12,15 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.snapshot;
+package org.stajistics.management;
 
-/**
- * 
- * @author The Stajistics Project
- *
- */
-public interface SnapshotMarshallerFactory {
+import java.io.IOException;
 
-    SnapshotMarshaller createSnapshotMarshaller();
+import javax.management.MXBean;
 
+import org.stajistics.snapshot.SnapshotPersistenceException;
+
+@MXBean
+public interface StatsSnapshotMBean {
+
+    void takeSnapshot(String fileName) throws IOException, SnapshotPersistenceException;
+
+    
 }
