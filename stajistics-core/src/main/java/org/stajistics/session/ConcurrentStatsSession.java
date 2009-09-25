@@ -349,20 +349,6 @@ public class ConcurrentStatsSession implements StatsSession {
         return Collections.unmodifiableList(dataRecorders);
     }
 
-    protected void appendStat(final StringBuilder buf,
-                              final String name,
-                              final Object value) {
-        buf.append(',');
-        buf.append(name);
-        buf.append('=');
-
-        if (value instanceof Double) {
-            buf.append(DECIMAL_FORMAT.format(value));
-        } else {
-            buf.append(String.valueOf(value));
-        }
-    }
-
     public String toString() {
 
         StringBuilder buf = new StringBuilder(512);
@@ -370,13 +356,24 @@ public class ConcurrentStatsSession implements StatsSession {
         buf.append(StatsSession.class.getSimpleName());
         buf.append("[key=");
         buf.append(key);
-
-        DataSet dataSet = collectData();
-
-        for (String name : dataSet.getFieldNames()) {
-            appendStat(buf, name, dataSet.getField(name));
-        }
-
+        buf.append(",hits=");
+        buf.append(getHits());
+        buf.append(",firstHitStamp=");
+        buf.append(new Date(getFirstHitStamp()));
+        buf.append(",lastHitStamp=");
+        buf.append(new Date(getLastHitStamp()));
+        buf.append(",commits=");
+        buf.append(getCommits());
+        buf.append(",first=");
+        buf.append(DECIMAL_FORMAT.format(getFirst()));
+        buf.append(",last=");
+        buf.append(DECIMAL_FORMAT.format(getLast()));
+        buf.append(",min=");
+        buf.append(DECIMAL_FORMAT.format(getMin()));
+        buf.append(",max=");
+        buf.append(DECIMAL_FORMAT.format(getMax()));
+        buf.append(",sum=");
+        buf.append(DECIMAL_FORMAT.format(getSum()));
         buf.append(']');
 
         return buf.toString();
