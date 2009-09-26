@@ -15,10 +15,13 @@
 package org.stajistics.snapshot;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 
 import org.stajistics.snapshot.binding.StatsSnapshot;
 
@@ -46,17 +49,52 @@ public class SingleFileStatsSnapshotDestination implements StatsSnapshotDestinat
         return "Single file: " + fileName;
     }
 
+    protected String getFileName(final String ext) {
+        String result = fileName;
+        if (!result.toLowerCase()
+                   .endsWith("." + ext.toLowerCase())) {
+            result += "." + ext;
+        }
+        return result;
+    }
+
     @Override
-    public OutputStream newOutputStream(final StatsSnapshot snapshot) throws IOException {
+    public void marshal(final StatsSnapshot snapshot, 
+                        final SnapshotMarshaller marshaller) throws IOException,SnapshotPersistenceException {
+        if (snapshot == null) {
+            throw new NullPointerException("snapshot");
+        }
+        if (marshaller == null) {
+            throw new NullPointerException("marshaller");
+        }
+
+        String fileName = getFileName(marshaller.getFileExtension());
 
         File file = new File(fileName);
         if (!file.exists()) {
             file.createNewFile();
         }
 
-        OutputStream result = new BufferedOutputStream(new FileOutputStream(file));
+        if (marshaller.supportsCharacterStreams()) {
+            Writer writer = new BufferedWriter(new FileWriter(file));
+            try {
+                marshaller.marshal(snapshot, writer);
+            } finally {
+                try {
+                    writer.close();
+                } catch (IOException ioe) {}
+            }
 
-        return result;
+        } else {
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+            try {
+                marshaller.marshal(snapshot, out);
+            } finally {
+                try {
+                    out.close();
+                } catch (IOException ioe) {}
+            }
+        }
     }
 
 }

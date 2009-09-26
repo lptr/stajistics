@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -63,7 +64,8 @@ public class XMLSnapshotPersisterTest {
     public void testMarshalUnmarshalPopulatedSnapshot() throws Exception {
 
         StatsSnapshot snapshot = new XMLStatsSnapshot();
-        Map<StatsKey,SessionSnapshot> sessionSnapshots = snapshot.getSessionSnapshots();
+        Map<StatsKey,SessionSnapshot> sessionSnapshots = new HashMap<StatsKey,SessionSnapshot>();
+        snapshot.setSessionSnapshots(sessionSnapshots);
 
         StatsManager statsManager = DefaultStatsManager.createWithDefaults();
         StatsKey key1 = statsManager.getKeyFactory()

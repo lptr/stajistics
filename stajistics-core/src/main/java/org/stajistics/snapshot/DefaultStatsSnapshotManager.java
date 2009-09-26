@@ -49,7 +49,6 @@ public class DefaultStatsSnapshotManager implements StatsSnapshotManager {
             throws IOException, SnapshotPersistenceException {
         StatsSnapshot snapshot = new DefaultSnapshotController().takeSnapshot(Stats.getManager());
 
-        OutputStream out = destination.newOutputStream(snapshot);
-        marshaller.marshal(snapshot, out);
+        destination.marshal(snapshot, marshaller);
     }
 }
