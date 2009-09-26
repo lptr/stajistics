@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import java.io.Writer;
 
 import org.stajistics.snapshot.binding.StatsSnapshot;
@@ -28,7 +29,7 @@ import org.stajistics.snapshot.binding.StatsSnapshot;
  *
  * @author The Stajistics Project
  */
-public interface SnapshotMarshaller {
+public interface SnapshotMarshaller extends Serializable {
 
     /**
      * 
@@ -41,6 +42,12 @@ public interface SnapshotMarshaller {
      * @return
      */
     String getContentType();
+
+    /**
+     * 
+     * @return
+     */
+    String getFileExtension();
 
     /**
      * 

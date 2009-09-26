@@ -15,7 +15,6 @@
 package org.stajistics.snapshot;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
 
 import org.stajistics.snapshot.binding.StatsSnapshot;
@@ -29,6 +28,5 @@ public interface StatsSnapshotDestination extends Serializable {
 
     String getDescription();
 
-    OutputStream newOutputStream(StatsSnapshot snapshot) throws IOException;
-
+    void marshal(StatsSnapshot snapshot, SnapshotMarshaller marshaller) throws IOException, SnapshotPersistenceException;
 }

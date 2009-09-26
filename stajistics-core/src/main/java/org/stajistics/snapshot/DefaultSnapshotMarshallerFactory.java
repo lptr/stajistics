@@ -14,6 +14,9 @@
  */
 package org.stajistics.snapshot;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * 
  * @author The Stajistics Project
@@ -30,8 +33,14 @@ public class DefaultSnapshotMarshallerFactory implements SnapshotMarshallerFacto
         try {
             Class<?> marshallerClass = Class.forName(DEFAULT_SNAPSHOT_MARSHALLER_CLASS_NAME);
             marshaller = (SnapshotMarshaller)marshallerClass.newInstance();
+
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger logger = Logger.getLogger(DefaultSnapshotMarshallerFactory.class.getName());
+            if (logger.isLoggable(Level.FINE)) {
+                logger.fine("Failed to locate XMLSnapshotMarshaller; falling back on SerialSnapshotMarshaller.");
+            }
+
+            marshaller = new SerialSnapshotMarshaller();
         }
 
         return marshaller;
