@@ -18,6 +18,11 @@ import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.stajistics.event.StatsEventManager;
+import org.stajistics.session.StatsSessionManager;
+import org.stajistics.snapshot.StatsSnapshotManager;
+import org.stajistics.tracker.ManualStatsTracker;
+import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -41,18 +46,54 @@ public abstract class TestUtil {
                                                  final String attrName,
                                                  final String attrValue) {
         mockery.checking(new Expectations() {{
-            ignoring(mockKey).getName(); will(returnValue(keyName));
-            ignoring(mockKey).getAttribute(with((String)null)); will(returnValue(null));
+            allowing(mockKey).getName(); will(returnValue(keyName));
+            allowing(mockKey).getAttribute(with((String)null)); will(returnValue(null));
 
             if (attrName == null) {
-                ignoring(mockKey).getAttribute((String)with(anything())); will(returnValue(null));
-                ignoring(mockKey).getAttributeCount(); will(returnValue(0));
-                ignoring(mockKey).getAttributes(); will(returnValue(Collections.emptyMap()));
+                allowing(mockKey).getAttribute((String)with(anything())); will(returnValue(null));
+                allowing(mockKey).getAttributeCount(); will(returnValue(0));
+                allowing(mockKey).getAttributes(); will(returnValue(Collections.emptyMap()));
             } else {
-                ignoring(mockKey).getAttribute(with(attrName)); will(returnValue(attrValue));
-                ignoring(mockKey).getAttributeCount(); will(returnValue(1));
-                ignoring(mockKey).getAttributes(); will(returnValue(Collections.singletonMap(attrName, attrValue)));
+                allowing(mockKey).getAttribute(with(attrName)); will(returnValue(attrValue));
+                allowing(mockKey).getAttributeCount(); will(returnValue(1));
+                allowing(mockKey).getAttributes(); will(returnValue(Collections.singletonMap(attrName, attrValue)));
             }
         }});
+    }
+
+    /**
+     * TODO: this needs more work to be useful
+     *
+     * @param mockery
+     * @param mockKey
+     * @return
+     */
+    public static StatsManager createMockStatsManager(final Mockery mockery,
+                                                      final StatsKey mockKey) {
+        final StatsManager mockManager = mockery.mock(StatsManager.class);
+
+        final StatsConfigFactory mockConfigFactory = mockery.mock(StatsConfigFactory.class);
+        final StatsConfigManager mockConfigManager = mockery.mock(StatsConfigManager.class);
+        final StatsEventManager mockEventManager = mockery.mock(StatsEventManager.class);
+        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
+        final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);
+        final StatsSnapshotManager mockSnapshotManager = mockery.mock(StatsSnapshotManager.class);
+
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+        final ManualStatsTracker mockManualTracker = mockery.mock(ManualStatsTracker.class);
+
+        mockery.checking(new Expectations() {{
+            allowing(mockManager).getConfigFactory(); will(returnValue(mockConfigFactory));
+            allowing(mockManager).getConfigManager(); will(returnValue(mockConfigManager));
+            allowing(mockManager).getEventManager(); will(returnValue(mockEventManager));
+            allowing(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
+            allowing(mockManager).getSessionManager(); will(returnValue(mockSessionManager));
+            allowing(mockManager).getSnapshotManager(); will(returnValue(mockSnapshotManager));
+
+            allowing(mockManager).getTracker(with(mockKey)); will(returnValue(mockTracker));
+            allowing(mockManager).getManualTracker(with(mockKey)); will(returnValue(mockManualTracker));
+        }});
+
+        return mockManager;
     }
 }

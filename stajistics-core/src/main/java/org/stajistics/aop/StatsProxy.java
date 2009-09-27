@@ -32,7 +32,7 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class StatsProxy implements InvocationHandler {
 
-    private static final Method EQUALS_METHOD;
+    protected static final Method EQUALS_METHOD;
     static {
         try {
             EQUALS_METHOD = Object.class.getMethod("equals",
@@ -42,16 +42,16 @@ public class StatsProxy implements InvocationHandler {
         }
     }
 
-    private static final String ATTR_METHOD = "method";
-    private static final String ATTR_EXCEPTION = "threw";
+    protected static final String ATTR_METHOD = "method";
+    protected static final String ATTR_EXCEPTION = "threw";
 
-    private final StatsManager statsManager;
-    private final StatsKey key;
-    private final Object target;
+    protected final StatsManager statsManager;
+    protected final StatsKey key;
+    protected final Object target;
 
-    private StatsProxy(final StatsManager statsManager,
-                       final StatsKey key,
-                       final Object target) {
+    protected StatsProxy(final StatsManager statsManager,
+                         final StatsKey key,
+                         final Object target) {
 
         if (statsManager == null) {
             this.statsManager = Stats.getManager();
