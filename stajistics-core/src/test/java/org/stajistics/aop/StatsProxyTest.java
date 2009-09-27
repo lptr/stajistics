@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.DefaultStatsManager;
@@ -39,10 +38,10 @@ import org.stajistics.tracker.StatsTrackerFactory;
  */
 public class StatsProxyTest {
 
-    private static Method SERVICE_FAIL_METHOD;
+    private static Method SERVICE_QUERY_METHOD;
     static {
         try {
-            SERVICE_FAIL_METHOD = Service2.class.getMethod("fail", (Class[])null);
+            SERVICE_QUERY_METHOD = Service.class.getMethod("query", (Class[])null);
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -51,6 +50,7 @@ public class StatsProxyTest {
     private Mockery mockery;
     private StatsManager mockStatsManager;
     private StatsKey mockKey;
+    private Service mockService;
 
     @Before
     public void setUp() {
@@ -59,17 +59,17 @@ public class StatsProxyTest {
         // TODO: these should be _actually_ mocked
         mockStatsManager = DefaultStatsManager.createWithDefaults();
         mockKey = mockStatsManager.getKeyFactory().createKey("test");
+
+        mockService = mockery.mock(Service.class);
     }
 
     @Test
     public void testMethodDelegation() {
-        final Service service = mockery.mock(Service.class);
-
         mockery.checking(new Expectations() {{
-            one(service).query();
+            one(mockService).query();
         }});
 
-        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, service);
+        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
         serviceProxy.query();
 
         mockery.assertIsSatisfied();
@@ -112,7 +112,7 @@ public class StatsProxyTest {
     public void testTrackMethodCall() {
 
         StatsKey methodKey = mockKey.buildCopy()
-                                .withAttribute("method", StatsProxy.getMethodString(SERVICE_FAIL_METHOD))
+                                .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
                                 .newKey();
 
         final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
@@ -134,9 +134,13 @@ public class StatsProxyTest {
          })
          .setConfigFor(methodKey);
 
-        Service serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, new ServiceImpl()); 
+        mockery.checking(new Expectations() {{
+            one(mockService).query();
+        }});
 
-        serviceImpl.query();
+        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService); 
+
+        serviceProxy.query();
 
         mockery.assertIsSatisfied();
     }
@@ -146,7 +150,7 @@ public class StatsProxyTest {
     public void testTrackExceptionIncident() {
 
         final StatsKey methodKey = mockKey.buildCopy()
-                                      .withAttribute("method", StatsProxy.getMethodString(SERVICE_FAIL_METHOD))
+                                      .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
                                       .newKey();
         final StatsKey exceptionKey = methodKey.buildCopy()
                                                .withAttribute("threw", IllegalStateException.class.getName())
@@ -171,23 +175,30 @@ public class StatsProxyTest {
                  if (key.equals(methodKey)) {
                      return methodTracker;
                  }
-        
+
                  if (key.equals(exceptionKey)) {
                      return exceptionTracker;
                  }
-        
+
                  throw new Error();
              }
          })
          .setConfigFor(methodKey);
 
-        Service2 serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, new ServiceImpl()); 
+        final IllegalStateException exception = new IllegalStateException();
+
+        mockery.checking(new Expectations() {{
+            one(mockService).query(); will(throwException(exception));
+        }});
+
+        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService); 
 
         try {
-            serviceImpl.fail();
+            serviceProxy.query();
             fail("Exception thrown from proxied method was swallowed");
         } catch (IllegalStateException ise) {
             // expected
+            assertEquals(exception, ise);
         }
 
         mockery.assertIsSatisfied();
@@ -195,56 +206,44 @@ public class StatsProxyTest {
 
     @Test
     public void testProxyEqualsProxy() {
-        Service serviceImpl = new ServiceImpl();
-        Service proxy1 = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
-        Service proxy2 = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
+        Service proxy1 = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        Service proxy2 = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
         assertEquals(proxy1, proxy2);
     }
 
     @Test
     public void testProxyEqualsNonProxy() {
-        Service serviceImpl = new ServiceImpl();
-        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
-        assertEquals(proxy, serviceImpl);
+        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        assertEquals(proxy, mockService); // yes, this is the correct oder for this test
     }
 
     @Test
     public void testNonProxyEqualsProxy() {
-        Service serviceImpl = new ServiceImpl();
-        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
-        assertFalse(serviceImpl.equals(proxy));
+        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        assertFalse(mockService.equals(proxy));
     }
 
     @Test
     public void testUnwrapProxy() {
-        Service serviceImpl = new ServiceImpl();
-        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
+        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
         Service unwrappedServiceImpl = StatsProxy.unwrap(proxy);
-        assertSame(serviceImpl, unwrappedServiceImpl);
+        assertSame(mockService, unwrappedServiceImpl);
     }
 
     @Test
     public void testUnwrapNonProxy() {
-        Service serviceImpl = new ServiceImpl();
-        Service unwrappedServiceImpl = StatsProxy.unwrap(serviceImpl);
-        assertSame(serviceImpl, unwrappedServiceImpl);
+        Service unwrappedServiceImpl = StatsProxy.unwrap(mockService);
+        assertSame(mockService, unwrappedServiceImpl);
     }
 
     private interface Service {
         void query();
     }
 
-    private interface Service2 {
-        void fail();
-    }
+    private interface Service2 {}
 
-    private static class ServiceImpl implements Service,Service2 {
+    private static class ServiceImpl implements Service, Service2 {
         @Override
         public void query() {}
-
-        @Override
-        public void fail() {
-            throw new IllegalStateException();
-        }
     }
 }
