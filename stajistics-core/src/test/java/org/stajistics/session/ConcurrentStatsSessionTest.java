@@ -20,8 +20,10 @@ import java.util.List;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
 import org.stajistics.data.DataSet;
@@ -36,6 +38,7 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class ConcurrentStatsSessionTest {
 
     protected static final double DELTA = 0.0000000000001;
@@ -137,8 +140,6 @@ public class ConcurrentStatsSessionTest {
         }});
 
         session.clear();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -175,8 +176,6 @@ public class ConcurrentStatsSessionTest {
         assertEquals(Double.NEGATIVE_INFINITY, session.getMax(), DELTA);
         assertEquals(Double.NaN, session.getLast(), DELTA);
         assertEquals(0, session.getSum(), DELTA);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -189,8 +188,6 @@ public class ConcurrentStatsSessionTest {
         }});
 
         session.track(mockTracker, 0L);
-
-        mockery.assertIsSatisfied();
     }
     
     @Test
@@ -211,8 +208,6 @@ public class ConcurrentStatsSessionTest {
         assertEquals(1, session.getLast(), DELTA);
         assertEquals(1, session.getSum(), DELTA);
 
-        mockery.assertIsSatisfied();
-
         mockery.checking(new Expectations() {{
             one(mockTracker).getValue(); will(returnValue(2.0));
         }});
@@ -227,8 +222,6 @@ public class ConcurrentStatsSessionTest {
         assertEquals(2, session.getMax(), DELTA);
         assertEquals(2, session.getLast(), DELTA);
         assertEquals(3, session.getSum(), DELTA);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -242,8 +235,6 @@ public class ConcurrentStatsSessionTest {
         }});
 
         session.update(mockTracker, 0L);
-
-        mockery.assertIsSatisfied();
     }
     
     @Test
@@ -268,8 +259,6 @@ public class ConcurrentStatsSessionTest {
         assertEquals(2, session.getLast(), DELTA);
         assertEquals(2, session.getSum(), DELTA);
 
-        mockery.assertIsSatisfied();
-
         mockery.checking(new Expectations() {{
             one(mockTracker).getValue(); will(returnValue(4.0));
         }});
@@ -288,8 +277,6 @@ public class ConcurrentStatsSessionTest {
         assertEquals(4, session.getMax(), DELTA);
         assertEquals(4, session.getLast(), DELTA);
         assertEquals(6, session.getSum(), DELTA);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -320,8 +307,6 @@ public class ConcurrentStatsSessionTest {
         assertEquals(session.getMax(), anotherSession.getMax(), DELTA);
         assertEquals(session.getLast(), anotherSession.getLast(), DELTA);
         assertEquals(session.getSum(), anotherSession.getSum(), DELTA);
-
-        mockery.assertIsSatisfied();
     }
 
 }

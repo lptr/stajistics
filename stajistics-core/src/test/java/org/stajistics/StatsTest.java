@@ -18,8 +18,10 @@ import static org.junit.Assert.assertSame;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.StatsTracker;
 
@@ -29,6 +31,7 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class StatsTest {
 
     private Mockery mockery;
@@ -55,8 +58,6 @@ public class StatsTest {
         }});
 
         Stats.getConfigManager();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -66,8 +67,6 @@ public class StatsTest {
         }});
 
         Stats.getSessionManager();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -77,8 +76,6 @@ public class StatsTest {
         }});
 
         Stats.getEventManager();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -88,8 +85,6 @@ public class StatsTest {
         }});
 
         Stats.isEnabled();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -101,8 +96,6 @@ public class StatsTest {
         }});
 
         assertSame(mockTracker, Stats.getTracker(mockKey));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -115,8 +108,6 @@ public class StatsTest {
         }});
 
         Stats.track(mockKey);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -130,8 +121,6 @@ public class StatsTest {
         }});
 
         Stats.incident(mockKey);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -144,8 +133,6 @@ public class StatsTest {
         }});
 
         assertSame(mockManualTracker, Stats.manual(mockKey));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -159,8 +146,6 @@ public class StatsTest {
         }});
 
         assertSame(mockKey, Stats.newKey(keyName));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -175,8 +160,6 @@ public class StatsTest {
         }});
 
         assertSame(mockKeyBuilder, Stats.buildKey(keyName));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -190,7 +173,5 @@ public class StatsTest {
         }});
 
         assertSame(mockConfigBuilder, Stats.buildConfig());
-
-        mockery.assertIsSatisfied();
     }
 }

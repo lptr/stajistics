@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 
 import javax.management.ObjectName;
 
-import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.session.StatsSessionManager;
@@ -31,12 +30,12 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class DefaultStatsSessionManagerMBeanTest extends AbstractMBeanTestCase {
 
-     protected Mockery mockery;
      protected StatsSessionManager mockSessionManager;
 
      @Before
+     @Override
      public void setUp() {
-         mockery = new Mockery();
+         super.setUp();
          mockSessionManager = mockery.mock(StatsSessionManager.class);
      }
 
@@ -54,8 +53,6 @@ public class DefaultStatsSessionManagerMBeanTest extends AbstractMBeanTestCase {
 
          assertEquals(mockSessionManager.getClass().getName(),
                       mBean.getImplementation());
-
-         mockery.assertIsSatisfied();
      }
 /*   TODO: this fails
      @Test

@@ -21,8 +21,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.session.StatsSession;
 
 
@@ -32,6 +34,7 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public abstract class AbstractStatsTrackerTestCase {
 
     protected static final double DELTA = 0.0000000000001;
@@ -54,8 +57,6 @@ public abstract class AbstractStatsTrackerTestCase {
 
         assertEquals(mockSession, tracker.getSession());
         assertEquals(0, tracker.getValue(), 0);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -70,8 +71,6 @@ public abstract class AbstractStatsTrackerTestCase {
         tracker.track();
 
         assertEquals(0, tracker.getValue(), 0);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -88,8 +87,6 @@ public abstract class AbstractStatsTrackerTestCase {
 
         tracker.track();
         tracker.commit();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -111,8 +108,6 @@ public abstract class AbstractStatsTrackerTestCase {
         tracker.commit();
 
         assertEquals(timeStamp, tracker.getTimeStamp());
-        
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -132,8 +127,6 @@ public abstract class AbstractStatsTrackerTestCase {
         tracker.commit();
 
         assertFalse(tracker.isTracking());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -154,8 +147,6 @@ public abstract class AbstractStatsTrackerTestCase {
         assertEquals(isTracking, tracker.isTracking());
         assertEquals(value, tracker.getValue(), DELTA);
         assertEquals(timeStamp, tracker.getTimeStamp());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -180,8 +171,6 @@ public abstract class AbstractStatsTrackerTestCase {
         assertEquals(isTracking, tracker.isTracking());
         assertEquals(value, tracker.getValue(), DELTA);
         assertEquals(timeStamp, tracker.getTimeStamp());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -213,8 +202,6 @@ public abstract class AbstractStatsTrackerTestCase {
         assertEquals(isTracking, tracker.isTracking());
         assertEquals(value, tracker.getValue(), DELTA);
         assertEquals(timeStamp, tracker.getTimeStamp());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -227,8 +214,6 @@ public abstract class AbstractStatsTrackerTestCase {
         assertFalse(tracker.isTracking());
         tracker.commit();
         assertFalse(tracker.isTracking());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -251,7 +236,5 @@ public abstract class AbstractStatsTrackerTestCase {
 
         assertTrue(tracker.isTracking());
         assertEquals(stamp, tracker.getTimeStamp());
-
-        mockery.assertIsSatisfied();
     }
 }

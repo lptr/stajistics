@@ -26,8 +26,10 @@ import java.util.Map;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * 
@@ -35,6 +37,7 @@ import org.junit.Test;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public abstract class AbstractStatsKeyTestCase {
 
     protected static final String TEST_NAME = "testName";

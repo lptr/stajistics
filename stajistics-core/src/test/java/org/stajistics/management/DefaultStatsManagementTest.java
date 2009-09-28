@@ -27,9 +27,11 @@ import javax.management.ObjectName;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigFactory;
 import org.stajistics.StatsConfigManager;
@@ -44,6 +46,7 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class DefaultStatsManagementTest {
 
     private static final String TYPE_TEST = "test";
@@ -253,8 +256,6 @@ public class DefaultStatsManagementTest {
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
         statsManagement.registerSessionManagerMBean(mockStatsManager, mockSessionManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -267,8 +268,6 @@ public class DefaultStatsManagementTest {
 
         statsManagement.unregisterSessionManagerMBean(mockStatsManager);
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -286,8 +285,6 @@ public class DefaultStatsManagementTest {
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
         statsManagement.registerConfigManagerMBean(mockStatsManager, mockConfigManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -300,8 +297,6 @@ public class DefaultStatsManagementTest {
 
         statsManagement.unregisterConfigManagerMBean(mockStatsManager);
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -324,8 +319,6 @@ public class DefaultStatsManagementTest {
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
         statsManagement.registerConfigMBean(mockStatsManager, mockKey, mockConfig);
         assertEquals(1, mBeanServer.queryMBeans(name, null).size());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -346,8 +339,6 @@ public class DefaultStatsManagementTest {
 
         statsManagement.unregisterConfigMBean(mockStatsManager, mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -371,8 +362,6 @@ public class DefaultStatsManagementTest {
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
         statsManagement.registerSessionMBean(mockStatsManager, mockSession);
         assertEquals(1, mBeanServer.queryMBeans(name, null).size());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -394,8 +383,6 @@ public class DefaultStatsManagementTest {
 
         statsManagement.unregisterSessionMBean(mockStatsManager, mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
-
-        mockery.assertIsSatisfied();
     }
 
     private void assertValidObjectName() {
@@ -407,8 +394,6 @@ public class DefaultStatsManagementTest {
         } catch (MalformedObjectNameException e) {
             fail(e.toString());
         }
-
-        mockery.assertIsSatisfied();
     }
 
     private void assertInvalidObjectName() {
@@ -421,7 +406,5 @@ public class DefaultStatsManagementTest {
         } catch (MalformedObjectNameException e) {
             // Expected
         }
-
-        mockery.assertIsSatisfied();
     }
 }

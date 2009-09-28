@@ -26,13 +26,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * 
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class StatsKeyMatcherTest {
 
     private Mockery mockery;

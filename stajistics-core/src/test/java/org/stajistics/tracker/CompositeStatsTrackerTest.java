@@ -23,8 +23,10 @@ import java.util.List;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * 
@@ -32,6 +34,7 @@ import org.junit.Test;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class CompositeStatsTrackerTest {
 
     private Mockery mockery;
@@ -114,8 +117,6 @@ public class CompositeStatsTrackerTest {
         CompositeStatsTracker cTracker = new CompositeStatsTracker(mockTrackers);
 
         assertTrue(cTracker.isTracking());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -128,8 +129,6 @@ public class CompositeStatsTrackerTest {
 
         CompositeStatsTracker cTracker = new CompositeStatsTracker(mockTrackers);
         cTracker.track();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -142,8 +141,6 @@ public class CompositeStatsTrackerTest {
 
         CompositeStatsTracker cTracker = new CompositeStatsTracker(mockTrackers);
         cTracker.commit();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -156,8 +153,6 @@ public class CompositeStatsTrackerTest {
 
         CompositeStatsTracker cTracker = new CompositeStatsTracker(mockTrackers);
         cTracker.reset();
-
-        mockery.assertIsSatisfied();
     }
 
 }

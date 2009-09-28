@@ -23,8 +23,10 @@ import java.lang.reflect.Method;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.DefaultStatsManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
@@ -36,6 +38,7 @@ import org.stajistics.tracker.StatsTrackerFactory;
  * 
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class StatsProxyTest {
 
     private static Method SERVICE_QUERY_METHOD;
@@ -71,8 +74,6 @@ public class StatsProxyTest {
 
         Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
         serviceProxy.query();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -141,8 +142,6 @@ public class StatsProxyTest {
         Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService); 
 
         serviceProxy.query();
-
-        mockery.assertIsSatisfied();
     }
 
     @SuppressWarnings("serial")
@@ -200,8 +199,6 @@ public class StatsProxyTest {
             // expected
             assertEquals(exception, ise);
         }
-
-        mockery.assertIsSatisfied();
     }
 
     @Test

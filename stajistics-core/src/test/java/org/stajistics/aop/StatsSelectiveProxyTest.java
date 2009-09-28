@@ -24,8 +24,10 @@ import java.util.Set;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.DefaultStatsManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
@@ -41,6 +43,7 @@ import org.stajistics.aop.StatsSelectiveProxy.SelectionCriteria;
  * @author The Stajistics Project
  *
  */
+@RunWith(JMock.class)
 public class StatsSelectiveProxyTest {
 
     private Mockery mockery;
@@ -103,8 +106,6 @@ public class StatsSelectiveProxyTest {
                                                         mockCriteria);
 
         serviceProxy.query();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -126,8 +127,6 @@ public class StatsSelectiveProxyTest {
                                                         mockCriteria);
 
         serviceProxy.query();
-
-        mockery.assertIsSatisfied();
     }
 
     @Test

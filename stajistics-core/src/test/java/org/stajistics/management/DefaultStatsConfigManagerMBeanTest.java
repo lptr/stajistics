@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import javax.management.ObjectName;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsConfigManager;
@@ -32,12 +31,12 @@ import org.stajistics.StatsConfigManager;
  */
 public class DefaultStatsConfigManagerMBeanTest extends AbstractMBeanTestCase {
 
-    protected Mockery mockery;
     protected StatsConfigManager mockConfigManager;
 
     @Before
+    @Override
     public void setUp() {
-        mockery = new Mockery();
+        super.setUp();
         mockConfigManager = mockery.mock(StatsConfigManager.class);
     }
 
