@@ -23,8 +23,10 @@ import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * 
@@ -32,6 +34,7 @@ import org.junit.Test;
  * 
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class DefaultStatsKeyBuilderTest {
 
     private Mockery mockery;
@@ -100,8 +103,6 @@ public class DefaultStatsKeyBuilderTest {
                               .newKey();
 
         assertTrue(key != null);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -128,8 +129,6 @@ public class DefaultStatsKeyBuilderTest {
                               .newKey();
 
         assertEquals("test", key.getName());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -142,8 +141,6 @@ public class DefaultStatsKeyBuilderTest {
                               .newKey();
 
         assertEquals("test.suffix", key.getName());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -157,8 +154,6 @@ public class DefaultStatsKeyBuilderTest {
                               .newKey();
 
         assertEquals("test.suffix1.suffix2", key.getName());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -174,8 +169,6 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals(1, key.getAttributes().size());
         assertEquals("value", key.getAttribute("test"));
         assertEquals("value", key.getAttributes().get("test"));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -193,8 +186,6 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals("value", key.getAttribute("test"));
         assertEquals("attribute", key.getAttributes().get("existing"));
         assertEquals("value", key.getAttributes().get("test"));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -213,8 +204,6 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals("value2", key.getAttribute("test2"));
         assertEquals("value1", key.getAttributes().get("test1"));
         assertEquals("value2", key.getAttributes().get("test2"));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -235,8 +224,6 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals("attribute", key.getAttributes().get("existing"));
         assertEquals("value1", key.getAttributes().get("test1"));
         assertEquals("value2", key.getAttributes().get("test2"));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -258,8 +245,6 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals("value1", key.getAttributes().get("test1"));
         assertEquals("value2", key.getAttributes().get("test2"));
         assertEquals("value3", key.getAttributes().get("test3"));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -283,8 +268,6 @@ public class DefaultStatsKeyBuilderTest {
         assertEquals("value1", key.getAttributes().get("test1"));
         assertEquals("value2", key.getAttributes().get("test2"));
         assertEquals("value3", key.getAttributes().get("test3"));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -385,8 +368,6 @@ public class DefaultStatsKeyBuilderTest {
             } catch (IllegalArgumentException iae) {
                 // expected
             }
-
-            mockery.assertIsSatisfied();
         }
     }
 
@@ -403,8 +384,6 @@ public class DefaultStatsKeyBuilderTest {
         } catch (NullPointerException npe) {
             assertEquals("value for name: name", npe.getMessage());
         }
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -420,8 +399,6 @@ public class DefaultStatsKeyBuilderTest {
         } catch (NullPointerException npe) {
             assertEquals("value for name: name", npe.getMessage());
         }
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -437,8 +414,6 @@ public class DefaultStatsKeyBuilderTest {
         } catch (NullPointerException npe) {
             // expected
         }
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -454,8 +429,6 @@ public class DefaultStatsKeyBuilderTest {
         } catch (NullPointerException npe) {
             // expected
         }
-
-        mockery.assertIsSatisfied();
     }
 
     @Test

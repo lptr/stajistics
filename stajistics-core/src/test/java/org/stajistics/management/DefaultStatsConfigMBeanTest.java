@@ -20,7 +20,6 @@ import static org.junit.Assert.assertTrue;
 import javax.management.ObjectName;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsConfig;
@@ -36,7 +35,6 @@ import org.stajistics.StatsKey;
  */
 public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
 
-    protected Mockery mockery = null;
     protected StatsKey mockKey = null;
     protected StatsConfigFactory mockConfigFactory = null;
     protected StatsConfig mockConfig = null;
@@ -46,8 +44,9 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
     }
 
     @Before
+    @Override
     public void setUp() {
-        mockery = new Mockery();
+        super.setUp();
         mockKey = mockery.mock(StatsKey.class);
         mockConfigFactory = mockery.mock(StatsConfigFactory.class);
         mockConfig = mockery.mock(StatsConfig.class);
@@ -66,8 +65,6 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         assertTrue(mBean.getEnabled());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -87,8 +84,6 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         mBean.setEnabled(false);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -104,8 +99,6 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         assertEquals("aUnit", mBean.getUnit());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -125,8 +118,6 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         mBean.setUnit("unit2");
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -142,8 +133,6 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         assertEquals("aDescription", mBean.getDescription());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -163,8 +152,6 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         mBean.setDescription("d2");
-
-        mockery.assertIsSatisfied();
     }
 
 }

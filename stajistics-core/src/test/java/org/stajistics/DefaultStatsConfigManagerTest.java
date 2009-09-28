@@ -24,8 +24,10 @@ import java.util.Map;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.DefaultSessionFactory;
@@ -35,6 +37,7 @@ import org.stajistics.tracker.TimeDurationTracker;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class DefaultStatsConfigManagerTest {
 
     private Mockery mockery;
@@ -107,8 +110,6 @@ public class DefaultStatsConfigManagerTest {
                                                       rootConfig, 
                                                       configMap);
 
-        mockery.assertIsSatisfied();
-
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(config0, configManager.getConfig(keys[0]));
         assertSame(config1, configManager.getConfig(keys[1]));
@@ -134,8 +135,6 @@ public class DefaultStatsConfigManagerTest {
 
         configManager.setRootConfig(config);
         assertSame(config, configManager.getRootConfig());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -234,8 +233,6 @@ public class DefaultStatsConfigManagerTest {
         assertSame(config1, configManager.getConfig(keys[1]));
         assertSame(config2, configManager.getConfig(keys[2]));
         assertSame(config3, configManager.getConfig(keys[3]));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -304,8 +301,6 @@ public class DefaultStatsConfigManagerTest {
         assertSame(config1, configManager.getConfig(keys[1]));
         assertSame(config0, configManager.getConfig(keys[0]));
         assertSame(rootConfig, configManager.getRootConfig());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -334,8 +329,6 @@ public class DefaultStatsConfigManagerTest {
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[1]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[2]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[3]));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -364,8 +357,6 @@ public class DefaultStatsConfigManagerTest {
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[2]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[1]));
         assertSame(rootConfig, configManager.getOrCreateConfig(keys[0]));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -529,8 +520,6 @@ public class DefaultStatsConfigManagerTest {
 
         configManager.setConfig(keys[3], createConfig());
         assertNotNull(configManager.getConfig(keys[3]));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -575,8 +564,6 @@ public class DefaultStatsConfigManagerTest {
         assertNull(configManager.removeConfig(keys[1]));
         assertNull(configManager.removeConfig(keys[2]));
         assertNull(configManager.removeConfig(keys[3]));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -639,8 +626,6 @@ public class DefaultStatsConfigManagerTest {
         assertNull(configManager.getConfig(keys[1]));
         assertNull(configManager.getConfig(keys[0]));
         assertNull(configManager.removeConfig(keys[0]));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -682,8 +667,6 @@ public class DefaultStatsConfigManagerTest {
         assertNull(configManager.getConfig(keys[2]));
         assertNull(configManager.getConfig(keys[1]));
         assertNull(configManager.getConfig(keys[0]));
-
-        mockery.assertIsSatisfied();
     }
 
 }

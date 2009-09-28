@@ -23,8 +23,10 @@ import static org.junit.Assert.fail;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
 
@@ -34,6 +36,7 @@ import org.stajistics.tracker.StatsTrackerFactory;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class DefaultStatsConfigBuilderTest {
 
     private Mockery mockery;
@@ -76,7 +79,6 @@ public class DefaultStatsConfigBuilderTest {
         assertSame(sessionFactory, config.getSessionFactory());
         assertEquals("testUnit", config.getUnit());
         assertEquals("testDescription", config.getDescription());
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -84,7 +86,6 @@ public class DefaultStatsConfigBuilderTest {
         StatsTrackerFactory trackerFactory = mockery.mock(StatsTrackerFactory.class);
         builder.withTrackerFactory(trackerFactory);
         assertSame(trackerFactory, builder.newConfig().getTrackerFactory());
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -102,7 +103,6 @@ public class DefaultStatsConfigBuilderTest {
         StatsSessionFactory sessionFactory = mockery.mock(StatsSessionFactory.class);
         builder.withSessionFactory(sessionFactory);
         assertSame(sessionFactory, builder.newConfig().getSessionFactory());
-        mockery.assertIsSatisfied();
     }
 
     @Test

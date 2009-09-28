@@ -27,8 +27,11 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 
 /**
  * Thanks to Eamonn McManus for the MBean testing strategy:
@@ -36,13 +39,19 @@ import org.junit.Before;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public abstract class AbstractMBeanTestCase {
 
+    protected Mockery mockery = null;
     private MBeanServer mBeanServer = null;
     private JMXConnector connector = null;
     private JMXConnectorServer connectorServer = null;
     private MBeanServerConnection mBeanServerConnection = null;
 
+    protected void setUp() {
+        this.mockery = new Mockery();
+    }
+    
     protected MBeanServer getMBeanServer() {
         if (mBeanServer == null) {
             throw new RuntimeException("MBeanServer not initialized");

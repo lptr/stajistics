@@ -27,6 +27,7 @@ import org.stajistics.session.recorder.DataRecorder;
  */
 public class SynchronousStatsSessionTest extends ConcurrentStatsSessionTest {
 
+    @Override
     protected StatsSession createStatsSession() {
         return new SynchronousStatsSession(mockKey, mockEventManager);
     }

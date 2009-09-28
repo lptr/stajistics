@@ -31,8 +31,10 @@ import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
@@ -46,6 +48,7 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class DefaultStatsManagerTest {
 
     private Mockery mockery;
@@ -262,8 +265,6 @@ public class DefaultStatsManagerTest {
 
         assertNotNull(tracker);
         assertSame(key, tracker.getSession().getKey());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -281,8 +282,6 @@ public class DefaultStatsManagerTest {
         assertNotNull(tracker);
         assertFalse(tracker instanceof CompositeStatsTracker);
         assertSame(key, tracker.getSession().getKey());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -306,8 +305,6 @@ public class DefaultStatsManagerTest {
         CompositeStatsTracker cTracker = (CompositeStatsTracker)tracker;
         assertSame(key1, cTracker.getTrackers().get(0).getSession().getKey());
         assertSame(key2, cTracker.getTrackers().get(1).getSession().getKey());
-
-        mockery.assertIsSatisfied();
     }
 
     @Test

@@ -14,14 +14,16 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * 
@@ -29,6 +31,7 @@ import org.junit.Test;
  *
  * @author The Stajistics Project
  */
+@RunWith(JMock.class)
 public class DefaultStatsConfigFactoryTest {
 
     // TODO: more

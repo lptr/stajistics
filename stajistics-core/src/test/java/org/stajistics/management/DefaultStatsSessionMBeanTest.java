@@ -22,7 +22,6 @@ import java.util.HashSet;
 import javax.management.ObjectName;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsKey;
@@ -38,15 +37,15 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
 
-    protected Mockery mockery;
     protected StatsKey mockKey;
     protected StatsSessionManager mockSessionManager;
     protected StatsSession mockSession;
     protected DataSet mockDataSet;
 
     @Before
+    @Override
     public void setUp() {
-        mockery = new Mockery();
+        super.setUp();
         mockKey = mockery.mock(StatsKey.class);
         mockSessionManager = mockery.mock(StatsSessionManager.class);
         mockSession = mockery.mock(StatsSession.class);
@@ -81,8 +80,6 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
 
         assertEquals(mockSession.getClass().getName(), 
                      getMBeanServerConnection().getAttribute(name, "Implementation"));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -102,8 +99,6 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsSessionMBean.class);
 
         assertEquals("value", getMBeanServerConnection().getAttribute(name, "_test"));
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -121,8 +116,6 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsSessionMBean.class);
 
         getMBeanServerConnection().invoke(name, "clear", null, null);
-
-        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -140,8 +133,6 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsSessionMBean.class);
 
         getMBeanServerConnection().invoke(name, "destroy", null, null);
-
-        mockery.assertIsSatisfied();
     }
 
     
