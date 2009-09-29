@@ -4,26 +4,16 @@
     <groupId>org.stajistics</groupId>
     <artifactId>stajistics-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.stajistics</groupId>
   <artifactId>stajistics-servlet</artifactId>
-  <packaging>jar</packaging>
   <name>Stajistics Servlet</name>
-  <version>0.1-SNAPSHOT</version>
-
-  <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-servlet/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-servlet/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-servlet</url>
-    <tag>trunk</tag>
-  </scm>
 
   <dependencies>
     <dependency>
       <groupId>${pom.groupId}</groupId>
-      <artifactId>stajistics</artifactId>
+      <artifactId>stajistics-core</artifactId>
+      <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>

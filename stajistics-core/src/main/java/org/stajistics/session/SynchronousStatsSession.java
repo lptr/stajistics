@@ -55,6 +55,15 @@ public class SynchronousStatsSession extends ConcurrentStatsSession {
      */
     public SynchronousStatsSession(final StatsKey key, 
                                    final StatsEventManager eventManager, 
+                                   final DataRecorder... dataRecorders) {
+        super(key, eventManager, dataRecorders);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SynchronousStatsSession(final StatsKey key, 
+                                   final StatsEventManager eventManager, 
                                    final List<DataRecorder> dataRecorders) {
         super(key, eventManager, dataRecorders);
     }
