@@ -19,48 +19,45 @@ import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * A tracker that tracks time duration with nanosecond precision 
- * (but not necessarily nanosecond accuracy).
- * The value is stored as a fraction of milliseconds.
+ * A tracker that tracks time duration with millisecond precision 
+ * (but not necessarily millisecond accuracy). The value is stored as milliseconds.
  *
- * @see System#nanoTime()
+ * <p>
+ * The advantage of using this less-precise time duration tracker is that 
+ * {@link System#currentTimeMillis()} called upon {@link #commit()} is re-used by the 
+ * {@link StatsSession}.
+ *
+ * @see System#currentTimeMillis()
  *
  * @author The Stajistics Project
  */
-public class NanoTimeDurationTracker extends TimeDurationTracker {
+public class MilliTimeDurationTracker extends AbstractStatsTracker {
 
-    private static final long serialVersionUID = 4797710237784883447L;
+    private static final long serialVersionUID = 4156520024679062924L;
 
     public static final StatsTrackerFactory FACTORY = new Factory();
 
-    private long nanoTime;
-
-    public NanoTimeDurationTracker(final StatsSession session) {
+    public MilliTimeDurationTracker(final StatsSession session) {
         super(session);
     }
 
     @Override
-    protected void trackImpl(final long now) {
-        nanoTime = System.nanoTime();
-
-        super.trackImpl(now);
-    }
-
-    @Override
     protected void commitImpl() {
-        value = (System.nanoTime() - nanoTime) / 1000000d;
+        final long now = System.currentTimeMillis(); 
+        value = now - this.timeStamp;
 
-        session.update(this, -1);
+        session.update(this, now);
     }
 
     public static class Factory implements StatsTrackerFactory {
 
-        private static final long serialVersionUID = 3938040539764698610L;
+        private static final long serialVersionUID = -3375825127543236566L;
 
         @Override
         public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {
-            return new NanoTimeDurationTracker(sessionManager.getOrCreateSession(key));
+            return new MilliTimeDurationTracker(sessionManager.getOrCreateSession(key));
         }
     }
+
 }

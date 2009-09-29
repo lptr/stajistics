@@ -14,18 +14,15 @@
  */
 package org.stajistics.tracker;
 
-
 /**
  * 
- * 
- *
  * @author The Stajistics Project
  */
-public class TimeDurationTrackerTest extends AbstractStatsTrackerTestCase {
+public class MilliTimeDurationTrackerTest extends AbstractStatsTrackerTestCase {
 
     @Override
     protected StatsTracker createStatsTracker() {
-        return new TimeDurationTracker(mockSession);
+        return new MilliTimeDurationTracker(mockSession);
     }
 
 }

@@ -18,49 +18,61 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 
+import sun.misc.Perf;
+
 /**
- * A tracker that tracks time duration with nanosecond precision 
- * (but not necessarily nanosecond accuracy).
+ * A tracker that tracks time duration with high precision. It uses
+ * <code>sun.misc.Perf</code>, a high performance time measurement service. 
+ * The actual time is calculated as <code>(endTicks - startTicks) * 1000 / frequency</code>. 
  * The value is stored as a fraction of milliseconds.
  *
- * @see System#nanoTime()
+ * <p>
+ * <b>Note:</b> This class uses proprietary Sun APIs, therefore it is not
+ * guaranteed to work with future versions of the Sun VM, or other VMs. The safest way 
+ * to use this tracker is to create it using {@link TimeDurationTracker#FACTORY} 
+ * which safely selects the most precise method of time duration measurement available.
  *
  * @author The Stajistics Project
  */
-public class NanoTimeDurationTracker extends TimeDurationTracker {
+public class PerfTimeDurationTracker extends TimeDurationTracker {
 
-    private static final long serialVersionUID = 4797710237784883447L;
+    private static final long serialVersionUID = 9134751181550384765L;
+
+    private static final Perf PERF = Perf.getPerf();
+
+    private static final double CONVERSION = 1e3 / PERF.highResFrequency();
 
     public static final StatsTrackerFactory FACTORY = new Factory();
 
-    private long nanoTime;
+    private long startTicks;
 
-    public NanoTimeDurationTracker(final StatsSession session) {
+    public PerfTimeDurationTracker(final StatsSession session) {
         super(session);
     }
 
     @Override
     protected void trackImpl(final long now) {
-        nanoTime = System.nanoTime();
+        startTicks = PERF.highResCounter();
 
         super.trackImpl(now);
     }
 
     @Override
     protected void commitImpl() {
-        value = (System.nanoTime() - nanoTime) / 1000000d;
+        long endTicks = PERF.highResCounter();
+        value = (endTicks - startTicks) * CONVERSION;
 
         session.update(this, -1);
     }
 
     public static class Factory implements StatsTrackerFactory {
 
-        private static final long serialVersionUID = 3938040539764698610L;
+        private static final long serialVersionUID = 6891282563577243942L;
 
         @Override
         public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {
-            return new NanoTimeDurationTracker(sessionManager.getOrCreateSession(key));
+            return new PerfTimeDurationTracker(sessionManager.getOrCreateSession(key));
         }
     }
 }

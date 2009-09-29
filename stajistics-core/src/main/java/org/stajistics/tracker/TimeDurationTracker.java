@@ -14,45 +14,37 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
-import org.stajistics.session.StatsSessionManager;
-
-
 
 /**
- * 
- * 
+ * A common base class for time duration trackers. The class chooses a
+ * {@link #FACTORY} that provides the most precise measurements on the current
+ * JVM. If <code>sun.misc.Perf</code> is available, the
+ * {@link PerfTimeDurationTracker#FACTORY} is chosen, otherwise the
+ * {@link NanoTimeDurationTracker#FACTORY} is chosen.
  *
  * @author The Stajistics Project
  */
-public class TimeDurationTracker extends AbstractStatsTracker {
+public abstract class TimeDurationTracker extends AbstractStatsTracker {
 
     private static final long serialVersionUID = 4156520024679062924L;
 
-    public static final StatsTrackerFactory FACTORY = new Factory();
+    public static final StatsTrackerFactory FACTORY;
+
+    static {
+        StatsTrackerFactory trackerFactory;
+        try {
+            Class.forName("sun.misc.Perf");
+            trackerFactory = PerfTimeDurationTracker.FACTORY;
+
+        } catch (ClassNotFoundException ex) {
+            trackerFactory = NanoTimeDurationTracker.FACTORY;
+        }
+
+        FACTORY = trackerFactory;
+    }
 
     public TimeDurationTracker(final StatsSession session) {
         super(session);
     }
-
-    @Override
-    protected void commitImpl() {
-        final long now = System.currentTimeMillis(); 
-        value = now - this.timeStamp;
-
-        session.update(this, now);
-    }
-
-    public static class Factory implements StatsTrackerFactory {
-
-        private static final long serialVersionUID = -3375825127543236566L;
-
-        @Override
-        public StatsTracker createTracker(final StatsKey key,
-                                          final StatsSessionManager sessionManager) {
-            return new TimeDurationTracker(sessionManager.getOrCreateSession(key));
-        }
-    }
-
 }
