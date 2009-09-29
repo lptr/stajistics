@@ -5,25 +5,15 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.stajistics</groupId>
   <artifactId>stajistics-examples</artifactId>
   <name>Stajistics Examples</name>
-  <version>0.1-SNAPSHOT</version>
   <description>Example usages of the Stajistics API</description>
-
-  <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-examples/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-examples/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-examples</url>
-    <tag>trunk</tag>
-  </scm>
 
   <dependencies>
     <dependency>
-      <groupId>org.stajistics</groupId>
-      <artifactId>stajistics</artifactId>
-      <version>0.1-SNAPSHOT</version>
-      <scope>compile</scope>
+      <groupId>${pom.groupId}</groupId>
+      <artifactId>stajistics-core</artifactId>
+      <version>${pom.version}</version>
     </dependency>
   </dependencies>
 </project>

@@ -3,30 +3,20 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.stajistics</groupId>
   <artifactId>stajistics-groovy</artifactId>
   <name>Stajistics Groovy</name>
-  <version>0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
 
   <parent>
     <groupId>org.stajistics</groupId>
     <artifactId>stajistics-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
-
-  <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-groovy/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-groovy/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-groovy</url>
-    <tag>trunk</tag>
-  </scm>
 
   <dependencies>
     <dependency>
       <groupId>${pom.groupId}</groupId>
-      <artifactId>stajistics</artifactId>
+      <artifactId>stajistics-core</artifactId>
+	  <version>${pom.version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
