@@ -49,10 +49,10 @@ public final class Stajistics {
         }
 
         if (name == null) {
-            name = "?";
+            name = "";
         }
         if (version == null) {
-            version = "?";
+            version = "";
         }
     }
 
