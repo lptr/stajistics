@@ -55,9 +55,11 @@ public abstract class AbstractStatsKey implements StatsKey {
     }
 
     protected void setHashCode() {
-        this.hashCode = name.hashCode() ^
-                        getAttributeCount() ^
-                        getAttributes().hashCode();
+        int h = 31 + name.hashCode();
+        h = h * 31 + getAttributeCount();
+        h = h * 31 + getAttributes().hashCode();
+
+        this.hashCode = h;
     }
 
     @Override
@@ -75,6 +77,7 @@ public abstract class AbstractStatsKey implements StatsKey {
             return true;
         }
 
+        // Try to short-circuit the attribute equality checks
         if (this.hashCode != other.hashCode()) {
             return false;
         }

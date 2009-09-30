@@ -61,7 +61,7 @@ public class StatsSelectiveProxy extends StatsProxy {
                              final T target,
                              final SelectionCriteria criteria) {
         Class<? super T>[] ifaces = (Class<? super T>[]) target.getClass()
-                .getInterfaces();
+                                                               .getInterfaces();
         return wrap(statsManager, key, target, criteria, ifaces);
     }
 
@@ -72,7 +72,7 @@ public class StatsSelectiveProxy extends StatsProxy {
                                          final SelectionCriteria criteria,
                                          final Class<T> iface) {
         return wrap(statsManager, key, target, criteria,
-                (Class<T>[]) new Class[] { iface });
+                    (Class<T>[]) new Class[] { iface });
     }
 
     @SuppressWarnings("unchecked")
@@ -82,10 +82,10 @@ public class StatsSelectiveProxy extends StatsProxy {
                                          final SelectionCriteria criteria,
                                          final Class<?>[] ifaces) {
         ClassLoader classLoader = Thread.currentThread()
-                .getContextClassLoader();
+                                        .getContextClassLoader();
 
         T proxy = (T) Proxy.newProxyInstance(classLoader, ifaces,
-                new StatsSelectiveProxy(statsManager, key, target, criteria));
+                                             new StatsSelectiveProxy(statsManager, key, target, criteria));
         return proxy;
     }
 
