@@ -71,7 +71,7 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void restore(final DataSet dataSet) {
-        product.set(dataSet.getField(Field.PRODUCT,Double.class));
+        product.set(dataSet.getField(Field.PRODUCT, Double.class));
         sumOfSquares.set(dataSet.getField(Field.SUM_OF_SQUARES, Double.class));
         sumOfInverses.set(dataSet.getField(Field.SUM_OF_INVERSES, Double.class));
     }
