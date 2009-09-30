@@ -46,7 +46,7 @@ public class XMLSessionSnapshot extends AbstractSessionSnapshot {
 	public XMLSessionSnapshot() {}
 
 	public XMLSessionSnapshot(final StatsSession realSession,
-	                   final StatsConfig config) {
+	                          final StatsConfig config) {
 	    setKey(realSession.getKey());
 
 		trackerFactory = extractTrackerFactoryClassName(config.getTrackerFactory());

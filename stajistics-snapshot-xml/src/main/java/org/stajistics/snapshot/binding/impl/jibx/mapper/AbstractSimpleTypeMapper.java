@@ -83,12 +83,16 @@ public abstract class AbstractSimpleTypeMapper implements IMarshaller,IUnmarshal
 
     protected static final Map<String,ValueUnmarshaller> VALUE_UNMARSHALLERS = new HashMap<String,ValueUnmarshaller>();
     static {
+        // byte
         VALUE_UNMARSHALLERS.put(Byte.class.getName(), new ValueUnmarshaller() {
             @Override
             public Object unmarshal(final String value) throws Exception {
                 return Utility.parseByte(value);
             }
         });
+        VALUE_UNMARSHALLERS.put(byte.class.getName(), VALUE_UNMARSHALLERS.get(Byte.class.getName()));
+
+        // char
         VALUE_UNMARSHALLERS.put(Character.class.getName(), new ValueUnmarshaller() {
             @Override
             public Object unmarshal(final String value)
@@ -96,6 +100,9 @@ public abstract class AbstractSimpleTypeMapper implements IMarshaller,IUnmarshal
                 return Utility.parseChar(value);
             }
         });
+        VALUE_UNMARSHALLERS.put(char.class.getName(), VALUE_UNMARSHALLERS.get(Character.class.getName()));
+
+        // boolean
         VALUE_UNMARSHALLERS.put(Boolean.class.getName(), new ValueUnmarshaller() {
             @Override
             public Object unmarshal(final String value)
@@ -103,12 +110,18 @@ public abstract class AbstractSimpleTypeMapper implements IMarshaller,IUnmarshal
                 return Utility.parseBoolean(value);
             }
         });
+        VALUE_UNMARSHALLERS.put(boolean.class.getName(), VALUE_UNMARSHALLERS.get(Boolean.class.getName()));
+
+        // short
         VALUE_UNMARSHALLERS.put(Short.class.getName(), new ValueUnmarshaller() {
             @Override
             public Object unmarshal(final String value) throws Exception {
                 return Utility.parseShort(value);
             }
         });
+        VALUE_UNMARSHALLERS.put(short.class.getName(), VALUE_UNMARSHALLERS.get(Short.class.getName()));
+
+        // int
         VALUE_UNMARSHALLERS.put(Integer.class.getName(), new ValueUnmarshaller() {
             @Override
             public Object unmarshal(final String value)
@@ -116,23 +129,42 @@ public abstract class AbstractSimpleTypeMapper implements IMarshaller,IUnmarshal
                 return Utility.parseInt(value);
             }
         });
+        VALUE_UNMARSHALLERS.put(int.class.getName(), VALUE_UNMARSHALLERS.get(Integer.class.getName()));
+
+        // long
         VALUE_UNMARSHALLERS.put(Long.class.getName(), new ValueUnmarshaller() {
             @Override
             public Object unmarshal(final String value) throws Exception {
                 return Utility.parseLong(value);
             }
         });
+        VALUE_UNMARSHALLERS.put(long.class.getName(), VALUE_UNMARSHALLERS.get(Long.class.getName()));
+
+        // float
+        VALUE_UNMARSHALLERS.put(Float.class.getName(), new ValueUnmarshaller() {
+            @Override
+            public Object unmarshal(final String value) throws Exception {
+                return Utility.parseFloat(value);
+            }
+        });
+        VALUE_UNMARSHALLERS.put(float.class.getName(), VALUE_UNMARSHALLERS.get(Float.class.getName()));
+
+        // double
         VALUE_UNMARSHALLERS.put(Double.class.getName(), DEFAULT_VALUE_UNMARSHALLER);
+        VALUE_UNMARSHALLERS.put(double.class.getName(), DEFAULT_VALUE_UNMARSHALLER);
+
+        // Date
         VALUE_UNMARSHALLERS.put(Date.class.getName(), new ValueUnmarshaller() {
             @Override
             public Object unmarshal(final String value) throws Exception {
                 return Utility.deserializeDateTime(value);
             }
         });
+
+        // String
         VALUE_UNMARSHALLERS.put(String.class.getName(),new ValueUnmarshaller() {
             @Override
-            public Object unmarshal(final String value)
-                    throws Exception {
+            public Object unmarshal(final String value) throws Exception {
                 return value;
             }
         });
@@ -177,9 +209,35 @@ public abstract class AbstractSimpleTypeMapper implements IMarshaller,IUnmarshal
         // type
         if (!type.equals(Double.class.getName())) {
             ctx.startTag(index, ELEMENT_TYPE);
-            ctx.content(type);
+            ctx.content(getTypeName(value.getClass()));
             ctx.endTag(index, ELEMENT_TYPE);
         }
+    }
+
+    private String getTypeName(final Class<?> type) {
+        String typeName;
+
+        if (type == Boolean.class) {
+            typeName = boolean.class.getName();
+        } else if (type == Byte.class) {
+            typeName = byte.class.getName();
+        } else if (type == Character.class) {
+            typeName = char.class.getName();
+        } else if (type == Short.class) {
+            typeName = short.class.getName();
+        } else if (type == Integer.class) {
+            typeName = int.class.getName();
+        } else if (type == Long.class) {
+            typeName = long.class.getName();
+        } else if (type == Float.class) {
+            typeName = float.class.getName();
+        } else if (type == Double.class) {
+            typeName = double.class.getName();
+        } else {
+            typeName = type.getName();
+        }
+
+        return typeName;
     }
 
     private ValueMarshaller getValueMarshaller(final String type) {
@@ -190,6 +248,7 @@ public abstract class AbstractSimpleTypeMapper implements IMarshaller,IUnmarshal
         return vm;
     }
 
+    @SuppressWarnings("unchecked")
     protected String unmarshalNameValuePair(final UnmarshallingContext ctx,
                                             final Object target) throws JiBXException {
         // name

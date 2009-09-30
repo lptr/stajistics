@@ -25,7 +25,17 @@ import org.stajistics.snapshot.binding.ApplicationEnvironment;
  */
 public class XMLApplicationEnvironment implements ApplicationEnvironment {
 
-    private HashMap<String,String> properties = new HashMap<String,String>();
+    private HashMap<String,String> properties;
+
+    public XMLApplicationEnvironment() {
+        properties = new HashMap<String,String>();
+    }
+
+    private XMLApplicationEnvironment(final boolean dummy) {}
+
+    public static XMLApplicationEnvironment factory() {
+        return new XMLApplicationEnvironment(false);
+    }
 
     @Override
     public Map<String,String> getProperties() {

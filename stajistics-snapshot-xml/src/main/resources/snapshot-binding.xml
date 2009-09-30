@@ -19,7 +19,8 @@
 
   <mapping name="snapshot" 
       class="org.stajistics.snapshot.binding.impl.jibx.XMLStatsSnapshot"
-      ns="http://www.stajistics.org/StatisticsSnapshot">
+      ns="http://www.stajistics.org/StatisticsSnapshot"
+      factory="org.stajistics.snapshot.binding.impl.jibx.XMLStatsSnapshot.factory">
     <value name="schemaVersion" field="schemaVersion" usage="required" />
     <value name="stajisticsVersion" field="stajisticsVersion" usage="required" />
 
@@ -29,11 +30,15 @@
     </structure>
 
     <structure name="environment">
-      <structure name="system" field="systemEnvironment">
+      <structure name="system" 
+          field="systemEnvironment" 
+          factory="org.stajistics.snapshot.binding.impl.jibx.XMLSystemEnvironment.factory">
         <value name="hostName" field="hostName" usage="required" />
         <structure field="properties" usage="optional" />
       </structure>
-      <structure name="application" field="applicationEnvironment">
+      <structure name="application" 
+          field="applicationEnvironment"
+          factory="org.stajistics.snapshot.binding.impl.jibx.XMLApplicationEnvironment.factory">
         <structure field="properties" usage="optional" />
       </structure>
     </structure>
@@ -75,4 +80,5 @@
       class="org.stajistics.data.DataSet" 
       marshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.DataSetMapper"
       unmarshaller="org.stajistics.snapshot.binding.impl.jibx.mapper.DataSetMapper" />
+
 </binding>
