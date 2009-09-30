@@ -14,13 +14,13 @@
  */
 package org.stajistics.snapshot.binding.impl.jibx.mapper;
 
-import java.util.logging.Logger;
-
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 import org.jibx.runtime.impl.MarshallingContext;
 import org.jibx.runtime.impl.UnmarshallingContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
 import org.stajistics.data.MetaData;
@@ -33,7 +33,7 @@ import org.stajistics.data.MetaDataSet;
  */
 public class DataSetMapper extends AbstractSimpleTypeMapper {
 
-    private static final Logger logger = Logger.getLogger(DataSetMapper.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(DataSetMapper.class);
 
     //private static final int DEFAULT_SIZE = 32;
 

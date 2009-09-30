@@ -19,13 +19,13 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
@@ -43,7 +43,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
 
     private static final long serialVersionUID = -9078257122643636861L;
 
-    private static Logger logger = Logger.getLogger(DefaultStatsManagement.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(DefaultStatsManagement.class);
 
     static final String DOMAIN = org.stajistics.Stats.class.getPackage().getName();
 
@@ -319,9 +319,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
     private void registerMBean(final Object mBean,
                                final ObjectName name) throws Exception {
         if (mBeanServer.isRegistered(name)) {
-            if (logger.isLoggable(Level.WARNING)) {
-                logger.warning("Replacing existing MBean: " + name);
-            }
+            logger.warn("Replacing existing MBean: {}", name);
 
             mBeanServer.unregisterMBean(name);
         }
@@ -372,7 +370,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
             buf.append('"');
         }
 
-        buf.append(escapeValue((String)value));
+        buf.append(escapeValue(value));
 
         if (valueNeedsQuotes) {
             buf.append('"');
@@ -419,7 +417,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
                                         final Class<?> mBeanType,
                                         final StatsKey key,
                                         final ObjectName objectName) {
-        if (logger.isLoggable(Level.INFO)) {
+        if (logger.isInfoEnabled()) {
             StringBuilder buf = new StringBuilder(256);
             if (register) {
                 buf.append("Registered ");
@@ -446,7 +444,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
                                         final StatsKey key,
                                         final String objectName,
                                         final Exception e) {
-        if (logger.isLoggable(Level.SEVERE)) {
+        if (logger.isErrorEnabled()) {
             StringBuilder buf = new StringBuilder(256);
             buf.append("Failed to ");
 
@@ -465,7 +463,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
             buf.append(", ObjectName: ");
             buf.append(objectName);
 
-            logger.log(Level.SEVERE, buf.toString(), e);
+            logger.error(buf.toString(), e);
         }
     }
 
@@ -477,8 +475,8 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
         if (!isPlatformMBeanServer) {
             isPlatformMBeanServer = true;
 
-            logger.warning("Restoring transient MBeanServer after deserialization to the " +
-                           "platform MBeanServer when the orginal was non-platform");
+            logger.warn("Restoring transient MBeanServer after deserialization to the "
+                      + "platform MBeanServer when the orginal was non-platform");
         }
 
         mBeanServer = ManagementFactory.getPlatformMBeanServer();

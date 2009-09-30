@@ -19,9 +19,9 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.snapshot.binding.SystemEnvironment;
 
 /**
@@ -31,7 +31,7 @@ import org.stajistics.snapshot.binding.SystemEnvironment;
  */
 public class XMLSystemEnvironment implements SystemEnvironment {
 
-    private static Logger logger = Logger.getLogger(XMLSystemEnvironment.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(XMLSystemEnvironment.class);
 
     private String hostName;
     private HashMap<String,String> properties;
@@ -41,7 +41,7 @@ public class XMLSystemEnvironment implements SystemEnvironment {
             hostName = InetAddress.getLocalHost()
                                   .getHostName();
         } catch (UnknownHostException e) {
-            logger.log(Level.SEVERE, "Failed to get host name");
+            logger.error("Failed to get host name", e);
         }
 
         Properties sysProps = System.getProperties();
@@ -82,6 +82,7 @@ public class XMLSystemEnvironment implements SystemEnvironment {
             properties.hashCode();
     }
 
+    @Override
     public boolean equals(final Object obj) {
         return (obj instanceof XMLSystemEnvironment) && equals((XMLSystemEnvironment)obj);
     }

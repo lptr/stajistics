@@ -15,9 +15,9 @@
 package org.stajistics.management;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 
@@ -30,6 +30,8 @@ import org.stajistics.session.StatsSessionManager;
 public class DefaultStatsSessionManagerMBean implements StatsSessionManagerMBean {
 
     protected static final String SESSION_DUMP_LOGGER_NAME = "stajistics.session.dump";
+    private static final Logger sessionLogger = LoggerFactory
+            .getLogger(SESSION_DUMP_LOGGER_NAME);
 
     protected final StatsSessionManager sessionManager;
 
@@ -53,10 +55,9 @@ public class DefaultStatsSessionManagerMBean implements StatsSessionManagerMBean
 
     @Override
     public void dumpAllSessions() throws IOException {
-        Logger logger = Logger.getLogger(SESSION_DUMP_LOGGER_NAME);
-        if (logger.isLoggable(Level.INFO)) {
+        if (sessionLogger.isInfoEnabled()) {
             for (StatsSession session : sessionManager.getSessions()) {
-                logger.info(session.toString());
+                sessionLogger.info(session.toString());
             }
         }
     }

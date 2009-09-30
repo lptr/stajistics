@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -30,6 +28,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.StatsTracker;
@@ -42,7 +42,7 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class StatsFilter implements Filter {
 
-    private static final Logger logger = Logger.getLogger(StatsFilter.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(StatsFilter.class);
 
     static final String INIT_PARAM_KEY_NAME = "keyName";
     static final String INIT_PARAM_BIND_PARAMS = "bindParameters";
@@ -105,9 +105,7 @@ public class StatsFilter implements Filter {
                                  .newKey();
         }
 
-        if (logger.isLoggable(Level.INFO)) {
-            logger.info(getClass().getSimpleName() + " initialized");
-        }
+        logger.info("{} initialized", getClass().getSimpleName());
     }
 
     private String[] parseBindings(final FilterConfig config,
@@ -133,9 +131,7 @@ public class StatsFilter implements Filter {
 
         exceptionKey = null;
 
-        if (logger.isLoggable(Level.INFO)) {
-            logger.info(getClass().getSimpleName() + " destroyed");
-        }
+        logger.info("{} destroyed", getClass().getSimpleName());
     }
 
     private StatsTracker getTracker(final ServletRequest request) {
@@ -183,10 +179,8 @@ public class StatsFilter implements Filter {
     private void addHeaderBoundStatsKeys(final ServletRequest request,
                                          final List<StatsKey> keyList) {
         if (!(request instanceof HttpServletRequest)) {
-            if (logger.isLoggable(Level.WARNING)) {
-                logger.warning("Header bindings specified in filter init-params but not processing HTTP request: " + 
-                               Arrays.asList(bindHeaders));
-            }
+            logger.warn("Header bindings specified in filter init-params but not processing HTTP request: {}", 
+                           Arrays.toString(bindHeaders));
 
             return;
         }

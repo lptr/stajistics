@@ -16,8 +16,6 @@ package org.stajistics.management;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -30,6 +28,8 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSessionManager;
 
@@ -40,6 +40,9 @@ import org.stajistics.session.StatsSessionManager;
  * @author The Stajistics Project
  */
 public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean {
+
+    private static final Logger sessionLogger = LoggerFactory
+            .getLogger(DefaultStatsSessionManagerMBean.SESSION_DUMP_LOGGER_NAME);
 
     protected static final String ATTR_IMPLEMENTATION = "Implementation";
     protected static final String ATTR_DATA_RECORDERS = "DataRecorders";
@@ -199,9 +202,8 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
             sessionManager.remove(session);
 
         } else if (actionName.equals(OP_DUMP)) {
-            Logger logger = Logger.getLogger(DefaultStatsSessionManagerMBean.SESSION_DUMP_LOGGER_NAME);
-            if (logger.isLoggable(Level.INFO)) {
-                logger.info(session.toString());
+            if (sessionLogger.isInfoEnabled()) {
+                sessionLogger.info(session.toString());
             }
 
         } else if (actionName.equals(OP_COLLECT_DATA)) {
