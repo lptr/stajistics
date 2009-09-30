@@ -190,6 +190,7 @@ public class Range implements Iterable<Double>,Serializable {
                name.hashCode();
     }
 
+    @Override
     public String toString() {
         return getName();
     }

@@ -14,14 +14,17 @@
  */
 package org.stajistics.snapshot;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  * @author The Stajistics Project
  */
 public class DefaultSnapshotMarshallerFactory implements SnapshotMarshallerFactory {
+
+    private static final Logger logger = LoggerFactory
+            .getLogger(DefaultSnapshotMarshallerFactory.class);
 
     private static final String DEFAULT_SNAPSHOT_MARSHALLER_CLASS_NAME = 
         "org.stajistics.snapshot.binding.XMLSnapshotMarshaller";
@@ -35,10 +38,8 @@ public class DefaultSnapshotMarshallerFactory implements SnapshotMarshallerFacto
             marshaller = (SnapshotMarshaller)marshallerClass.newInstance();
 
         } catch (Exception e) {
-            Logger logger = Logger.getLogger(DefaultSnapshotMarshallerFactory.class.getName());
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Failed to locate XMLSnapshotMarshaller; falling back on SerialSnapshotMarshaller.");
-            }
+            logger.debug("Failed to locate XMLSnapshotMarshaller; "
+                       + "falling back on SerialSnapshotMarshaller.");
 
             marshaller = new SerialSnapshotMarshaller();
         }

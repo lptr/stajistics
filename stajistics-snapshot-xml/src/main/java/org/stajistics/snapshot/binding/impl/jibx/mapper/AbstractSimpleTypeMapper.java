@@ -17,8 +17,6 @@ package org.stajistics.snapshot.binding.impl.jibx.mapper;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jibx.runtime.IAliasable;
 import org.jibx.runtime.IMarshaller;
@@ -28,6 +26,7 @@ import org.jibx.runtime.JiBXException;
 import org.jibx.runtime.Utility;
 import org.jibx.runtime.impl.MarshallingContext;
 import org.jibx.runtime.impl.UnmarshallingContext;
+import org.slf4j.Logger;
 import org.stajistics.data.DataContainer;
 
 /**
@@ -200,8 +199,7 @@ public abstract class AbstractSimpleTypeMapper implements IMarshaller,IUnmarshal
         try {
             ctx.content(marshaller.marshal(value));
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, 
-                            "Failed to marshal field: " + name + " = " + value, 
+            getLogger().error("Failed to marshal field: " + name + " = " + value, 
                             e);
         }
         ctx.endTag(index, ELEMENT_VALUE);
@@ -293,8 +291,7 @@ public abstract class AbstractSimpleTypeMapper implements IMarshaller,IUnmarshal
                 throw new IllegalArgumentException("Unsupported unmarshal target: " + target.getClass());
             }
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE,
-                            "Failed to unmarshal value field: " + name + " = " + strValue, 
+            getLogger().error("Failed to unmarshal value field: " + name + " = " + strValue, 
                             e);
         }
 

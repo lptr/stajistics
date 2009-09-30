@@ -36,51 +36,51 @@ public class XMLSessionSnapshot extends AbstractSessionSnapshot {
 
 	private DefaultStatsKey key;
 
-	private String trackerFactory;
-	private String sessionFactory;
-	private ArrayList<String> dataRecorders;
-	private String unit;
+    private String trackerFactory;
+    private String sessionFactory;
+    private ArrayList<String> dataRecorders;
+    private String unit;
 
-	private DataSet dataSet;
+    private DataSet dataSet;
 
-	public XMLSessionSnapshot() {}
+    public XMLSessionSnapshot() {}
 
 	public XMLSessionSnapshot(final StatsSession realSession,
 	                          final StatsConfig config) {
 	    setKey(realSession.getKey());
 
-		trackerFactory = extractTrackerFactoryClassName(config.getTrackerFactory());
-		sessionFactory = config.getSessionFactory().getClass().getName();
+        trackerFactory = extractTrackerFactoryClassName(config.getTrackerFactory());
+        sessionFactory = config.getSessionFactory().getClass().getName();
 
-		List<DataRecorder> dataRecorders = realSession.getDataRecorders();
-		this.dataRecorders = new ArrayList<String>(dataRecorders.size());
-		for (DataRecorder dataRecorder : dataRecorders) {
-		    this.dataRecorders.add(dataRecorder.toString());
-		}
+        List<DataRecorder> dataRecorders = realSession.getDataRecorders();
+        this.dataRecorders = new ArrayList<String>(dataRecorders.size());
+        for (DataRecorder dataRecorder : dataRecorders) {
+            this.dataRecorders.add(dataRecorder.toString());
+        }
 
-		unit = config.getUnit();
+        unit = config.getUnit();
 
-		dataSet = realSession.collectData();
-	}
+        dataSet = realSession.collectData();
+    }
 
-	private String extractTrackerFactoryClassName(final StatsTrackerFactory factory) {
-	    if (factory instanceof CompositeStatsTrackerFactory) {
-	        Map<String,StatsTrackerFactory> factoryMap = ((CompositeStatsTrackerFactory)factory).getFactoryMap();
+    private String extractTrackerFactoryClassName(final StatsTrackerFactory factory) {
+        if (factory instanceof CompositeStatsTrackerFactory) {
+            Map<String,StatsTrackerFactory> factoryMap = ((CompositeStatsTrackerFactory)factory).getFactoryMap();
 
-	        StringBuilder buf = new StringBuilder(64 * factoryMap.size());
-	        for (Map.Entry<String,StatsTrackerFactory> entry : factoryMap.entrySet()) {
-	            buf.append(entry.getKey());
-	            buf.append(':');
-	            buf.append(entry.getValue().getClass().getName());
-	            buf.append(',');
-	        }
-	        buf.setLength(buf.length() - 1); // chop off trailing comma
+            StringBuilder buf = new StringBuilder(64 * factoryMap.size());
+            for (Map.Entry<String,StatsTrackerFactory> entry : factoryMap.entrySet()) {
+                buf.append(entry.getKey());
+                buf.append(':');
+                buf.append(entry.getValue().getClass().getName());
+                buf.append(',');
+            }
+            buf.setLength(buf.length() - 1); // chop off trailing comma
 
-	        return buf.toString();
-	    }
+            return buf.toString();
+        }
 
-	    return factory.getClass().getName();
-	}
+        return factory.getClass().getName();
+    }
 
     @Override
     public StatsKey getKey() {
@@ -132,10 +132,10 @@ public class XMLSessionSnapshot extends AbstractSessionSnapshot {
         this.unit = unit;
     }
 
-	@Override
-	public DataSet getDataSet() {
-		return dataSet;
-	}
+    @Override
+    public DataSet getDataSet() {
+        return dataSet;
+    }
 
     @Override
     public void setDataSet(final DataSet dataSet) {

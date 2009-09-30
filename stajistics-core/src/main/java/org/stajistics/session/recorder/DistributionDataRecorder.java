@@ -149,6 +149,7 @@ public class DistributionDataRecorder implements DataRecorder {
         return Math.sqrt(numerator / nMinus1);
     }
 
+    @Override
     public String toString() {
         return getClass().getSimpleName();
     }

@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
 
@@ -39,11 +39,11 @@ public class SynchronousStatsEventManager implements StatsEventManager {
 
     private static final long serialVersionUID = -1747663767850867849L;
 
-    private static final Logger logger = Logger.getLogger(SynchronousStatsEventManager.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SynchronousStatsEventManager.class);
 
     private final List<StatsEventHandler> globalEventHandlers = createEventHandlerList();
 
-    private ConcurrentMap<StatsKey,List<StatsEventHandler>> sessionEventHandlers =
+    private final ConcurrentMap<StatsKey,List<StatsEventHandler>> sessionEventHandlers =
         new ConcurrentHashMap<StatsKey,List<StatsEventHandler>>();
 
     protected List<StatsEventHandler> createEventHandlerList() {
@@ -163,9 +163,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
             throw new NullPointerException("target");
         }
 
-        if (logger.isLoggable(Level.FINEST)) {
-            logger.finest("Firing event: " + eventType + ", key: " + key);
-        }
+        logger.trace("Firing event: {}, key: {}", eventType, key);
 
         List<StatsEventHandler> sessionEventHandlers = getEventHandlers(key, false);
         if (sessionEventHandlers != null) {
@@ -183,10 +181,7 @@ public class SynchronousStatsEventManager implements StatsEventManager {
             try {
                 handler.handleStatsEvent(eventType, key, target);
             } catch (Exception e) {
-                logger.log(Level.SEVERE,
-                           "Uncaught Exception in " + 
-                               StatsEventHandler.class.getSimpleName(), 
-                           e);
+                logger.error("Uncaught Exception", e);
             }
         }
     }

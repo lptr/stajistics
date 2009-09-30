@@ -14,11 +14,9 @@
  */
 package org.stajistics.tracker;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.session.StatsSession;
-
 
 /**
  * 
@@ -30,7 +28,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
     private static final long serialVersionUID = 7869543246230561742L;
 
-    private static final Logger logger = Logger.getLogger(AbstractStatsTracker.class.getPackage().getName());
+    private static final Logger logger = LoggerFactory.getLogger(AbstractStatsTracker.class);
 
     protected StatsSession session;
 
@@ -57,9 +55,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     public final StatsTracker track() {
 
         if (tracking) {
-            if (logger.isLoggable(Level.WARNING)) {
-                logger.warning("track() called when already tracking: " + this);
-            }
+            logger.warn("track() called when already tracking: {}", this);
 
             return this;
         }
@@ -81,9 +77,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
     public final StatsTracker commit() {
 
         if (!tracking) {
-            if (logger.isLoggable(Level.WARNING)) {
-                logger.warning("commit() called when not tracking: " + this);
-            }
+            logger.warn("commit() called when not tracking: {}", this);
 
             return this;
         }

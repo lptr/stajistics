@@ -51,6 +51,7 @@ public class SingleAttributeStatsKeyTest extends AbstractStatsKeyTestCase {
     }
 
     @Test
+    @Override
     public void testConstructWithNullAttributes() {
         StatsKey key = createStatsKey(TEST_NAME, mockKeyFactory, null);
         assertEquals(0, key.getAttributeCount());

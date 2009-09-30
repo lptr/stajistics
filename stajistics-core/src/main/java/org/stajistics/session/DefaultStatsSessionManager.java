@@ -19,9 +19,9 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
@@ -39,7 +39,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
 
     private static final long serialVersionUID = 7815229695876668904L;
 
-    private static final Logger logger = Logger.getLogger(DefaultStatsSessionManager.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(DefaultStatsSessionManager.class);
 
     protected ConcurrentMap<StatsKey,StatsSession> sessionMap = 
         new ConcurrentHashMap<StatsKey,StatsSession>(128);
@@ -114,9 +114,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
         if (session == null) {
             session = createSession(key);
 
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Created StatsSession for key: " + key);
-            }
+            logger.debug("Created StatsSession for key: {}", key);
 
             StatsSession existingSession = sessionMap.putIfAbsent(key, session);
             if (existingSession != null) {

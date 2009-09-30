@@ -71,7 +71,6 @@ public class DefaultSnapshotController implements SnapshotController {
                                 final StatsSnapshot snapshot) {
 
         StatsSessionManager sessionManager = statsManager.getSessionManager();
-        StatsConfigManager configManager = statsManager.getConfigManager();
 
         Map<StatsKey,SessionSnapshot> sessionSnapshotMap = snapshot.getSessionSnapshots();
         for (SessionSnapshot sessionSnapshot : sessionSnapshotMap.values()) {

@@ -16,13 +16,14 @@ package org.stajistics.snapshot.binding.impl.jibx.mapper;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 import org.jibx.runtime.impl.MarshallingContext;
 import org.jibx.runtime.impl.UnmarshallingContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.DefaultStatsKey;
 import org.stajistics.StatsKey;
 
@@ -33,7 +34,7 @@ import org.stajistics.StatsKey;
  */
 public class StatsKeyMapper extends AbstractSimpleTypeMapper {
 
-    private static final Logger logger = Logger.getLogger(StatsKeyMapper.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(StatsKeyMapper.class);
 
     private static final String ELEMENT_ATTRIBUTES = "attributes";
     private static final String ELEMENT_ATTRIBUTE = "attribute";

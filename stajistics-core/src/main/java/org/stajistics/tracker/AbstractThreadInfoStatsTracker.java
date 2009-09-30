@@ -17,9 +17,9 @@ package org.stajistics.tracker;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -32,7 +32,7 @@ public abstract class AbstractThreadInfoStatsTracker extends AbstractStatsTracke
 
     private static final long serialVersionUID = 5195519555074189812L;
 
-    private static Logger logger = Logger.getLogger(AbstractThreadInfoStatsTracker.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(AbstractThreadInfoStatsTracker.class);
 
     private static volatile boolean hasSetContentionMonitoringEnabled = false;
     private static volatile boolean hasSetCPUTimeMonitoringEnabled = false;
@@ -58,15 +58,11 @@ public abstract class AbstractThreadInfoStatsTracker extends AbstractStatsTracke
                 threadMXBean.setThreadContentionMonitoringEnabled(true);
                 contentionMonitoringEnabled = true;
 
-                if (logger.isLoggable(Level.INFO)) {
-                    logger.info("Enabling thread contention monitoring");
-                }
+                logger.info("Enabling thread contention monitoring");
 
             } else {
-                if (logger.isLoggable(Level.WARNING)) {
-                    logger.warning("Thread contention monitoring is not supported in this JVM; " +
-                                   "Thread contention related trackers will be silent");
-                }
+                logger.warn("Thread contention monitoring is not supported in this JVM; "
+                          + "Thread contention related trackers will be silent");
             }
         }
     }
@@ -83,14 +79,10 @@ public abstract class AbstractThreadInfoStatsTracker extends AbstractStatsTracke
                 threadMXBean.setThreadCpuTimeEnabled(true);
                 cpuTimeMonitoringEnabled = true;
 
-                if (logger.isLoggable(Level.INFO)) {
-                    logger.info("Enabling thread CPU time monitoring");
-                }
+                logger.info("Enabling thread CPU time monitoring");
             } else {
-                if (logger.isLoggable(Level.WARNING)) {
-                    logger.warning("Thread CPU time monitoring is not supported in this JVM; " +
-                                   "Thread CPU time related trackers will be silent");
-                }
+                logger.warn("Thread CPU time monitoring is not supported in this JVM; "
+                          + "Thread CPU time related trackers will be silent");
             }
         }
     }

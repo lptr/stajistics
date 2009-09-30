@@ -86,7 +86,7 @@ public class SessionsMapper implements IMarshaller, IUnmarshaller, IAliasable {
             ctx.closeStartContent();
 
             for (Map.Entry<String,XMLSessionSnapshot> entry : map.entrySet()) {
-            	((IMarshallable)entry.getValue()).marshal(ctx);
+                ((IMarshallable)entry.getValue()).marshal(ctx);
             }
         }
 

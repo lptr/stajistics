@@ -61,11 +61,11 @@ public class StatsSelectiveProxyTest {
         try {
             Class<StatsSelectiveProxyTest> cls = StatsSelectiveProxyTest.class;
 
-            PRIVATE_METHOD = cls.getDeclaredMethod("privateTestMethod", null);
-            PRIVATE_STATIC_METHOD = cls.getDeclaredMethod("privateStaticTestMethod", null);
-            PROTECTED_METHOD = cls.getDeclaredMethod("protectedTestMethod", null);
-            PROTECTED_STATIC_METHOD = cls.getDeclaredMethod("protectedStaticTestMethod", null);
-            PUBLIC_METHOD = cls.getDeclaredMethod("publicTestMethod", null);
+            PRIVATE_METHOD = cls.getDeclaredMethod("privateTestMethod");
+            PRIVATE_STATIC_METHOD = cls.getDeclaredMethod("privateStaticTestMethod");
+            PROTECTED_METHOD = cls.getDeclaredMethod("protectedTestMethod");
+            PROTECTED_STATIC_METHOD = cls.getDeclaredMethod("protectedStaticTestMethod");
+            PUBLIC_METHOD = cls.getDeclaredMethod("publicTestMethod");
 
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
