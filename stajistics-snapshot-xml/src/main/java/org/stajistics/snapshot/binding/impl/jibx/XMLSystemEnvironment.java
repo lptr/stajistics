@@ -34,11 +34,9 @@ public class XMLSystemEnvironment implements SystemEnvironment {
     private static Logger logger = Logger.getLogger(XMLSystemEnvironment.class.getName());
 
     private String hostName;
-
     private HashMap<String,String> properties;
 
     public XMLSystemEnvironment() {
-        
         try {
             hostName = InetAddress.getLocalHost()
                                   .getHostName();
@@ -54,9 +52,7 @@ public class XMLSystemEnvironment implements SystemEnvironment {
         }
     }
 
-    private XMLSystemEnvironment(boolean dummy) {
-        //TODO: need to not overwrite unmarshalled properties with current system properties
-    }
+    private XMLSystemEnvironment(final boolean dummy) {}
 
     public static XMLSystemEnvironment factory() {
         return new XMLSystemEnvironment(false);

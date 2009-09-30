@@ -33,15 +33,30 @@ import org.stajistics.snapshot.binding.SystemEnvironment;
 @SuppressWarnings("unchecked")
 public class XMLStatsSnapshot extends AbstractStatsSnapshot {
 
-    private String schemaVersion = "1.0";
-    private String stajisticsVersion = Stajistics.getVersion();
-    private Date startTimeStamp = new Date();
-    private Date endTimeStamp = new Date();
+    private String schemaVersion;
+    private String stajisticsVersion;
+    private Date startTimeStamp;
+    private Date endTimeStamp;
 
-    private XMLApplicationEnvironment applicationEnvironment = new XMLApplicationEnvironment();
-    private XMLSystemEnvironment systemEnvironment = new XMLSystemEnvironment();
+    private XMLApplicationEnvironment applicationEnvironment;
+    private XMLSystemEnvironment systemEnvironment;
 
     private HashMap sessions = new HashMap();
+
+    public XMLStatsSnapshot() {
+        schemaVersion = "1.0";
+        stajisticsVersion = Stajistics.getVersion();
+        startTimeStamp = endTimeStamp = new Date();
+
+        applicationEnvironment = new XMLApplicationEnvironment();
+        systemEnvironment = new XMLSystemEnvironment();
+    }
+
+    private XMLStatsSnapshot(final boolean dummy) {}
+
+    public static XMLStatsSnapshot factory() {
+        return new XMLStatsSnapshot(false);
+    }
 
     @Override
     public String getSchemaVersion() {
@@ -74,17 +89,11 @@ public class XMLStatsSnapshot extends AbstractStatsSnapshot {
 
     @Override
     public SystemEnvironment getSystemEnvironment() {
-        if (systemEnvironment == null) {
-            systemEnvironment = new XMLSystemEnvironment();
-        }
         return systemEnvironment;
     }
 
     @Override
     public ApplicationEnvironment getApplicationEnvironment() {
-        if (applicationEnvironment == null) {
-            applicationEnvironment = new XMLApplicationEnvironment();
-        }
         return applicationEnvironment;
     }
 
