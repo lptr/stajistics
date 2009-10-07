@@ -10,4 +10,12 @@
   <name>Stajistics JDBC</name>
   <description>Stajistics JDBC integration</description>
 
+  <dependencies>
+    <dependency>
+      <groupId>${pom.groupId}</groupId>
+      <artifactId>stajistics-core</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+  </dependencies>
+
 </project>

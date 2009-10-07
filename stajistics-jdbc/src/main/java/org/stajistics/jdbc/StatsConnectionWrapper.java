@@ -14,23 +14,17 @@
  */
 package org.stajistics.jdbc;
 
-import java.sql.Array;
-import java.sql.Blob;
 import java.sql.CallableStatement;
-import java.sql.Clob;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
 import java.sql.PreparedStatement;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
 import java.sql.Statement;
-import java.sql.Struct;
-import java.util.Map;
-import java.util.Properties;
+
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.aop.ProxyFactory;
+import org.stajistics.jdbc.decorator.AbstractConnectionDecorator;
+import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -38,67 +32,59 @@ import java.util.Properties;
  *
  * @author The Stajistics Project
  */
-public class StatsConnectionWrapper implements Connection {
+public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
-    private final Connection delegate;
+    private final StatsTracker openClosedTracker;
+
+    private ProxyFactory<Statement> statementProxyFactory = ProxyFactory.NO_OP;
+    private ProxyFactory<CallableStatement> callableStatementProxyFactory = ProxyFactory.NO_OP;
+    private ProxyFactory<PreparedStatement> preparedStatementProxyFactory = ProxyFactory.NO_OP;
 
     public StatsConnectionWrapper(final Connection delegate) {
-        if (delegate == null) {
-            throw new NullPointerException("delegate");
-        }
-
-        this.delegate = delegate;
+        this(delegate, 
+             JDBCStatsKeyConstants.CONNECTION
+                                  .buildCopy()
+                                  .withNameSuffix("open")
+                                  .newKey());
     }
 
-    @Override
-    public void clearWarnings() throws SQLException {
-        delegate.clearWarnings();
+    public StatsConnectionWrapper(final Connection delegate,
+                                  final StatsKey openClosedKey) {
+        super(delegate);
+
+        if (openClosedKey == null) {
+            throw new NullPointerException("openClosedKey");
+        }
+
+        openClosedTracker = Stats.track(openClosedKey);
     }
 
     @Override
     public void close() throws SQLException {
-        delegate.close();
-    }
-
-    @Override
-    public void commit() throws SQLException {
-        delegate.commit();
-    }
-
-    @Override
-    public Array createArrayOf(final String typeName, final Object[] elements) throws SQLException {
-        return delegate.createArrayOf(typeName, elements);
-    }
-
-    @Override
-    public Blob createBlob() throws SQLException {
-        return delegate.createBlob();
-    }
-
-    @Override
-    public Clob createClob() throws SQLException {
-        return delegate.createClob();
-    }
-
-    @Override
-    public NClob createNClob() throws SQLException {
-        return delegate.createNClob();
-    }
-
-    @Override
-    public SQLXML createSQLXML() throws SQLException {
-        return delegate.createSQLXML();
+        try {
+            delegate().close();
+        } finally {
+            openClosedTracker.commit();
+        }
     }
 
     @Override
     public Statement createStatement() throws SQLException {
-        return delegate.createStatement();
+        Statement s = new StatsStatementWrapper(delegate().createStatement(), this);
+
+        s = statementProxyFactory.createProxy(s);
+
+        return s;
     }
 
     @Override
     public Statement createStatement(final int resultSetType, final int resultSetConcurrency) 
             throws SQLException {
-        return delegate.createStatement(resultSetType, resultSetConcurrency);
+        Statement s = new StatsStatementWrapper(delegate().createStatement(resultSetType, resultSetConcurrency), this);
+
+        s = statementProxyFactory.createProxy(s);
+
+        return s;
     }
 
     @Override
@@ -106,88 +92,30 @@ public class StatsConnectionWrapper implements Connection {
                                      final int resultSetConcurrency, 
                                      final int resultSetHoldability) 
             throws SQLException {
-        return delegate.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
-    }
+        Statement s = new StatsStatementWrapper(delegate().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability), this);
 
-    @Override
-    public Struct createStruct(final String typeName, final Object[] attributes) throws SQLException {
-        return delegate.createStruct(typeName, attributes);
-    }
+        s = statementProxyFactory.createProxy(s);
 
-    @Override
-    public boolean getAutoCommit() throws SQLException {
-        return delegate.getAutoCommit();
-    }
-
-    @Override
-    public String getCatalog() throws SQLException {
-        return delegate.getCatalog();
-    }
-
-    @Override
-    public Properties getClientInfo() throws SQLException {
-        return delegate.getClientInfo();
-    }
-
-    @Override
-    public String getClientInfo(final String name) throws SQLException {
-        return delegate.getClientInfo(name);
-    }
-
-    @Override
-    public int getHoldability() throws SQLException {
-        return delegate.getHoldability();
-    }
-
-    @Override
-    public DatabaseMetaData getMetaData() throws SQLException {
-        return delegate.getMetaData();
-    }
-
-    @Override
-    public int getTransactionIsolation() throws SQLException {
-        return delegate.getTransactionIsolation();
-    }
-
-    @Override
-    public Map<String,Class<?>> getTypeMap() throws SQLException {
-        return delegate.getTypeMap();
-    }
-
-    @Override
-    public SQLWarning getWarnings() throws SQLException {
-        return delegate.getWarnings();
-    }
-
-    @Override
-    public boolean isClosed() throws SQLException {
-        return delegate.isClosed();
-    }
-
-    @Override
-    public boolean isReadOnly() throws SQLException {
-        return delegate.isReadOnly();
-    }
-
-    @Override
-    public boolean isValid(final int timeout) throws SQLException {
-        return delegate.isValid(timeout);
-    }
-
-    @Override
-    public String nativeSQL(final String sql) throws SQLException {
-        return delegate.nativeSQL(sql);
+        return s;
     }
 
     @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
-        return delegate.prepareCall(sql);
+        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql), this, sql);
+
+        cs = callableStatementProxyFactory.createProxy(cs);
+
+        return cs;
     }
 
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) 
             throws SQLException {
-        return delegate.prepareCall(sql, resultSetType, resultSetConcurrency);
+        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql, resultSetType, resultSetConcurrency), this, sql);
+
+        cs = callableStatementProxyFactory.createProxy(cs);
+
+        return cs;
     }
 
     @Override
@@ -195,33 +123,57 @@ public class StatsConnectionWrapper implements Connection {
                                          int resultSetType,
                                          int resultSetConcurrency,
                                          int resultSetHoldability) throws SQLException {
-        return delegate.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability), this, sql);
+
+        cs = callableStatementProxyFactory.createProxy(cs);
+
+        return cs;
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return new StatsPreparedStatementWrapper(delegate.prepareStatement(sql), sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql), this, sql);
+
+        ps = preparedStatementProxyFactory.createProxy(ps);
+
+        return ps;
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-        return new StatsPreparedStatementWrapper(delegate.prepareStatement(sql, autoGeneratedKeys), sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, autoGeneratedKeys), this, sql);
+
+        ps = preparedStatementProxyFactory.createProxy(ps);
+
+        return ps;
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-        return new StatsPreparedStatementWrapper(delegate.prepareStatement(sql, columnIndexes), sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, columnIndexes), this, sql);
+
+        ps = preparedStatementProxyFactory.createProxy(ps);
+
+        return ps;
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-        return new StatsPreparedStatementWrapper(delegate.prepareStatement(sql, columnNames), sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, columnNames), this, sql);
+
+        ps = preparedStatementProxyFactory.createProxy(ps);
+
+        return ps;
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) 
             throws SQLException {
-        return new StatsPreparedStatementWrapper(delegate.prepareStatement(sql, resultSetType, resultSetConcurrency), sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, resultSetType, resultSetConcurrency), this, sql);
+
+        ps = preparedStatementProxyFactory.createProxy(ps);
+
+        return ps;
     }
 
     @Override
@@ -229,90 +181,10 @@ public class StatsConnectionWrapper implements Connection {
                                               int resultSetType,
                                               int resultSetConcurrency,
                                               int resultSetHoldability) throws SQLException {
-        return new StatsPreparedStatementWrapper(delegate.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability), sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability), this, sql);
+
+        ps = preparedStatementProxyFactory.createProxy(ps);
+
+        return ps;
     }
-
-    @Override
-    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-        delegate.releaseSavepoint(savepoint);
-    }
-
-    @Override
-    public void rollback() throws SQLException {
-        delegate.rollback();
-    }
-
-    @Override
-    public void rollback(Savepoint savepoint) throws SQLException {
-        delegate.rollback(savepoint);
-    }
-
-    @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        delegate.setAutoCommit(autoCommit);
-    }
-
-    @Override
-    public void setCatalog(String catalog) throws SQLException {
-        delegate.setCatalog(catalog);
-    }
-
-    @Override
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
-        delegate.setClientInfo(properties);
-    }
-
-    @Override
-    public void setClientInfo(String name, String value) throws SQLClientInfoException {
-        delegate.setClientInfo(name, value);
-    }
-
-    @Override
-    public void setHoldability(int holdability) throws SQLException {
-        delegate.setHoldability(holdability);
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) throws SQLException {
-        delegate.setReadOnly(readOnly);
-    }
-
-    @Override
-    public Savepoint setSavepoint() throws SQLException {
-        return delegate.setSavepoint();
-    }
-
-    @Override
-    public Savepoint setSavepoint(String name) throws SQLException {
-        return delegate.setSavepoint(name);
-    }
-
-    @Override
-    public void setTransactionIsolation(int level) throws SQLException {
-        delegate.setTransactionIsolation(level);
-    }
-
-    @Override
-    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-        delegate.setTypeMap(map);
-    }
-
-    @Override
-    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        if (iface.isAssignableFrom(delegate.getClass())) {
-            return true;
-        }
-
-        return delegate.isWrapperFor(iface);
-    }
-
-    @Override
-    public <T> T unwrap(final Class<T> iface) throws SQLException {
-        if (iface.isAssignableFrom(delegate.getClass())) {
-            return iface.cast(delegate);
-        }
-
-        return delegate.unwrap(iface);
-    }
-
 }

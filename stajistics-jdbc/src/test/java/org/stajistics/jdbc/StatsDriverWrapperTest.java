@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -31,6 +32,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.aop.StatsProxy;
 
 /**
  * 
@@ -63,6 +65,10 @@ public class StatsDriverWrapperTest {
             allowing(mockDriver).connect(with(VENDOR_URL),
                                          with(aNull(Properties.class)));
             will(returnValue(mockConnection));
+
+            allowing(mockDriver).getPropertyInfo(with(aNonNull(String.class)),
+                                                 with(aNull(Properties.class)));
+            will(returnValue(new DriverPropertyInfo[0]));
         }});
 
         DriverManager.registerDriver(mockDriver);
@@ -96,6 +102,13 @@ public class StatsDriverWrapperTest {
     @Test
     public void testConnectWithValidDriver() throws SQLException {
         Connection con = driver.connect(STATS_URL, null);
-        assertTrue(con instanceof StatsConnectionWrapper);
+        assertTrue(StatsProxy.isProxy(con));
+        assertTrue(StatsProxy.unwrap(con) instanceof StatsConnectionWrapper);
+    }
+
+    @Test
+    public void testPropertyInfo() throws SQLException {
+        DriverPropertyInfo[] info = driver.getPropertyInfo(STATS_URL, null);
+        assertEquals(1, info.length);
     }
 }

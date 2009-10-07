@@ -78,7 +78,8 @@ public class StatsDataBaseURL {
             return false;
         }
 
-        return dataBaseURL.startsWith(PREFIX);
+        return dataBaseURL.toLowerCase()
+                          .startsWith(PREFIX);
     }
 
     public String getOriginalURL() {
@@ -234,7 +235,11 @@ public class StatsDataBaseURL {
     /* NESTED CLASSES */
 
     public enum Parameters {
-        DELEGATE_DRIVER("statsDelegateDriver");
+        DELEGATE_DRIVER("statsDelegateDriver"),
+        KEY_PREFIX("statsKeyPrefix"),
+        DRIVER_WRAPPER_ENABLED("statsDriverWrapperEnabled"),
+        MANAGEMENT_ENABLED("statsManagementEnabled"),
+        PROXY_ENABLED("statsProxyEnabled");
 
         private final String parameterName;
 

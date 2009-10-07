@@ -20,15 +20,20 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.stajistics.aop.ProxyFactory;
+import org.stajistics.jdbc.decorator.AbstractWrapper;
+
 /**
  * 
  * 
  *
  * @author The Stajistics Project
  */
-public class StatsDataSourceWrapper implements DataSource {
+public class StatsDataSourceWrapper extends AbstractWrapper implements DataSource {
 
     private final DataSource delegate;
+
+    private final ProxyFactory<Connection> proxyFactory = new ConnectionProxyFactory();
 
     public StatsDataSourceWrapper(final DataSource delegate) {
         if (delegate == null) {
@@ -39,14 +44,27 @@ public class StatsDataSourceWrapper implements DataSource {
     }
 
     @Override
+    protected final DataSource delegate() {
+        return delegate;
+    }
+
+    @Override
     public Connection getConnection() throws SQLException {
-        return new StatsConnectionWrapper(delegate.getConnection());
+        Connection connection = new StatsConnectionWrapper(delegate.getConnection());
+
+        connection = proxyFactory.createProxy(connection);
+
+        return connection;
     }
 
     @Override
     public Connection getConnection(String username, String password)
             throws SQLException {
-        return new StatsConnectionWrapper(delegate.getConnection(username, password));
+        Connection connection = new StatsConnectionWrapper(delegate.getConnection(username, password));
+
+        connection = proxyFactory.createProxy(connection);
+
+        return connection;
     }
 
     @Override
@@ -69,21 +87,4 @@ public class StatsDataSourceWrapper implements DataSource {
         delegate.setLoginTimeout(seconds);
     }
 
-    @Override
-    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        if (iface.isAssignableFrom(delegate.getClass())) {
-            return true;
-        }
-
-        return delegate.isWrapperFor(iface);
-    }
-
-    @Override
-    public <T> T unwrap(final Class<T> iface) throws SQLException {
-        if (iface.isAssignableFrom(delegate.getClass())) {
-            return iface.cast(delegate);
-        }
-
-        return delegate.unwrap(iface);
-    }
 }
