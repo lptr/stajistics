@@ -29,22 +29,24 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class StatsResultSetWrapper extends AbstractResultSetDecorator {
 
+    private final StatsJDBCConfig config;
+
     private final StatsTracker openClosedTracker;
 
-    public StatsResultSetWrapper(final ResultSet delegate) {
-        this(delegate, JDBCStatsKeyConstants.RESULT_SET
-                                            .buildCopy()
-                                            .withNameSuffix("open")
-                                            .newKey());
-    }
-
     public StatsResultSetWrapper(final ResultSet delegate,
-                                 final StatsKey openClosedKey) {
+                                 final StatsJDBCConfig config) {
         super(delegate);
 
-        if (openClosedKey == null) {
-            throw new NullPointerException("openClosedKey");
+        if (config == null) {
+            throw new NullPointerException("config");
         }
+
+        this.config = config; 
+        
+        StatsKey openClosedKey = JDBCStatsKeyConstants.RESULT_SET
+                                                      .buildCopy()
+                                                      .withNameSuffix("open")
+                                                      .newKey();
 
         openClosedTracker = Stats.track(openClosedKey);
     }
@@ -57,5 +59,6 @@ public class StatsResultSetWrapper extends AbstractResultSetDecorator {
             openClosedTracker.commit();
         }
     }
+
     
 }

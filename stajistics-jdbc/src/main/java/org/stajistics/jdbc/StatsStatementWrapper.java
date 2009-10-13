@@ -31,36 +31,38 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class StatsStatementWrapper extends AbstractStatementDecorator {
 
+    private final StatsJDBCConfig config;
+
     private final Connection connection;
 
     private final StatsTracker openClosedTracker;
 
     public StatsStatementWrapper(final Statement delegate,
-                                 final Connection connection) {
-        this(delegate, connection, JDBCStatsKeyConstants.STATEMENT
-                                                        .buildCopy()
-                                                        .withNameSuffix("open")
-                                                        .newKey());
-    }
-
-    public StatsStatementWrapper(final Statement delegate,
                                  final Connection connection,
-                                 final StatsKey openClosedKey) {
+                                 final StatsJDBCConfig config) {
         super(delegate);
 
         if (connection == null) {
             throw new NullPointerException("connection");
         }
-        if (openClosedKey == null) {
-            throw new NullPointerException("openClosedKey");
+        if (config == null) {
+            throw new NullPointerException("config");
         }
 
         this.connection = connection;
+        this.config = config;
+
+        StatsKey openClosedKey = JDBCStatsKeyConstants.STATEMENT
+                                                      .buildCopy()
+                                                      .withNameSuffix("open")
+                                                      .newKey();
+
         openClosedTracker = Stats.track(openClosedKey);
     }
 
     private void handleSQL(final String sql) {
-        
+        config.getSQLAnalyzer()
+              .analyzeSQL(sql);
     }
 
     @Override
@@ -101,17 +103,17 @@ public class StatsStatementWrapper extends AbstractStatementDecorator {
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
         handleSQL(sql);
-        return new StatsResultSetWrapper(delegate().executeQuery(sql));
+        return new StatsResultSetWrapper(delegate().executeQuery(sql), config);
     }
 
     @Override
     public ResultSet getGeneratedKeys() throws SQLException {
-        return new StatsResultSetWrapper(delegate().getGeneratedKeys());
+        return new StatsResultSetWrapper(delegate().getGeneratedKeys(), config);
     }
 
     @Override
     public ResultSet getResultSet() throws SQLException {
-        return new StatsResultSetWrapper(delegate().getResultSet());
+        return new StatsResultSetWrapper(delegate().getResultSet(), config);
     }
     
     @Override

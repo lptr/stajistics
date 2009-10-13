@@ -15,65 +15,47 @@
 package org.stajistics.jdbc;
 
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
-import org.stajistics.aop.ProxyFactory;
-import org.stajistics.jdbc.decorator.AbstractWrapper;
+import javax.sql.ConnectionPoolDataSource;
+import javax.sql.PooledConnection;
 
 /**
  * 
- * 
- *
  * @author The Stajistics Project
+ *
  */
-public class StatsDataSourceWrapper extends AbstractWrapper implements DataSource {
+public class StatsConnectionPoolDataSourceWrapper implements
+        ConnectionPoolDataSource {
 
-    private final DataSource delegate;
+    private ConnectionPoolDataSource delegate;
 
     private StatsJDBCConfig config;
-    private ProxyFactory<Connection> proxyFactory;
 
-    public StatsDataSourceWrapper(final DataSource delegate) {
-        if (delegate == null) {
-            throw new NullPointerException("delegate");
-        }
-
+    public StatsConnectionPoolDataSourceWrapper() {
+        
+    }
+    
+    public StatsConnectionPoolDataSourceWrapper(final ConnectionPoolDataSource delegate) {
         this.delegate = delegate;
     }
 
-    public StatsJDBCConfig getConfig() {
-        return config;
-    }
-
-    public void setConfig(final StatsJDBCConfig config) {
-        this.config = config; 
-    }
-    
     @Override
-    protected final DataSource delegate() {
-        return delegate;
+    public PooledConnection getPooledConnection() throws SQLException {
+        
+        PooledConnection pc = new StatsPooledConnectionWrapper(delegate.getPooledConnection(), config);
+
+        return pc;
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
-        Connection connection = new StatsConnectionWrapper(delegate.getConnection(), config);
-
-        connection = proxyFactory.createProxy(connection);
-
-        return connection;
-    }
-
-    @Override
-    public Connection getConnection(String username, String password)
+    public PooledConnection getPooledConnection(final String user, 
+                                                final String password)
             throws SQLException {
-        Connection connection = new StatsConnectionWrapper(delegate.getConnection(username, password), config);
+        PooledConnection pc = new StatsPooledConnectionWrapper(delegate.getPooledConnection(user, password), config);
 
-        connection = proxyFactory.createProxy(connection);
-
-        return connection;
+        
+        return pc;
     }
 
     @Override

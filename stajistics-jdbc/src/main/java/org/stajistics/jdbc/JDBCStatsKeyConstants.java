@@ -14,11 +14,13 @@
  */
 package org.stajistics.jdbc;
 
-import java.beans.Statement;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+
+import javax.sql.PooledConnection;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
@@ -30,14 +32,16 @@ import org.stajistics.StatsKey;
  */
 public interface JDBCStatsKeyConstants {
 
-    StatsKey PARENT = Stats.newKey(Connection.class
-                                             .getPackage()
-                                             .getName());
-
+    // java.sql
+    
     StatsKey CONNECTION = Stats.newKey(Connection.class.getName());
     StatsKey CALLABLE_STATEMENT = Stats.newKey(CallableStatement.class.getName());
     StatsKey PREPARED_STATEMENT = Stats.newKey(PreparedStatement.class.getName());
     StatsKey RESULT_SET = Stats.newKey(ResultSet.class.getName());
     StatsKey STATEMENT = Stats.newKey(Statement.class.getName());
+
+    // javax.sql
+
+    StatsKey POOLED_CONNECTION = Stats.newKey(PooledConnection.class.getName());
 
 }

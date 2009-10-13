@@ -47,17 +47,24 @@ public class StatsDriverWrapper implements Driver {
 
     private static final Logger logger = LoggerFactory.getLogger(StatsDriverWrapper.class);
 
-    private final ConcurrentMap<String,StatsDataBaseURL> dataBaseURLMap = 
-        new ConcurrentHashMap<String,StatsDataBaseURL>();
+    private final ConcurrentMap<Key,Entry> dataBaseURLMap = 
+        new ConcurrentHashMap<Key,Entry>();
 
-    private volatile boolean initialized = false;
     private volatile boolean enabled = true;
 
-    private ProxyFactory<Connection> connectionProxyFactory; 
+    private StatsJDBCConfig config = new DefaultStatsJDBCConfig();
 
-    public StatsDriverWrapper() {
-        connectionProxyFactory = new ConnectionProxyFactory();
+    static {
+        Driver driver = new StatsDriverWrapper();
+        try {
+            DriverManager.registerDriver(driver);
+        } catch (SQLException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
+    protected StatsDriverWrapper() {
+        registerMBean();
     }
  
     private void registerMBean() {
@@ -65,7 +72,7 @@ public class StatsDriverWrapper implements Driver {
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
         try {
-            ObjectName name = new ObjectName("org.stajistics.jdbc:type=manager,name=StatsDriverWrapper");
+            ObjectName name = new ObjectName("org.stajistics:type=manager,name=StatsDriverWrapper");
 
             mBeanServer.registerMBean(new DefaultStatsDriverWrapperMBean(this), name);
   
@@ -96,21 +103,6 @@ public class StatsDriverWrapper implements Driver {
         return StatsDataBaseURL.isSupported(url);
     }
 
-    private StatsDataBaseURL getStatsDataBaseURL(final String url) {
-
-        StatsDataBaseURL statsURL = dataBaseURLMap.get(url);
-        if (statsURL == null) {
-            statsURL = createStatsDataBaseURL(url);
-            if (dataBaseURLMap.putIfAbsent(url, statsURL) == null) {
-                logger.info("Wrapping Driver: {}, delegate URL: {}",
-                            statsURL.getDelegateDriverClassName(),
-                            statsURL.getDelegateURL());
-            }
-        }
-
-        return statsURL;
-    }
-
     protected StatsDataBaseURL createStatsDataBaseURL(final String url) {
         return new StatsDataBaseURL(url);
     }
@@ -121,48 +113,21 @@ public class StatsDriverWrapper implements Driver {
             return null;
         }
 
-        StatsDataBaseURL statsURL = getStatsDataBaseURL(url);
-        Driver delegateDriver = getDelegateDriver(statsURL);
+        Entry entry = getEntry(url, info);
+        StatsDataBaseURL statsDataBaseURL = entry.statsDataBaseURL;
+        Driver driver = entry.driver;
 
-        if (!initialized) {
-            synchronized (this) {
-                if (!initialized) {
-                    logger.info("Initializing StatsDriverWrapper from URL: {}", url);
-
-                    Map<String,String> params = statsURL.getParameters();
-
-                    boolean mgmtEnabled = isTrue(params.get(StatsDataBaseURL.Parameters
-                                                                            .MANAGEMENT_ENABLED),
-                                                 true);
-                    if (mgmtEnabled) {
-                        registerMBean();
-                    }
-
-                    logger.info("Management enabled: {} ", mgmtEnabled);
-
-                    enabled = isTrue(params.get(StatsDataBaseURL.Parameters
-                                                                .DRIVER_WRAPPER_ENABLED),
-                                     true);
-                    
-                    logger.info("{} enabled: {}",
-                                getClass(),
-                                enabled);
-
-                    initialized = true;
-                }
-            }
-        }
-
-        Connection connection = delegateDriver.connect(statsURL.getDelegateURL(), info);
+        Connection connection = driver.connect(statsDataBaseURL.getDelegateURL(), info);
 
         if (enabled) {
-            connection = new StatsConnectionWrapper(connection);
+            connection = new StatsConnectionWrapper(connection, config);
 
-            if (isTrue(statsURL.getParameters()
-                    .get(StatsDataBaseURL.Parameters
-                                         .PROXY_ENABLED), true)) {
+            if (isTrue(statsDataBaseURL.getParameters()
+                                       .get(StatsDataBaseURL.Parameters
+                                                            .PROXY_ENABLED), true)) {
 
-                connection = connectionProxyFactory.createProxy(connection);
+                ProxyFactory<Connection> proxyFactory = config.getProxyFactory(Connection.class);
+                connection = proxyFactory.createProxy(connection);
             }
         }
 
@@ -194,11 +159,10 @@ public class StatsDriverWrapper implements Driver {
     public DriverPropertyInfo[] getPropertyInfo(final String url, 
                                                 final Properties info) throws SQLException {
 
-        StatsDataBaseURL statsURL = new StatsDataBaseURL(url);
-        Driver delegateDriver = getDelegateDriver(statsURL);
+        Entry entry = getEntry(url, info);
 
         DriverPropertyInfo[] delegatePropertyInfo = 
-            delegateDriver.getPropertyInfo(statsURL.getDelegateURL(), info);
+            entry.driver.getPropertyInfo(entry.statsDataBaseURL.getDelegateURL(), info);
 
         DriverPropertyInfo[] propertyInfo = new DriverPropertyInfo[delegatePropertyInfo.length + 1];
         System.arraycopy(delegatePropertyInfo, 0, propertyInfo, 0, delegatePropertyInfo.length);
@@ -207,7 +171,7 @@ public class StatsDriverWrapper implements Driver {
             new DriverPropertyInfo(StatsDataBaseURL.Parameters
                                                    .DELEGATE_DRIVER
                                                    .getParameterName(),
-                                   statsURL.getDelegateDriverClassName());
+                                   entry.statsDataBaseURL.getDelegateDriverClassName());
 
         return propertyInfo;
     }
@@ -222,9 +186,14 @@ public class StatsDriverWrapper implements Driver {
         Driver delegateDriver;
 
         try {
-            Class.forName(statsURL.getDelegateDriverClassName());
-
             delegateDriver = DriverManager.getDriver(statsURL.getDelegateURL());
+            if (delegateDriver == null) {
+
+                Class<?> driverClass = Class.forName(statsURL.getDelegateDriverClassName());
+
+                delegateDriver = (Driver)driverClass.newInstance();
+                DriverManager.registerDriver(delegateDriver);
+            }
 
         } catch (SQLException sqle) {
             throw sqle;
@@ -234,5 +203,97 @@ public class StatsDriverWrapper implements Driver {
         }
 
         return delegateDriver;
+    }
+
+    private Entry getEntry(final String url,
+                           final Properties properties) 
+            throws SQLException {
+
+        final Key key = new Key(url, properties);
+
+        Entry result = this.dataBaseURLMap.get(key);
+        if (result == null) {
+            StatsDataBaseURL statsURL = new StatsDataBaseURL(url);
+            Driver delegateDriver = getDelegateDriver(statsURL);
+
+            result = new Entry(statsURL, delegateDriver);
+            Entry existingEntry = this.dataBaseURLMap.putIfAbsent(key, result);
+            if (existingEntry != null) {
+                result = existingEntry;
+            }
+        }
+
+        return result;
+    }
+    
+    /* NESTED CLASSES */
+
+    private static class Key {
+
+        final String url;
+        final Properties properties;
+
+        Key(final String url,
+            final Properties properties) {
+
+            this.url = url;
+            this.properties = properties;
+        }
+
+        @Override
+        public int hashCode() {
+            int h = url.hashCode();
+            h = (h * 31) + ((properties == null) ? 0 : properties.hashCode());
+            return h;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+
+            if (obj == null) {
+                return false;
+            }
+
+            if (!(obj instanceof Key)) {
+                return false;
+            }
+
+            Key other = (Key)obj;
+
+            if (!url.equals(other.url)) {
+                return false;
+            }
+
+            if (properties == null) {
+                return other.properties == null;
+            }
+
+            if (other.properties == null) {
+                return false;
+            }
+
+            if (!properties.equals(other.properties)) {
+                return false;
+            }
+
+            return true;
+        }
+
+    }
+
+    private static class Entry {
+
+        final StatsDataBaseURL statsDataBaseURL;
+        final Driver driver;
+
+        public Entry(final StatsDataBaseURL statsDataBaseURL,
+                     final Driver driver) {
+            this.statsDataBaseURL = statsDataBaseURL;
+            this.driver = driver;
+        }
+        
     }
 }
