@@ -34,22 +34,14 @@ public class StatsPreparedStatementWrapper extends AbstractPreparedStatementDeco
 
     private final Connection connection;
     private final String sql;
+    private final StatsJDBCConfig config;
 
     private final StatsTracker openClosedTracker;
 
     public StatsPreparedStatementWrapper(final PreparedStatement delegate,
                                          final Connection connection,
-                                         final String sql) {
-        this(delegate, connection, sql, JDBCStatsKeyConstants.PREPARED_STATEMENT
-                                                             .buildCopy()
-                                                             .withNameSuffix("open")
-                                                             .newKey());
-    }
-
-    public StatsPreparedStatementWrapper(final PreparedStatement delegate,
-                                         final Connection connection,
                                          final String sql,
-                                         final StatsKey openClosedKey) {
+                                         final StatsJDBCConfig config) {
         super(delegate);
 
         if (connection == null) {
@@ -58,20 +50,30 @@ public class StatsPreparedStatementWrapper extends AbstractPreparedStatementDeco
         if (sql == null) {
             throw new NullPointerException("sql");
         }
+        if (config == null) {
+            throw new NullPointerException("config");
+        }
 
         this.connection = connection;
         this.sql = sql;
+        this.config = config;
 
-        openClosedTracker = Stats.track(openClosedKey);
+        StatsKey openClosedKey = JDBCStatsKeyConstants.PREPARED_STATEMENT
+                                                      .buildCopy()
+                                                      .withNameSuffix("open")
+                                                      .newKey();
+
+        openClosedTracker = Stats.track(openClosedKey);        
     }
-    
+
     @Override
     public Connection getConnection() throws SQLException {
         return connection;
     }
 
     private void handleSQL(final String sql) {
-        
+        config.getSQLAnalyzer()
+              .analyzeSQL(sql);
     }
 
     @Override
@@ -107,19 +109,19 @@ public class StatsPreparedStatementWrapper extends AbstractPreparedStatementDeco
             throws SQLException {
         handleSQL(sql);
         return delegate().execute(sql, columnNames);
-    }
+    }    private volatile boolean initialized = false;
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        return new StatsResultSetWrapper(delegate().executeQuery());
+        return new StatsResultSetWrapper(delegate().executeQuery(), config);
     }
-    
+
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
         handleSQL(sql);
-        return new StatsResultSetWrapper(delegate().executeQuery(sql));
+        return new StatsResultSetWrapper(delegate().executeQuery(sql), config);
     }
-    
+
     public String getSQL() {
         return sql;
     }

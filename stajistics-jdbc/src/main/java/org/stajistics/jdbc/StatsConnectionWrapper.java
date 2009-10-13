@@ -34,28 +34,33 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
+    private final StatsJDBCConfig config;
+
     private final StatsTracker openClosedTracker;
 
-    private ProxyFactory<Statement> statementProxyFactory = ProxyFactory.NO_OP;
-    private ProxyFactory<CallableStatement> callableStatementProxyFactory = ProxyFactory.NO_OP;
-    private ProxyFactory<PreparedStatement> preparedStatementProxyFactory = ProxyFactory.NO_OP;
-
-    public StatsConnectionWrapper(final Connection delegate) {
-        this(delegate, 
-             JDBCStatsKeyConstants.CONNECTION
-                                  .buildCopy()
-                                  .withNameSuffix("open")
-                                  .newKey());
-    }
+    private ProxyFactory<Statement> statementProxyFactory;
+    private ProxyFactory<CallableStatement> callableStatementProxyFactory;
+    private ProxyFactory<PreparedStatement> preparedStatementProxyFactory;
 
     public StatsConnectionWrapper(final Connection delegate,
-                                  final StatsKey openClosedKey) {
+                                  final StatsJDBCConfig config) {
         super(delegate);
 
-        if (openClosedKey == null) {
-            throw new NullPointerException("openClosedKey");
+        if (config == null) {
+            throw new NullPointerException("config");
         }
 
+        this.config = config; 
+        
+        StatsKey openClosedKey = JDBCStatsKeyConstants.CONNECTION
+                                                      .buildCopy()
+                                                      .withNameSuffix("open")
+                                                      .newKey();
+
+        statementProxyFactory = config.getProxyFactory(Statement.class);
+        callableStatementProxyFactory = config.getProxyFactory(CallableStatement.class);
+        preparedStatementProxyFactory = config.getProxyFactory(PreparedStatement.class);
+        
         openClosedTracker = Stats.track(openClosedKey);
     }
 
@@ -70,7 +75,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
     @Override
     public Statement createStatement() throws SQLException {
-        Statement s = new StatsStatementWrapper(delegate().createStatement(), this);
+        Statement s = new StatsStatementWrapper(delegate().createStatement(), this, config);
 
         s = statementProxyFactory.createProxy(s);
 
@@ -80,7 +85,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
     @Override
     public Statement createStatement(final int resultSetType, final int resultSetConcurrency) 
             throws SQLException {
-        Statement s = new StatsStatementWrapper(delegate().createStatement(resultSetType, resultSetConcurrency), this);
+        Statement s = new StatsStatementWrapper(delegate().createStatement(resultSetType, resultSetConcurrency), this, config);
 
         s = statementProxyFactory.createProxy(s);
 
@@ -92,7 +97,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
                                      final int resultSetConcurrency, 
                                      final int resultSetHoldability) 
             throws SQLException {
-        Statement s = new StatsStatementWrapper(delegate().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability), this);
+        Statement s = new StatsStatementWrapper(delegate().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability), this, config);
 
         s = statementProxyFactory.createProxy(s);
 
@@ -101,7 +106,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
     @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
-        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql), this, sql);
+        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql), this, sql, config);
 
         cs = callableStatementProxyFactory.createProxy(cs);
 
@@ -111,7 +116,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) 
             throws SQLException {
-        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql, resultSetType, resultSetConcurrency), this, sql);
+        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql, resultSetType, resultSetConcurrency), this, sql, config);
 
         cs = callableStatementProxyFactory.createProxy(cs);
 
@@ -123,7 +128,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
                                          int resultSetType,
                                          int resultSetConcurrency,
                                          int resultSetHoldability) throws SQLException {
-        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability), this, sql);
+        CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability), this, sql, config);
 
         cs = callableStatementProxyFactory.createProxy(cs);
 
@@ -132,7 +137,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql), this, sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql), this, sql, config);
 
         ps = preparedStatementProxyFactory.createProxy(ps);
 
@@ -141,7 +146,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
     @Override
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, autoGeneratedKeys), this, sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, autoGeneratedKeys), this, sql, config);
 
         ps = preparedStatementProxyFactory.createProxy(ps);
 
@@ -150,7 +155,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
     @Override
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, columnIndexes), this, sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, columnIndexes), this, sql, config);
 
         ps = preparedStatementProxyFactory.createProxy(ps);
 
@@ -159,7 +164,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
     @Override
     public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, columnNames), this, sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, columnNames), this, sql, config);
 
         ps = preparedStatementProxyFactory.createProxy(ps);
 
@@ -169,7 +174,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) 
             throws SQLException {
-        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, resultSetType, resultSetConcurrency), this, sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, resultSetType, resultSetConcurrency), this, sql, config);
 
         ps = preparedStatementProxyFactory.createProxy(ps);
 
@@ -181,7 +186,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
                                               int resultSetType,
                                               int resultSetConcurrency,
                                               int resultSetHoldability) throws SQLException {
-        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability), this, sql);
+        PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability), this, sql, config);
 
         ps = preparedStatementProxyFactory.createProxy(ps);
 

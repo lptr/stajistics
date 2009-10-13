@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.jdbc;
+package org.stajistics.jdbc.proxy;
 
 import java.sql.Connection;
 
@@ -20,6 +20,7 @@ import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
 import org.stajistics.aop.StatsProxy;
+import org.stajistics.jdbc.JDBCStatsKeyConstants;
 
 /**
  * 
@@ -28,7 +29,6 @@ import org.stajistics.aop.StatsProxy;
  */
 public class ConnectionProxyFactory implements ProxyFactory<Connection> {
 
-    
     private final StatsKey proxyKey;
 
     public ConnectionProxyFactory() {
