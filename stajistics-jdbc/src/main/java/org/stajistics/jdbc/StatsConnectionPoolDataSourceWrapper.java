@@ -20,30 +20,74 @@ import java.sql.SQLException;
 import javax.sql.ConnectionPoolDataSource;
 import javax.sql.PooledConnection;
 
+import org.stajistics.jdbc.wrapper.StatsPooledConnectionWrapper;
+
 /**
  * 
  * @author The Stajistics Project
  *
  */
-public class StatsConnectionPoolDataSourceWrapper implements
-        ConnectionPoolDataSource {
+public class StatsConnectionPoolDataSourceWrapper implements ConnectionPoolDataSource {
 
     private ConnectionPoolDataSource delegate;
-
     private StatsJDBCConfig config;
 
-    public StatsConnectionPoolDataSourceWrapper() {
-        
+    public StatsConnectionPoolDataSourceWrapper() {}
+
+    public StatsConnectionPoolDataSourceWrapper(final ConnectionPoolDataSource delegate,
+                                                final StatsJDBCConfig config) {
+        setDelegate(delegate);
+        setConfig(config);
     }
-    
+
+    public ConnectionPoolDataSource getDelegate() {
+        return delegate;
+    }
+
+    public void setDelegate(final ConnectionPoolDataSource delegate) {
+        if (delegate == null) {
+            throw new NullPointerException("delegate");
+        }
+
+        this.delegate = delegate;
+    }
+
+    protected ConnectionPoolDataSource delegate() {
+        if (delegate == null) {
+            throw new IllegalStateException("no delegate supplied");
+        }
+
+        return delegate;
+    }
+
+    protected StatsJDBCConfig requireConfig() {
+        if (config == null) {
+            throw new IllegalStateException("no config supplied");
+        }
+
+        return config;
+    }
+
+    public StatsJDBCConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(final StatsJDBCConfig config) {
+        if (config == null) {
+            throw new NullPointerException("config");
+        }
+
+        this.config = config;
+    }
+
     public StatsConnectionPoolDataSourceWrapper(final ConnectionPoolDataSource delegate) {
         this.delegate = delegate;
     }
 
     @Override
     public PooledConnection getPooledConnection() throws SQLException {
-        
-        PooledConnection pc = new StatsPooledConnectionWrapper(delegate.getPooledConnection(), config);
+        PooledConnection pc = new StatsPooledConnectionWrapper(delegate().getPooledConnection(), 
+                                                               requireConfig());
 
         return pc;
     }
@@ -52,30 +96,30 @@ public class StatsConnectionPoolDataSourceWrapper implements
     public PooledConnection getPooledConnection(final String user, 
                                                 final String password)
             throws SQLException {
-        PooledConnection pc = new StatsPooledConnectionWrapper(delegate.getPooledConnection(user, password), config);
+        PooledConnection pc = new StatsPooledConnectionWrapper(delegate().getPooledConnection(user, password), 
+                                                               requireConfig());
 
-        
         return pc;
     }
 
     @Override
     public PrintWriter getLogWriter() throws SQLException {
-        return delegate.getLogWriter();
+        return delegate().getLogWriter();
     }
 
     @Override
     public int getLoginTimeout() throws SQLException {
-        return delegate.getLoginTimeout();
+        return delegate().getLoginTimeout();
     }
 
     @Override
     public void setLogWriter(PrintWriter out) throws SQLException {
-        delegate.setLogWriter(out);
+        delegate().setLogWriter(out);
     }
 
     @Override
     public void setLoginTimeout(int seconds) throws SQLException {
-        delegate.setLoginTimeout(seconds);
+        delegate().setLoginTimeout(seconds);
     }
 
 }

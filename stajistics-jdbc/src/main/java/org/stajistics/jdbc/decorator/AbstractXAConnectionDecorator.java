@@ -44,32 +44,31 @@ public class AbstractXAConnectionDecorator implements XAConnection {
     }
 
     public void addConnectionEventListener(ConnectionEventListener listener) {
-        delegate.addConnectionEventListener(listener);
+        delegate().addConnectionEventListener(listener);
     }
 
     public void addStatementEventListener(StatementEventListener listener) {
-        delegate.addStatementEventListener(listener);
+        delegate().addStatementEventListener(listener);
     }
 
     public void close() throws SQLException {
-        delegate.close();
+        delegate().close();
     }
 
     public Connection getConnection() throws SQLException {
-        return delegate.getConnection();
+        return delegate().getConnection();
     }
 
     public XAResource getXAResource() throws SQLException {
-        return delegate.getXAResource();
+        return delegate().getXAResource();
     }
 
     public void removeConnectionEventListener(ConnectionEventListener listener) {
-        delegate.removeConnectionEventListener(listener);
+        delegate().removeConnectionEventListener(listener);
     }
 
     public void removeStatementEventListener(StatementEventListener listener) {
-        delegate.removeStatementEventListener(listener);
+        delegate().removeStatementEventListener(listener);
     }
 
-    
 }

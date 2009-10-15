@@ -20,7 +20,6 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -36,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.aop.ProxyFactory;
 import org.stajistics.jdbc.management.DefaultStatsDriverWrapperMBean;
+import org.stajistics.jdbc.wrapper.StatsConnectionWrapper;
 
 /**
  * 
