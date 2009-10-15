@@ -12,32 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.aop;
-
+package org.stajistics;
 
 /**
  * 
- * @author The Stajistics Project
+ * 
  *
+ * @author The Stajistics Project
  */
-public interface ProxyFactory<T> {
+public class StatsKeyUtils {
 
-    T createProxy(T instance);
+    private StatsKeyUtils() {}
 
-    public static final class NoOp<T> implements ProxyFactory<T> {
-
-        @SuppressWarnings("unchecked")
-        private static final NoOp instance = new NoOp();
-
-        private NoOp() {}
-
-        @SuppressWarnings("unchecked")
-        public static <T> NoOp<T> instance() {
-            return instance;
-        }
-
-        public T createProxy(final T instance) {
-            return instance;
-        }
+    public static StatsKey keyForFailure(final StatsKey key,
+                                         final Throwable failure) {
+        StatsKey failureKey = key.buildCopy()
+                                 .withAttribute("threw",  
+                                                failure.getClass()
+                                                       .getName())
+                                 .newKey();
+        return failureKey;
     }
 }

@@ -52,8 +52,6 @@ public class StatsDriverWrapper implements Driver {
 
     private volatile boolean enabled = true;
 
-    private StatsJDBCConfig config = new DefaultStatsJDBCConfig();
-
     static {
         Driver driver = new StatsDriverWrapper();
         try {
@@ -120,29 +118,12 @@ public class StatsDriverWrapper implements Driver {
         Connection connection = driver.connect(statsDataBaseURL.getDelegateURL(), info);
 
         if (enabled) {
-            connection = new StatsConnectionWrapper(connection, config);
+            connection = new StatsConnectionWrapper(connection, entry.config);
 
-            if (isTrue(statsDataBaseURL.getParameters()
-                                       .get(StatsDataBaseURL.Parameters
-                                                            .PROXY_ENABLED), true)) {
-
-                ProxyFactory<Connection> proxyFactory = config.getProxyFactory(Connection.class);
-                connection = proxyFactory.createProxy(connection);
-            }
+            connection = entry.connectionProxyFactory.createProxy(connection);
         }
 
         return connection;
-    }
-
-    private boolean isTrue(final String str,
-                           final boolean defaultValue) {
-        boolean value = defaultValue;
-
-        if (str != null) {
-            value = Boolean.parseBoolean(str);
-        }
-
-        return value;
     }
 
     @Override
@@ -186,14 +167,8 @@ public class StatsDriverWrapper implements Driver {
         Driver delegateDriver;
 
         try {
+            Class.forName(statsURL.getDelegateDriverClassName());
             delegateDriver = DriverManager.getDriver(statsURL.getDelegateURL());
-            if (delegateDriver == null) {
-
-                Class<?> driverClass = Class.forName(statsURL.getDelegateDriverClassName());
-
-                delegateDriver = (Driver)driverClass.newInstance();
-                DriverManager.registerDriver(delegateDriver);
-            }
 
         } catch (SQLException sqle) {
             throw sqle;
@@ -213,10 +188,8 @@ public class StatsDriverWrapper implements Driver {
 
         Entry result = this.dataBaseURLMap.get(key);
         if (result == null) {
-            StatsDataBaseURL statsURL = new StatsDataBaseURL(url);
-            Driver delegateDriver = getDelegateDriver(statsURL);
+            result = createEntry(url, properties);
 
-            result = new Entry(statsURL, delegateDriver);
             Entry existingEntry = this.dataBaseURLMap.putIfAbsent(key, result);
             if (existingEntry != null) {
                 result = existingEntry;
@@ -225,7 +198,31 @@ public class StatsDriverWrapper implements Driver {
 
         return result;
     }
-    
+
+    private Entry createEntry(final String url,
+                              final Properties properties) throws SQLException {
+
+        StatsDataBaseURL statsURL = new StatsDataBaseURL(url);
+
+        logger.debug("Parsed URL: {}", statsURL);
+
+        Driver delegateDriver = getDelegateDriver(statsURL);
+
+        logger.debug("Initialized delegate driver: {}", delegateDriver);
+
+        // TODO: build the config from statsURL
+        StatsJDBCConfig config = DefaultStatsJDBCConfig.createWithDefaults();
+
+        ProxyFactory<Connection> connectionProxyFactory = config.getProxyFactory(Connection.class);
+
+        Entry result = new Entry(statsURL, 
+                                 delegateDriver, 
+                                 config, 
+                                 connectionProxyFactory);
+
+        return result;
+    }
+
     /* NESTED CLASSES */
 
     private static class Key {
@@ -288,12 +285,18 @@ public class StatsDriverWrapper implements Driver {
 
         final StatsDataBaseURL statsDataBaseURL;
         final Driver driver;
+        final StatsJDBCConfig config;
+        final ProxyFactory<Connection> connectionProxyFactory;
 
         public Entry(final StatsDataBaseURL statsDataBaseURL,
-                     final Driver driver) {
+                     final Driver driver,
+                     final StatsJDBCConfig config,
+                     final ProxyFactory<Connection> connectionProxyFactory) {
             this.statsDataBaseURL = statsDataBaseURL;
             this.driver = driver;
+            this.config = config;
+            this.connectionProxyFactory = connectionProxyFactory;
         }
-        
+
     }
 }

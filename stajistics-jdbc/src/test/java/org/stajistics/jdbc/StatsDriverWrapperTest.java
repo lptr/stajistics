@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.stajistics.aop.StatsProxy;
+import org.stajistics.jdbc.wrapper.StatsConnectionWrapper;
 
 /**
  * 

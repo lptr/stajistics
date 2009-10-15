@@ -21,6 +21,7 @@ import java.lang.reflect.Proxy;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyUtils;
 import org.stajistics.StatsManager;
 import org.stajistics.tracker.StatsTracker;
 
@@ -43,7 +44,6 @@ public class StatsProxy implements InvocationHandler {
     }
 
     protected static final String ATTR_METHOD = "method";
-    protected static final String ATTR_EXCEPTION = "threw";
 
     protected final StatsManager statsManager;
     protected final StatsKey key;
@@ -163,14 +163,18 @@ public class StatsProxy implements InvocationHandler {
                                 .withAttribute(ATTR_METHOD, getMethodString(method))
                                 .newKey();
 
-        final StatsTracker tracker = statsManager.getTracker(methodKey).track();
-
         try {
-            if (method.equals(EQUALS_METHOD)) {
-                return target.equals(unwrap(args[0]));
-            }
+            final StatsTracker tracker = statsManager.getTracker(methodKey).track();
+            try {
+                if (method.equals(EQUALS_METHOD)) {
+                    return target.equals(unwrap(args[0]));
+                }
 
-            return method.invoke(target, args);
+                return method.invoke(target, args);
+
+            } finally {
+                tracker.commit();
+            }
 
         } catch (Throwable t) {
             Throwable cause;
@@ -180,16 +184,11 @@ public class StatsProxy implements InvocationHandler {
                 cause = t;
             }
 
-            StatsKey exceptionKey = methodKey.buildCopy()
-                                             .withAttribute(ATTR_EXCEPTION, cause.getClass().getName())
-                                             .newKey();
-
-            statsManager.getTracker(exceptionKey).track().commit();
+            statsManager.getTracker(StatsKeyUtils.keyForFailure(key, cause))
+                        .track()
+                        .commit();
 
             throw cause;
-
-        } finally {
-            tracker.commit();
         }
     }
 }

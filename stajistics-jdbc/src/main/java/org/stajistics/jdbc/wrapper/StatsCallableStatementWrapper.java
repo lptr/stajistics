@@ -18,9 +18,12 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.aop.ProxyFactory;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractCallableStatementDecorator;
 import org.stajistics.tracker.StatsTracker;
@@ -36,8 +39,11 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
 
     private final Connection connection;
     private final String sql;
+    private final List<String> batchSQL;
 
     private final StatsTracker openClosedTracker;
+
+    private final ProxyFactory<ResultSet> resultSetProxyFactory;
 
     public StatsCallableStatementWrapper(final CallableStatement delegate,
                                          final Connection connection,
@@ -59,6 +65,10 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
         this.sql = sql;
         this.config = config;
 
+        batchSQL = new LinkedList<String>();
+
+        resultSetProxyFactory = config.getProxyFactory(ResultSet.class);
+
         StatsKey openClosedKey = Stats.buildKey(CallableStatement.class.getName())
                                       .withNameSuffix("open")
                                       .newKey();
@@ -69,10 +79,15 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
     public String getSQL() {
         return sql;
     }
-    
+
     private void handleSQL(final String sql) {
         config.getSQLAnalyzer()
               .analyzeSQL(sql);
+    }
+
+    private void handleSQL(final List<String> batchSQL) {
+        config.getSQLAnalyzer()
+              .analyzeSQL(batchSQL);
     }
 
     @Override
@@ -86,18 +101,55 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        return new StatsResultSetWrapper(delegate().executeQuery(), config);
+        ResultSet rs = new StatsResultSetWrapper(delegate().executeQuery(), config);
+
+        handleSQL(this.sql);
+
+        rs = resultSetProxyFactory.createProxy(rs);
+
+        return rs;
     }
 
     @Override
-    public ResultSet executeQuery(String sql) throws SQLException {
+    public ResultSet executeQuery(final String sql) throws SQLException {
+        ResultSet rs = new StatsResultSetWrapper(delegate().executeQuery(sql), config);
+
         handleSQL(sql);
-        return new StatsResultSetWrapper(delegate().executeQuery(sql), config);
+
+        rs = resultSetProxyFactory.createProxy(rs);
+
+        return rs;
     }
-    
+
     @Override
     public Connection getConnection() throws SQLException {
         return connection;
     }
 
+    @Override
+    public int[] executeBatch() throws SQLException {
+        int[] result = delegate().executeBatch();
+
+        handleSQL(batchSQL);
+
+        return result;
+    }
+
+    @Override
+    public void addBatch() throws SQLException {
+        delegate().addBatch();
+        batchSQL.add(this.sql);
+    }
+
+    @Override
+    public void addBatch(final String sql) throws SQLException {
+        delegate().addBatch(sql);
+        batchSQL.add(sql);
+    }
+
+    @Override
+    public void clearBatch() throws SQLException {
+        delegate().clearBatch();
+        batchSQL.clear();
+    }
 }
