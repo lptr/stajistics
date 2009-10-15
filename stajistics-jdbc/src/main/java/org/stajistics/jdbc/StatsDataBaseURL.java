@@ -232,6 +232,24 @@ public class StatsDataBaseURL {
         return c == test;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder(512);
+
+        buf.append(getClass().getSimpleName());
+        buf.append("[originalURL=");
+        buf.append(originalURL);
+        buf.append(",delegateURL=");
+        buf.append(delegateURL);
+        buf.append(",delegateDriverClassName=");
+        buf.append(delegateDriverClassName);
+        buf.append(",parameters=");
+        buf.append(parameterMap);
+        buf.append(']');
+
+        return buf.toString();
+    }
+    
     /* NESTED CLASSES */
 
     public enum Parameters {

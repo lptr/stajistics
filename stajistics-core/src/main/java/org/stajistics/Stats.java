@@ -146,11 +146,11 @@ public final class Stats {
      * used to collect statistics. Equivalent to calling
      * <tt>Stats.getTracker(Stats.newKey(name))</tt>.
      *
-     * @param name The key name for which to return a tracker.
+     * @param keyName The key name for which to return a tracker.
      * @return A {@link StatsTracker}, never <tt>null</tt>.
      */
-    public static StatsTracker getTracker(final String name) {
-        return getManager().getTracker(newKey(name));
+    public static StatsTracker getTracker(final String keyName) {
+        return getManager().getTracker(newKey(keyName));
     }
 
     /**
@@ -181,16 +181,16 @@ public final class Stats {
 
     /**
      * A convenience method equivalent to calling:
-     * <tt>Stats.getTracker(Stats.newKey(name).track()</tt>.
+     * <tt>Stats.getTracker(Stats.newKey(name)).track()</tt>.
      *
-     * @param name The key name for which to return a tracker.
+     * @param keyName The key name for which to return a tracker.
      * @return A {@link StatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getTracker(StatsKey)
      * @see StatsTracker#track()
      */
-    public static StatsTracker track(final String name) {
-        return getTracker(newKey(name)).track();
+    public static StatsTracker track(final String keyName) {
+        return getTracker(newKey(keyName)).track();
     }
 
     /**
@@ -225,14 +225,14 @@ public final class Stats {
      * Report an incident. Equivalent to calling:
      * <tt>Stats.getTracker(Stats.newKey(name)).track().commit()</tt>.
      *
-     * @param name The key name for which to report an incident.
+     * @param keyName The key name for which to report an incident.
      *
      * @see StatsManager#getTracker(StatsKey...)
      * @see StatsTracker#track()
      * @see StatsTracker#commit()
      */
-    public static void incident(final String name) {
-        getTracker(newKey(name)).track().commit();
+    public static void incident(final String keyName) {
+        getTracker(newKey(keyName)).track().commit();
     }
 
     /**
@@ -264,16 +264,38 @@ public final class Stats {
     }
 
     /**
+     * Report a failure.
+     *
+     * @param keyName The key name for which to report an incident.
+     * @param failure The Throwable that represents the failure.
+     */
+    public static void failure(final String keyName,
+                               final Throwable failure) {
+        failure(newKey(keyName), failure);
+    }
+
+    /**
+     * Report a failure.
+     *
+     * @param key The {@link StatsKey} for which to report a failure.
+     * @param failure The Throwable that represents the failure.
+     */
+    public static void failure(final StatsKey key,
+                               final Throwable failure) {
+        incident(StatsKeyUtils.keyForFailure(key, failure));
+    }
+
+    /**
      * Obtain a {@link ManualStatsTracker} for the given key <tt>name</tt> that can be
      * used to report manually collected statistics.
      *
-     * @param name The key name for which to return a manual tracker.
+     * @param keyName The key name for which to return a manual tracker.
      * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getManualTracker(StatsKey)
      */
-    public static ManualStatsTracker manual(final String name) {
-        return getManager().getManualTracker(newKey(name));
+    public static ManualStatsTracker manual(final String keyName) {
+        return getManager().getManualTracker(newKey(keyName));
     }
 
     /**

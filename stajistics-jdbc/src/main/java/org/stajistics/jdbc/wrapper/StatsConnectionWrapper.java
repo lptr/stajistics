@@ -37,11 +37,11 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
     private final StatsJDBCConfig config;
 
-    private final StatsTracker openClosedTracker;
+    private final ProxyFactory<CallableStatement> callableStatementProxyFactory;
+    private final ProxyFactory<PreparedStatement> preparedStatementProxyFactory;
+    private final ProxyFactory<Statement> statementProxyFactory;
 
-    private ProxyFactory<Statement> statementProxyFactory;
-    private ProxyFactory<CallableStatement> callableStatementProxyFactory;
-    private ProxyFactory<PreparedStatement> preparedStatementProxyFactory;
+    private final StatsTracker openClosedTracker;
 
     public StatsConnectionWrapper(final Connection delegate,
                                   final StatsJDBCConfig config) {
@@ -53,14 +53,14 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
         this.config = config; 
 
+        callableStatementProxyFactory = config.getProxyFactory(CallableStatement.class);
+        preparedStatementProxyFactory = config.getProxyFactory(PreparedStatement.class);
+        statementProxyFactory = config.getProxyFactory(Statement.class);
+
         StatsKey openClosedKey = Stats.buildKey(Connection.class.getName())
                                       .withNameSuffix("open")
                                       .newKey();
 
-        statementProxyFactory = config.getProxyFactory(Statement.class);
-        callableStatementProxyFactory = config.getProxyFactory(CallableStatement.class);
-        preparedStatementProxyFactory = config.getProxyFactory(PreparedStatement.class);
-        
         openClosedTracker = Stats.track(openClosedKey);
     }
 
@@ -192,4 +192,5 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
         return ps;
     }
+
 }

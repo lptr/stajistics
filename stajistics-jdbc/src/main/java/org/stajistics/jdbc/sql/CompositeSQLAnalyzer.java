@@ -36,4 +36,10 @@ public class CompositeSQLAnalyzer implements SQLAnalyzer {
         }
     }
 
+    @Override
+    public void analyzeSQL(List<String> batchSQL) {
+        for (SQLAnalyzer analyzer : analyzers) {
+            analyzer.analyzeSQL(batchSQL);
+        }
+    }
 }

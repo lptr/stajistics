@@ -1,5 +1,7 @@
 package org.stajistics.jdbc.sql;
 
+import java.util.List;
+
 /**
  * 
  * @author The Stajistics Project
@@ -8,6 +10,8 @@ package org.stajistics.jdbc.sql;
 public interface SQLAnalyzer {
 
     void analyzeSQL(String sql);
+
+    void analyzeSQL(List<String> batchSQL);
 
     public static final class NoOp implements SQLAnalyzer {
 
@@ -21,5 +25,8 @@ public interface SQLAnalyzer {
 
         @Override
         public void analyzeSQL(final String sql) {}
+
+        @Override
+        public void analyzeSQL(final List<String> batchSQL) {}
     }
 }

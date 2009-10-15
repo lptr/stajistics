@@ -79,12 +79,10 @@ public class DefaultStatsJDBCConfig implements StatsJDBCConfig {
                             DefaultJDBCProxyFactory.createWithDefaults(XAResource.class));
 
         DefaultStatsJDBCConfig config = new DefaultStatsJDBCConfig(sqlAnalyzer, proxyFactoryMap);
-        
+
         return config;
     }
 
-    
-    
     public void setSQLAnalyzer(final SQLAnalyzer sqlAnalyzer) {
         if (sqlAnalyzer == null) {
             this.sqlAnalyzer = SQLAnalyzer.NoOp.instance();
