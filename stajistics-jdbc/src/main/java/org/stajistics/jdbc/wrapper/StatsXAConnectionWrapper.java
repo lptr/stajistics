@@ -12,10 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.jdbc;
+package org.stajistics.jdbc.wrapper;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.sql.XAConnection;
+import javax.transaction.xa.XAResource;
 
+import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractXAConnectionDecorator;
 
 /**
@@ -26,7 +31,7 @@ import org.stajistics.jdbc.decorator.AbstractXAConnectionDecorator;
 public class StatsXAConnectionWrapper extends AbstractXAConnectionDecorator {
 
     private StatsJDBCConfig config;
-    
+
     public StatsXAConnectionWrapper(final XAConnection delegate,
                                     final StatsJDBCConfig config) {
         super(delegate);
@@ -38,6 +43,23 @@ public class StatsXAConnectionWrapper extends AbstractXAConnectionDecorator {
         this.config = config;
     }
 
-    
+    @Override
+    public Connection getConnection() throws SQLException {
+        Connection con = new StatsConnectionWrapper(delegate().getConnection(), config);
 
+        con = config.getProxyFactory(Connection.class)
+                    .createProxy(con);
+
+        return con;
+    }
+
+    @Override
+    public XAResource getXAResource() throws SQLException {
+        XAResource xar = new StatsXAResourceWrapper(delegate().getXAResource());
+
+        xar = config.getProxyFactory(XAResource.class)
+                    .createProxy(xar);
+
+        return xar;
+    }
 }

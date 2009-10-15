@@ -65,7 +65,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#absolute(int)
      */
     public boolean absolute(int row) throws SQLException {
-        return delegate.absolute(row);
+        return delegate().absolute(row);
     }
 
     /**
@@ -73,7 +73,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#afterLast()
      */
     public void afterLast() throws SQLException {
-        delegate.afterLast();
+        delegate().afterLast();
     }
 
     /**
@@ -81,7 +81,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#beforeFirst()
      */
     public void beforeFirst() throws SQLException {
-        delegate.beforeFirst();
+        delegate().beforeFirst();
     }
 
     /**
@@ -89,7 +89,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#cancelRowUpdates()
      */
     public void cancelRowUpdates() throws SQLException {
-        delegate.cancelRowUpdates();
+        delegate().cancelRowUpdates();
     }
 
     /**
@@ -97,7 +97,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#clearWarnings()
      */
     public void clearWarnings() throws SQLException {
-        delegate.clearWarnings();
+        delegate().clearWarnings();
     }
 
     /**
@@ -105,7 +105,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#close()
      */
     public void close() throws SQLException {
-        delegate.close();
+        delegate().close();
     }
 
     /**
@@ -113,7 +113,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#deleteRow()
      */
     public void deleteRow() throws SQLException {
-        delegate.deleteRow();
+        delegate().deleteRow();
     }
 
     /**
@@ -123,7 +123,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#findColumn(java.lang.String)
      */
     public int findColumn(String columnLabel) throws SQLException {
-        return delegate.findColumn(columnLabel);
+        return delegate().findColumn(columnLabel);
     }
 
     /**
@@ -132,7 +132,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#first()
      */
     public boolean first() throws SQLException {
-        return delegate.first();
+        return delegate().first();
     }
 
     /**
@@ -142,7 +142,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getArray(int)
      */
     public Array getArray(int columnIndex) throws SQLException {
-        return delegate.getArray(columnIndex);
+        return delegate().getArray(columnIndex);
     }
 
     /**
@@ -152,7 +152,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getArray(java.lang.String)
      */
     public Array getArray(String columnLabel) throws SQLException {
-        return delegate.getArray(columnLabel);
+        return delegate().getArray(columnLabel);
     }
 
     /**
@@ -162,7 +162,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getAsciiStream(int)
      */
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
-        return delegate.getAsciiStream(columnIndex);
+        return delegate().getAsciiStream(columnIndex);
     }
 
     /**
@@ -172,7 +172,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getAsciiStream(java.lang.String)
      */
     public InputStream getAsciiStream(String columnLabel) throws SQLException {
-        return delegate.getAsciiStream(columnLabel);
+        return delegate().getAsciiStream(columnLabel);
     }
 
     /**
@@ -185,7 +185,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public BigDecimal getBigDecimal(int columnIndex, int scale)
             throws SQLException {
-        return delegate.getBigDecimal(columnIndex, scale);
+        return delegate().getBigDecimal(columnIndex, scale);
     }
 
     /**
@@ -195,7 +195,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBigDecimal(int)
      */
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        return delegate.getBigDecimal(columnIndex);
+        return delegate().getBigDecimal(columnIndex);
     }
 
     /**
@@ -208,7 +208,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public BigDecimal getBigDecimal(String columnLabel, int scale)
             throws SQLException {
-        return delegate.getBigDecimal(columnLabel, scale);
+        return delegate().getBigDecimal(columnLabel, scale);
     }
 
     /**
@@ -218,7 +218,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBigDecimal(java.lang.String)
      */
     public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-        return delegate.getBigDecimal(columnLabel);
+        return delegate().getBigDecimal(columnLabel);
     }
 
     /**
@@ -228,7 +228,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBinaryStream(int)
      */
     public InputStream getBinaryStream(int columnIndex) throws SQLException {
-        return delegate.getBinaryStream(columnIndex);
+        return delegate().getBinaryStream(columnIndex);
     }
 
     /**
@@ -238,7 +238,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBinaryStream(java.lang.String)
      */
     public InputStream getBinaryStream(String columnLabel) throws SQLException {
-        return delegate.getBinaryStream(columnLabel);
+        return delegate().getBinaryStream(columnLabel);
     }
 
     /**
@@ -248,7 +248,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBlob(int)
      */
     public Blob getBlob(int columnIndex) throws SQLException {
-        return delegate.getBlob(columnIndex);
+        return delegate().getBlob(columnIndex);
     }
 
     /**
@@ -258,7 +258,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBlob(java.lang.String)
      */
     public Blob getBlob(String columnLabel) throws SQLException {
-        return delegate.getBlob(columnLabel);
+        return delegate().getBlob(columnLabel);
     }
 
     /**
@@ -268,7 +268,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBoolean(int)
      */
     public boolean getBoolean(int columnIndex) throws SQLException {
-        return delegate.getBoolean(columnIndex);
+        return delegate().getBoolean(columnIndex);
     }
 
     /**
@@ -278,7 +278,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBoolean(java.lang.String)
      */
     public boolean getBoolean(String columnLabel) throws SQLException {
-        return delegate.getBoolean(columnLabel);
+        return delegate().getBoolean(columnLabel);
     }
 
     /**
@@ -288,7 +288,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getByte(int)
      */
     public byte getByte(int columnIndex) throws SQLException {
-        return delegate.getByte(columnIndex);
+        return delegate().getByte(columnIndex);
     }
 
     /**
@@ -298,7 +298,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getByte(java.lang.String)
      */
     public byte getByte(String columnLabel) throws SQLException {
-        return delegate.getByte(columnLabel);
+        return delegate().getByte(columnLabel);
     }
 
     /**
@@ -308,7 +308,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBytes(int)
      */
     public byte[] getBytes(int columnIndex) throws SQLException {
-        return delegate.getBytes(columnIndex);
+        return delegate().getBytes(columnIndex);
     }
 
     /**
@@ -318,7 +318,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getBytes(java.lang.String)
      */
     public byte[] getBytes(String columnLabel) throws SQLException {
-        return delegate.getBytes(columnLabel);
+        return delegate().getBytes(columnLabel);
     }
 
     /**
@@ -328,7 +328,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getCharacterStream(int)
      */
     public Reader getCharacterStream(int columnIndex) throws SQLException {
-        return delegate.getCharacterStream(columnIndex);
+        return delegate().getCharacterStream(columnIndex);
     }
 
     /**
@@ -338,7 +338,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getCharacterStream(java.lang.String)
      */
     public Reader getCharacterStream(String columnLabel) throws SQLException {
-        return delegate.getCharacterStream(columnLabel);
+        return delegate().getCharacterStream(columnLabel);
     }
 
     /**
@@ -348,7 +348,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getClob(int)
      */
     public Clob getClob(int columnIndex) throws SQLException {
-        return delegate.getClob(columnIndex);
+        return delegate().getClob(columnIndex);
     }
 
     /**
@@ -358,7 +358,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getClob(java.lang.String)
      */
     public Clob getClob(String columnLabel) throws SQLException {
-        return delegate.getClob(columnLabel);
+        return delegate().getClob(columnLabel);
     }
 
     /**
@@ -367,7 +367,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getConcurrency()
      */
     public int getConcurrency() throws SQLException {
-        return delegate.getConcurrency();
+        return delegate().getConcurrency();
     }
 
     /**
@@ -376,7 +376,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getCursorName()
      */
     public String getCursorName() throws SQLException {
-        return delegate.getCursorName();
+        return delegate().getCursorName();
     }
 
     /**
@@ -387,7 +387,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getDate(int, java.util.Calendar)
      */
     public Date getDate(int columnIndex, Calendar cal) throws SQLException {
-        return delegate.getDate(columnIndex, cal);
+        return delegate().getDate(columnIndex, cal);
     }
 
     /**
@@ -397,7 +397,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getDate(int)
      */
     public Date getDate(int columnIndex) throws SQLException {
-        return delegate.getDate(columnIndex);
+        return delegate().getDate(columnIndex);
     }
 
     /**
@@ -408,7 +408,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getDate(java.lang.String, java.util.Calendar)
      */
     public Date getDate(String columnLabel, Calendar cal) throws SQLException {
-        return delegate.getDate(columnLabel, cal);
+        return delegate().getDate(columnLabel, cal);
     }
 
     /**
@@ -418,7 +418,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getDate(java.lang.String)
      */
     public Date getDate(String columnLabel) throws SQLException {
-        return delegate.getDate(columnLabel);
+        return delegate().getDate(columnLabel);
     }
 
     /**
@@ -428,7 +428,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getDouble(int)
      */
     public double getDouble(int columnIndex) throws SQLException {
-        return delegate.getDouble(columnIndex);
+        return delegate().getDouble(columnIndex);
     }
 
     /**
@@ -438,7 +438,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getDouble(java.lang.String)
      */
     public double getDouble(String columnLabel) throws SQLException {
-        return delegate.getDouble(columnLabel);
+        return delegate().getDouble(columnLabel);
     }
 
     /**
@@ -447,7 +447,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getFetchDirection()
      */
     public int getFetchDirection() throws SQLException {
-        return delegate.getFetchDirection();
+        return delegate().getFetchDirection();
     }
 
     /**
@@ -456,7 +456,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getFetchSize()
      */
     public int getFetchSize() throws SQLException {
-        return delegate.getFetchSize();
+        return delegate().getFetchSize();
     }
 
     /**
@@ -466,7 +466,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getFloat(int)
      */
     public float getFloat(int columnIndex) throws SQLException {
-        return delegate.getFloat(columnIndex);
+        return delegate().getFloat(columnIndex);
     }
 
     /**
@@ -476,7 +476,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getFloat(java.lang.String)
      */
     public float getFloat(String columnLabel) throws SQLException {
-        return delegate.getFloat(columnLabel);
+        return delegate().getFloat(columnLabel);
     }
 
     /**
@@ -485,7 +485,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getHoldability()
      */
     public int getHoldability() throws SQLException {
-        return delegate.getHoldability();
+        return delegate().getHoldability();
     }
 
     /**
@@ -495,7 +495,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getInt(int)
      */
     public int getInt(int columnIndex) throws SQLException {
-        return delegate.getInt(columnIndex);
+        return delegate().getInt(columnIndex);
     }
 
     /**
@@ -505,7 +505,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getInt(java.lang.String)
      */
     public int getInt(String columnLabel) throws SQLException {
-        return delegate.getInt(columnLabel);
+        return delegate().getInt(columnLabel);
     }
 
     /**
@@ -515,7 +515,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getLong(int)
      */
     public long getLong(int columnIndex) throws SQLException {
-        return delegate.getLong(columnIndex);
+        return delegate().getLong(columnIndex);
     }
 
     /**
@@ -525,7 +525,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getLong(java.lang.String)
      */
     public long getLong(String columnLabel) throws SQLException {
-        return delegate.getLong(columnLabel);
+        return delegate().getLong(columnLabel);
     }
 
     /**
@@ -534,7 +534,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getMetaData()
      */
     public ResultSetMetaData getMetaData() throws SQLException {
-        return delegate.getMetaData();
+        return delegate().getMetaData();
     }
 
     /**
@@ -544,7 +544,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getNCharacterStream(int)
      */
     public Reader getNCharacterStream(int columnIndex) throws SQLException {
-        return delegate.getNCharacterStream(columnIndex);
+        return delegate().getNCharacterStream(columnIndex);
     }
 
     /**
@@ -554,7 +554,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getNCharacterStream(java.lang.String)
      */
     public Reader getNCharacterStream(String columnLabel) throws SQLException {
-        return delegate.getNCharacterStream(columnLabel);
+        return delegate().getNCharacterStream(columnLabel);
     }
 
     /**
@@ -564,7 +564,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getNClob(int)
      */
     public NClob getNClob(int columnIndex) throws SQLException {
-        return delegate.getNClob(columnIndex);
+        return delegate().getNClob(columnIndex);
     }
 
     /**
@@ -574,7 +574,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getNClob(java.lang.String)
      */
     public NClob getNClob(String columnLabel) throws SQLException {
-        return delegate.getNClob(columnLabel);
+        return delegate().getNClob(columnLabel);
     }
 
     /**
@@ -584,7 +584,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getNString(int)
      */
     public String getNString(int columnIndex) throws SQLException {
-        return delegate.getNString(columnIndex);
+        return delegate().getNString(columnIndex);
     }
 
     /**
@@ -594,7 +594,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getNString(java.lang.String)
      */
     public String getNString(String columnLabel) throws SQLException {
-        return delegate.getNString(columnLabel);
+        return delegate().getNString(columnLabel);
     }
 
     /**
@@ -606,7 +606,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public Object getObject(int columnIndex, Map<String,Class<?>> map)
             throws SQLException {
-        return delegate.getObject(columnIndex, map);
+        return delegate().getObject(columnIndex, map);
     }
 
     /**
@@ -616,7 +616,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getObject(int)
      */
     public Object getObject(int columnIndex) throws SQLException {
-        return delegate.getObject(columnIndex);
+        return delegate().getObject(columnIndex);
     }
 
     /**
@@ -628,7 +628,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public Object getObject(String columnLabel, Map<String,Class<?>> map)
             throws SQLException {
-        return delegate.getObject(columnLabel, map);
+        return delegate().getObject(columnLabel, map);
     }
 
     /**
@@ -638,7 +638,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getObject(java.lang.String)
      */
     public Object getObject(String columnLabel) throws SQLException {
-        return delegate.getObject(columnLabel);
+        return delegate().getObject(columnLabel);
     }
 
     /**
@@ -648,7 +648,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getRef(int)
      */
     public Ref getRef(int columnIndex) throws SQLException {
-        return delegate.getRef(columnIndex);
+        return delegate().getRef(columnIndex);
     }
 
     /**
@@ -658,7 +658,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getRef(java.lang.String)
      */
     public Ref getRef(String columnLabel) throws SQLException {
-        return delegate.getRef(columnLabel);
+        return delegate().getRef(columnLabel);
     }
 
     /**
@@ -667,7 +667,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getRow()
      */
     public int getRow() throws SQLException {
-        return delegate.getRow();
+        return delegate().getRow();
     }
 
     /**
@@ -677,7 +677,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getRowId(int)
      */
     public RowId getRowId(int columnIndex) throws SQLException {
-        return delegate.getRowId(columnIndex);
+        return delegate().getRowId(columnIndex);
     }
 
     /**
@@ -687,7 +687,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getRowId(java.lang.String)
      */
     public RowId getRowId(String columnLabel) throws SQLException {
-        return delegate.getRowId(columnLabel);
+        return delegate().getRowId(columnLabel);
     }
 
     /**
@@ -697,7 +697,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getShort(int)
      */
     public short getShort(int columnIndex) throws SQLException {
-        return delegate.getShort(columnIndex);
+        return delegate().getShort(columnIndex);
     }
 
     /**
@@ -707,7 +707,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getShort(java.lang.String)
      */
     public short getShort(String columnLabel) throws SQLException {
-        return delegate.getShort(columnLabel);
+        return delegate().getShort(columnLabel);
     }
 
     /**
@@ -717,7 +717,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getSQLXML(int)
      */
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        return delegate.getSQLXML(columnIndex);
+        return delegate().getSQLXML(columnIndex);
     }
 
     /**
@@ -727,7 +727,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getSQLXML(java.lang.String)
      */
     public SQLXML getSQLXML(String columnLabel) throws SQLException {
-        return delegate.getSQLXML(columnLabel);
+        return delegate().getSQLXML(columnLabel);
     }
 
     /**
@@ -736,7 +736,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getStatement()
      */
     public Statement getStatement() throws SQLException {
-        return delegate.getStatement();
+        return delegate().getStatement();
     }
 
     /**
@@ -746,7 +746,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getString(int)
      */
     public String getString(int columnIndex) throws SQLException {
-        return delegate.getString(columnIndex);
+        return delegate().getString(columnIndex);
     }
 
     /**
@@ -756,7 +756,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getString(java.lang.String)
      */
     public String getString(String columnLabel) throws SQLException {
-        return delegate.getString(columnLabel);
+        return delegate().getString(columnLabel);
     }
 
     /**
@@ -767,7 +767,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getTime(int, java.util.Calendar)
      */
     public Time getTime(int columnIndex, Calendar cal) throws SQLException {
-        return delegate.getTime(columnIndex, cal);
+        return delegate().getTime(columnIndex, cal);
     }
 
     /**
@@ -777,7 +777,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getTime(int)
      */
     public Time getTime(int columnIndex) throws SQLException {
-        return delegate.getTime(columnIndex);
+        return delegate().getTime(columnIndex);
     }
 
     /**
@@ -788,7 +788,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getTime(java.lang.String, java.util.Calendar)
      */
     public Time getTime(String columnLabel, Calendar cal) throws SQLException {
-        return delegate.getTime(columnLabel, cal);
+        return delegate().getTime(columnLabel, cal);
     }
 
     /**
@@ -798,7 +798,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getTime(java.lang.String)
      */
     public Time getTime(String columnLabel) throws SQLException {
-        return delegate.getTime(columnLabel);
+        return delegate().getTime(columnLabel);
     }
 
     /**
@@ -810,7 +810,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public Timestamp getTimestamp(int columnIndex, Calendar cal)
             throws SQLException {
-        return delegate.getTimestamp(columnIndex, cal);
+        return delegate().getTimestamp(columnIndex, cal);
     }
 
     /**
@@ -820,7 +820,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getTimestamp(int)
      */
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        return delegate.getTimestamp(columnIndex);
+        return delegate().getTimestamp(columnIndex);
     }
 
     /**
@@ -832,7 +832,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public Timestamp getTimestamp(String columnLabel, Calendar cal)
             throws SQLException {
-        return delegate.getTimestamp(columnLabel, cal);
+        return delegate().getTimestamp(columnLabel, cal);
     }
 
     /**
@@ -842,7 +842,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getTimestamp(java.lang.String)
      */
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
-        return delegate.getTimestamp(columnLabel);
+        return delegate().getTimestamp(columnLabel);
     }
 
     /**
@@ -851,7 +851,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getType()
      */
     public int getType() throws SQLException {
-        return delegate.getType();
+        return delegate().getType();
     }
 
     /**
@@ -862,7 +862,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getUnicodeStream(int)
      */
     public InputStream getUnicodeStream(int columnIndex) throws SQLException {
-        return delegate.getUnicodeStream(columnIndex);
+        return delegate().getUnicodeStream(columnIndex);
     }
 
     /**
@@ -873,7 +873,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getUnicodeStream(java.lang.String)
      */
     public InputStream getUnicodeStream(String columnLabel) throws SQLException {
-        return delegate.getUnicodeStream(columnLabel);
+        return delegate().getUnicodeStream(columnLabel);
     }
 
     /**
@@ -883,7 +883,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getURL(int)
      */
     public URL getURL(int columnIndex) throws SQLException {
-        return delegate.getURL(columnIndex);
+        return delegate().getURL(columnIndex);
     }
 
     /**
@@ -893,7 +893,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getURL(java.lang.String)
      */
     public URL getURL(String columnLabel) throws SQLException {
-        return delegate.getURL(columnLabel);
+        return delegate().getURL(columnLabel);
     }
 
     /**
@@ -902,7 +902,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#getWarnings()
      */
     public SQLWarning getWarnings() throws SQLException {
-        return delegate.getWarnings();
+        return delegate().getWarnings();
     }
 
     /**
@@ -910,7 +910,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#insertRow()
      */
     public void insertRow() throws SQLException {
-        delegate.insertRow();
+        delegate().insertRow();
     }
 
     /**
@@ -919,7 +919,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#isAfterLast()
      */
     public boolean isAfterLast() throws SQLException {
-        return delegate.isAfterLast();
+        return delegate().isAfterLast();
     }
 
     /**
@@ -928,7 +928,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#isBeforeFirst()
      */
     public boolean isBeforeFirst() throws SQLException {
-        return delegate.isBeforeFirst();
+        return delegate().isBeforeFirst();
     }
 
     /**
@@ -937,7 +937,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#isClosed()
      */
     public boolean isClosed() throws SQLException {
-        return delegate.isClosed();
+        return delegate().isClosed();
     }
 
     /**
@@ -946,7 +946,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#isFirst()
      */
     public boolean isFirst() throws SQLException {
-        return delegate.isFirst();
+        return delegate().isFirst();
     }
 
     /**
@@ -955,7 +955,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#isLast()
      */
     public boolean isLast() throws SQLException {
-        return delegate.isLast();
+        return delegate().isLast();
     }
 
     /**
@@ -964,7 +964,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#last()
      */
     public boolean last() throws SQLException {
-        return delegate.last();
+        return delegate().last();
     }
 
     /**
@@ -972,7 +972,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#moveToCurrentRow()
      */
     public void moveToCurrentRow() throws SQLException {
-        delegate.moveToCurrentRow();
+        delegate().moveToCurrentRow();
     }
 
     /**
@@ -980,7 +980,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#moveToInsertRow()
      */
     public void moveToInsertRow() throws SQLException {
-        delegate.moveToInsertRow();
+        delegate().moveToInsertRow();
     }
 
     /**
@@ -989,7 +989,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#next()
      */
     public boolean next() throws SQLException {
-        return delegate.next();
+        return delegate().next();
     }
 
     /**
@@ -998,7 +998,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#previous()
      */
     public boolean previous() throws SQLException {
-        return delegate.previous();
+        return delegate().previous();
     }
 
     /**
@@ -1006,7 +1006,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#refreshRow()
      */
     public void refreshRow() throws SQLException {
-        delegate.refreshRow();
+        delegate().refreshRow();
     }
 
     /**
@@ -1016,7 +1016,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#relative(int)
      */
     public boolean relative(int rows) throws SQLException {
-        return delegate.relative(rows);
+        return delegate().relative(rows);
     }
 
     /**
@@ -1025,7 +1025,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#rowDeleted()
      */
     public boolean rowDeleted() throws SQLException {
-        return delegate.rowDeleted();
+        return delegate().rowDeleted();
     }
 
     /**
@@ -1034,7 +1034,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#rowInserted()
      */
     public boolean rowInserted() throws SQLException {
-        return delegate.rowInserted();
+        return delegate().rowInserted();
     }
 
     /**
@@ -1043,7 +1043,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#rowUpdated()
      */
     public boolean rowUpdated() throws SQLException {
-        return delegate.rowUpdated();
+        return delegate().rowUpdated();
     }
 
     /**
@@ -1052,7 +1052,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#setFetchDirection(int)
      */
     public void setFetchDirection(int direction) throws SQLException {
-        delegate.setFetchDirection(direction);
+        delegate().setFetchDirection(direction);
     }
 
     /**
@@ -1061,7 +1061,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#setFetchSize(int)
      */
     public void setFetchSize(int rows) throws SQLException {
-        delegate.setFetchSize(rows);
+        delegate().setFetchSize(rows);
     }
 
     /**
@@ -1071,7 +1071,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateArray(int, java.sql.Array)
      */
     public void updateArray(int columnIndex, Array x) throws SQLException {
-        delegate.updateArray(columnIndex, x);
+        delegate().updateArray(columnIndex, x);
     }
 
     /**
@@ -1081,7 +1081,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateArray(java.lang.String, java.sql.Array)
      */
     public void updateArray(String columnLabel, Array x) throws SQLException {
-        delegate.updateArray(columnLabel, x);
+        delegate().updateArray(columnLabel, x);
     }
 
     /**
@@ -1093,7 +1093,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateAsciiStream(int columnIndex, InputStream x, int length)
             throws SQLException {
-        delegate.updateAsciiStream(columnIndex, x, length);
+        delegate().updateAsciiStream(columnIndex, x, length);
     }
 
     /**
@@ -1105,7 +1105,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateAsciiStream(int columnIndex, InputStream x, long length)
             throws SQLException {
-        delegate.updateAsciiStream(columnIndex, x, length);
+        delegate().updateAsciiStream(columnIndex, x, length);
     }
 
     /**
@@ -1116,7 +1116,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateAsciiStream(int columnIndex, InputStream x)
             throws SQLException {
-        delegate.updateAsciiStream(columnIndex, x);
+        delegate().updateAsciiStream(columnIndex, x);
     }
 
     /**
@@ -1128,7 +1128,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateAsciiStream(String columnLabel, InputStream x, int length)
             throws SQLException {
-        delegate.updateAsciiStream(columnLabel, x, length);
+        delegate().updateAsciiStream(columnLabel, x, length);
     }
 
     /**
@@ -1140,7 +1140,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateAsciiStream(String columnLabel, InputStream x, long length)
             throws SQLException {
-        delegate.updateAsciiStream(columnLabel, x, length);
+        delegate().updateAsciiStream(columnLabel, x, length);
     }
 
     /**
@@ -1151,7 +1151,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateAsciiStream(String columnLabel, InputStream x)
             throws SQLException {
-        delegate.updateAsciiStream(columnLabel, x);
+        delegate().updateAsciiStream(columnLabel, x);
     }
 
     /**
@@ -1162,7 +1162,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBigDecimal(int columnIndex, BigDecimal x)
             throws SQLException {
-        delegate.updateBigDecimal(columnIndex, x);
+        delegate().updateBigDecimal(columnIndex, x);
     }
 
     /**
@@ -1173,7 +1173,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBigDecimal(String columnLabel, BigDecimal x)
             throws SQLException {
-        delegate.updateBigDecimal(columnLabel, x);
+        delegate().updateBigDecimal(columnLabel, x);
     }
 
     /**
@@ -1185,7 +1185,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBinaryStream(int columnIndex, InputStream x, int length)
             throws SQLException {
-        delegate.updateBinaryStream(columnIndex, x, length);
+        delegate().updateBinaryStream(columnIndex, x, length);
     }
 
     /**
@@ -1197,7 +1197,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBinaryStream(int columnIndex, InputStream x, long length)
             throws SQLException {
-        delegate.updateBinaryStream(columnIndex, x, length);
+        delegate().updateBinaryStream(columnIndex, x, length);
     }
 
     /**
@@ -1208,7 +1208,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBinaryStream(int columnIndex, InputStream x)
             throws SQLException {
-        delegate.updateBinaryStream(columnIndex, x);
+        delegate().updateBinaryStream(columnIndex, x);
     }
 
     /**
@@ -1220,7 +1220,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBinaryStream(String columnLabel, InputStream x, int length)
             throws SQLException {
-        delegate.updateBinaryStream(columnLabel, x, length);
+        delegate().updateBinaryStream(columnLabel, x, length);
     }
 
     /**
@@ -1233,7 +1233,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
     public void updateBinaryStream(String columnLabel,
                                    InputStream x,
                                    long length) throws SQLException {
-        delegate.updateBinaryStream(columnLabel, x, length);
+        delegate().updateBinaryStream(columnLabel, x, length);
     }
 
     /**
@@ -1244,7 +1244,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBinaryStream(String columnLabel, InputStream x)
             throws SQLException {
-        delegate.updateBinaryStream(columnLabel, x);
+        delegate().updateBinaryStream(columnLabel, x);
     }
 
     /**
@@ -1254,7 +1254,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateBlob(int, java.sql.Blob)
      */
     public void updateBlob(int columnIndex, Blob x) throws SQLException {
-        delegate.updateBlob(columnIndex, x);
+        delegate().updateBlob(columnIndex, x);
     }
 
     /**
@@ -1266,7 +1266,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBlob(int columnIndex, InputStream inputStream, long length)
             throws SQLException {
-        delegate.updateBlob(columnIndex, inputStream, length);
+        delegate().updateBlob(columnIndex, inputStream, length);
     }
 
     /**
@@ -1277,7 +1277,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBlob(int columnIndex, InputStream inputStream)
             throws SQLException {
-        delegate.updateBlob(columnIndex, inputStream);
+        delegate().updateBlob(columnIndex, inputStream);
     }
 
     /**
@@ -1287,7 +1287,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateBlob(java.lang.String, java.sql.Blob)
      */
     public void updateBlob(String columnLabel, Blob x) throws SQLException {
-        delegate.updateBlob(columnLabel, x);
+        delegate().updateBlob(columnLabel, x);
     }
 
     /**
@@ -1300,7 +1300,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
     public void updateBlob(String columnLabel,
                            InputStream inputStream,
                            long length) throws SQLException {
-        delegate.updateBlob(columnLabel, inputStream, length);
+        delegate().updateBlob(columnLabel, inputStream, length);
     }
 
     /**
@@ -1311,7 +1311,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBlob(String columnLabel, InputStream inputStream)
             throws SQLException {
-        delegate.updateBlob(columnLabel, inputStream);
+        delegate().updateBlob(columnLabel, inputStream);
     }
 
     /**
@@ -1321,7 +1321,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateBoolean(int, boolean)
      */
     public void updateBoolean(int columnIndex, boolean x) throws SQLException {
-        delegate.updateBoolean(columnIndex, x);
+        delegate().updateBoolean(columnIndex, x);
     }
 
     /**
@@ -1332,7 +1332,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateBoolean(String columnLabel, boolean x)
             throws SQLException {
-        delegate.updateBoolean(columnLabel, x);
+        delegate().updateBoolean(columnLabel, x);
     }
 
     /**
@@ -1342,7 +1342,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateByte(int, byte)
      */
     public void updateByte(int columnIndex, byte x) throws SQLException {
-        delegate.updateByte(columnIndex, x);
+        delegate().updateByte(columnIndex, x);
     }
 
     /**
@@ -1352,7 +1352,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateByte(java.lang.String, byte)
      */
     public void updateByte(String columnLabel, byte x) throws SQLException {
-        delegate.updateByte(columnLabel, x);
+        delegate().updateByte(columnLabel, x);
     }
 
     /**
@@ -1362,7 +1362,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateBytes(int, byte[])
      */
     public void updateBytes(int columnIndex, byte[] x) throws SQLException {
-        delegate.updateBytes(columnIndex, x);
+        delegate().updateBytes(columnIndex, x);
     }
 
     /**
@@ -1372,7 +1372,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateBytes(java.lang.String, byte[])
      */
     public void updateBytes(String columnLabel, byte[] x) throws SQLException {
-        delegate.updateBytes(columnLabel, x);
+        delegate().updateBytes(columnLabel, x);
     }
 
     /**
@@ -1384,7 +1384,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateCharacterStream(int columnIndex, Reader x, int length)
             throws SQLException {
-        delegate.updateCharacterStream(columnIndex, x, length);
+        delegate().updateCharacterStream(columnIndex, x, length);
     }
 
     /**
@@ -1396,7 +1396,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateCharacterStream(int columnIndex, Reader x, long length)
             throws SQLException {
-        delegate.updateCharacterStream(columnIndex, x, length);
+        delegate().updateCharacterStream(columnIndex, x, length);
     }
 
     /**
@@ -1407,7 +1407,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateCharacterStream(int columnIndex, Reader x)
             throws SQLException {
-        delegate.updateCharacterStream(columnIndex, x);
+        delegate().updateCharacterStream(columnIndex, x);
     }
 
     /**
@@ -1420,7 +1420,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
     public void updateCharacterStream(String columnLabel,
                                       Reader reader,
                                       int length) throws SQLException {
-        delegate.updateCharacterStream(columnLabel, reader, length);
+        delegate().updateCharacterStream(columnLabel, reader, length);
     }
 
     /**
@@ -1433,7 +1433,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
     public void updateCharacterStream(String columnLabel,
                                       Reader reader,
                                       long length) throws SQLException {
-        delegate.updateCharacterStream(columnLabel, reader, length);
+        delegate().updateCharacterStream(columnLabel, reader, length);
     }
 
     /**
@@ -1444,7 +1444,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateCharacterStream(String columnLabel, Reader reader)
             throws SQLException {
-        delegate.updateCharacterStream(columnLabel, reader);
+        delegate().updateCharacterStream(columnLabel, reader);
     }
 
     /**
@@ -1454,7 +1454,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateClob(int, java.sql.Clob)
      */
     public void updateClob(int columnIndex, Clob x) throws SQLException {
-        delegate.updateClob(columnIndex, x);
+        delegate().updateClob(columnIndex, x);
     }
 
     /**
@@ -1466,7 +1466,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateClob(int columnIndex, Reader reader, long length)
             throws SQLException {
-        delegate.updateClob(columnIndex, reader, length);
+        delegate().updateClob(columnIndex, reader, length);
     }
 
     /**
@@ -1476,7 +1476,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateClob(int, java.io.Reader)
      */
     public void updateClob(int columnIndex, Reader reader) throws SQLException {
-        delegate.updateClob(columnIndex, reader);
+        delegate().updateClob(columnIndex, reader);
     }
 
     /**
@@ -1486,7 +1486,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateClob(java.lang.String, java.sql.Clob)
      */
     public void updateClob(String columnLabel, Clob x) throws SQLException {
-        delegate.updateClob(columnLabel, x);
+        delegate().updateClob(columnLabel, x);
     }
 
     /**
@@ -1498,7 +1498,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateClob(String columnLabel, Reader reader, long length)
             throws SQLException {
-        delegate.updateClob(columnLabel, reader, length);
+        delegate().updateClob(columnLabel, reader, length);
     }
 
     /**
@@ -1509,7 +1509,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateClob(String columnLabel, Reader reader)
             throws SQLException {
-        delegate.updateClob(columnLabel, reader);
+        delegate().updateClob(columnLabel, reader);
     }
 
     /**
@@ -1519,7 +1519,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateDate(int, java.sql.Date)
      */
     public void updateDate(int columnIndex, Date x) throws SQLException {
-        delegate.updateDate(columnIndex, x);
+        delegate().updateDate(columnIndex, x);
     }
 
     /**
@@ -1529,7 +1529,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateDate(java.lang.String, java.sql.Date)
      */
     public void updateDate(String columnLabel, Date x) throws SQLException {
-        delegate.updateDate(columnLabel, x);
+        delegate().updateDate(columnLabel, x);
     }
 
     /**
@@ -1539,7 +1539,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateDouble(int, double)
      */
     public void updateDouble(int columnIndex, double x) throws SQLException {
-        delegate.updateDouble(columnIndex, x);
+        delegate().updateDouble(columnIndex, x);
     }
 
     /**
@@ -1549,7 +1549,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateDouble(java.lang.String, double)
      */
     public void updateDouble(String columnLabel, double x) throws SQLException {
-        delegate.updateDouble(columnLabel, x);
+        delegate().updateDouble(columnLabel, x);
     }
 
     /**
@@ -1559,7 +1559,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateFloat(int, float)
      */
     public void updateFloat(int columnIndex, float x) throws SQLException {
-        delegate.updateFloat(columnIndex, x);
+        delegate().updateFloat(columnIndex, x);
     }
 
     /**
@@ -1569,7 +1569,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateFloat(java.lang.String, float)
      */
     public void updateFloat(String columnLabel, float x) throws SQLException {
-        delegate.updateFloat(columnLabel, x);
+        delegate().updateFloat(columnLabel, x);
     }
 
     /**
@@ -1579,7 +1579,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateInt(int, int)
      */
     public void updateInt(int columnIndex, int x) throws SQLException {
-        delegate.updateInt(columnIndex, x);
+        delegate().updateInt(columnIndex, x);
     }
 
     /**
@@ -1589,7 +1589,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateInt(java.lang.String, int)
      */
     public void updateInt(String columnLabel, int x) throws SQLException {
-        delegate.updateInt(columnLabel, x);
+        delegate().updateInt(columnLabel, x);
     }
 
     /**
@@ -1599,7 +1599,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateLong(int, long)
      */
     public void updateLong(int columnIndex, long x) throws SQLException {
-        delegate.updateLong(columnIndex, x);
+        delegate().updateLong(columnIndex, x);
     }
 
     /**
@@ -1609,7 +1609,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateLong(java.lang.String, long)
      */
     public void updateLong(String columnLabel, long x) throws SQLException {
-        delegate.updateLong(columnLabel, x);
+        delegate().updateLong(columnLabel, x);
     }
 
     /**
@@ -1621,7 +1621,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNCharacterStream(int columnIndex, Reader x, long length)
             throws SQLException {
-        delegate.updateNCharacterStream(columnIndex, x, length);
+        delegate().updateNCharacterStream(columnIndex, x, length);
     }
 
     /**
@@ -1632,7 +1632,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNCharacterStream(int columnIndex, Reader x)
             throws SQLException {
-        delegate.updateNCharacterStream(columnIndex, x);
+        delegate().updateNCharacterStream(columnIndex, x);
     }
 
     /**
@@ -1645,7 +1645,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
     public void updateNCharacterStream(String columnLabel,
                                        Reader reader,
                                        long length) throws SQLException {
-        delegate.updateNCharacterStream(columnLabel, reader, length);
+        delegate().updateNCharacterStream(columnLabel, reader, length);
     }
 
     /**
@@ -1656,7 +1656,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNCharacterStream(String columnLabel, Reader reader)
             throws SQLException {
-        delegate.updateNCharacterStream(columnLabel, reader);
+        delegate().updateNCharacterStream(columnLabel, reader);
     }
 
     /**
@@ -1666,7 +1666,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateNClob(int, java.sql.NClob)
      */
     public void updateNClob(int columnIndex, NClob nClob) throws SQLException {
-        delegate.updateNClob(columnIndex, nClob);
+        delegate().updateNClob(columnIndex, nClob);
     }
 
     /**
@@ -1678,7 +1678,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNClob(int columnIndex, Reader reader, long length)
             throws SQLException {
-        delegate.updateNClob(columnIndex, reader, length);
+        delegate().updateNClob(columnIndex, reader, length);
     }
 
     /**
@@ -1688,7 +1688,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateNClob(int, java.io.Reader)
      */
     public void updateNClob(int columnIndex, Reader reader) throws SQLException {
-        delegate.updateNClob(columnIndex, reader);
+        delegate().updateNClob(columnIndex, reader);
     }
 
     /**
@@ -1699,7 +1699,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNClob(String columnLabel, NClob nClob)
             throws SQLException {
-        delegate.updateNClob(columnLabel, nClob);
+        delegate().updateNClob(columnLabel, nClob);
     }
 
     /**
@@ -1711,7 +1711,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNClob(String columnLabel, Reader reader, long length)
             throws SQLException {
-        delegate.updateNClob(columnLabel, reader, length);
+        delegate().updateNClob(columnLabel, reader, length);
     }
 
     /**
@@ -1722,7 +1722,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNClob(String columnLabel, Reader reader)
             throws SQLException {
-        delegate.updateNClob(columnLabel, reader);
+        delegate().updateNClob(columnLabel, reader);
     }
 
     /**
@@ -1733,7 +1733,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNString(int columnIndex, String nString)
             throws SQLException {
-        delegate.updateNString(columnIndex, nString);
+        delegate().updateNString(columnIndex, nString);
     }
 
     /**
@@ -1744,7 +1744,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateNString(String columnLabel, String nString)
             throws SQLException {
-        delegate.updateNString(columnLabel, nString);
+        delegate().updateNString(columnLabel, nString);
     }
 
     /**
@@ -1753,7 +1753,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateNull(int)
      */
     public void updateNull(int columnIndex) throws SQLException {
-        delegate.updateNull(columnIndex);
+        delegate().updateNull(columnIndex);
     }
 
     /**
@@ -1762,7 +1762,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateNull(java.lang.String)
      */
     public void updateNull(String columnLabel) throws SQLException {
-        delegate.updateNull(columnLabel);
+        delegate().updateNull(columnLabel);
     }
 
     /**
@@ -1774,7 +1774,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateObject(int columnIndex, Object x, int scaleOrLength)
             throws SQLException {
-        delegate.updateObject(columnIndex, x, scaleOrLength);
+        delegate().updateObject(columnIndex, x, scaleOrLength);
     }
 
     /**
@@ -1784,7 +1784,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateObject(int, java.lang.Object)
      */
     public void updateObject(int columnIndex, Object x) throws SQLException {
-        delegate.updateObject(columnIndex, x);
+        delegate().updateObject(columnIndex, x);
     }
 
     /**
@@ -1796,7 +1796,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateObject(String columnLabel, Object x, int scaleOrLength)
             throws SQLException {
-        delegate.updateObject(columnLabel, x, scaleOrLength);
+        delegate().updateObject(columnLabel, x, scaleOrLength);
     }
 
     /**
@@ -1806,7 +1806,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateObject(java.lang.String, java.lang.Object)
      */
     public void updateObject(String columnLabel, Object x) throws SQLException {
-        delegate.updateObject(columnLabel, x);
+        delegate().updateObject(columnLabel, x);
     }
 
     /**
@@ -1816,7 +1816,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateRef(int, java.sql.Ref)
      */
     public void updateRef(int columnIndex, Ref x) throws SQLException {
-        delegate.updateRef(columnIndex, x);
+        delegate().updateRef(columnIndex, x);
     }
 
     /**
@@ -1826,7 +1826,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateRef(java.lang.String, java.sql.Ref)
      */
     public void updateRef(String columnLabel, Ref x) throws SQLException {
-        delegate.updateRef(columnLabel, x);
+        delegate().updateRef(columnLabel, x);
     }
 
     /**
@@ -1834,7 +1834,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateRow()
      */
     public void updateRow() throws SQLException {
-        delegate.updateRow();
+        delegate().updateRow();
     }
 
     /**
@@ -1844,7 +1844,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateRowId(int, java.sql.RowId)
      */
     public void updateRowId(int columnIndex, RowId x) throws SQLException {
-        delegate.updateRowId(columnIndex, x);
+        delegate().updateRowId(columnIndex, x);
     }
 
     /**
@@ -1854,7 +1854,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateRowId(java.lang.String, java.sql.RowId)
      */
     public void updateRowId(String columnLabel, RowId x) throws SQLException {
-        delegate.updateRowId(columnLabel, x);
+        delegate().updateRowId(columnLabel, x);
     }
 
     /**
@@ -1864,7 +1864,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateShort(int, short)
      */
     public void updateShort(int columnIndex, short x) throws SQLException {
-        delegate.updateShort(columnIndex, x);
+        delegate().updateShort(columnIndex, x);
     }
 
     /**
@@ -1874,7 +1874,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateShort(java.lang.String, short)
      */
     public void updateShort(String columnLabel, short x) throws SQLException {
-        delegate.updateShort(columnLabel, x);
+        delegate().updateShort(columnLabel, x);
     }
 
     /**
@@ -1885,7 +1885,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateSQLXML(int columnIndex, SQLXML xmlObject)
             throws SQLException {
-        delegate.updateSQLXML(columnIndex, xmlObject);
+        delegate().updateSQLXML(columnIndex, xmlObject);
     }
 
     /**
@@ -1896,7 +1896,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateSQLXML(String columnLabel, SQLXML xmlObject)
             throws SQLException {
-        delegate.updateSQLXML(columnLabel, xmlObject);
+        delegate().updateSQLXML(columnLabel, xmlObject);
     }
 
     /**
@@ -1906,7 +1906,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateString(int, java.lang.String)
      */
     public void updateString(int columnIndex, String x) throws SQLException {
-        delegate.updateString(columnIndex, x);
+        delegate().updateString(columnIndex, x);
     }
 
     /**
@@ -1916,7 +1916,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateString(java.lang.String, java.lang.String)
      */
     public void updateString(String columnLabel, String x) throws SQLException {
-        delegate.updateString(columnLabel, x);
+        delegate().updateString(columnLabel, x);
     }
 
     /**
@@ -1926,7 +1926,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateTime(int, java.sql.Time)
      */
     public void updateTime(int columnIndex, Time x) throws SQLException {
-        delegate.updateTime(columnIndex, x);
+        delegate().updateTime(columnIndex, x);
     }
 
     /**
@@ -1936,7 +1936,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#updateTime(java.lang.String, java.sql.Time)
      */
     public void updateTime(String columnLabel, Time x) throws SQLException {
-        delegate.updateTime(columnLabel, x);
+        delegate().updateTime(columnLabel, x);
     }
 
     /**
@@ -1947,7 +1947,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateTimestamp(int columnIndex, Timestamp x)
             throws SQLException {
-        delegate.updateTimestamp(columnIndex, x);
+        delegate().updateTimestamp(columnIndex, x);
     }
 
     /**
@@ -1958,7 +1958,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      */
     public void updateTimestamp(String columnLabel, Timestamp x)
             throws SQLException {
-        delegate.updateTimestamp(columnLabel, x);
+        delegate().updateTimestamp(columnLabel, x);
     }
 
     /**
@@ -1967,7 +1967,7 @@ public class AbstractResultSetDecorator extends AbstractWrapper implements Resul
      * @see java.sql.ResultSet#wasNull()
      */
     public boolean wasNull() throws SQLException {
-        return delegate.wasNull();
+        return delegate().wasNull();
     }
 
     

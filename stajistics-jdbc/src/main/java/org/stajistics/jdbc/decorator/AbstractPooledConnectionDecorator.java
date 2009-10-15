@@ -41,7 +41,7 @@ public abstract class AbstractPooledConnectionDecorator implements PooledConnect
     protected final PooledConnection delegate() {
         return delegate;
     }
-    
+
     @Override
     public void addConnectionEventListener(ConnectionEventListener listener) {
         delegate().addConnectionEventListener(listener);

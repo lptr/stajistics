@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 
+import org.stajistics.jdbc.wrapper.StatsXAConnectionWrapper;
+
 /**
  * 
  * @author The Stajistics Project
@@ -28,25 +30,67 @@ import javax.sql.XADataSource;
 public class StatsXADataSourceWrapper implements XADataSource {
 
     private XADataSource delegate;
-
     private StatsJDBCConfig config;
 
     public StatsXADataSourceWrapper() {}
 
-    public StatsXADataSourceWrapper(final XADataSource delegate) {
+    public StatsXADataSourceWrapper(final XADataSource delegate,
+                                    final StatsJDBCConfig config) {
+        setDelegate(delegate);
+        setConfig(config);
+    }
+
+    public XADataSource getDelegate() {
+        return delegate;
+    }
+
+    public void setDelegate(final XADataSource delegate) {
+        if (delegate == null) {
+            throw new NullPointerException("delegate");
+        }
+
         this.delegate = delegate;
     }
 
+    public StatsJDBCConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(final StatsJDBCConfig config) {
+        if (config == null) {
+            throw new NullPointerException("config");
+        }
+
+        this.config = config;
+    }
+
+    protected XADataSource delegate() {
+        if (delegate == null) {
+            throw new IllegalStateException("no delegate supplied");
+        }
+
+        return delegate;
+    }
+
+    protected StatsJDBCConfig requireConfig() {
+        if (config == null) {
+            throw new IllegalStateException("no config supplied");
+        }
+
+        return config;
+    }
+    
     public int getLoginTimeout() throws SQLException {
-        return delegate.getLoginTimeout();
+        return delegate().getLoginTimeout();
     }
 
     public PrintWriter getLogWriter() throws SQLException {
-        return delegate.getLogWriter();
+        return delegate().getLogWriter();
     }
 
     public XAConnection getXAConnection() throws SQLException {
-        XAConnection xac = new StatsXAConnectionWrapper(delegate.getXAConnection(), config);
+        XAConnection xac = new StatsXAConnectionWrapper(delegate().getXAConnection(),
+                                                        requireConfig());
 
         return xac;
     }
@@ -54,18 +98,18 @@ public class StatsXADataSourceWrapper implements XADataSource {
     public XAConnection getXAConnection(final String user, 
                                         final String password)
             throws SQLException {
-        XAConnection xac = new StatsXAConnectionWrapper(delegate.getXAConnection(user, password), config);
+        XAConnection xac = new StatsXAConnectionWrapper(delegate().getXAConnection(user, password),
+                                                        requireConfig());
 
         return xac;
     }
 
     public void setLoginTimeout(int seconds) throws SQLException {
-        delegate.setLoginTimeout(seconds);
+        delegate().setLoginTimeout(seconds);
     }
 
     public void setLogWriter(PrintWriter out) throws SQLException {
-        delegate.setLogWriter(out);
+        delegate().setLogWriter(out);
     }
-
     
 }

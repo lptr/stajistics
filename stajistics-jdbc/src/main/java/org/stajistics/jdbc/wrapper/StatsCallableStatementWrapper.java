@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.jdbc;
+package org.stajistics.jdbc.wrapper;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -21,6 +21,7 @@ import java.sql.SQLException;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractCallableStatementDecorator;
 import org.stajistics.tracker.StatsTracker;
 
@@ -32,12 +33,12 @@ import org.stajistics.tracker.StatsTracker;
 public class StatsCallableStatementWrapper extends AbstractCallableStatementDecorator {
 
     private final StatsJDBCConfig config;
-    
+
     private final Connection connection;
     private final String sql;
 
     private final StatsTracker openClosedTracker;
-    
+
     public StatsCallableStatementWrapper(final CallableStatement delegate,
                                          final Connection connection,
                                          final String sql,
@@ -57,16 +58,18 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
         this.connection = connection;
         this.sql = sql;
         this.config = config;
-    
-        StatsKey openClosedKey = JDBCStatsKeyConstants.CALLABLE_STATEMENT
-                                                      .buildCopy()
-                                                      .withNameSuffix("open")
-                                                      .newKey();
+
+        StatsKey openClosedKey = Stats.buildKey(CallableStatement.class.getName())
+                                      .withNameSuffix("open")
+                                      .newKey();
 
         openClosedTracker = Stats.track(openClosedKey);
-    
     }
 
+    public String getSQL() {
+        return sql;
+    }
+    
     private void handleSQL(final String sql) {
         config.getSQLAnalyzer()
               .analyzeSQL(sql);

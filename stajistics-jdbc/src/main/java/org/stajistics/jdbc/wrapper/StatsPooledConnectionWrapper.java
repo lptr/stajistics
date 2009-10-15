@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.jdbc;
+package org.stajistics.jdbc.wrapper;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.ConnectionEvent;
@@ -24,6 +25,7 @@ import javax.sql.StatementEventListener;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
+import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractPooledConnectionDecorator;
 import org.stajistics.tracker.StatsTracker;
 
@@ -49,14 +51,13 @@ public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecora
 
         this.config = config;
 
-        StatsKey openClosedKey = JDBCStatsKeyConstants.POOLED_CONNECTION
-                                                      .buildCopy()
-                                                      .withNameSuffix("open")
-                                                      .newKey();
-        StatsKey checkInCheckOutKey = JDBCStatsKeyConstants.POOLED_CONNECTION
-                                                           .buildCopy()
-                                                           .withNameSuffix("checkedOut")
-                                                           .newKey();
+        StatsKey openClosedKey = Stats.buildKey(PooledConnection.class.getName())
+                                      .withNameSuffix("open")
+                                      .newKey();
+
+        StatsKey checkInCheckOutKey = Stats.buildKey(PooledConnection.class.getName())
+                                           .withNameSuffix("checkedOut")
+                                           .newKey();
 
         openClosedTracker = Stats.track(openClosedKey);
         //checkInCheckOutTracker = null;
@@ -71,6 +72,16 @@ public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecora
         }
     }
 
+    @Override
+    public Connection getConnection() throws SQLException {
+        Connection con = new StatsConnectionWrapper(delegate().getConnection(), config);
+
+        con = config.getProxyFactory(Connection.class)
+                    .createProxy(con);
+
+        return con;
+    }
+    
     /* NESTED CLASSES */
 
     private class ConnectionEventHandler implements ConnectionEventListener {

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.jdbc;
+package org.stajistics.jdbc.wrapper;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -23,6 +23,7 @@ import java.sql.Statement;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
+import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractConnectionDecorator;
 import org.stajistics.tracker.StatsTracker;
 
@@ -51,11 +52,10 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
         }
 
         this.config = config; 
-        
-        StatsKey openClosedKey = JDBCStatsKeyConstants.CONNECTION
-                                                      .buildCopy()
-                                                      .withNameSuffix("open")
-                                                      .newKey();
+
+        StatsKey openClosedKey = Stats.buildKey(Connection.class.getName())
+                                      .withNameSuffix("open")
+                                      .newKey();
 
         statementProxyFactory = config.getProxyFactory(Statement.class);
         callableStatementProxyFactory = config.getProxyFactory(CallableStatement.class);
