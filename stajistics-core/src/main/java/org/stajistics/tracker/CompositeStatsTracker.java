@@ -58,6 +58,15 @@ public class CompositeStatsTracker implements StatsTracker {
     }
 
     @Override
+    public StatsTracker incident() {
+        for (int i = 0; i < trackers.length; i++) {
+            trackers[i].incident();
+        }
+
+        return this;
+    }
+
+    @Override
     public StatsSession getSession() {
         return trackers[0].getSession();
     }

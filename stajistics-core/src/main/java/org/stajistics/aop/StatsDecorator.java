@@ -14,7 +14,10 @@
  */
 package org.stajistics.aop;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
@@ -53,7 +56,7 @@ public class StatsDecorator {
                     }
 
                 } catch (Throwable t) {
-                    Stats.failure(key, t);
+                    Stats.failure(t, key);
                     rethrow(t);
                 }
             }
@@ -74,7 +77,7 @@ public class StatsDecorator {
                     }
 
                 } catch (Throwable t) {
-                    Stats.failure(key, t);
+                    Stats.failure(t, key);
                     rethrow(t);
                     return null; // Can't get here, silly compiler
                 }
@@ -82,4 +85,43 @@ public class StatsDecorator {
         };
     }
 
+    public static Observer wrap(final Observer observer,
+                                final StatsKey key) {
+        return new Observer() {
+            @Override
+            public void update(final Observable o, 
+                               final Object arg) {
+                try {
+                    StatsTracker tracker = Stats.track(key);
+                    try {
+                        observer.update(o, arg);
+                    } finally {
+                        tracker.commit();
+                    }
+
+                } catch (Throwable t) {
+                    Stats.failure(t, key);
+                    rethrow(t);
+                }
+            }
+        };
+    }
+
+    public static Executor wrap(final Executor executor,
+                                final StatsKey key) {
+        return new Executor() {
+            @Override
+            public void execute(final Runnable command) {
+                try {
+                    Stats.incident(key);
+
+                    executor.execute(command);
+
+                } catch (Throwable t) {
+                    Stats.failure(t, key);
+                    rethrow(t);
+                }
+            }
+        };
+    }
 }

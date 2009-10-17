@@ -42,8 +42,11 @@ public class MilliTimeDurationTracker extends AbstractStatsTracker {
     }
 
     @Override
-    protected void commitImpl() {
-        final long now = System.currentTimeMillis(); 
+    protected void commitImpl(long now) {
+        if (now < 0) {
+            now = System.currentTimeMillis();
+        }
+
         value = now - this.timeStamp;
 
         session.update(this, now);

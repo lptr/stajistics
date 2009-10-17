@@ -31,6 +31,8 @@ public interface StatsTracker extends Serializable {
 
     StatsTracker commit();
 
+    StatsTracker incident();
+
     double getValue();
 
     long getTimeStamp();

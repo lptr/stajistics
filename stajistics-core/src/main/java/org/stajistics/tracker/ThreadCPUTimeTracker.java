@@ -48,13 +48,13 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     @Override
-    protected void commitImpl() {
+    protected void commitImpl(final long now) {
         if (isCPUTimeMonitoringEnabled()) {
             long endCPUTime = getThreadMXBean().getCurrentThreadCpuTime();
 
             value = (endCPUTime - startCPUTime) / 1000000d; // to millis
 
-            session.update(this, -1);
+            session.update(this, now);
         }
     }
 

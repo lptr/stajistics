@@ -44,11 +44,11 @@ public class HitFrequencyTracker extends AbstractStatsTracker {
     }
 
     @Override
-    protected void commitImpl() {
+    protected void commitImpl(final long now) {
         if (lastHitStamp != 0) {
             value = timeStamp - lastHitStamp;
 
-            session.update(this, -1);
+            session.update(this, now);
         }
     }
 

@@ -56,6 +56,11 @@ public final class NullTracker implements StatsTracker,ManualStatsTracker {
     }
 
     @Override
+    public StatsTracker incident() {
+        return this;
+    }
+
+    @Override
     public double getValue() {
         return 0;
     }

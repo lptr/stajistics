@@ -58,7 +58,7 @@ public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
     }
 
     @Override
-    protected void commitImpl() {
+    protected void commitImpl(final long now) {
         List<GarbageCollectorMXBean> gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
         if (gcMXBeans.size() == startCGNames.length) {
 
@@ -95,7 +95,7 @@ public class GarbageCollectionTimeTracker extends AbstractStatsTracker {
 
             if (commit) {
                 value = totalGCTime;
-                session.update(this, -1);
+                session.update(this, now);
             }
         }
     }

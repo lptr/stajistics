@@ -223,7 +223,7 @@ public final class Stats {
 
     /**
      * Report an incident. Equivalent to calling:
-     * <tt>Stats.getTracker(Stats.newKey(name)).track().commit()</tt>.
+     * <tt>Stats.getTracker(Stats.newKey(name)).incident()</tt>.
      *
      * @param keyName The key name for which to report an incident.
      *
@@ -232,12 +232,12 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final String keyName) {
-        getTracker(newKey(keyName)).track().commit();
+        getTracker(newKey(keyName)).incident();
     }
 
     /**
      * Report an incident. Equivalent to calling:
-     * <tt>Stats.getTracker(key).track().commit()</tt>.
+     * <tt>Stats.getTracker(key).incident()</tt>.
      *
      * @param key The {@link StatsKey} for which to report an incident.
      *
@@ -246,12 +246,12 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final StatsKey key) {
-        getTracker(key).track().commit();
+        getTracker(key).incident();
     }
 
     /**
      * Report an incident. Equivalent to calling:
-     * <tt>Stats.getTracker(keys).track().commit()</tt>.
+     * <tt>Stats.getTracker(keys).incident()</tt>.
      *
      * @param keys The {@link StatsKey}s for which to report an incident.
      *
@@ -260,29 +260,46 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final StatsKey... keys) {
-        getTracker(keys).track().commit();
+        getTracker(keys).incident();
     }
 
     /**
      * Report a failure.
      *
+     * @param failure The Throwable that represents the failure.
      * @param keyName The key name for which to report an incident.
-     * @param failure The Throwable that represents the failure.
      */
-    public static void failure(final String keyName,
-                               final Throwable failure) {
-        failure(newKey(keyName), failure);
+    public static void failure(final Throwable failure,
+                               final String keyName) {
+        getTracker(StatsKeyUtils.keyForFailure(newKey(keyName), failure)).incident();
     }
 
     /**
      * Report a failure.
      *
+     * @param failure The Throwable that represents the failure.
      * @param key The {@link StatsKey} for which to report a failure.
+     */
+    public static void failure(final Throwable failure,
+                               final StatsKey key) {
+        getTracker(StatsKeyUtils.keyForFailure(key, failure)).incident();
+    }
+
+    /**
+     * Report a failure.
+     *
+     * @param keys The {@link StatsKey}s for which to report a failure.
      * @param failure The Throwable that represents the failure.
      */
-    public static void failure(final StatsKey key,
-                               final Throwable failure) {
-        incident(StatsKeyUtils.keyForFailure(key, failure));
+    public static void failure(final Throwable failure,
+                               final StatsKey... keys) {
+        if (keys.length == 0) {
+            throw new IllegalArgumentException("must supply at least one key");
+        }
+
+        for (StatsKey key : keys) {
+            getTracker(StatsKeyUtils.keyForFailure(key, failure)).incident();
+        }
     }
 
     /**

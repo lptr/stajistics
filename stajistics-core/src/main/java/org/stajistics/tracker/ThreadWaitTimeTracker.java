@@ -55,13 +55,13 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     @Override
-    protected void commitImpl() {
+    protected void commitImpl(final long now) {
         ThreadInfo threadInfo = getCurrentThreadInfo();
         if (threadInfo != null && startWaitTime > -1) {
             long endWaitTime = threadInfo.getWaitedTime();
             if (endWaitTime > -1) {
                 value = endWaitTime - startWaitTime;
-                session.update(this, -1);
+                session.update(this, now);
             }
         }
     }

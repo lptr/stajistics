@@ -366,11 +366,11 @@ public class DefaultStatsManagerTest {
 
         // Populate the data structures a bit
         StatsKey key1 = manager.getKeyFactory().createKey("test1");
-        manager.getTracker(key1).track().commit();
+        manager.getTracker(key1).incident();
         StatsKey key2 = manager.getKeyFactory().createKey("test2");
-        manager.getTracker(key2).track().commit();
+        manager.getTracker(key2).incident();
         StatsKey key3 = manager.getKeyFactory().createKey("test3");
-        manager.getTracker(key3).track().commit();
+        manager.getTracker(key3).incident();
 
         // Serialize/deserialize to/from file
         File file = File.createTempFile(toString(), null);

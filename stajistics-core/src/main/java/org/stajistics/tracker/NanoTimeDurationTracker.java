@@ -47,10 +47,10 @@ public class NanoTimeDurationTracker extends TimeDurationTracker {
     }
 
     @Override
-    protected void commitImpl() {
+    protected void commitImpl(final long now) {
         value = (System.nanoTime() - nanoTime) / 1000000d;
 
-        session.update(this, -1);
+        session.update(this, now);
     }
 
     public static class Factory implements StatsTrackerFactory {
