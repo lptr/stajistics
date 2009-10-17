@@ -58,11 +58,11 @@ public class PerfTimeDurationTracker extends TimeDurationTracker {
     }
 
     @Override
-    protected void commitImpl() {
+    protected void commitImpl(final long now) {
         long endTicks = PERF.highResCounter();
         value = (endTicks - startTicks) * CONVERSION;
 
-        session.update(this, -1);
+        session.update(this, now);
     }
 
     public static class Factory implements StatsTrackerFactory {

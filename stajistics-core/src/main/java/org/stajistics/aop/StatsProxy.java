@@ -185,8 +185,7 @@ public class StatsProxy implements InvocationHandler {
             }
 
             statsManager.getTracker(StatsKeyUtils.keyForFailure(key, cause))
-                        .track()
-                        .commit();
+                        .incident();
 
             throw cause;
         }

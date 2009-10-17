@@ -84,13 +84,29 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
         tracking = false;
 
-        commitImpl();
+        commitImpl(-1);
 
         return this;
     }
 
-    protected void commitImpl() {
-        session.update(this, -1);
+    @Override
+    public StatsTracker incident() {
+
+        if (tracking) {
+            logger.warn("incident() called when already tracking: {}", this);
+
+            return this;
+        }
+
+        final long now = System.currentTimeMillis();
+        trackImpl(now);
+        commitImpl(now);
+
+        return this;
+    }
+
+    protected void commitImpl(final long now) {
+        session.update(this, now);
     }
 
     @Override

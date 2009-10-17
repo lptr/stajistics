@@ -228,6 +228,10 @@ public class DefaultStatsManager implements StatsManager {
             throw new NullPointerException("keys");
         }
 
+        if (keys.length == 0) {
+            throw new IllegalArgumentException("must supply at least one key");
+        }
+
         if (!enabled) {
             return NullTracker.getInstance();
         }

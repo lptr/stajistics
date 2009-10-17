@@ -27,6 +27,7 @@ public class StatsKeyUtils {
     public static StatsKey keyForFailure(final StatsKey key,
                                          final Throwable failure) {
         StatsKey failureKey = key.buildCopy()
+                                 .withNameSuffix("exception")
                                  .withAttribute("threw",  
                                                 failure.getClass()
                                                        .getName())

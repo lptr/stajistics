@@ -55,13 +55,13 @@ public class ThreadBlockTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     @Override
-    protected void commitImpl() {
+    protected void commitImpl(final long now) {
         ThreadInfo threadInfo = getCurrentThreadInfo();
         if (threadInfo != null && startBlockTime > -1) {
             long endBlockTime = threadInfo.getBlockedTime();
             if (endBlockTime > -1) {
                 value = endBlockTime - startBlockTime;
-                session.update(this, -1);
+                session.update(this, now);
             }
         }
     }

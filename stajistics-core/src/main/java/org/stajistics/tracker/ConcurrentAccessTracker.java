@@ -35,10 +35,10 @@ public class ConcurrentAccessTracker extends AbstractStatsTracker {
     }
 
     @Override
-    protected void commitImpl() {
+    protected void commitImpl(final long now) {
         value = session.getHits() - session.getCommits();
 
-        session.update(this, -1);
+        session.update(this, now);
     }
 
     public static class Factory implements StatsTrackerFactory {
