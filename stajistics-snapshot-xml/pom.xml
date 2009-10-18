@@ -9,6 +9,13 @@
   <artifactId>stajistics-snapshot-xml</artifactId>
   <name>Stajistics Snapshot XML</name>
 
+  <scm>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-snapshot-xml/</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-snapshot-xml/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-snapshot-xml</url>
+    <tag>trunk</tag>
+  </scm>
+
   <build>
     <plugins>
       <plugin>
