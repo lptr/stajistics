@@ -10,6 +10,13 @@
   <name>Stajistics JDBC</name>
   <description>Stajistics JDBC integration</description>
 
+  <scm>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-jdbc/</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-jdbc/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-jdbc</url>
+    <tag>trunk</tag>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>${pom.groupId}</groupId>
