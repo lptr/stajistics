@@ -17,6 +17,8 @@ package org.stajistics.snapshot;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
@@ -34,6 +36,8 @@ import org.stajistics.snapshot.binding.StatsSnapshot;
  *
  */
 public class DefaultSnapshotController implements SnapshotController {
+
+    private static final Logger logger = LoggerFactory.getLogger(DefaultSnapshotController.class);
 
     private static final String DEFAULT_SNAPSHOT_BINDING_FACTORY_CLASS_NAME = 
         "org.stajistics.snapshot.binding.XMLSnapshotBindingFactory";
@@ -57,8 +61,8 @@ public class DefaultSnapshotController implements SnapshotController {
 
         Class<?> factoryClass;
         try {
-            factoryClass = Class.forName(factoryClassName);
-            factory = (SnapshotBindingFactory)factoryClass.newInstance();
+            //factoryClass = Class.forName(factoryClassName);
+            //factory = (SnapshotBindingFactory)factoryClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace(); // TODO: log this
         }
