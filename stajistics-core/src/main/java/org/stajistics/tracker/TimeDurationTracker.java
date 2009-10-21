@@ -32,16 +32,23 @@ public abstract class TimeDurationTracker extends AbstractStatsTracker {
     public static final StatsTrackerFactory FACTORY;
 
     static {
-        StatsTrackerFactory trackerFactory;
+        StatsTrackerFactory trackerFactory = NanoTimeDurationTracker.FACTORY;
+
         try {
             Class.forName("sun.misc.Perf");
-            trackerFactory = PerfTimeDurationTracker.FACTORY;
+
+            /* Note: When trackerFactory is assigned to PerfTimeDurationTracker.FACTORY 
+             * on the line below, for some reason it returns null when running unit tests 
+             * from maven. How that is even possible, I have no idea.
+             */
+            trackerFactory = new PerfTimeDurationTracker.Factory();
 
         } catch (ClassNotFoundException ex) {
-            trackerFactory = NanoTimeDurationTracker.FACTORY;
-        }
+            // Ignore
 
-        FACTORY = trackerFactory;
+        } finally {
+            FACTORY = trackerFactory;
+        }
     }
 
     public TimeDurationTracker(final StatsSession session) {
