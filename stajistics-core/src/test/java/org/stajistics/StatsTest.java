@@ -116,8 +116,7 @@ public class StatsTest {
 
         mockery.checking(new Expectations() {{
             one(mockManager).getTracker(with(mockKey)); will(returnValue(mockTracker));
-            one(mockTracker).track(); will(returnValue(mockTracker));
-            one(mockTracker).commit();
+            one(mockTracker).incident(); will(returnValue(mockTracker));
         }});
 
         Stats.incident(mockKey);

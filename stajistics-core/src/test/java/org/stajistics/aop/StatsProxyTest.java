@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.stajistics.DefaultStatsManager;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyUtils;
 import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.StatsTracker;
@@ -151,17 +152,15 @@ public class StatsProxyTest {
         final StatsKey methodKey = mockKey.buildCopy()
                                       .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
                                       .newKey();
-        final StatsKey exceptionKey = methodKey.buildCopy()
-                                               .withAttribute("threw", IllegalStateException.class.getName())
-                                               .newKey();
+        final StatsKey exceptionKey = StatsKeyUtils.keyForFailure(methodKey,
+                                                                  new IllegalStateException());
 
         final StatsTracker methodTracker = mockery.mock(StatsTracker.class, "methodTracker");
         final StatsTracker exceptionTracker = mockery.mock(StatsTracker.class, "exceptionTracker");
 
         mockery.checking(new Expectations() {{
             one(methodTracker).track(); will(returnValue(methodTracker));
-            one(exceptionTracker).track(); will(returnValue(exceptionTracker));
-            one(exceptionTracker).commit(); will(returnValue(exceptionTracker));
+            one(exceptionTracker).incident(); will(returnValue(exceptionTracker));
             one(methodTracker).commit(); will(returnValue(methodTracker));
         }});
 
@@ -179,7 +178,7 @@ public class StatsProxyTest {
                      return exceptionTracker;
                  }
 
-                 throw new Error();
+                 throw new Error("key is neither the methodKey nor the exceptionKey");
              }
          })
          .setConfigFor(methodKey);

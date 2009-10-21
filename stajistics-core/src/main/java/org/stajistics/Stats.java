@@ -190,7 +190,8 @@ public final class Stats {
      * @see StatsTracker#track()
      */
     public static StatsTracker track(final String keyName) {
-        return getTracker(newKey(keyName)).track();
+        return getManager().getTracker(newKey(keyName))
+                           .track();
     }
 
     /**
@@ -204,7 +205,8 @@ public final class Stats {
      * @see StatsTracker#track()
      */
     public static StatsTracker track(final StatsKey key) {
-        return getTracker(key).track();
+        return getManager().getTracker(key)
+                           .track();
     }
 
     /**
@@ -218,7 +220,8 @@ public final class Stats {
      * @see StatsTracker#track()
      */
     public static StatsTracker track(final StatsKey... keys) {
-        return getTracker(keys).track();
+        return getManager().getTracker(keys)
+                           .track();
     }
 
     /**
@@ -232,7 +235,8 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final String keyName) {
-        getTracker(newKey(keyName)).incident();
+        getManager().getTracker(newKey(keyName))
+                    .incident();
     }
 
     /**
@@ -246,7 +250,8 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final StatsKey key) {
-        getTracker(key).incident();
+        getManager().getTracker(key)
+                    .incident();
     }
 
     /**
@@ -260,7 +265,8 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final StatsKey... keys) {
-        getTracker(keys).incident();
+        getManager().getTracker(keys)
+                    .incident();
     }
 
     /**
@@ -271,7 +277,8 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final String keyName) {
-        getTracker(StatsKeyUtils.keyForFailure(newKey(keyName), failure)).incident();
+        getManager().getTracker(StatsKeyUtils.keyForFailure(newKey(keyName), failure))
+                    .incident();
     }
 
     /**
@@ -282,7 +289,8 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final StatsKey key) {
-        getTracker(StatsKeyUtils.keyForFailure(key, failure)).incident();
+        getManager().getTracker(StatsKeyUtils.keyForFailure(key, failure))
+                    .incident();
     }
 
     /**
@@ -297,8 +305,11 @@ public final class Stats {
             throw new IllegalArgumentException("must supply at least one key");
         }
 
+        StatsManager statsManager = getManager();
+
         for (StatsKey key : keys) {
-            getTracker(StatsKeyUtils.keyForFailure(key, failure)).incident();
+            statsManager.getTracker(StatsKeyUtils.keyForFailure(key, failure))
+                        .incident();
         }
     }
 
