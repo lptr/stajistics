@@ -1,8 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.stajistics</groupId>
     <artifactId>stajistics-parent</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>stajistics-jdbc</artifactId>
@@ -10,9 +11,9 @@
   <description>Stajistics JDBC integration</description>
 
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/tags/stajistics-parent-0.1/trunk/stajistics-jdbc</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/tags/stajistics-parent-0.1/trunk/stajistics-jdbc</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/tags/stajistics-parent-0.1/#svn/trunk/stajistics-jdbc</url>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-jdbc/</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-jdbc/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-jdbc</url>
     <tag>trunk</tag>
   </scm>
 
