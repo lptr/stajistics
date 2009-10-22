@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.stajistics</groupId>
     <artifactId>stajistics-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>stajistics-servlet</artifactId>
   <name>Stajistics Servlet</name>
 
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-servlet/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-servlet/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-servlet</url>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/tags/stajistics-parent-0.1/trunk/stajistics-servlet</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/tags/stajistics-parent-0.1/trunk/stajistics-servlet</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/tags/stajistics-parent-0.1/#svn/trunk/stajistics-servlet</url>
     <tag>trunk</tag>
   </scm>
 
