@@ -2,7 +2,7 @@
   <parent>
     <groupId>org.stajistics</groupId>
     <artifactId>stajistics-parent</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>stajistics-jdbc</artifactId>
@@ -10,9 +10,9 @@
   <description>Stajistics JDBC integration</description>
 
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-jdbc/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-jdbc/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-jdbc</url>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/tags/stajistics-parent-0.2/trunk/stajistics-jdbc</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/tags/stajistics-parent-0.2/trunk/stajistics-jdbc</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/tags/stajistics-parent-0.2/#svn/trunk/stajistics-jdbc</url>
   </scm>
 
   <dependencies>
