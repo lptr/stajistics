@@ -424,6 +424,10 @@
       <url>scp://stajistics.org/home/troyk/repository.stajistics.org/snapshots/</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
+    <repository>
+      <id>stajistics.org-releases</id>
+      <url>scp://stajistics.org/home/troyk/repository.stajistics.org/releases/</url>
+    </repository>
     <site>
       <id>stajistics.org</id>
       <url>scp://stajistics.org/home/troyk/stajistics.org/</url>
