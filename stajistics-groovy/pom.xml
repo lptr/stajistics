@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>stajistics-groovy</artifactId>
   <name>Stajistics Groovy</name>
@@ -9,13 +7,13 @@
   <parent>
     <groupId>org.stajistics</groupId>
     <artifactId>stajistics-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
   </parent>
 
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-groovy/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-groovy/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-groovy</url>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/tags/stajistics-parent-0.1/trunk/stajistics-groovy</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/tags/stajistics-parent-0.1/trunk/stajistics-groovy</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/tags/stajistics-parent-0.1/#svn/trunk/stajistics-groovy</url>
     <tag>trunk</tag>
   </scm>
 
