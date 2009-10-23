@@ -14,14 +14,8 @@
  */
 package org.stajistics.session;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -29,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
-import org.stajistics.data.DefaultDataSet;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
@@ -44,22 +37,11 @@ import org.stajistics.util.AtomicDouble;
  * 
  * @author The Stajistics Project
  */
-public class ConcurrentStatsSession implements StatsSession {
+public class ConcurrentStatsSession extends AbstractStatsSession {
 
     private static final long serialVersionUID = -5265957157097835416L;
 
     private static final Logger logger = LoggerFactory.getLogger(ConcurrentStatsSession.class);
-
-    private static final DecimalFormat DECIMAL_FORMAT;
-    static {
-        DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
-        dfs.setDecimalSeparator('.');
-        DECIMAL_FORMAT = new DecimalFormat("0.###", dfs);
-        DECIMAL_FORMAT.setGroupingSize(Byte.MAX_VALUE);
-    }
-
-    protected final StatsKey key;
-    protected final StatsEventManager eventManager;
 
     protected final AtomicLong hits = new AtomicLong(0);
     protected final AtomicLong firstHitStamp = new AtomicLong(-1);
@@ -72,36 +54,20 @@ public class ConcurrentStatsSession implements StatsSession {
     protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
     protected final AtomicDouble sum = new AtomicDouble(0);
 
-    protected final List<DataRecorder> dataRecorders;
-
     public ConcurrentStatsSession(final StatsKey key, final StatsEventManager eventManager) {
-        this(key, eventManager, (List<DataRecorder>)null);
+        super(key, eventManager);
     }
 
     public ConcurrentStatsSession(final StatsKey key, 
                                   final StatsEventManager eventManager, 
                                   final DataRecorder... dataRecorders) {
-        this(key, eventManager, Arrays.asList(dataRecorders));
+        super(key, eventManager, dataRecorders);
     }
 
     public ConcurrentStatsSession(final StatsKey key, 
                                   final StatsEventManager eventManager, 
                                   final List<DataRecorder> dataRecorders) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-        if (eventManager == null) {
-            throw new NullPointerException("eventManager");
-        }
-
-        this.key = key;
-        this.eventManager = eventManager;
-
-        if (dataRecorders == null || dataRecorders.isEmpty()) {
-            this.dataRecorders = Collections.emptyList();
-        } else {
-            this.dataRecorders = new ArrayList<DataRecorder>(dataRecorders);
-        }
+        super(key, eventManager, dataRecorders);
     }
 
     /**
@@ -123,11 +89,6 @@ public class ConcurrentStatsSession implements StatsSession {
 
         logger.trace("Track: {}", this);
 
-        fireTrackingEvent(this, tracker);
-    }
-
-    protected void fireTrackingEvent(final StatsSession session,
-                                     final StatsTracker tracker) {
         eventManager.fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
     }
 
@@ -161,14 +122,6 @@ public class ConcurrentStatsSession implements StatsSession {
     @Override
     public long getCommits() {
         return commits.get();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsKey getKey() {
-        return key;
     }
 
     /**
@@ -223,11 +176,6 @@ public class ConcurrentStatsSession implements StatsSession {
 
         logger.info("Commit: {}", this);
 
-        fireUpdateEvent(this, tracker);
-    }
-
-    protected void fireUpdateEvent(final StatsSession session,
-                                   final StatsTracker tracker) {
         eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }
 
@@ -250,7 +198,7 @@ public class ConcurrentStatsSession implements StatsSession {
      */
     @Override
     public double getLast() {
-        return this.last;
+        return last;
     }
 
     /**
@@ -258,7 +206,7 @@ public class ConcurrentStatsSession implements StatsSession {
      */
     @Override
     public double getMin() {
-        return this.min.get();
+        return min.get();
     }
 
     /**
@@ -266,7 +214,7 @@ public class ConcurrentStatsSession implements StatsSession {
      */
     @Override
     public double getMax() {
-        return this.max.get();
+        return max.get();
     }
 
     /**
@@ -274,32 +222,7 @@ public class ConcurrentStatsSession implements StatsSession {
      */
     @Override
     public double getSum() {
-        return this.sum.get();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public DataSet collectData() {
-
-        DataSet dataSet = new DefaultDataSet();
-
-        dataSet.setField(DataSet.Field.HITS, getHits());
-        dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
-        dataSet.setField(DataSet.Field.LAST_HIT_STAMP, new Date(getLastHitStamp()));
-        dataSet.setField(DataSet.Field.COMMITS, getCommits());
-        dataSet.setField(DataSet.Field.FIRST, getFirst());
-        dataSet.setField(DataSet.Field.LAST, getLast());
-        dataSet.setField(DataSet.Field.MIN, getMin());
-        dataSet.setField(DataSet.Field.MAX, getMax());
-        dataSet.setField(DataSet.Field.SUM, getSum());
-
-        for (DataRecorder dataRecorder : dataRecorders) {
-            dataRecorder.collectData(this, dataSet);
-        }
-
-        return dataSet;
+        return sum.get();
     }
 
     @Override
@@ -313,6 +236,10 @@ public class ConcurrentStatsSession implements StatsSession {
         min.set(dataSet.getField(DataSet.Field.MIN, Double.class));
         max.set(dataSet.getField(DataSet.Field.MAX, Double.class));
         sum.set(dataSet.getField(DataSet.Field.SUM, Double.class));
+
+        for (DataRecorder dataRecorder : dataRecorders) {
+            dataRecorder.restore(dataSet);
+        }
     }
 
     /**
@@ -335,45 +262,6 @@ public class ConcurrentStatsSession implements StatsSession {
         }
 
         eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<DataRecorder> getDataRecorders() {
-        return Collections.unmodifiableList(dataRecorders);
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder buf = new StringBuilder(512);
-
-        buf.append(StatsSession.class.getSimpleName());
-        buf.append("[key=");
-        buf.append(key);
-        buf.append(",hits=");
-        buf.append(getHits());
-        buf.append(",firstHitStamp=");
-        buf.append(new Date(getFirstHitStamp()));
-        buf.append(",lastHitStamp=");
-        buf.append(new Date(getLastHitStamp()));
-        buf.append(",commits=");
-        buf.append(getCommits());
-        buf.append(",first=");
-        buf.append(DECIMAL_FORMAT.format(getFirst()));
-        buf.append(",last=");
-        buf.append(DECIMAL_FORMAT.format(getLast()));
-        buf.append(",min=");
-        buf.append(DECIMAL_FORMAT.format(getMin()));
-        buf.append(",max=");
-        buf.append(DECIMAL_FORMAT.format(getMax()));
-        buf.append(",sum=");
-        buf.append(DECIMAL_FORMAT.format(getSum()));
-        buf.append(']');
-
-        return buf.toString();
     }
 
 }
