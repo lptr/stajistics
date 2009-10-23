@@ -25,7 +25,7 @@ import org.stajistics.session.recorder.DataRecorder;
  * 
  * @author The Stajistics Project
  */
-public class SynchronousStatsSessionTest extends ConcurrentStatsSessionTest {
+public class SynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
 
     @Override
     protected StatsSession createStatsSession() {
