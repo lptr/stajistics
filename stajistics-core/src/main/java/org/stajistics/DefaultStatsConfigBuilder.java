@@ -37,10 +37,26 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     protected String unit;
     protected String description;
 
+    /**
+     * Create a new instance.
+     *
+     * @param configManager The {@link StatsConfigManager} to support 
+     *                      {@link #setConfigFor(StatsKey)} calls. Must not be <tt>null</tt>.
+     * @throws NullPointerException If <tt>configManager</tt> is <tt>null</tt>.
+     */
     public DefaultStatsConfigBuilder(final StatsConfigManager configManager) {
         this(configManager, null);
     }
 
+    /**
+     * Create a new instance.
+     *
+     * @param configManager The {@link StatsConfigManager} to support 
+     *                      {@link #setConfigFor(StatsKey)} calls. Must not be <tt>null</tt>.
+     * @param config The {@link StatsConfig} from which to copy configuration as a starting point.
+     *
+     * @throws NullPointerException If <tt>configManager</tt> is <tt>null</tt>.
+     */
     public DefaultStatsConfigBuilder(final StatsConfigManager configManager,
                                      final StatsConfig config) {
         if (configManager == null) {

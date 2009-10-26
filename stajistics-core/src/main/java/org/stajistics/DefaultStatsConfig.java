@@ -34,6 +34,11 @@ public class DefaultStatsConfig implements StatsConfig {
     private final String unit;
     private final String description;
 
+    /**
+     * Construct a new instance supplying template configuration to copy.
+     *
+     * @param template The {@link StatsConfig} from which to copy all configuration values.
+     */
     public DefaultStatsConfig(final StatsConfig template) {
         this(template.isEnabled(),
              template.getTrackerFactory(),
@@ -42,6 +47,19 @@ public class DefaultStatsConfig implements StatsConfig {
              template.getDescription());
     }
 
+    /**
+     * Construct a new instance supplying the configuration values.
+     *
+     * @param enabled The result of {@link #isEnabled()}.
+     * @param trackerFactory The result of {@link #getTrackerFactory()}.
+     * @param sessionFactory The result of {@link #getSessionFactory()}.
+     * @param unit The result of {@link #getUnit()}.
+     * @param description The result of {@link #getDescription()}. May be <tt>null</tt>.
+     *
+     * @throws NullPointerException If <tt>enabled</tt>, <tt>trackerFactory</tt>,
+     *         <tt>sessionFactory</tt>, or <tt>unit</tt> are <tt>null</tt>.
+     * @throws IllegalArgumentException If <tt>unit</tt> is zero length.
+     */
     public DefaultStatsConfig(final boolean enabled,
                               final StatsTrackerFactory trackerFactory,
                               final StatsSessionFactory sessionFactory,
@@ -108,6 +126,9 @@ public class DefaultStatsConfig implements StatsConfig {
         return trackerFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object obj) {
         return (obj instanceof StatsConfig) && equals((StatsConfig)obj);
@@ -137,6 +158,9 @@ public class DefaultStatsConfig implements StatsConfig {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Boolean.valueOf(enabled).hashCode() ^
@@ -146,6 +170,9 @@ public class DefaultStatsConfig implements StatsConfig {
                ((description == null) ? 0 : description.hashCode());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();

@@ -16,8 +16,7 @@ package org.stajistics;
 
 
 /**
- * 
- * 
+ * A convenience base class for {@link StatsKey} implementations.
  *
  * @author The Stajistics Project
  */
@@ -30,8 +29,16 @@ public abstract class AbstractStatsKey implements StatsKey {
 
     private int hashCode;
 
-    protected AbstractStatsKey(final String name,
-                               final StatsKeyFactory keyFactory) {
+    /**
+     * Construct a new instance.
+     *
+     * @param name The key name. Must not be null.
+     * @param keyFactory The factory that supports the creation of copies of this StatsKey instance.
+     *
+     * @throws NullPointerException If <tt>name</tt> is <tt>null</tt>.
+     */
+    public AbstractStatsKey(final String name,
+                            final StatsKeyFactory keyFactory) {
         if (name == null) {
             throw new NullPointerException("name");
         }
@@ -40,6 +47,9 @@ public abstract class AbstractStatsKey implements StatsKey {
         this.keyFactory = keyFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final StatsKeyBuilder buildCopy() {
         if (keyFactory == null) {
@@ -49,11 +59,18 @@ public abstract class AbstractStatsKey implements StatsKey {
         return keyFactory.createKeyBuilder(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final String getName() {
         return name;
     }
 
+    /**
+     * A convenience method to be called by subclass constructors
+     * to calculate the hash code value in the default manner.
+     */
     protected void setHashCode() {
         int h = 31 + name.hashCode();
         h = h * 31 + getAttributeCount();
@@ -62,11 +79,17 @@ public abstract class AbstractStatsKey implements StatsKey {
         this.hashCode = h;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final int hashCode() {
         return hashCode;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final boolean equals(final Object other) {
         if (other == null) {
@@ -95,6 +118,9 @@ public abstract class AbstractStatsKey implements StatsKey {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         int attrCount = getAttributeCount();
@@ -115,5 +141,11 @@ public abstract class AbstractStatsKey implements StatsKey {
         return buf.toString();
     }
 
+    /**
+     * A hook for subclasses to insert attribute values into the result
+     * of {@link #toString()} calls.
+     *
+     * @param buf The StringBuilder into which attributes should be appended.
+     */
     protected void appendAttributes(final StringBuilder buf) {}
 }
