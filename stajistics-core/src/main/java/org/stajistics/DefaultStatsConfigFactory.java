@@ -25,6 +25,13 @@ public class DefaultStatsConfigFactory implements StatsConfigFactory {
 
     protected final StatsConfigManager configManager;
 
+    /**
+     * Construct a new instance.
+     *
+     * @param configManager The {@link StatsConfigManager} to pass into {@link StatsConfigBuilder}
+     *                      instance created by this factory. Must not be <tt>null</tt>.
+     * @throws NullPointerException If <tt>configManager</tt> is <tt>null</tt>.
+     */
     public DefaultStatsConfigFactory(final StatsConfigManager configManager) {
         if (configManager == null) {
             throw new NullPointerException("configManager");

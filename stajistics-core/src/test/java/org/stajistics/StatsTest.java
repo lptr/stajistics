@@ -14,6 +14,7 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import org.jmock.Expectations;
@@ -49,6 +50,21 @@ public class StatsTest {
     @Test
     public void testGetManager() {
         assertSame(mockManager, Stats.getManager());
+    }
+
+    @Test
+    public void testLoadManagerWithNull() {
+        try {
+            Stats.loadManager(null);
+        } catch (NullPointerException npe) {
+            assertEquals("manager", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testLoadManager() {
+        Stats.loadManager(mockManager);
+        assertEquals(mockManager, Stats.getManager());
     }
 
     @Test
@@ -99,17 +115,80 @@ public class StatsTest {
     }
 
     @Test
+    public void testGetTrackerWithStatsKeys() {
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+
+        final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
+
+        mockery.checking(new Expectations() {{
+            one(mockManager).getTracker(with(new StatsKey[] { mockKey, mockKey2 })); 
+            will(returnValue(mockTracker));
+        }});
+
+        assertSame(mockTracker, Stats.getTracker(mockKey, mockKey2));
+    }
+    
+    @Test
+    public void testTrackWithKeyName() {
+        final String keyName = "test.name";
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+
+        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
+            one(mockKeyFactory).createKey(keyName); will(returnValue(mockKey));
+            one(mockManager).getTracker(with(any(StatsKey.class))); will(returnValue(mockTracker));
+            one(mockTracker).track(); will(returnValue(mockTracker));
+        }});
+
+        assertEquals(mockTracker, Stats.track(keyName));
+    }
+
+    @Test
     public void testTrackWithStatsKey() {
         final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
 
         mockery.checking(new Expectations() {{
             one(mockManager).getTracker(with(mockKey)); will(returnValue(mockTracker));
-            one(mockTracker).track();
+            one(mockTracker).track(); will(returnValue(mockTracker));
         }});
 
-        Stats.track(mockKey);
+        assertEquals(mockTracker, Stats.track(mockKey));
     }
 
+    @Test
+    public void testTrackWithStatsKeys() {
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+
+        final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
+
+        mockery.checking(new Expectations() {{
+            one(mockManager).getTracker(with(new StatsKey[] { mockKey, mockKey2 })); 
+            will(returnValue(mockTracker));
+            one(mockTracker).track(); will(returnValue(mockTracker));
+        }});
+
+        assertEquals(mockTracker, Stats.track(mockKey, mockKey2));
+    }
+
+    @Test
+    public void testIncidentWithKeyName() {
+        final String keyName = "test.name";
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+
+        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
+            one(mockKeyFactory).createKey(keyName); will(returnValue(mockKey));
+            one(mockManager).getTracker(with(mockKey)); will(returnValue(mockTracker));
+            one(mockTracker).incident();
+        }});
+
+        Stats.incident(keyName);
+    }
+    
     @Test
     public void testIncidentWithStatsKey() {
         final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
@@ -120,6 +199,74 @@ public class StatsTest {
         }});
 
         Stats.incident(mockKey);
+    }
+
+    @Test
+    public void testIncidentWithStatsKeys() {
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+
+        final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
+
+        mockery.checking(new Expectations() {{
+            one(mockManager).getTracker(with(new StatsKey[] { mockKey, mockKey2 })); 
+            will(returnValue(mockTracker));
+            one(mockTracker).incident(); will(returnValue(mockTracker));
+        }});
+
+        Stats.incident(mockKey, mockKey2);
+    }
+
+    @Test
+    public void testFailureWithKeyName() {
+
+        TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
+
+        final String keyName = "test.name";
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+
+        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
+
+        final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
+        final StatsKeyBuilder mockKeyBuilder = mockery.mock(StatsKeyBuilder.class); 
+
+        final Exception e = new Exception();
+
+        mockery.checking(new Expectations() {{
+            one(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
+            one(mockKeyFactory).createKey(keyName); will(returnValue(mockKey));
+            one(mockKey).buildCopy(); will(returnValue(mockKeyBuilder));
+            one(mockKeyBuilder).withNameSuffix("exception"); will(returnValue(mockKeyBuilder));
+            one(mockKeyBuilder).withAttribute("threw", e.getClass().getName()); will(returnValue(mockKeyBuilder));
+            one(mockKeyBuilder).newKey(); will(returnValue(mockKey2));
+            one(mockManager).getTracker(mockKey2); will(returnValue(mockTracker));
+            one(mockTracker).incident();
+        }});
+
+        Stats.failure(e, keyName);
+    }
+
+    @Test
+    public void testFailureWithStatsKey() {
+
+        TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
+
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+
+        final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
+        final StatsKeyBuilder mockKeyBuilder = mockery.mock(StatsKeyBuilder.class); 
+
+        final Exception e = new Exception();
+
+        mockery.checking(new Expectations() {{
+            one(mockKey).buildCopy(); will(returnValue(mockKeyBuilder));
+            one(mockKeyBuilder).withNameSuffix("exception"); will(returnValue(mockKeyBuilder));
+            one(mockKeyBuilder).withAttribute("threw", e.getClass().getName()); will(returnValue(mockKeyBuilder));
+            one(mockKeyBuilder).newKey(); will(returnValue(mockKey2));
+            one(mockManager).getTracker(mockKey2); will(returnValue(mockTracker));
+            one(mockTracker).incident();
+        }});
+
+        Stats.failure(e, mockKey);
     }
 
     @Test
