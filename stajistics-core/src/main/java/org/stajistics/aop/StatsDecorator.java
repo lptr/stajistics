@@ -18,6 +18,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadFactory;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
@@ -107,21 +108,76 @@ public class StatsDecorator {
         };
     }
 
-    public static Executor wrap(final Executor executor,
-                                final StatsKey key) {
-        return new Executor() {
-            @Override
-            public void execute(final Runnable command) {
-                try {
-                    Stats.incident(key);
-
-                    executor.execute(command);
-
-                } catch (Throwable t) {
-                    Stats.failure(t, key);
-                    rethrow(t);
-                }
-            }
-        };
+    public static ThreadFactory wrap(final ThreadFactory threadFactory,
+                                     final StatsKey key) {
+        return new ThreadFactoryWrapper(threadFactory, key);
     }
+
+    public static Executor wrap(final Executor executor,
+                                final StatsKey executorKey,
+                                final StatsKey commandKey) {
+        return new ExecutorWrapper(executor, executorKey, commandKey);
+    }
+
+    /* NESTED CLASSES */
+
+    protected static class ThreadFactoryWrapper implements ThreadFactory {
+
+        protected final ThreadFactory threadFactory;
+        protected final StatsKey key;
+
+        public ThreadFactoryWrapper(final ThreadFactory threadFactory,
+                                    final StatsKey key) {
+            if (threadFactory == null) {
+                throw new NullPointerException("threadFactory");
+            }
+
+            this.threadFactory = threadFactory;
+            this.key = key; 
+        }
+
+        @Override
+        public Thread newThread(final Runnable r) {
+            return threadFactory.newThread(StatsDecorator.wrap(r, key));
+        }
+    }
+
+    protected static class ExecutorWrapper implements Executor {
+
+        protected final Executor executor;
+        protected final StatsKey executorKey;
+        protected final StatsKey commandKey;
+
+        public ExecutorWrapper(final Executor executor,
+                               final StatsKey executorKey,
+                               final StatsKey commandKey) {
+            if (executor == null) {
+                throw new NullPointerException("executor");
+            }
+            if (executorKey == null) {
+                throw new NullPointerException("executorKey");
+            }
+            if (commandKey == null) {
+                throw new NullPointerException("commandKey");
+            }
+
+            this.executor = executor;
+            this.executorKey = executorKey;
+            this.commandKey = commandKey;
+        }
+
+        @Override
+        public void execute(final Runnable command) {
+            try {
+                Stats.incident(executorKey);
+
+                executor.execute(StatsDecorator.wrap(command, commandKey));
+
+            } catch (Throwable t) {
+                Stats.failure(t, executorKey);
+                rethrow(t);
+            }
+        }
+    }
+
 }

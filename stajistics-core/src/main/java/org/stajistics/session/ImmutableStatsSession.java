@@ -82,7 +82,7 @@ public class ImmutableStatsSession implements StatsSession {
     }
 
     /**
-     * {@inheritDoc}
+     * Does nothing.
      */
     @Override
     public void restore(DataSet dataSet) {}
@@ -92,7 +92,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public double getFirst() {
-        return (Double)dataSet.getField(DataSet.Field.FIRST);
+        return dataSet.getField(DataSet.Field.FIRST, Double.class);
     }
 
     /**
@@ -100,7 +100,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public long getFirstHitStamp() {
-        return (Long)dataSet.getField(DataSet.Field.FIRST_HIT_STAMP);
+        return dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Long.class);
     }
 
     /**
@@ -108,7 +108,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public long getHits() {
-        return (Long)dataSet.getField(DataSet.Field.HITS);
+        return dataSet.getField(DataSet.Field.HITS, Long.class);
     }
 
     /**
@@ -116,7 +116,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public long getCommits() {
-        return (Long)dataSet.getField(DataSet.Field.COMMITS);
+        return dataSet.getField(DataSet.Field.COMMITS, Long.class);
     }
 
     /**
@@ -124,7 +124,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public double getLast() {
-        return (Double)dataSet.getField(DataSet.Field.LAST);
+        return dataSet.getField(DataSet.Field.LAST, Double.class);
     }
 
     /**
@@ -132,7 +132,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public long getLastHitStamp() {
-        return (Long)dataSet.getField(DataSet.Field.LAST_HIT_STAMP);
+        return dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Long.class);
     }
 
     /**
@@ -140,7 +140,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public double getMax() {
-        return (Double)dataSet.getField(DataSet.Field.MAX);
+        return dataSet.getField(DataSet.Field.MAX, Double.class);
     }
 
     /**
@@ -148,7 +148,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public double getMin() {
-        return (Double)dataSet.getField(DataSet.Field.MIN);
+        return dataSet.getField(DataSet.Field.MIN, Double.class);
     }
 
     /**
@@ -156,7 +156,7 @@ public class ImmutableStatsSession implements StatsSession {
      */
     @Override
     public double getSum() {
-        return (Double)dataSet.getField(DataSet.Field.SUM);
+        return dataSet.getField(DataSet.Field.SUM, Double.class);
     }
 
     /**

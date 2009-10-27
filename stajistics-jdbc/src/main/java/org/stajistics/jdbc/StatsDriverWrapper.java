@@ -193,6 +193,9 @@ public class StatsDriverWrapper implements Driver {
             Entry existingEntry = this.dataBaseURLMap.putIfAbsent(key, result);
             if (existingEntry != null) {
                 result = existingEntry;
+            } else {
+                logger.debug("Parsed URL: {}", result.statsDataBaseURL);
+                logger.debug("Initialized delegate driver: {}", result.driver);
             }
         }
 
@@ -204,11 +207,7 @@ public class StatsDriverWrapper implements Driver {
 
         StatsDataBaseURL statsURL = new StatsDataBaseURL(url);
 
-        logger.debug("Parsed URL: {}", statsURL);
-
         Driver delegateDriver = getDelegateDriver(statsURL);
-
-        logger.debug("Initialized delegate driver: {}", delegateDriver);
 
         // TODO: build the config from statsURL
         StatsJDBCConfig config = DefaultStatsJDBCConfig.createWithDefaults();
