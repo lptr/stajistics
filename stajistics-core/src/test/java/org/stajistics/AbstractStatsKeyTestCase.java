@@ -16,6 +16,7 @@ package org.stajistics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -97,6 +98,16 @@ public abstract class AbstractStatsKeyTestCase {
         } catch (NullPointerException npe) {
             assertEquals("attributes", npe.getMessage());
         }
+    }
+
+    @Test
+    public void testGetAttribute() {
+        final Map<String,Object> testAttributes = new HashMap<String,Object>();
+        testAttributes.put("test1", Boolean.TRUE);
+
+        StatsKey key = createStatsKey(TEST_NAME, null, testAttributes);
+        assertEquals(Boolean.TRUE, key.getAttribute("test1"));
+        assertNull(key.getAttribute("test2"));
     }
 
     @Test

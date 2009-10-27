@@ -71,27 +71,35 @@ public final class Stats {
         return manager;
     }
 
-    private static StatsManager loadDefaultStatsManager() {
+    protected static StatsManager loadDefaultStatsManager() {
 
         StatsManager manager = null;
 
-        String managerClassName = System.getProperty(StatsManager.class.getName());
-        if (managerClassName != null) {
-            try {
-                @SuppressWarnings("unchecked")
-                Class<StatsManager> managerClass = (Class<StatsManager>)Class.forName(managerClassName);
+        try {
+            manager = loadStatsManagerFromSystemProperties();
 
-                manager = managerClass.newInstance();
-
-            } catch (Exception e) {
-                logger.error("Failed to load " + StatsManager.class.getSimpleName() + 
-                               ": " + managerClassName, 
-                           e);
-            }
+        } catch (Exception e) {
+            logger.error("Failed to load " + StatsManager.class.getSimpleName() + 
+                           ": " + e.toString(), 
+                         e);
         }
 
         if (manager == null) {
             manager = DefaultStatsManager.createWithDefaults();
+        }
+
+        return manager;
+    }
+
+    protected static StatsManager loadStatsManagerFromSystemProperties() throws Exception {
+        StatsManager manager = null;
+
+        String managerClassName = System.getProperty(StatsManager.class.getName());
+        if (managerClassName != null) {
+            @SuppressWarnings("unchecked")
+            Class<StatsManager> managerClass = (Class<StatsManager>)Class.forName(managerClassName);
+
+            manager = managerClass.newInstance();
         }
 
         return manager;

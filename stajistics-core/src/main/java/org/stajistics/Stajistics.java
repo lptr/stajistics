@@ -25,38 +25,43 @@ import java.util.Properties;
  */
 public final class Stajistics {
 
-    private static final String PROPS_FILE = "library.properties";
-    private static final String PROP_NAME = "library.name";
-    private static final String PROP_VERSION = "library.version";
+    protected static final String PROPS_FILE = "library.properties";
+    protected static final String PROP_NAME = "library.name";
+    protected static final String PROP_VERSION = "library.version";
 
     private static String name;
     private static String version;
     static {
-        Properties props = new Properties();
         try {
-            ClassLoader classLoader = Stajistics.class.getClassLoader();
-            InputStream in = classLoader.getResourceAsStream(PROPS_FILE);
-
-            if (in != null) {
-                props.load(in);
-
-                name = props.getProperty(PROP_NAME);
-                version = props.getProperty(PROP_VERSION);
-            }
-
+            loadProperties(PROPS_FILE);
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (name == null) {
-            name = "";
-        }
-        if (version == null) {
-            version = "";
+            throw new ExceptionInInitializerError(e);
         }
     }
 
     private Stajistics() {}
+
+    protected static void loadProperties(final String fileName) throws IOException {
+        Properties props = new Properties();
+
+        ClassLoader classLoader = Stajistics.class.getClassLoader();
+        InputStream in = classLoader.getResourceAsStream(fileName);
+
+        String name = null;
+        String version = null;
+        
+        if (in != null) {
+            props.load(in);
+
+            name = props.getProperty(PROP_NAME);
+            version = props.getProperty(PROP_VERSION);
+        }
+
+        Stajistics.name = (name == null) ? ""
+                                         : name;
+        Stajistics.version = (version == null) ? ""
+                                               : version;
+    }
 
     public static String getName() {
         return name;

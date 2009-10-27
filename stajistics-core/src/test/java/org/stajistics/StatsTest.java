@@ -15,7 +15,9 @@
 package org.stajistics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -23,6 +25,9 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.event.StatsEventManager;
+import org.stajistics.session.StatsSessionManager;
+import org.stajistics.snapshot.StatsSnapshotManager;
 import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.StatsTracker;
 
@@ -68,6 +73,30 @@ public class StatsTest {
     }
 
     @Test
+    public void testLoadDefaultStatsManagerReturnsNotNull() {
+        assertNotNull(Stats.loadDefaultStatsManager());
+    }
+
+    @Test
+    public void testLoadStatsManagerFromSystemProperties() throws Exception {
+
+        try {
+            System.getProperties()
+                  .setProperty(StatsManager.class.getName(),
+                               ClassLoadableMockStatsManager.class.getName());
+
+            StatsManager mgr = Stats.loadStatsManagerFromSystemProperties();
+
+            assertNotNull(mgr);
+            assertTrue(mgr instanceof ClassLoadableMockStatsManager);
+
+        } finally {
+            System.getProperties()
+                  .remove(StatsManager.class.getName());
+        }
+    }
+
+    @Test
     public void testGetConfigManager() {
         mockery.checking(new Expectations() {{
             one(mockManager).getConfigManager();
@@ -101,6 +130,22 @@ public class StatsTest {
         }});
 
         Stats.isEnabled();
+    }
+
+    @Test
+    public void testGetTrackerWithKeyName() {
+        final String keyName = "test.name";
+        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+
+        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
+            one(mockKeyFactory).createKey(keyName); will(returnValue(mockKey));
+            one(mockManager).getTracker(with(any(StatsKey.class))); will(returnValue(mockTracker));
+        }});
+
+        assertEquals(mockTracker, Stats.getTracker(keyName));
     }
 
     @Test
@@ -269,6 +314,27 @@ public class StatsTest {
         Stats.failure(e, mockKey);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testFailureWithNoStatsKeys() {
+        Stats.failure(new Throwable());
+    }
+
+    @Test
+    public void testManualWithKeyName() {
+        final String keyName = "test.name";
+        final ManualStatsTracker mockManualTracker = mockery.mock(ManualStatsTracker.class);
+
+        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
+            one(mockKeyFactory).createKey(keyName); will(returnValue(mockKey));
+            one(mockManager).getManualTracker(with(any(StatsKey.class))); will(returnValue(mockManualTracker));
+        }});
+
+        assertEquals(mockManualTracker, Stats.manual(keyName));
+    }
+
     @Test
     public void testManualWithStatsKey() {
 
@@ -319,5 +385,65 @@ public class StatsTest {
         }});
 
         assertSame(mockConfigBuilder, Stats.buildConfig());
+    }
+
+    /* NESTED CLASSES */
+
+    @SuppressWarnings("serial")
+    public static final class ClassLoadableMockStatsManager implements StatsManager {
+
+        @Override
+        public StatsConfigFactory getConfigFactory() {
+            return null;
+        }
+
+        @Override
+        public StatsConfigManager getConfigManager() {
+            return null;
+        }
+
+        @Override
+        public StatsEventManager getEventManager() {
+            return null;
+        }
+
+        @Override
+        public StatsKeyFactory getKeyFactory() {
+            return null;
+        }
+
+        @Override
+        public ManualStatsTracker getManualTracker(StatsKey key) {
+            return null;
+        }
+
+        @Override
+        public StatsSessionManager getSessionManager() {
+            return null;
+        }
+
+        @Override
+        public StatsSnapshotManager getSnapshotManager() {
+            return null;
+        }
+
+        @Override
+        public StatsTracker getTracker(StatsKey key) {
+            return null;
+        }
+
+        @Override
+        public StatsTracker getTracker(StatsKey... keys) {
+            return null;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {}
+
     }
 }

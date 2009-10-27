@@ -14,9 +14,13 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -25,6 +29,18 @@ import org.junit.Test;
  *
  */
 public class StajisticsTest {
+
+    @Before
+    public void setUp() throws IOException {
+        Stajistics.loadProperties(Stajistics.PROPS_FILE);
+    }
+
+    @Test
+    public void testLoadProperties() throws IOException {
+        Stajistics.loadProperties("certainly.does.not.exist.at.all.for.sure.properties");
+        assertEquals("", Stajistics.getName());
+        assertEquals("", Stajistics.getVersion());
+    }
 
     @Test
     public void testGetName() {
@@ -37,4 +53,5 @@ public class StajisticsTest {
         assertNotNull(Stajistics.getVersion());
         assertTrue(Stajistics.getVersion().length() > 0);
     }
+
 }

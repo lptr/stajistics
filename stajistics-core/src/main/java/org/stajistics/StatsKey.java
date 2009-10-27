@@ -123,6 +123,8 @@ public interface StatsKey extends Serializable {
      * Create another key instance using this instance as a template.
      *
      * @return A key builder initialized with this keys name and attributes.
+     *
+     * @throws UnsupportedOperationException If the key cannot be copied.
      */
     StatsKeyBuilder buildCopy();
 
