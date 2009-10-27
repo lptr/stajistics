@@ -25,7 +25,9 @@ import org.junit.Test;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigBuilder;
 import org.stajistics.StatsConfigFactory;
+import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 
 /**
  * 
@@ -36,11 +38,13 @@ import org.stajistics.StatsKey;
 public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
 
     protected StatsKey mockKey = null;
+    protected StatsManager mockManager = null;
     protected StatsConfigFactory mockConfigFactory = null;
+    protected StatsConfigManager mockConfigManager = null;
     protected StatsConfig mockConfig = null;
 
     protected DefaultStatsConfigMBean createStatsConfigMBean(final StatsConfig config) {
-        return new DefaultStatsConfigMBean(mockConfigFactory, mockKey, config);
+        return new DefaultStatsConfigMBean(mockManager, mockKey, config);
     }
 
     @Before
@@ -48,8 +52,15 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
     public void setUp() {
         super.setUp();
         mockKey = mockery.mock(StatsKey.class);
+        mockManager = mockery.mock(StatsManager.class);
         mockConfigFactory = mockery.mock(StatsConfigFactory.class);
+        mockConfigManager = mockery.mock(StatsConfigManager.class);
         mockConfig = mockery.mock(StatsConfig.class);
+
+        mockery.checking(new Expectations() {{
+            allowing(mockManager).getConfigFactory(); will(returnValue(mockConfigFactory));
+            allowing(mockManager).getConfigManager(); will(returnValue(mockConfigManager));
+        }});
     }
 
     @Test

@@ -17,11 +17,9 @@ package org.stajistics.management;
 import javax.management.MBeanServer;
 
 import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
-import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -33,8 +31,7 @@ public interface StatsManagement {
 
     MBeanServer getMBeanServer();
 
-    void registerConfigManagerMBean(StatsManager statsManager,
-                                    StatsConfigManager configManager);
+    void registerConfigManagerMBean(StatsManager statsManager);
 
     void unregisterConfigManagerMBean(StatsManager statsManager);
 
@@ -45,8 +42,7 @@ public interface StatsManagement {
     void unregisterConfigMBean(StatsManager statsManager, 
                                StatsKey key);
 
-    void registerSessionManagerMBean(StatsManager statsManager, 
-                                     StatsSessionManager sessionManager);
+    void registerSessionManagerMBean(StatsManager statsManager);
 
     void unregisterSessionManagerMBean(StatsManager statsManager);
 

@@ -17,12 +17,9 @@ package org.stajistics.management;
 import java.io.Serializable;
 
 import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigFactory;
-import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
-import org.stajistics.session.StatsSessionManager;
-import org.stajistics.snapshot.StatsSnapshotManager;
 
 /**
  * 
@@ -32,16 +29,16 @@ import org.stajistics.snapshot.StatsSnapshotManager;
  */
 public interface StatsMBeanFactory extends Serializable {
 
-    StatsConfigManagerMBean createConfigManagerMBean(StatsConfigManager configManager);
+    StatsConfigManagerMBean createConfigManagerMBean(StatsManager statsManager);
 
-    StatsConfigMBean createConfigMBean(StatsConfigFactory configFactory, 
+    StatsConfigMBean createConfigMBean(StatsManager statsManager, 
                                        StatsKey key, 
                                        StatsConfig config);
 
-    StatsSessionManagerMBean createSessionManagerMBean(StatsSessionManager sessionManager);
+    StatsSessionManagerMBean createSessionManagerMBean(StatsManager statsManager);
 
-    StatsSessionMBean createSessionMBean(StatsSessionManager sessionManager,
+    StatsSessionMBean createSessionMBean(StatsManager statsManager,
                                          StatsSession session);
 
-    StatsSnapshotMBean createSnapshotMBean(StatsSnapshotManager snapshotManager);
+    StatsSnapshotMBean createSnapshotMBean(StatsManager statsManager);
 }
