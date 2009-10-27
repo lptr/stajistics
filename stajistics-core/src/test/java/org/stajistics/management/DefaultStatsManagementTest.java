@@ -248,13 +248,13 @@ public class DefaultStatsManagementTest {
         final StatsSessionManagerMBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockMBeanFactory).createSessionManagerMBean(with(mockSessionManager)); will(returnValue(mockSessionManagerMBean));
+            one(mockMBeanFactory).createSessionManagerMBean(with(mockStatsManager)); will(returnValue(mockSessionManagerMBean));
         }});
 
         ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager, 
                                                                                 DefaultStatsManagement.MANAGER_NAME_SESSION));
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-        statsManagement.registerSessionManagerMBean(mockStatsManager, mockSessionManager);
+        statsManagement.registerSessionManagerMBean(mockStatsManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
     }
 
@@ -277,13 +277,13 @@ public class DefaultStatsManagementTest {
         final StatsConfigManagerMBean mockConfigManagerMBean = mockery.mock(StatsConfigManagerMBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockMBeanFactory).createConfigManagerMBean(mockConfigManager); will(returnValue(mockConfigManagerMBean));
+            one(mockMBeanFactory).createConfigManagerMBean(mockStatsManager); will(returnValue(mockConfigManagerMBean));
         }});
 
         ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
                                                                                 DefaultStatsManagement.MANAGER_NAME_CONFIG));
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-        statsManagement.registerConfigManagerMBean(mockStatsManager, mockConfigManager);
+        statsManagement.registerConfigManagerMBean(mockStatsManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
     }
 
@@ -309,8 +309,8 @@ public class DefaultStatsManagementTest {
         final StatsConfigMBean mockConfigMBean = mockery.mock(StatsConfigMBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockStatsManager).getConfigFactory(); will(returnValue(mockConfigFactory));
-            one(mockMBeanFactory).createConfigMBean(mockConfigFactory, mockKey, mockConfig); will(returnValue(mockConfigMBean));
+            allowing(mockStatsManager).getConfigFactory(); will(returnValue(mockConfigFactory));
+            one(mockMBeanFactory).createConfigMBean(mockStatsManager, mockKey, mockConfig); will(returnValue(mockConfigMBean));
             ignoring(mockConfig);
         }});
 
@@ -351,8 +351,8 @@ public class DefaultStatsManagementTest {
         final StatsSessionMBean mockSessionMBean = mockery.mock(StatsSessionMBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockStatsManager).getSessionManager(); will(returnValue(mockSessionManager));
-            one(mockMBeanFactory).createSessionMBean(mockSessionManager, mockSession); will(returnValue(mockSessionMBean));
+            allowing(mockStatsManager).getSessionManager(); will(returnValue(mockSessionManager));
+            one(mockMBeanFactory).createSessionMBean(mockStatsManager, mockSession); will(returnValue(mockSessionMBean));
             allowing(mockSession).getKey(); will(returnValue(mockKey));
             ignoring(mockSession);
         }});

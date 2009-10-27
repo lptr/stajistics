@@ -15,12 +15,9 @@
 package org.stajistics.management;
 
 import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigFactory;
-import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
-import org.stajistics.session.StatsSessionManager;
-import org.stajistics.snapshot.StatsSnapshotManager;
 
 /**
  * 
@@ -33,30 +30,32 @@ public class DefaultStatsMBeanFactory implements StatsMBeanFactory {
     private static final long serialVersionUID = 4934468666587889695L;
 
     @Override
-    public StatsConfigManagerMBean createConfigManagerMBean(final StatsConfigManager configManager) {
-        return new DefaultStatsConfigManagerMBean(configManager);
+    public StatsConfigManagerMBean createConfigManagerMBean(final StatsManager statsManager) {
+        return new DefaultStatsConfigManagerMBean(statsManager.getConfigManager());
     }
 
     @Override
-    public StatsConfigMBean createConfigMBean(final StatsConfigFactory configFactory,
+    public StatsConfigMBean createConfigMBean(final StatsManager statsManager,
                                               final StatsKey key, 
                                               final StatsConfig config) {
-        return new DefaultStatsConfigMBean(configFactory, key, config);
+        return new DefaultStatsConfigMBean(statsManager,
+                                           key, 
+                                           config);
     }
 
     @Override
-    public StatsSessionMBean createSessionMBean(final StatsSessionManager sessionManager,
+    public StatsSessionMBean createSessionMBean(final StatsManager statsManager,
                                                 final StatsSession session) {
-        return new DefaultStatsSessionMBean(sessionManager, session);
+        return new DefaultStatsSessionMBean(statsManager.getSessionManager(), session);
     }
 
     @Override
-    public StatsSessionManagerMBean createSessionManagerMBean(final StatsSessionManager sessionManager) {
-        return new DefaultStatsSessionManagerMBean(sessionManager);
+    public StatsSessionManagerMBean createSessionManagerMBean(final StatsManager statsManager) {
+        return new DefaultStatsSessionManagerMBean(statsManager.getSessionManager());
     }
 
     @Override
-    public StatsSnapshotMBean createSnapshotMBean(final StatsSnapshotManager snapshotManager) {
-        return new DefaultStatsSnapshotMBean(snapshotManager);
+    public StatsSnapshotMBean createSnapshotMBean(final StatsManager statsManager) {
+        return new DefaultStatsSnapshotMBean(statsManager.getSnapshotManager());
     }
 }

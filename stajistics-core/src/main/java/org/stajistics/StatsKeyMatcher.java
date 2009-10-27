@@ -76,6 +76,14 @@ public abstract class StatsKeyMatcher implements Serializable {
         return new PrefixMatcher(MatchTarget.KEY_NAME, prefix);
     }
 
+    public static StatsKeyMatcher childOf(String keyName) {
+        if (!keyName.endsWith(".")) {
+            keyName += ".";
+        }
+
+        return new PrefixMatcher(MatchTarget.KEY_NAME, keyName);
+    }
+
     public static StatsKeyMatcher attrNamePrefix(final String prefix) {
         return new PrefixMatcher(MatchTarget.ATTR_NAME, prefix);
     }
@@ -83,11 +91,11 @@ public abstract class StatsKeyMatcher implements Serializable {
     public static StatsKeyMatcher attrValuePrefix(final String prefix) {
         return new PrefixMatcher(MatchTarget.ATTR_VALUE, prefix);
     }
-    
+
     public static StatsKeyMatcher suffix(final String suffix) {
         return new SuffixMatcher(MatchTarget.KEY_NAME, suffix);
     }
-    
+
     public static StatsKeyMatcher attrNameSuffix(final String suffix) {
         return new SuffixMatcher(MatchTarget.ATTR_NAME, suffix);
     }
@@ -95,7 +103,7 @@ public abstract class StatsKeyMatcher implements Serializable {
     public static StatsKeyMatcher attrValueSuffix(final String suffix) {
         return new SuffixMatcher(MatchTarget.ATTR_VALUE, suffix);
     }
-    
+
     public static StatsKeyMatcher contains(final String string) {
         return new ContainsMatcher(MatchTarget.KEY_NAME, string);
     }

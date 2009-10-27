@@ -118,8 +118,8 @@ public class DefaultStatsManager implements StatsManager {
 
         if (StatsProperties.getBooleanProperty(SYS_PROP_MANAGEMENT_ENABLED, true)) {
             StatsManagement management = new DefaultStatsManagement();
-            management.registerConfigManagerMBean(manager, configManager);
-            management.registerSessionManagerMBean(manager, sessionManager);
+            management.registerConfigManagerMBean(manager);
+            management.registerSessionManagerMBean(manager);
             management.registerSnapshotMBean(manager);
 
             StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(manager, management);

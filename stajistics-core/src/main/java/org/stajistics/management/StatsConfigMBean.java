@@ -14,8 +14,6 @@
  */
 package org.stajistics.management;
 
-import java.io.IOException;
-
 import javax.management.MXBean;
 
 /**
@@ -27,20 +25,21 @@ import javax.management.MXBean;
 @MXBean
 public interface StatsConfigMBean {
 
-    boolean getEnabled() throws IOException;
+    boolean getEnabled();
 
-    void setEnabled(boolean enabled) throws IOException;
+    void setEnabled(boolean enabled);
 
-    String getUnit() throws IOException;
+    String getUnit();
 
-    void setUnit(String unit) throws IOException;
+    void setUnit(String unit);
 
-    String getDescription() throws IOException;
+    String getDescription();
 
-    void setDescription(String description) throws IOException;
+    void setDescription(String description);
 
-    String getTrackerFactory() throws IOException;
+    String getTrackerFactory();
 
-    String getSessionFactory() throws IOException;
+    String getSessionFactory();
 
+    void enableTree(boolean enabled);
 }

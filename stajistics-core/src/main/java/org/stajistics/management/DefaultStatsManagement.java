@@ -27,11 +27,9 @@ import javax.management.ObjectName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
-import org.stajistics.session.StatsSessionManager;
 
 /**
  * 
@@ -119,14 +117,13 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
     }
 
     @Override
-    public void registerSessionManagerMBean(final StatsManager statsManager, 
-                                            final StatsSessionManager sessionManager) {
+    public void registerSessionManagerMBean(final StatsManager statsManager) {
 
         String name = buildManagerName(statsManager, MANAGER_NAME_SESSION);
 
         try {
             StatsSessionManagerMBean statsSessionManagerMBean = 
-                mBeanFactory.createSessionManagerMBean(sessionManager);
+                mBeanFactory.createSessionManagerMBean(statsManager);
 
             ObjectName objectName = new ObjectName(name);
 
@@ -161,12 +158,11 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
     }
 
     @Override
-    public void registerConfigManagerMBean(final StatsManager statsManager, 
-                                           final StatsConfigManager configManager) {
+    public void registerConfigManagerMBean(final StatsManager statsManager) {
         String name = buildManagerName(statsManager, MANAGER_NAME_CONFIG);
         try {
             StatsConfigManagerMBean statsConfigManagerMBean = 
-                mBeanFactory.createConfigManagerMBean(configManager);
+                mBeanFactory.createConfigManagerMBean(statsManager);
 
             ObjectName objectName = new ObjectName(name);
 
@@ -206,7 +202,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
         String name = buildName(statsManager, key, TYPE_KEYS, SUBTYPE_CONFIG, false);
 
         try {
-            StatsConfigMBean configMBean = mBeanFactory.createConfigMBean(statsManager.getConfigFactory(),
+            StatsConfigMBean configMBean = mBeanFactory.createConfigMBean(statsManager,
                                                                           key, 
                                                                           config);
             ObjectName objectName = new ObjectName(name);
@@ -248,7 +244,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
         String name = buildName(statsManager, session.getKey(), TYPE_KEYS, SUBTYPE_SESSION, true);
 
         try {
-            StatsSessionMBean sessionMBean = mBeanFactory.createSessionMBean(statsManager.getSessionManager(),
+            StatsSessionMBean sessionMBean = mBeanFactory.createSessionMBean(statsManager,
                                                                              session);
 
             ObjectName objectName = new ObjectName(name);
@@ -288,7 +284,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
         String name = buildManagerName(statsManager, MANAGER_NAME_SNAPSHOT);
 
         try {
-            StatsSnapshotMBean snapshotMBean = mBeanFactory.createSnapshotMBean(statsManager.getSnapshotManager());
+            StatsSnapshotMBean snapshotMBean = mBeanFactory.createSnapshotMBean(statsManager);
 
             ObjectName objectName = new ObjectName(name);
             mBeanServer.registerMBean(snapshotMBean, objectName);

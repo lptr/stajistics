@@ -14,10 +14,13 @@
  */
 package org.stajistics.management;
 
-import java.io.IOException;
+import java.util.Map;
 
+import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigFactory;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
+import org.stajistics.StatsManager;
 
 /**
  * 
@@ -27,15 +30,15 @@ import org.stajistics.StatsKey;
  */
 public class DefaultStatsConfigMBean implements StatsConfigMBean {
 
-    protected final StatsConfigFactory configFactory;
+    protected final StatsManager statsManager;
     protected final StatsKey key;
     protected final org.stajistics.StatsConfig config;
 
-    public DefaultStatsConfigMBean(final StatsConfigFactory configFactory,
-                       final StatsKey key, 
-                       final org.stajistics.StatsConfig config) {
-        if (configFactory == null) {
-            throw new NullPointerException("configFactory");
+    public DefaultStatsConfigMBean(final StatsManager statsManager,
+                                   final StatsKey key, 
+                                   final org.stajistics.StatsConfig config) {
+        if (statsManager == null) {
+            throw new NullPointerException("statsManager");
         }
         if (key == null) {
             throw new NullPointerException("key");
@@ -44,67 +47,87 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
             throw new NullPointerException("config");
         }
 
-        this.configFactory = configFactory;
+        this.statsManager = statsManager;
         this.key = key;
         this.config = config;
     }
 
     @Override
-    public boolean getEnabled() throws IOException {
+    public boolean getEnabled() {
         return config.isEnabled();
     }
 
     @Override
-    public void setEnabled(final boolean enabled) throws IOException {
+    public void setEnabled(final boolean enabled) {
         if (enabled == config.isEnabled()) {
             return;
         }
 
-        configFactory.createConfigBuilder(config)
-                     .withEnabledState(enabled)
-                     .setConfigFor(key);
+        statsManager.getConfigFactory()
+                    .createConfigBuilder(config)
+                    .withEnabledState(enabled)
+                    .setConfigFor(key);
     }
 
     @Override
-    public String getUnit() throws IOException {
+    public String getUnit() {
         return config.getUnit();
     }
 
     @Override
-    public void setUnit(final String unit) throws IOException {
+    public void setUnit(final String unit) {
         if (unit.equals(config.getUnit())) {
             return;
         }
 
-        configFactory.createConfigBuilder(config)
-                     .withUnit(unit)
-                     .setConfigFor(key);
+        statsManager.getConfigFactory()
+                    .createConfigBuilder(config)
+                    .withUnit(unit)
+                    .setConfigFor(key);
     }
 
     @Override
-    public String getDescription() throws IOException {
+    public String getDescription() {
         return config.getDescription();
     }
 
     @Override
-    public void setDescription(final String description) throws IOException {
+    public void setDescription(final String description) {
         if (description.equals(config.getDescription())) {
             return;
         }
 
-        configFactory.createConfigBuilder(config)
-                     .withDescription(description)
-                     .setConfigFor(key);
+        statsManager.getConfigFactory()
+                    .createConfigBuilder(config)
+                    .withDescription(description)
+                    .setConfigFor(key);
     }
 
     @Override
-    public String getTrackerFactory() throws IOException {
+    public String getTrackerFactory() {
         return config.getTrackerFactory().toString();
     }
 
     @Override
-    public String getSessionFactory() throws IOException {
+    public String getSessionFactory() {
         return config.getSessionFactory().toString();
     }
 
+    @Override
+    public void enableTree(final boolean enabled) {
+
+        setEnabled(enabled);
+
+        StatsConfigFactory configFactory = statsManager.getConfigFactory();
+
+        Map<StatsKey,StatsConfig> childMap = 
+            statsManager.getConfigManager()
+                        .getConfigs(StatsKeyMatcher.childOf(key.getName()));
+
+        for (Map.Entry<StatsKey,StatsConfig> entry : childMap.entrySet()) {
+            configFactory.createConfigBuilder(entry.getValue())
+                         .withEnabledState(enabled)
+                         .setConfigFor(entry.getKey());
+        }
+    }
 }
