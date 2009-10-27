@@ -14,6 +14,7 @@
  */
 package org.stajistics.management;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,11 +55,17 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
     protected static final String FIELD_PREFIX = "_";
 
+    private static final long CACHED_DATA_SET_LIFE_SPAN = 2000; // 2 seconds
+
     protected final StatsSessionManager sessionManager;
     protected final org.stajistics.session.StatsSession session;
 
+    // DataSet cache members
+    private transient long cachedDataSetLastAccess = 0L;
+    private transient WeakReference<DataSet> cachedDataSetRef = null;
+
     public DefaultStatsSessionMBean(final StatsSessionManager sessionManager,
-                        final org.stajistics.session.StatsSession session) {
+                                    final org.stajistics.session.StatsSession session) {
         if (sessionManager == null) {
             throw new NullPointerException("sessionManager");
         }
@@ -76,6 +83,36 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
     public String getDataRecorders() {
         return session.getDataRecorders().toString();
+    }
+
+    /* Manages a very short-lived cached DataSet for the purposes of throttling
+     * calls to StatsSession#collectData(). This is important for when
+     * #getAttribute(String) is called multiple times consecutively.
+     */
+    private synchronized DataSet getDataSet() {
+
+        final long now = System.currentTimeMillis();
+
+        DataSet dataSet = null;
+
+        if (cachedDataSetRef != null) {
+            dataSet = cachedDataSetRef.get();
+        }
+
+        if (dataSet != null) {
+            if (now - cachedDataSetLastAccess > CACHED_DATA_SET_LIFE_SPAN) {
+                dataSet = null;
+            }
+        }
+
+        if (dataSet == null) {
+            dataSet = session.collectData();
+
+            cachedDataSetLastAccess = now;
+            cachedDataSetRef = new WeakReference<DataSet>(dataSet);
+        }
+
+        return dataSet;
     }
 
     @Override
@@ -96,7 +133,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
         attribute = attribute.substring(FIELD_PREFIX.length());
 
-        DataSet dataSet = session.collectData();
+        DataSet dataSet = getDataSet();
         Object value = dataSet.getField(attribute);
         if (value == null) {
             throw new AttributeNotFoundException(attribute);
@@ -106,8 +143,10 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
     @Override
     public AttributeList getAttributes(final String[] attributes) {
+
         AttributeList attrList = new AttributeList();
-        DataSet dataSet = session.collectData();
+        DataSet dataSet = getDataSet();
+
         for (String name : attributes) {
             if (name.equals(ATTR_IMPLEMENTATION)) {
                 attrList.add(new Attribute(name, getImplementation()));
@@ -129,7 +168,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
     @Override
     public MBeanInfo getMBeanInfo() {
-        DataSet dataSet = session.collectData();
+        DataSet dataSet = getDataSet();
 
         MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.size() + 2];
 

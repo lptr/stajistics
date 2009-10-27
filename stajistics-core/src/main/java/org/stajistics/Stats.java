@@ -39,7 +39,7 @@ public final class Stats {
      * @param manager The {@link StatsManager} instance to use.
      * @see #getManager()
      */
-    public static void loadManager(final StatsManager manager) {
+    public static synchronized void loadManager(final StatsManager manager) {
         if (manager == null) {
             throw new NullPointerException("manager");
         }
@@ -65,7 +65,11 @@ public final class Stats {
      */
     public static StatsManager getManager() {
         if (manager == null) {
-            loadManager(loadDefaultStatsManager());
+            synchronized (Stats.class) {
+                if (manager == null) {
+                    loadManager(loadDefaultStatsManager());
+                }
+            }
         }
 
         return manager;
