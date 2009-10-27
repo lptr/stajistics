@@ -158,6 +158,17 @@ public class DefaultStatsConfigTest {
     }
 
     @Test
+    public void testEqualsWithDifferentType() {
+        StatsConfig config = new DefaultStatsConfig(true,
+                                                    MilliTimeDurationTracker.FACTORY, 
+                                                    DefaultSessionFactory.getInstance(), 
+                                                    "unit", 
+                                                    "description");
+
+        assertFalse(config.equals("not-a-config"));
+    }
+
+    @Test
     public void testEqualsWithSameEverything() {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY, 
@@ -335,5 +346,18 @@ public class DefaultStatsConfigTest {
                                                      "unit", 
                                                      "description2");
         assertFalse(config1.hashCode() == config2.hashCode());
+    }
+
+    @Test
+    public void testToString() {
+        StatsConfig config = new DefaultStatsConfig(true,
+                                                    MilliTimeDurationTracker.FACTORY, 
+                                                    DefaultSessionFactory.getInstance(), 
+                                                    "unit", 
+                                                    "description");
+
+        String str = config.toString();
+
+        assertTrue(str.indexOf(StatsConfig.class.getSimpleName() + "[") == 0);
     }
 }

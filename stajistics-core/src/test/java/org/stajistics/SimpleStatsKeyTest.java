@@ -14,9 +14,13 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertNull;
+
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * 
@@ -31,6 +35,16 @@ public class SimpleStatsKeyTest extends AbstractStatsKeyTestCase {
                                       final StatsKeyFactory keyFactory,
                                       final Map<String, Object> attributes) {
         return new SimpleStatsKey(name, keyFactory);
+    }
+
+    @Test
+    public void testGetAttribute() {
+        final Map<String,Object> testAttributes = new HashMap<String,Object>();
+        testAttributes.put("test1", Boolean.TRUE);
+
+        StatsKey key = createStatsKey(TEST_NAME, null, testAttributes);
+        assertNull(key.getAttribute("test1"));
+        assertNull(key.getAttribute("test2"));
     }
 
     @Override
