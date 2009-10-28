@@ -14,6 +14,12 @@
  */
 package org.stajistics;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * A convenience base class for {@link StatsKey} implementations.
@@ -116,6 +122,54 @@ public abstract class AbstractStatsKey implements StatsKey {
         }
 
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public int compareTo(final StatsKey other) {
+        // Compare key names
+        int i = this.name.compareTo(other.getName());
+
+        if (i == 0) {
+            // Compare attribute counts
+            i = other.getAttributeCount() - this.getAttributeCount();
+
+            if (i == 0) {
+                // Compare sorted attribute names
+                Map<String,Object> thisAttrs = this.getAttributes();
+                Map<String,Object> otherAttrs = other.getAttributes();
+
+                List<String> thisAttrKeys = new ArrayList<String>(thisAttrs.keySet());
+                List<String> otherAttrKeys = new ArrayList<String>(otherAttrs.keySet());
+
+                Collections.sort(thisAttrKeys);
+                Collections.sort(otherAttrKeys);
+
+                Iterator<String> thisItr = thisAttrKeys.iterator();
+                Iterator<String> otherItr = otherAttrKeys.iterator();
+
+                while (thisItr.hasNext() && otherItr.hasNext()) {
+                    i = thisItr.next()
+                               .compareTo(otherItr.next());
+                    if (i != 0) {
+                        break;
+                    }
+                }
+
+                if (i == 0) {
+                    // Compare attribute values
+                    for (Map.Entry<String,Object> entry : thisAttrs.entrySet()) {
+                        Object otherValue = otherAttrs.get(entry.getKey());
+                        i = ((Comparable)entry.getValue()).compareTo(otherValue);
+                        if (i != 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return i;
     }
 
     /**

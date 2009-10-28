@@ -21,7 +21,7 @@ import org.stajistics.tracker.TimeDurationTracker;
 
 /**
  * The default implementation of a {@link StatsConfigBuilder}. Do not instantiate this class
- * directly. Instead use {@link StatsManager#createConfigBuilder()}.
+ * directly. Instead use {@link StatsManager#createConfigBuilder()}, or {@link Stats#buildConfig()}.
  *
  * @author The Stajistics Project
  */

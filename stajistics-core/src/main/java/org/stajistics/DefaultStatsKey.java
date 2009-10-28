@@ -18,7 +18,10 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * A {@link StatsKey} implementation that stores attributes in a {@link Map}.
+ * A {@link StatsKey} implementation that stores attributes in a {@link Map}. Do not
+ * instantiate this class directly. Instead use the {@link StatsKeyFactory} provided by
+ * {@link StatsManager#getKeyFactory()}, or {@link Stats#newKey(String)}, or
+ * {@link Stats#buildKey(String)}.
  *
  * @author The Stajistics Project
  */
@@ -28,6 +31,15 @@ public class DefaultStatsKey extends AbstractStatsKey {
 
     protected final Map<String,Object> attributes;
 
+    /**
+     * Create a new instance.
+     *
+     * @param name The key name. Must not be <tt>null</tt>.
+     * @param keyFactory The factory that supports the creation of copies of this StatsKey instance.
+     * @param attributes The Map of attributes to be associated with this StatsKey instance. 
+     *                   Must not be <tt>null</tt>. This Map is not copied; it is referenced directly.
+     * @throws NullPointerException If <tt>attributes</tt> is <tt>null</tt>.
+     */
     public DefaultStatsKey(final String name,
                            final StatsKeyFactory keyFactory,
                            final Map<String,Object> attributes) {
@@ -66,6 +78,9 @@ public class DefaultStatsKey extends AbstractStatsKey {
         return attributes.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void appendAttributes(final StringBuilder buf) {
         buf.append(attributes);

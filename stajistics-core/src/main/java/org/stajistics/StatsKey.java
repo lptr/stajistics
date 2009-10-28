@@ -28,12 +28,18 @@ import org.stajistics.session.StatsSession;
  * StatsKeys are also used to address various entities in statistics collection that are associated
  * with the keys target, such as, configuration ({@link StatsConfig}) and collected data
  * ({@link StatsSession}). As StatsKeys are immutable, copies can be made using a 
- * {@link StatsKeyBuilder}.</p>
+ * {@link StatsKeyBuilder} which is obtained with the {@link #buildCopy()} method.</p>
  *
  * <dt>Naming and the Key Hierarchy</dt>
  * <dd>
  * <p>A key name is defined statically in the sense that it is not composed of runtime data. 
- * A valid key name must be greater than zero length. There are no restrictions on which 
+ * In other words, any key name must be able to be referenced or declared in a static configuration
+ * file. For example, it wouldn't make sense for a key name to contain a user ID because a user
+ * ID is runtime data, and it would be extremely awkward to manually maintain a secondary list of 
+ * active user IDs in a static configuration file. Key names should be predictable for the
+ * purposes of easily querying the Stajistics API for data related to a key.</p>
+ *
+ * <p>A valid key name must be greater than zero length. There are no restrictions on which 
  * characters can appear in a key name. Dot (.) characters, however, are interpreted as
  * hierarchy delimiters.</p>
  *
@@ -59,36 +65,42 @@ import org.stajistics.session.StatsSession;
  *
  * <dt>Attributes and Sub-Keys</dt>
  * <dd>
- * <p>Beyond the key hierarchy described above, there is the notion of sub-keys. Sub-keys 
- * allow the client to conveniently refine the scope of another key.</p>
+ * <p>Beyond the key hierarchy described above, there is the notion of sub-keys. A sub-key is just
+ * a StatsKey instance like any other key, but by convention, a key can only be called a
+ * sub-key if it has one or more associated attributes.</p>
  *
- * <p>Sub-keys are defined by adding any number of attributes to a key. When a key has attributes, 
- * it is said to be the sub-key of another key with the same name that does not have any attributes.
- * Specifically, Key Y is a sub-key of key X if the two share the same name and key X has no 
- * attributes. Since key X and Y are not equal, they can be assigned to different tracking targets.</p>
+ * <p>The purpose of sub-keys is to allow the client to conveniently refine or narrow the scope
+ * of a target for which statistics are collected. Key attributes are intended to hold the runtime 
+ * data that should not be statically defined in the key name, such as a worker thread name, a
+ * URL, or a file name, for example.</p>
+ *
+ * <p>A key with no attributes is known as a super-key. A key is a sub-key when it has one or more 
+ * associated attributes. When a key has attributes, it is said to be the sub-key of another key 
+ * with the same name that does not have any attributes (a super-key). As an example, 
+ * Key Y is a sub-key of key X if the two keys share the same name and key X has no attributes. 
+ * Since key X and Y are not equal, they can be assigned to different tracking targets.</p>
  *
  * <p>While the sub-key mechanism (and the key hierarchy mechanism) can be used in any way to 
- * support various organizations of statistics tracking, the following is a useful example 
+ * support various organizations of statistics tracking, the following is a best-practice example 
  * usage of sub-keys:
  * <blockquote>
- *   A key named "com.acme.AnvilApp.http.sessions" is defined to track the total number of active 
- *   HTTP sessions in a web application. A sub-key of this key that has an attribute "user" set to
- *   the ID of the logged in user for the request. Using this configuration allows the tracking of 
- *   data for all HTTP sessions as well as for HTTP sessions per user.
+ *   A key named "com.acme.AnvilApp.http.sessions" is defined to track the total number and life span
+ *   of active HTTP sessions in a web application. A sub-key of this key that has an attribute 
+ *   "user" is set to the ID of the logged in user for the request. Using this configuration allows 
+ *   the collection of statistics for all HTTP sessions, and separately for HTTP sessions per user.
  * </blockquote>
  * </p>
  *
  * <p>TODO: Attribute naming restrictions/caveats</p>
  * </dd>
  *
- * </dd>
- *
  * @see Stats
  * @see StatsKeyBuilder
+ * @see StatsKeyFactory
  *
  * @author The Stajistics Project
  */
-public interface StatsKey extends Serializable {
+public interface StatsKey extends Comparable<StatsKey>,Serializable {
 
     /**
      * Get the key name.
@@ -124,7 +136,7 @@ public interface StatsKey extends Serializable {
      *
      * @return A key builder initialized with this keys name and attributes.
      *
-     * @throws UnsupportedOperationException If the key cannot be copied.
+     * @throws UnsupportedOperationException If the key does not support being copied.
      */
     StatsKeyBuilder buildCopy();
 

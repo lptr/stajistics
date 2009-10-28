@@ -18,8 +18,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * The default implementation of {@link StatsKeyBuilder}.
- * 
+ * The default implementation of {@link StatsKeyBuilder}. Do not
+ * instantiate this class directly. Instead use the {@link StatsKeyFactory} provided by
+ * {@link StatsManager#getKeyFactory()}.
+ *
  * @author The Stajistics Project
  */
 public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
@@ -34,6 +36,14 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
     protected Map<String,Object> attributes;
 
+    /**
+     * Create a new instance.
+     *
+     * @param name The initial key name. Must not be <tt>null</tt>.
+     * @param keyFactory The factory that supports the creation of StatsKey instances. 
+     *                   Must not be <tt>null</tt>.
+     * @throws NullPointerException If <tt>name</tt> or <tt>keyFactory</tt> is <tt>null</tt>.
+     */
     public DefaultStatsKeyBuilder(final String name,
                                   final StatsKeyFactory keyFactory) {
         if (name == null) {
@@ -47,6 +57,14 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         this.keyFactory = keyFactory;
     }
 
+    /**
+     * Create a new instance initialized with the fields provided by <tt>template</tt>.
+     * A copy of the <tt>template</tt> attribute Map is used by this new instance.
+     *
+     * @param template The StatsKey from which the initial state of this builder will be 
+     *                 extracted. Must not be null.
+     * @param keyFactory The factory that supports the creation of StatsKey instances. Must not be null.
+     */
     public DefaultStatsKeyBuilder(final StatsKey template,
                                   final StatsKeyFactory keyFactory) {
         if (template == null) {

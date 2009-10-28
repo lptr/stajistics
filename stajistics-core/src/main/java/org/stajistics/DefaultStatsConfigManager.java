@@ -36,9 +36,8 @@ import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.tracker.TimeDurationTracker;
 
 /**
- * The default implementation of {@link StatsConfigManager}.
- *
- * TODO: Need to describe what that is.
+ * The default implementation of {@link StatsConfigManager}. Clients typically do not instantiate 
+ * this class directly. Instead use {@link Stats#getConfigManager()}. 
  *
  * @author The Stajistics Project
  */
@@ -60,6 +59,8 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
      *
      * @param eventManager The {@link StatsEventManager} with which to fire configuration events.
      * @param keyFactory The {@link StatsKeyFactory} with which to create keys.
+     *
+     * @throws NullPointerException If <tt>eventManager</tt> or <tt>keyFactory</tt> is <tt>null</tt>.
      */
     public DefaultStatsConfigManager(final StatsEventManager eventManager,
                                      final StatsKeyFactory keyFactory) {
@@ -75,6 +76,9 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
      * @param keyFactory The {@link StatsKeyFactory} with which to create keys.
      * @param rootConfig The root {@link StatsConfig} from which to inherit in the absence of configuration.
      * @param configMap A Map of key names to configurations. May be <tt>null</tt>.
+     *
+     * @throws NullPointerException If <tt>eventManager</tt>, <tt>keyFactory</tt>, 
+     *                              or <tt>rootConfig</tt> is <tt>null</tt>.
      */
     public DefaultStatsConfigManager(final StatsEventManager eventManager,
                                      final StatsKeyFactory keyFactory,
@@ -120,8 +124,8 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     /**
-     * A hook for subclasses to override the {@link ConcurrentMap} implementation used
-     * for <tt>statsKey</tt>.
+     * A factory method hook for subclasses to override the {@link ConcurrentMap} implementation 
+     * to be used for <tt>statsKey</tt>.
      *
      * @return A {@link ConcurrentMap}, never <tt>null</tt>.
      */

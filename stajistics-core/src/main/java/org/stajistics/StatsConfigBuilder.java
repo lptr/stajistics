@@ -68,7 +68,8 @@ public interface StatsConfigBuilder extends Serializable {
 
     /**
      * Create a new immutable {@link StatsConfig} instance based on the builders currently 
-     * configured state.
+     * configured state. Can be invoked multiple times and the state can be modified further
+     * in between invocations.
      *
      * @return A {@link StatsConfig} instance, never <tt>null</tt>.
      */
@@ -76,9 +77,7 @@ public interface StatsConfigBuilder extends Serializable {
 
     /**
      * Set the result of {@link #newConfig()} with the given <tt>key</tt> on the
-     * {@link StatsConfigManager}.
-     *
-     * TODO: which StatsConfigManager?
+     * {@link StatsConfigManager} that is associated with this builder instance.
      *
      * @param key The {@link StatsKey} to be associated with the new {@link StatsConfig}.
      */

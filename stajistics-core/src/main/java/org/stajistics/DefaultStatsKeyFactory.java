@@ -16,7 +16,8 @@ package org.stajistics;
 
 
 /**
- * The default implementation of {@link StatsKeyFactory}.
+ * The default implementation of {@link StatsKeyFactory}. Do not
+ * instantiate this class directly. Instead use {@link StatsManager#getKeyFactory()}.
  *
  * @author The Stajistics Project
  */
