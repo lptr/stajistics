@@ -30,7 +30,8 @@ import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * The default implementation of {@link StatsManager}.
+ * The default implementation of {@link StatsManager}. Clients typically do not
+ * instantiate this class directly. Instead use {@link Stats#getManager()}.
  *
  * @author The Stajistics Project
  */
@@ -53,10 +54,13 @@ public class DefaultStatsManager implements StatsManager {
     /**
      * Construct a DefaultStatsManager using the given set of managers.
      *
-     * @param configManager The {@link StatsConfigManager} to use.
-     * @param sessionManager The {@link StatsSessionManager} to use.
-     * @param eventManager The {@link StatsEventManager} to use.
-     * @param keyFactory The {@link StatsKeyFactory} to use.
+     * @param configManager The {@link StatsConfigManager} to use. Must not be <tt>null</tt>.
+     * @param sessionManager The {@link StatsSessionManager} to use. Must not be <tt>null</tt>.
+     * @param eventManager The {@link StatsEventManager} to use. Must not be <tt>null</tt>.
+     * @param snapshotManager The {@link StatsSnapshotManager} to use. Must not be <tt>null</tt>.
+     * @param keyFactory The {@link StatsKeyFactory} to use. Must not be <tt>null</tt>.
+     * @param configFactory The {@link StatsConfigFactory} to use. Must not be <tt>null</tt>.
+     * @throws NullPointerException If any parameter is <tt>null</tt>.
      */
     public DefaultStatsManager(final StatsConfigManager configManager,
                                final StatsSessionManager sessionManager,

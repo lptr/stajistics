@@ -18,7 +18,10 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * A {@link StatsKey} implementation that can store only a single attribute.
+ * A {@link StatsKey} implementation that can store only a single attribute. Do not
+ * instantiate this class directly. Instead use the {@link StatsKeyFactory} provided by
+ * {@link StatsManager#getKeyFactory()}, or {@link Stats#newKey(String)}, or
+ * {@link Stats#buildKey(String)}.
  *
  * @author The Stajistics Project
  */
@@ -29,13 +32,23 @@ public class SingleAttributeStatsKey extends AbstractStatsKey {
     private final String attrName;
     private final Object attrValue;
 
-    protected SingleAttributeStatsKey(final String name,
-                                      final StatsKeyFactory keyFactory,
-                                      final String attrName,
-                                      final Object attrValue) {
+    /**
+     * Create a new instance.
+     *
+     * @param name The key name. Must not be <tt>null</tt>.
+     * @param keyFactory The factory that supports the creation of copies of this StatsKey instance.
+     * @param attrName The sole attribute name. Can only be <tt>null</tt> if <tt>attrValue</tt> is <tt>null</tt>.
+     * @param attrValue The sole attribute value. May be <tt>null</tt>.
+     * @throws NullPointerException If <tt>name</tt> is <tt>null</tt>. 
+     *                              If <tt>attrName</tt> is <tt>null</tt> and <tt>attrValue</tt> is not.
+     */
+    public SingleAttributeStatsKey(final String name,
+                                   final StatsKeyFactory keyFactory,
+                                   final String attrName,
+                                   final Object attrValue) {
         super(name, keyFactory);
 
-        if (attrName != null && attrValue == null) {
+        if (attrName == null && attrValue != null) {
             throw new NullPointerException("attrValue");
         }
 
@@ -77,6 +90,9 @@ public class SingleAttributeStatsKey extends AbstractStatsKey {
         return attrName == null ? 0 : 1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void appendAttributes(final StringBuilder buf) {
         buf.append('{');

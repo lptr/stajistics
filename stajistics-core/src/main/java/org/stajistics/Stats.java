@@ -23,7 +23,7 @@ import org.stajistics.tracker.StatsTracker;
 
 /**
  * A facade to the Stajistics core API. Maintains a singleton default instance of a {@link StatsManager}.
- *
+ * Provides static convenience methods for manipulating the underlying API.
  *
  * @author The Stajistics Project
  */

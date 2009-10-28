@@ -96,4 +96,19 @@ public final class NullStatsKey implements StatsKey {
         return this == obj;
     }
 
+    /**
+     * @return <tt>-1</tt>.
+     */
+    @Override
+    public int compareTo(final StatsKey o) {
+        return -1;
+    }
+
+    /**
+     * @return <tt>"NullStatsKey"</tt>.
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

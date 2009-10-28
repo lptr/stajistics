@@ -19,9 +19,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * 
- * @author The Stajistics Project
+ * Provides information on the Stajistics API.
  *
+ * @author The Stajistics Project
  */
 public final class Stajistics {
 
@@ -63,10 +63,18 @@ public final class Stajistics {
                                                : version;
     }
 
+    /**
+     * Get the name of the Stajistics API.
+     * @return The name.
+     */
     public static String getName() {
         return name;
     }
 
+    /**
+     * Get the version of the Stajistics API.
+     * @return The version.
+     */
     public static String getVersion() {
         return version;
     }
