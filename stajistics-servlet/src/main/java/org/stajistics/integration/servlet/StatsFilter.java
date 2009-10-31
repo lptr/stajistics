@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -134,13 +134,13 @@ public class StatsFilter implements Filter {
         logger.info("{} destroyed", getClass().getSimpleName());
     }
 
-    private StatsTracker getTracker(final ServletRequest request) {
+    private SpanTracker getSpanTracker(final ServletRequest request) {
 
-        StatsTracker tracker;
+        SpanTracker tracker;
         if (bindParams == null && bindHeaders == null) {
-            tracker = Stats.getTracker(key);
+            tracker = Stats.getSpanTracker(key);
         } else {
-            tracker = Stats.getTracker(getStatsKeys(request));
+            tracker = Stats.getSpanTracker(getStatsKeys(request));
         }
 
         return tracker;
@@ -207,8 +207,8 @@ public class StatsFilter implements Filter {
                          final FilterChain chain)
             throws IOException, ServletException {
 
-        StatsTracker tracker = getTracker(request);
-        tracker.track();
+        SpanTracker tracker = getSpanTracker(request);
+        tracker.start();
 
         try {
             StatsHttpServletResponse statsResponse = null;
@@ -226,12 +226,7 @@ public class StatsFilter implements Filter {
             }
 
         } catch (Throwable t) {
-            if (exceptionKey != null) {
-                Stats.incident(exceptionKey);
-                Stats.incident(exceptionKey.buildCopy()
-                                           .withAttribute("threw", t.getClass().getName())
-                                           .newKey());
-            }
+            Stats.failure(t, exceptionKey);
 
             if (t instanceof IOException) {
                 throw (IOException)t;
@@ -246,7 +241,7 @@ public class StatsFilter implements Filter {
             throw new RuntimeException(t);
 
         } finally {
-            tracker.commit();
+            tracker.stop();
         }
     }
 

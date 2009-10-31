@@ -214,6 +214,15 @@ public final class Stats {
         }
     }
 
+    public static SpanTracker getSpanTracker(final StatsKey... keys) {
+        try {
+            return getTrackerLocator().getSpanTracker(keys);
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
+    }
+    
     /**
      * A convenience method equivalent to calling:
      * <tt>Stats.getTracker(Stats.newKey(name)).track()</tt>.
