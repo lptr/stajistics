@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigFactory;
-import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
@@ -244,7 +243,6 @@ public class DefaultStatsManagementTest {
     @Test
     public void testRegisterSessionManagerMBean() throws Exception {
 
-        final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);
         final StatsSessionManagerMBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMBean.class);
 
         mockery.checking(new Expectations() {{
@@ -273,7 +271,6 @@ public class DefaultStatsManagementTest {
     @Test
     public void testRegisterConfigManagerMBean() throws Exception {
 
-        final StatsConfigManager mockConfigManager = mockery.mock(StatsConfigManager.class);
         final StatsConfigManagerMBean mockConfigManagerMBean = mockery.mock(StatsConfigManagerMBean.class);
 
         mockery.checking(new Expectations() {{

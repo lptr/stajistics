@@ -28,7 +28,7 @@ public class DefaultStatsConfig implements StatsConfig {
 
     private final boolean enabled;
 
-    private final StatsTrackerFactory trackerFactory;
+    private final StatsTrackerFactory<?> trackerFactory;
     private final StatsSessionFactory sessionFactory;
 
     private final String unit;
@@ -61,7 +61,7 @@ public class DefaultStatsConfig implements StatsConfig {
      * @throws IllegalArgumentException If <tt>unit</tt> is zero length.
      */
     public DefaultStatsConfig(final boolean enabled,
-                              final StatsTrackerFactory trackerFactory,
+                              final StatsTrackerFactory<?> trackerFactory,
                               final StatsSessionFactory sessionFactory,
                               final String unit,
                               final String description) {
@@ -122,7 +122,7 @@ public class DefaultStatsConfig implements StatsConfig {
      * {@inheritDoc}
      */
     @Override
-    public StatsTrackerFactory getTrackerFactory() {
+    public StatsTrackerFactory<?> getTrackerFactory() {
         return trackerFactory;
     }
 

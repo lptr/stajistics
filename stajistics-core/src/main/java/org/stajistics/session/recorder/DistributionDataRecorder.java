@@ -44,7 +44,7 @@ public class DistributionDataRecorder implements DataRecorder {
     public Set<String> getSupportedFieldNames() {
         return SUPPORTED_FIELD_NAMES;
     }
-    
+
     @Override
     public void update(final StatsSession session, 
                        final StatsTracker tracker, 

@@ -32,7 +32,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     protected final StatsConfigManager configManager;
 
     protected boolean enabled = true;
-    protected StatsTrackerFactory trackerFactory;
+    protected StatsTrackerFactory<?> trackerFactory;
     protected StatsSessionFactory sessionFactory;
     protected String unit;
     protected String description;
@@ -100,7 +100,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
      * {@inheritDoc}
      */
     @Override
-    public StatsConfigBuilder withTrackerFactory(final StatsTrackerFactory trackerFactory) {
+    public StatsConfigBuilder withTrackerFactory(final StatsTrackerFactory<?> trackerFactory) {
         if (trackerFactory == null) {
             throw new NullPointerException("trackerFactory");
         }
@@ -136,7 +136,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
      *
      * @return The default {@link StatsTrackerFactory}, never <tt>null</tt>.
      */
-    protected StatsTrackerFactory createDefaultTrackerFactory() {
+    protected StatsTrackerFactory<?> createDefaultTrackerFactory() {
         return TimeDurationTracker.FACTORY;
     }
 
@@ -164,7 +164,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     @Override
     public StatsConfig newConfig() {
 
-        StatsTrackerFactory trackerFactory = this.trackerFactory;
+        StatsTrackerFactory<?> trackerFactory = this.trackerFactory;
         StatsSessionFactory sessionFactory = this.sessionFactory;
         String unit = this.unit;
 

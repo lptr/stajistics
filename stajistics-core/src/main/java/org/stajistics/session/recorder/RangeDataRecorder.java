@@ -98,7 +98,7 @@ public class RangeDataRecorder implements DataRecorder {
     public void restore(final DataSet dataSet) {
 
         long[] values = new long[rangeList.size()];
-        
+
         Range range;
         Long value;
         int i = 0;

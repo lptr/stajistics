@@ -245,9 +245,16 @@ public abstract class AbstractSpanStatsTrackerTestCase {
 
         final SpanTracker tracker = createStatsTracker();
 
+        mockery.checking(new Expectations() {{
+            one(mockSession).track(with(tracker), with(any(long.class)));
+            ignoring(mockSession).getHits();
+            ignoring(mockSession).getLastHitStamp();
+            ignoring(mockSession).getCommits();
+        }});
+
         assertFalse(tracker.isTracking());
         tracker.start();
-        assertFalse(tracker.isTracking());
+        assertTrue(tracker.isTracking());
     }
 
     @Test

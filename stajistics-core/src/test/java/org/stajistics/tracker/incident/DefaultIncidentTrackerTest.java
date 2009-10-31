@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.tracker.manual;
 
-import static org.junit.Assert.assertEquals;
+package org.stajistics.tracker.incident;
 
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
@@ -25,14 +25,11 @@ import org.stajistics.session.StatsSession;
 
 /**
  * 
- * 
- *
  * @author The Stajistics Project
+ *
  */
 @RunWith(JMock.class)
-public class DefaultManualTrackerTest {
-
-    protected static final double DELTA = 0.0000000000001;
+public class DefaultIncidentTrackerTest {
 
     private Mockery mockery;
     private StatsSession mockSession;
@@ -44,35 +41,14 @@ public class DefaultManualTrackerTest {
     }
 
     @Test
-    public void testInitialState() {
-        DefaultManualTracker mTracker = new DefaultManualTracker(mockSession);
+    public void testIncident() {
+        final IncidentTracker tracker = new DefaultIncidentTracker(mockSession);
 
-        assertEquals(0, mTracker.getTimeStamp());
-        assertEquals(0.0, mTracker.getValue(), DELTA);
-    }
-
-    @Test
-    public void testUpdate() {
-        DefaultManualTracker mTracker = new DefaultManualTracker(mockSession);
-
-        int total = 0;
-
-        for (int i = 0; i < 100; i++) {
-            mTracker.addValue(i);
-            total += i;
-
-            assertEquals(total, mTracker.getValue(), DELTA);
-        }
-    }
-
-    @Test
-    public void testSetValue() {
-        DefaultManualTracker mTracker = new DefaultManualTracker(mockSession);
-
-        for (int i = 0; i < 100; i++) {
-            mTracker.setValue(i);
-
-            assertEquals(i, mTracker.getValue(), DELTA);
-        }
+        mockery.checking(new Expectations() {{
+            one(mockSession).track(with(tracker), with(any(long.class)));
+            one(mockSession).update(with(tracker), with(any(long.class)));
+        }});
+        
+        tracker.incident();
     }
 }

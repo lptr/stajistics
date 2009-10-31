@@ -40,7 +40,7 @@ public interface StatsConfigBuilder extends Serializable {
      * @param trackerFactory The {@link StatsTrackerFactory} instance use.
      * @return <tt>this</tt>.
      */
-    StatsConfigBuilder withTrackerFactory(StatsTrackerFactory trackerFactory);
+    StatsConfigBuilder withTrackerFactory(StatsTrackerFactory<?> trackerFactory);
 
     /**
      * Build the configuration with the given {@link StatsSessionFactory}.

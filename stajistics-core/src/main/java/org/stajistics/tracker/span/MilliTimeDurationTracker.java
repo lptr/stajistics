@@ -50,7 +50,7 @@ public class MilliTimeDurationTracker extends AbstractSpanStatsTracker {
 
         value = now - this.timeStamp;
 
-        session.update(this, now);
+        session.track(this, now);
     }
 
     public static class Factory implements StatsTrackerFactory<SpanTracker> {

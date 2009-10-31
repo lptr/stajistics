@@ -39,8 +39,9 @@ public class IncidentCompositeStatsTracker
 
     @Override
     public IncidentTracker incident() {
-        for (int i = 0; i < trackers.length; i++) {
-            (trackers[i]).incident();
+        int len = trackers.length;
+        for (int i = 0; i < len; i++) {
+            trackers[i].incident();
         }
         return this;
     }
