@@ -26,7 +26,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractCallableStatementDecorator;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
     private final String sql;
     private final List<String> batchSQL;
 
-    private final StatsTracker openClosedTracker;
+    private final SpanTracker openClosedTracker;
 
     private final ProxyFactory<ResultSet> resultSetProxyFactory;
 
@@ -73,7 +73,7 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
                                       .withNameSuffix("open")
                                       .newKey();
 
-        openClosedTracker = Stats.track(openClosedKey);
+        openClosedTracker = Stats.start(openClosedKey);
     }
 
     public String getSQL() {
@@ -95,7 +95,7 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
         try {
             delegate().close();
         } finally {
-            openClosedTracker.commit();
+            openClosedTracker.stop();
         }
     }
 
