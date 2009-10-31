@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import java.util.Map;
+
 /**
  * 
  * @author The Stajistics Project
@@ -23,7 +25,7 @@ public abstract class StatsProperties {
 
     private static StatsProperties instance;
 
-    protected StatsProperties() {}
+    public StatsProperties() {}
 
     public static StatsProperties getInstance() {
         if (instance == null) {
@@ -136,13 +138,37 @@ public abstract class StatsProperties {
 
     /* NESTED CLASSES */
 
-    private static final class SystemStatsProperties extends StatsProperties {
+    public static final class SystemStatsProperties extends StatsProperties {
 
         @Override
         public String getPropertyImpl(final String key,
                                       final String defaultValue) {
             return System.getProperty(key, defaultValue);
         }
+    }
 
+    public static final class MapStatsProperties extends StatsProperties {
+
+        private final Map<String,?> propertyMap;
+
+        public MapStatsProperties(final Map<String,?> propertyMap) {
+            if (propertyMap == null) {
+                throw new NullPointerException("propertyMap");
+            }
+            this.propertyMap = propertyMap;
+        }
+
+        @Override
+        protected String getPropertyImpl(final String key, 
+                                         final String defaultValue) {
+            String result = defaultValue;
+
+            Object value = propertyMap.get(key);
+            if (value != null) {
+                result = value.toString();
+            }
+
+            return result;
+        }
     }
 }

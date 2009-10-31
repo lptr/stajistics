@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.DefaultSessionFactory;
-import org.stajistics.tracker.TimeDurationTracker;
+import org.stajistics.tracker.span.TimeDurationTracker;
 
 /**
  *

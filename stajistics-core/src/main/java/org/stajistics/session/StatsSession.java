@@ -30,7 +30,8 @@ import org.stajistics.tracker.StatsTracker;
 public interface StatsSession extends Serializable {
 
     /**
-     * Obtain the {@link StatsKey} associated with this session.
+     * Obtain the {@link StatsKey} that represents the target for which this session is
+     * storing data.
      *
      * @return A {@link StatsKey} instance, never <tt>null</tt>.
      */
@@ -131,7 +132,12 @@ public interface StatsSession extends Serializable {
      */
     DataSet collectData();
 
-    
+    /**
+     * Re-populate internal data fields and {@link DataRecorder}s using the given
+     * <tt>dataSet</tt>. This will clear any previously recorded data.
+     *
+     * @param dataSet The data set with which to populate this session.
+     */
     void restore(DataSet dataSet);
 
     /**

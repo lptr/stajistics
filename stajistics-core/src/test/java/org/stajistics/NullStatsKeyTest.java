@@ -19,7 +19,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.jmock.Mockery;
 import org.junit.Test;
@@ -55,12 +54,8 @@ public class NullStatsKeyTest {
 
     @Test
     public void testBuildCopy() {
-        try {
-            NullStatsKey.getInstance().buildCopy();
-            fail("Allowed buildCopy");
-        } catch (UnsupportedOperationException uoe) {
-            // expected
-        }
+        assertEquals(NullStatsKeyBuilder.getInstance(),
+                     NullStatsKey.getInstance().buildCopy());
     }
 
     @Test

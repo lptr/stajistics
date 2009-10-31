@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -35,8 +35,8 @@ public class LifeCycleMonitor<T> {
 
     private final ReferenceQueue<T> refQueue = new ReferenceQueue<T>();
 
-    private final Map<Reference<T>,StatsTracker> trackerMap =
-        Collections.synchronizedMap(new IdentityHashMap<Reference<T>,StatsTracker>(512));
+    private final Map<Reference<T>,SpanTracker> trackerMap =
+        Collections.synchronizedMap(new IdentityHashMap<Reference<T>,SpanTracker>(512));
 
     private final LifeCyclePoller lifeCyclePoller = new LifeCyclePoller();
 
@@ -62,12 +62,10 @@ public class LifeCycleMonitor<T> {
     public void monitor(final T object,
                         final StatsKey key) {
 
-        StatsTracker tracker = Stats.getTracker(key);
+        SpanTracker tracker = Stats.start(key);
 
         Reference<T> ref = new PhantomReference<T>(object, refQueue);
         trackerMap.put(ref, tracker);
-
-        tracker.track();
     }
 
     public boolean isRunning() {
@@ -83,9 +81,9 @@ public class LifeCycleMonitor<T> {
     }
 
     protected void remove(final Reference<? extends T> ref) {
-        StatsTracker tracker = trackerMap.remove(ref);
+        SpanTracker tracker = trackerMap.remove(ref);
         if (tracker != null) {
-            tracker.commit();
+            tracker.stop();
         }
     }
 

@@ -17,7 +17,7 @@ package org.stajistics;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
-import org.stajistics.tracker.TimeDurationTracker;
+import org.stajistics.tracker.span.TimeDurationTracker;
 
 /**
  * The default implementation of a {@link StatsConfigBuilder}. Do not instantiate this class

@@ -20,11 +20,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
+ * 
  * 
  * @author The Stajistics Project
  */
@@ -35,6 +37,8 @@ public abstract class StatsKeyMatcher implements Serializable {
     public static Builder build() {
         return new Builder();
     }
+
+    /* FACTORY METHODS */
 
     public static StatsKeyMatcher all() {
         return AllMatcher.INSTANCE;
@@ -76,12 +80,20 @@ public abstract class StatsKeyMatcher implements Serializable {
         return new PrefixMatcher(MatchTarget.KEY_NAME, prefix);
     }
 
-    public static StatsKeyMatcher childOf(String keyName) {
-        if (!keyName.endsWith(".")) {
-            keyName += ".";
-        }
+    public static StatsKeyMatcher descendentOf(final String keyName) {
+        return new DescendentMatcher(keyName);
+    }
 
-        return new PrefixMatcher(MatchTarget.KEY_NAME, keyName);
+    public static StatsKeyMatcher ancestorOf(final String keyName) {
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public static StatsKeyMatcher childOf(final String keyName) {
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    public static StatsKeyMatcher parentOf(final String keyName) {
+        throw new UnsupportedOperationException("TODO");
     }
 
     public static StatsKeyMatcher attrNamePrefix(final String prefix) {
@@ -160,7 +172,18 @@ public abstract class StatsKeyMatcher implements Serializable {
         return new AttrCountMatcher(count);
     }
 
-    public Collection<StatsKey> filterKeys(final Collection<StatsKey> keys) {
+    /* FILTER METHODS */
+
+    public void filter(final Collection<StatsKey> keys) {
+        Iterator<StatsKey> itr = keys.iterator();
+        while (itr.hasNext()) {
+            if (!matches(itr.next())) {
+                itr.remove();
+            }
+        }
+    }
+
+    public Collection<StatsKey> filterCopy(final Collection<StatsKey> keys) {
         List<StatsKey> filteredList = new ArrayList<StatsKey>(keys.size());
         for (StatsKey key : keys) {
             if (matches(key)) {
@@ -168,6 +191,26 @@ public abstract class StatsKeyMatcher implements Serializable {
             }
         }
         return Collections.unmodifiableCollection(filteredList);
+    }
+
+    public <T> void filter(final Map<StatsKey,T> map) {
+        Iterator<Map.Entry<StatsKey,T>> itr = map.entrySet().iterator();
+        while (itr.hasNext()) {
+            Map.Entry<StatsKey,T> entry = itr.next();
+            if (!matches(entry.getKey())) {
+                itr.remove();
+            }
+        }
+    }
+
+    public <T> Map<StatsKey,T> filterCopy(final Map<StatsKey,T> map) {
+        Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(map.size() / 2);
+        for (Map.Entry<StatsKey,T> entry : map.entrySet()) {
+            if (matches(entry.getKey())) {
+                filteredMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return Collections.unmodifiableMap(filteredMap);
     }
 
     public <T> Collection<T> filterToCollection(final Map<StatsKey,T> map) {
@@ -190,16 +233,6 @@ public abstract class StatsKeyMatcher implements Serializable {
             }
         }
         return Collections.unmodifiableCollection(filteredList);
-    }
-
-    public <T> Map<StatsKey,T> filterToMap(final Map<StatsKey,T> map) {
-        Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(map.size() / 2);
-        for (Map.Entry<StatsKey,T> entry : map.entrySet()) {
-            if (matches(entry.getKey())) {
-                filteredMap.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return Collections.unmodifiableMap(filteredMap);
     }
 
     public <T> Map<StatsKey,T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
@@ -441,18 +474,46 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         @Override
-        public Collection<StatsKey> filterKeys(final Collection<StatsKey> keys) {
+        public void filter(final Collection<StatsKey> keys) {
+            // Do nothing
+        }
+
+        @Override
+        public <T> void filter(final Map<StatsKey, T> map) {
+            // Do nothing
+        }
+
+        @Override
+        public Collection<StatsKey> filterCopy(final Collection<StatsKey> keys) {
             return Collections.unmodifiableCollection(new ArrayList<StatsKey>(keys));
+        }
+
+        @Override
+        public <T> Map<StatsKey,T> filterCopy(final Map<StatsKey,T> map) {
+            return Collections.unmodifiableMap(map);
         }
 
         @Override
         public <T> Collection<T> filterToCollection(final Map<StatsKey,T> map) {
             return Collections.unmodifiableCollection(new ArrayList<T>(map.values()));
         }
-        
+
         @Override
-        public <T> Map<StatsKey,T> filterToMap(final Map<StatsKey,T> map) {
-            return Collections.unmodifiableMap(map);
+        public <T> Collection<T> filterToCollection(Collection<? extends StatsKeyAssociation<T>> associations) {
+            List<T> filteredList = new ArrayList<T>(associations.size());
+            for (StatsKeyAssociation<T> ka : associations) {
+                filteredList.add(ka.getValue());
+            }
+            return Collections.unmodifiableCollection(filteredList);
+        }
+
+        @Override
+        public <T> Map<StatsKey,T> filterToMap(Collection<? extends StatsKeyAssociation<T>> associations) {
+            Map<StatsKey,T> filteredMap = new HashMap<StatsKey,T>(associations.size());
+            for (StatsKeyAssociation<T> ka : associations) {
+                filteredMap.put(ka.getKey(), ka.getValue());
+            }
+            return Collections.unmodifiableMap(filteredMap);
         }
 
         @Override
@@ -478,8 +539,23 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         @Override
-        public Collection<StatsKey> filterKeys(final Collection<StatsKey> keys) {
+        public void filter(final Collection<StatsKey> keys) {
+            keys.clear();
+        }
+
+        @Override
+        public <T> void filter(final Map<StatsKey,T> map) {
+            map.clear();
+        }
+
+        @Override
+        public Collection<StatsKey> filterCopy(final Collection<StatsKey> keys) {
             return Collections.emptyList();
+        }
+
+        @Override
+        public <T> Map<StatsKey,T> filterCopy(final Map<StatsKey,T> map) {
+            return Collections.emptyMap();
         }
 
         @Override
@@ -492,11 +568,6 @@ public abstract class StatsKeyMatcher implements Serializable {
             return Collections.emptyList();
         }
 
-        @Override
-        public <T> Map<StatsKey, T> filterToMap(final Map<StatsKey,T> map) {
-            return Collections.emptyMap();
-        }
-        
         @Override
         public <T> Map<StatsKey,T> filterToMap(final Collection<? extends StatsKeyAssociation<T>> associations) {
             return Collections.emptyMap();
@@ -651,6 +722,26 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public int hashCode() {
             return getClass().hashCode() ^ target.hashCode() ^ prefix.hashCode();
+        }
+    }
+
+    private static class DescendentMatcher extends PrefixMatcher {
+
+        private static final long serialVersionUID = -6981649453441657393L;
+
+        public DescendentMatcher(final String keyName) {
+            super(MatchTarget.KEY_NAME, formatKeyName(keyName));
+        }
+
+        private static String formatKeyName(String keyName) {
+            if (keyName == null) {
+                throw new NullPointerException("keyName");
+            }
+
+            if (!keyName.endsWith(".")) {
+                keyName += ".";
+            }
+            return keyName;
         }
     }
 

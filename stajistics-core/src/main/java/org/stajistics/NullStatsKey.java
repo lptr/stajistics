@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * A {@link StatsKey} implementation conforming to the null object pattern.
+ * A singleton {@link StatsKey} implementation conforming to the null object pattern.
  *
  * @author The Stajistics Project
  */
@@ -72,11 +72,11 @@ public final class NullStatsKey implements StatsKey {
     }
 
     /**
-     * @throws UnsupportedOperationException always.
+     * @return {@link NullStatsKeyBuilder#getInstance()}
      */
     @Override
     public StatsKeyBuilder buildCopy() {
-        throw new UnsupportedOperationException();
+        return NullStatsKeyBuilder.getInstance();
     }
 
     /**

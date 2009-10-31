@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadFactory;
 
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -49,11 +49,11 @@ public class StatsDecorator {
             @Override
             public void run() {
                 try {
-                    StatsTracker tracker = Stats.track(key);
+                    SpanTracker tracker = Stats.start(key);
                     try {
                         r.run();
                     } finally {
-                        tracker.commit();
+                        tracker.stop();
                     }
 
                 } catch (Throwable t) {
@@ -70,11 +70,11 @@ public class StatsDecorator {
             @Override
             public T call() throws Exception {
                 try {
-                    StatsTracker tracker = Stats.track(key);
+                    SpanTracker tracker = Stats.start(key);
                     try {
                         return c.call();
                     } finally {
-                        tracker.commit();
+                        tracker.stop();
                     }
 
                 } catch (Throwable t) {
@@ -93,11 +93,11 @@ public class StatsDecorator {
             public void update(final Observable o, 
                                final Object arg) {
                 try {
-                    StatsTracker tracker = Stats.track(key);
+                    SpanTracker tracker = Stats.start(key);
                     try {
                         observer.update(o, arg);
                     } finally {
-                        tracker.commit();
+                        tracker.stop();
                     }
 
                 } catch (Throwable t) {

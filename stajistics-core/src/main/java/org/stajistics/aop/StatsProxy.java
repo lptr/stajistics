@@ -23,7 +23,7 @@ import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyUtils;
 import org.stajistics.StatsManager;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -164,7 +164,9 @@ public class StatsProxy implements InvocationHandler {
                                 .newKey();
 
         try {
-            final StatsTracker tracker = statsManager.getTracker(methodKey).track();
+            final SpanTracker tracker = statsManager.getTrackerLocator()
+                                                         .getSpanTracker(methodKey)
+                                                         .start();
             try {
                 if (method.equals(EQUALS_METHOD)) {
                     return target.equals(unwrap(args[0]));
@@ -173,7 +175,7 @@ public class StatsProxy implements InvocationHandler {
                 return method.invoke(target, args);
 
             } finally {
-                tracker.commit();
+                tracker.stop();
             }
 
         } catch (Throwable t) {
@@ -184,7 +186,8 @@ public class StatsProxy implements InvocationHandler {
                 cause = t;
             }
 
-            statsManager.getTracker(StatsKeyUtils.keyForFailure(methodKey, cause))
+            statsManager.getTrackerLocator()
+                        .getIncidentTracker(StatsKeyUtils.keyForFailure(methodKey, cause))
                         .incident();
 
             throw cause;

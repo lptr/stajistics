@@ -25,8 +25,8 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public interface StatsTrackerFactory extends Serializable {
+public interface StatsTrackerFactory<T extends StatsTracker> extends Serializable {
 
-    StatsTracker createTracker(StatsKey key, StatsSessionManager sessionManager);
+    T createTracker(StatsKey key, StatsSessionManager sessionManager);
 
 }
