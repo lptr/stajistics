@@ -122,7 +122,7 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
 
         Map<StatsKey,StatsConfig> childMap = 
             statsManager.getConfigManager()
-                        .getConfigs(StatsKeyMatcher.childOf(key.getName()));
+                        .getConfigs(StatsKeyMatcher.descendentOf(key.getName()));
 
         for (Map.Entry<StatsKey,StatsConfig> entry : childMap.entrySet()) {
             configFactory.createConfigBuilder(entry.getValue())

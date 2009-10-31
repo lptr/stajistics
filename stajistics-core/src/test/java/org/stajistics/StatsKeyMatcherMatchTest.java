@@ -31,6 +31,7 @@ import static org.stajistics.StatsKeyMatcher.attrValueSuffix;
 import static org.stajistics.StatsKeyMatcher.attributeCount;
 import static org.stajistics.StatsKeyMatcher.contains;
 import static org.stajistics.StatsKeyMatcher.depth;
+import static org.stajistics.StatsKeyMatcher.descendentOf;
 import static org.stajistics.StatsKeyMatcher.exactMatch;
 import static org.stajistics.StatsKeyMatcher.length;
 import static org.stajistics.StatsKeyMatcher.matchesRegEx;
@@ -120,6 +121,14 @@ public class StatsKeyMatcherMatchTest extends TestCase {
         { prefix("a."), newKey("a.2"), true },
         { prefix("a"), newKey("b"), false },
         { prefix("b"), newKey("a.b.c"), false },
+
+        // ChildOf
+        { descendentOf("a"), newKey("a"), false },
+        { descendentOf("a"), newKey("b"), false },
+        { descendentOf("a"), newKey("ab"), false },
+        { descendentOf("a"), newKey("a."), true },
+        { descendentOf("a"), newKey("a.b"), true },
+        { descendentOf("a"), newKey("a.b.c"), true },
 
         // Attribute name prefix
         { attrNamePrefix("a"), newKey("a", "a", "x"), true },

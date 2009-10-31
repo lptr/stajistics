@@ -19,11 +19,7 @@ import java.io.Serializable;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
-import org.stajistics.tracker.CompositeStatsTracker;
-import org.stajistics.tracker.ManualStatsTracker;
-import org.stajistics.tracker.NullTracker;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.StatsTrackerLocator;
 
 /**
  * Acts as an aggregator of other managers and factories. Maintains a master enabled switch for 
@@ -62,6 +58,13 @@ public interface StatsManager extends Serializable {
     StatsSnapshotManager getSnapshotManager();
 
     /**
+     * Get the {@link StatsTrackerLocator}.
+     *
+     * @return The {@link StatsTrackerLocator}, never <tt>null</tt>.
+     */
+    StatsTrackerLocator getTrackerLocator();
+
+    /**
      * Get the {@link StatsKeyFactory}.
      *
      * @return The {@link StatsKeyFactory}, never <tt>null</tt>.
@@ -89,36 +92,6 @@ public interface StatsManager extends Serializable {
      */
     void setEnabled(boolean enabled);
 
-    /**
-     * Obtain a {@link StatsTracker} for the given <tt>key</tt> that can be
-     * used to collect statistics. If statistics collection is disabled, 
-     * a safe no-op {@link NullTracker} instance is returned.
-     *
-     * @param key The {@link StatsKey} for which to return a tracker.
-     * @return A {@link StatsTracker}. Never <tt>null</tt>.
-     * @throws NullPointerException if <tt>key</tt> is <tt>null</tt>.
-     */
-    StatsTracker getTracker(StatsKey key);
 
-    /**
-     * Obtain a {@link StatsTracker} for the given set of <tt>keys</tt> that can be used to
-     * collect statistics. A {@link StatsTracker} is obtained for each key in <tt>keys</tt>
-     * and all are wrapped in a {@link CompositeStatsTracker} instance.
-     *
-     * @param keys The {@link StatsKey}s for which to return a tracker.
-     * @return A {@link StatsTracker}, never <tt>null</tt>.
-     * @see CompositeStatsTracker
-     */
-    StatsTracker getTracker(StatsKey... keys);
-
-    /**
-     * Obtain a {@link ManualStatsTracker} for a given {@link StatsKey} that can be used to
-     * report manually collected data. Regardless of the given <tt>key</tt>s configured
-     * {@link StatsTrackerFactory}, a ManualStatsTracker instance is returned.
-     *
-     * @param key The {@link StatsKey} for which to return a manual tracker.
-     * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
-     */
-    ManualStatsTracker getManualTracker(StatsKey key);
 
 }

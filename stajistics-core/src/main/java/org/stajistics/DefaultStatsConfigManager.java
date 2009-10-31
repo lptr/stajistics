@@ -33,7 +33,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.DefaultSessionFactory;
-import org.stajistics.tracker.TimeDurationTracker;
+import org.stajistics.tracker.span.TimeDurationTracker;
 
 /**
  * The default implementation of {@link StatsConfigManager}. Clients typically do not instantiate 

@@ -15,21 +15,28 @@
 package org.stajistics.tracker;
 
 import org.stajistics.NullStatsKey;
+import org.stajistics.StatsKey;
 import org.stajistics.session.ImmutableStatsSession;
 import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
+import org.stajistics.tracker.incident.IncidentTracker;
+import org.stajistics.tracker.manual.ManualTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 
 /**
- * 
- * 
+ * A singleton {@link StatsTracker} implementation conforming to the null object pattern.
  *
  * @author The Stajistics Project
  */
-public final class NullTracker implements StatsTracker,ManualStatsTracker {
+public final class NullTracker
+    implements StatsTracker,SpanTracker,IncidentTracker,ManualTracker {
 
     private static final long serialVersionUID = -4347885685828741849L;
 
-    private static final NullTracker instance = new NullTracker();
+    public static final StatsTrackerFactory<StatsTracker> FACTORY = new Factory();
+
+    private static final NullTracker INSTANCE = new NullTracker();
 
     private static final StatsSession session = 
         new ImmutableStatsSession(NullStatsKey.getInstance());
@@ -37,61 +44,123 @@ public final class NullTracker implements StatsTracker,ManualStatsTracker {
     private NullTracker() {}
 
     public static NullTracker getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isTracking() {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public StatsTracker track() {
+    public SpanTracker start() {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public StatsTracker commit() {
+    public SpanTracker stop() {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public StatsTracker incident() {
+    public IncidentTracker incident() {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getValue() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getTimeStamp() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsTracker reset() {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StatsKey getKey() {
+        return NullStatsKey.getInstance();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsSession getSession() {
         return session;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public StatsTracker setValue(double value) {
+    public ManualTracker setValue(double value) {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public StatsTracker update(double value) {
+    public ManualTracker addValue(double value) {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ManualTracker commit() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    /* NESTED CLASSES */
+
+    public static final class Factory implements StatsTrackerFactory<StatsTracker> {
+
+        private static final long serialVersionUID = 701871274011770267L;
+
+        @Override
+        public StatsTracker createTracker(final StatsKey key, 
+                                          final StatsSessionManager sessionManager) {
+            return NullTracker.getInstance();
+        }
     }
 }

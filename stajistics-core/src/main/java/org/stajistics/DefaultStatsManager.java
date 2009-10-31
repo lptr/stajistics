@@ -23,11 +23,8 @@ import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.DefaultStatsSnapshotManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
-import org.stajistics.tracker.CompositeStatsTracker;
-import org.stajistics.tracker.DefaultManualStatsTracker;
-import org.stajistics.tracker.ManualStatsTracker;
-import org.stajistics.tracker.NullTracker;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.DefaultStatsTrackerLocator;
+import org.stajistics.tracker.StatsTrackerLocator;
 
 /**
  * The default implementation of {@link StatsManager}. Clients typically do not
@@ -47,6 +44,7 @@ public class DefaultStatsManager implements StatsManager {
     protected final StatsSessionManager sessionManager;
     protected final StatsEventManager eventManager;
     protected final StatsSnapshotManager snapshotManager;
+    protected final StatsTrackerLocator trackerLocator;
     protected final StatsKeyFactory keyFactory;
     protected final StatsConfigFactory configFactory;
 
@@ -66,6 +64,7 @@ public class DefaultStatsManager implements StatsManager {
                                final StatsSessionManager sessionManager,
                                final StatsEventManager eventManager,
                                final StatsSnapshotManager snapshotManager,
+                               final StatsTrackerLocator trackerLocator,
                                final StatsKeyFactory keyFactory,
                                final StatsConfigFactory configFactory) {
 
@@ -81,6 +80,9 @@ public class DefaultStatsManager implements StatsManager {
         if (snapshotManager == null) {
             throw new NullPointerException("snapshotManager");
         }
+        if (trackerLocator == null) {
+            throw new NullPointerException("trackerLocator");
+        }
         if (keyFactory == null) {
             throw new NullPointerException("keyFactory");
         }
@@ -92,6 +94,7 @@ public class DefaultStatsManager implements StatsManager {
         this.configManager = configManager;
         this.sessionManager = sessionManager;
         this.snapshotManager = snapshotManager;
+        this.trackerLocator = trackerLocator;
         this.eventManager = eventManager;
         this.configFactory = configFactory;
     }
@@ -110,13 +113,14 @@ public class DefaultStatsManager implements StatsManager {
         StatsConfigManager configManager = new DefaultStatsConfigManager(eventManager, keyFactory);
         StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager, eventManager);
         StatsSnapshotManager snapshotManager = DefaultStatsSnapshotManager.createWithDefaults();
-
+        StatsTrackerLocator trackerLocator = new DefaultStatsTrackerLocator(configManager, sessionManager);
         StatsConfigFactory configFactory = new DefaultStatsConfigFactory(configManager);
 
         DefaultStatsManager manager = new DefaultStatsManager(configManager,
                                                               sessionManager,
                                                               eventManager,
                                                               snapshotManager,
+                                                              trackerLocator,
                                                               keyFactory,
                                                               configFactory);
 
@@ -169,6 +173,14 @@ public class DefaultStatsManager implements StatsManager {
      * {@inheritDoc}
      */
     @Override
+    public StatsTrackerLocator getTrackerLocator() {
+        return trackerLocator;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public StatsKeyFactory getKeyFactory() {
         return keyFactory;
     }
@@ -195,75 +207,7 @@ public class DefaultStatsManager implements StatsManager {
     @Override
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+        this.trackerLocator.setEnabled(enabled); // ??????
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsTracker getTracker(final StatsKey key) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-
-        StatsTracker tracker = null;
-
-        if (enabled) {
-            StatsConfig config = configManager.getOrCreateConfig(key);
-            if (config.isEnabled()) {
-                tracker = config.getTrackerFactory().createTracker(key, sessionManager);
-            }
-        }
-
-        if (tracker == null) {
-            tracker = NullTracker.getInstance();
-        }
-
-        return tracker;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StatsTracker getTracker(final StatsKey... keys) {
-
-        if (keys == null) {
-            throw new NullPointerException("keys");
-        }
-
-        if (keys.length == 0) {
-            throw new IllegalArgumentException("must supply at least one key");
-        }
-
-        if (!enabled) {
-            return NullTracker.getInstance();
-        }
-
-        if (keys.length == 1) {
-            return getTracker(keys[0]);
-        }
-
-        final StatsTracker[] trackers = new StatsTracker[keys.length];
-
-        for (int i = 0; i < keys.length; i++) {
-            trackers[i] = getTracker(keys[i]);
-        }
-
-        return new CompositeStatsTracker(trackers);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ManualStatsTracker getManualTracker(final StatsKey key) {
-        StatsTracker tracker = getTracker(key);
-
-        if (tracker instanceof ManualStatsTracker) {
-            return (ManualStatsTracker)tracker;
-        }
-
-        return DefaultManualStatsTracker.FACTORY.createTracker(key, sessionManager);
-    }
 }

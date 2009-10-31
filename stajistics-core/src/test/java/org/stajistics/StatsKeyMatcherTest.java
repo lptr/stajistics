@@ -59,9 +59,9 @@ public class StatsKeyMatcherTest {
         keys.add(newKey("c"));
         keys = Collections.unmodifiableCollection(keys);
 
-        assertTrue(keys != all().filterKeys(keys));
-        assertEquals(3, all().filterKeys(keys).size());
-        assertTrue(none().filterKeys(keys).isEmpty());
+        assertTrue(keys != all().filterCopy(keys));
+        assertEquals(3, all().filterCopy(keys).size());
+        assertTrue(none().filterCopy(keys).isEmpty());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class StatsKeyMatcherTest {
         map.put(newKey("a"), o1);
         map.put(newKey("b"), o2);
 
-        assertTrue(map != all().filterToMap(map));
+        assertTrue(map != all().filterCopy(map));
         assertEquals(2, all().filterToCollection(map).size());
         assertTrue(none().filterToCollection(map).isEmpty());
     }

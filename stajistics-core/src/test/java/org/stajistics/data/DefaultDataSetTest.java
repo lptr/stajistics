@@ -84,6 +84,38 @@ public class DefaultDataSetTest {
     }
 
     @Test
+    public void testSetFieldWithNullName() {
+        try {
+            dataSet.setField(null, "something");
+        } catch (NullPointerException npe) {
+            assertEquals("name", npe.getMessage());
+        }
+        try {
+            dataSet.setField(null, null);
+        } catch (NullPointerException npe) {
+            assertEquals("name", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testSetFieldWithNullValue() {
+        try {
+            dataSet.setField("test", null);
+        } catch (NullPointerException npe) {
+            assertEquals("value", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testSetFieldWithEmptyName() {
+        try {
+            dataSet.setField("", "something");
+        } catch (IllegalArgumentException iae) {
+            assertEquals("empty name", iae.getMessage());
+        }
+    }
+
+    @Test
     public void testRemoveField() {
         dataSet.setField("test", "value");
         assertEquals("value", dataSet.removeField("test"));
@@ -103,6 +135,19 @@ public class DefaultDataSetTest {
         } catch (ClassCastException cce) {
             // expected
         }
+    }
+
+    @Test
+    public void testClear() {
+        dataSet.setField("test", 1);
+        assertFalse(dataSet.isEmpty());
+        assertEquals(1, dataSet.size());
+
+        dataSet.clear();
+
+        assertNull(dataSet.getField("test"));
+        assertTrue(dataSet.isEmpty());
+        assertEquals(0, dataSet.size());
     }
 
     @Test

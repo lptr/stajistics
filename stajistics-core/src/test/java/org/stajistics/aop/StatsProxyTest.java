@@ -34,6 +34,8 @@ import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.incident.IncidentTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -117,11 +119,11 @@ public class StatsProxyTest {
                                 .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
                                 .newKey();
 
-        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+        final SpanTracker mockTracker = mockery.mock(SpanTracker.class);
 
         mockery.checking(new Expectations() {{
-            one(mockTracker).track(); will(returnValue(mockTracker));
-            one(mockTracker).commit(); will(returnValue(mockTracker));
+            one(mockTracker).start(); will(returnValue(mockTracker));
+            one(mockTracker).stop(); will(returnValue(mockTracker));
         }});
 
         mockStatsManager.getConfigFactory()
@@ -155,13 +157,13 @@ public class StatsProxyTest {
         final StatsKey exceptionKey = StatsKeyUtils.keyForFailure(methodKey,
                                                                   new IllegalStateException());
 
-        final StatsTracker methodTracker = mockery.mock(StatsTracker.class, "methodTracker");
-        final StatsTracker exceptionTracker = mockery.mock(StatsTracker.class, "exceptionTracker");
+        final SpanTracker methodTracker = mockery.mock(SpanTracker.class, "methodTracker");
+        final IncidentTracker exceptionTracker = mockery.mock(IncidentTracker.class, "exceptionTracker");
 
         mockery.checking(new Expectations() {{
-            one(methodTracker).track(); will(returnValue(methodTracker));
+            one(methodTracker).start(); will(returnValue(methodTracker));
             one(exceptionTracker).incident(); will(returnValue(exceptionTracker));
-            one(methodTracker).commit(); will(returnValue(methodTracker));
+            one(methodTracker).stop(); will(returnValue(methodTracker));
         }});
 
         mockStatsManager.getConfigFactory()

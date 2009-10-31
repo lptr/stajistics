@@ -21,8 +21,9 @@ import org.jmock.Mockery;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
-import org.stajistics.tracker.ManualStatsTracker;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerLocator;
+import org.stajistics.tracker.manual.ManualTracker;
 
 /**
  * 
@@ -72,15 +73,16 @@ public abstract class TestUtil {
                                                       final StatsKey mockKey) {
         final StatsManager mockManager = mockery.mock(StatsManager.class);
 
-        final StatsConfigFactory mockConfigFactory = mockery.mock(StatsConfigFactory.class);
         final StatsConfigManager mockConfigManager = mockery.mock(StatsConfigManager.class);
         final StatsEventManager mockEventManager = mockery.mock(StatsEventManager.class);
-        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
         final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);
         final StatsSnapshotManager mockSnapshotManager = mockery.mock(StatsSnapshotManager.class);
+        final StatsTrackerLocator mockTrackerLocator = mockery.mock(StatsTrackerLocator.class);
+        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
+        final StatsConfigFactory mockConfigFactory = mockery.mock(StatsConfigFactory.class);
 
         final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
-        final ManualStatsTracker mockManualTracker = mockery.mock(ManualStatsTracker.class);
+        final ManualTracker mockManualTracker = mockery.mock(ManualTracker.class);
 
         mockery.checking(new Expectations() {{
             allowing(mockManager).getConfigFactory(); will(returnValue(mockConfigFactory));
@@ -89,9 +91,10 @@ public abstract class TestUtil {
             allowing(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
             allowing(mockManager).getSessionManager(); will(returnValue(mockSessionManager));
             allowing(mockManager).getSnapshotManager(); will(returnValue(mockSnapshotManager));
+            allowing(mockManager).getTrackerLocator(); will(returnValue(mockTrackerLocator));
 
-            allowing(mockManager).getTracker(with(mockKey)); will(returnValue(mockTracker));
-            allowing(mockManager).getManualTracker(with(mockKey)); will(returnValue(mockManualTracker));
+            allowing(mockTrackerLocator).getTracker(with(mockKey)); will(returnValue(mockTracker));
+            allowing(mockTrackerLocator).getManualTracker(with(mockKey)); will(returnValue(mockManualTracker));
         }});
 
         return mockManager;

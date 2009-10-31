@@ -16,31 +16,66 @@ package org.stajistics.tracker;
 
 import java.io.Serializable;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
 
 
 /**
- * 
- * 
+ * <p>A tracker is the main interface that is manipulated directly by client code for the
+ * purposes of collecting statistics in a client-specific manner.</p> 
+ *
+ * <p>StatsTracker store 
+ *
+ * <p>StatsTrackers are intentionally designed to be manipulated by only one thread at a time,
+ * and as such, are thread-unsafe. A StatsTracker instance should not be stored unless it 
+ * is known that it will be accessed in a thread-safe manner. Rather, it is recommended that
+ * an instance be retrieved when needed using {@link StatsManager#getTracker(StatsKey)}, 
+ * or one of the convenience methods defined in {@link Stats}.
+ *
+ * The statistical
+ * data that is collected by a tracker is published to an associated {@link StatsSession}.
  *
  * @author The Stajistics Project
  */
 public interface StatsTracker extends Serializable {
 
-    StatsTracker track();
-
-    StatsTracker commit();
-
-    StatsTracker incident();
-
+    /**
+     * Obtain the numeric value that was calculated as a result of tracking a span using
+     * {@link #track()} and {@link #commit()}.
+     *
+     * @return
+     */
     double getValue();
 
+    /**
+     * 
+     * @return
+     */
     long getTimeStamp();
 
-    boolean isTracking();
-
+    /**
+     * Clear the state of the tracker. This does not revert any changes that may have occurred
+     * as a result of publishing data to the associated {@link StatsSession}.
+     *
+     * @return <tt>this</tt>.
+     */
     StatsTracker reset();
 
+    /**
+     * Get the key that represents the target for which this tracker is collecting statistics.
+     * This is equivalent to calling <tt>getSession().getKey()</tt>.
+     *
+     * @return A {@link StatsKey} instance, never <tt>null</tt>.
+     */
+    StatsKey getKey();
+
+    /**
+     * Obtain the {@link StatsSession} to which this tracker publishes statistics data.
+     *
+     * @return A {@link StatsSession} instance, never <tt>null</tt>.
+     */
     StatsSession getSession();
 
 }

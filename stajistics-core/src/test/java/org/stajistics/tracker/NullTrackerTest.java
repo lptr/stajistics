@@ -30,23 +30,23 @@ import org.stajistics.NullStatsKey;
 public class NullTrackerTest {
 
     protected static final double DELTA = 0.0000000000001;
-    
+
     @Test
     public void testIsTracking() {
         assertFalse(NullTracker.getInstance().isTracking());
     }
 
     @Test
-    public void testTrack() {
+    public void testStart() {
         assertSame(NullTracker.getInstance(),
-                   NullTracker.getInstance().track());
+                   NullTracker.getInstance().start());
         assertFalse(NullTracker.getInstance().isTracking());
     }
 
     @Test
-    public void testCommit() {
+    public void testStop() {
         assertSame(NullTracker.getInstance(),
-                   NullTracker.getInstance().commit());
+                   NullTracker.getInstance().stop());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class NullTrackerTest {
     @Test
     public void testUpdate() {
         double val = NullTracker.getInstance().getValue();
-        NullTracker.getInstance().update(100);
+        NullTracker.getInstance().addValue(100);
         assertEquals(val, NullTracker.getInstance().getValue(), DELTA);
     }
 

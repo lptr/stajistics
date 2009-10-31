@@ -14,13 +14,11 @@
  */
 package org.stajistics.tracker;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 /**
- * 
- * 
+ * A convenience base implementation of {@link StatsTracker}.
  *
  * @author The Stajistics Project
  */
@@ -28,17 +26,12 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
     private static final long serialVersionUID = 7869543246230561742L;
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractStatsTracker.class);
-
     protected StatsSession session;
 
-    protected boolean tracking = false;
     protected long timeStamp = 0;
     protected double value = 0;
 
-    protected AbstractStatsTracker() {}
-
-    protected AbstractStatsTracker(final StatsSession session) {
+    public AbstractStatsTracker(final StatsSession session) {
         if (session == null) {
             throw new NullPointerException("session");
         }
@@ -46,92 +39,51 @@ public abstract class AbstractStatsTracker implements StatsTracker {
         this.session = session;
     }
 
-    @Override
-    public boolean isTracking() {
-        return tracking;
-    }
-
-    @Override
-    public final StatsTracker track() {
-
-        if (tracking) {
-            logger.warn("track() called when already tracking: {}", this);
-
-            return this;
-        }
-
-        tracking = true;
-
-        timeStamp = System.currentTimeMillis();
-
-        trackImpl(timeStamp);
-
-        return this;
-    }
-
-    protected void trackImpl(final long now) {
-        session.track(this, now);
-    }
-
-    @Override
-    public final StatsTracker commit() {
-
-        if (!tracking) {
-            logger.warn("commit() called when not tracking: {}", this);
-
-            return this;
-        }
-
-        tracking = false;
-
-        commitImpl(-1);
-
-        return this;
-    }
-
-    @Override
-    public StatsTracker incident() {
-
-        if (tracking) {
-            logger.warn("incident() called when already tracking: {}", this);
-
-            return this;
-        }
-
-        final long now = System.currentTimeMillis();
-        trackImpl(now);
-        commitImpl(now);
-
-        return this;
-    }
-
-    protected void commitImpl(final long now) {
-        session.update(this, now);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double getValue() {
         return value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getTimeStamp() {
         return timeStamp;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsTracker reset() {
-        tracking = false;
         timeStamp = 0;
         value = 0;
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StatsKey getKey() {
+        return session.getKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsSession getSession() {
         return session;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(256);

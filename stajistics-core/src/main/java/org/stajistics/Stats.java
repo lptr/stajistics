@@ -18,8 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.ManualStatsTracker;
+import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerLocator;
+import org.stajistics.tracker.incident.IncidentTracker;
+import org.stajistics.tracker.manual.ManualTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * A facade to the Stajistics core API. Maintains a singleton default instance of a {@link StatsManager}.
@@ -109,6 +113,10 @@ public final class Stats {
         return manager;
     }
 
+    private static StatsTrackerLocator getTrackerLocator() {
+        return getManager().getTrackerLocator();
+    }
+
     /**
      * Get the {@link StatsConfigManager}.
      *
@@ -162,7 +170,12 @@ public final class Stats {
      * @return A {@link StatsTracker}, never <tt>null</tt>.
      */
     public static StatsTracker getTracker(final String keyName) {
-        return getManager().getTracker(newKey(keyName));
+        try {
+            return getTrackerLocator().getTracker(newKey(keyName));
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
     }
 
     /**
@@ -175,20 +188,30 @@ public final class Stats {
      * @see StatsManager#getTracker(StatsKey)
      */
     public static StatsTracker getTracker(final StatsKey key) {
-        return getManager().getTracker(key);
+        try {
+            return getTrackerLocator().getTracker(key);
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
     }
 
-    /**
-     * Obtain a {@link StatsTracker} for the given set of <tt>keys</tt> that can be used to
-     * collect statistics.
-     *
-     * @param keys The {@link StatsKey}s for which to return a tracker.
-     * @return A {@link StatsTracker}, never <tt>null</tt>.
-     *
-     * @see StatsManager#getTracker(StatsKey...)
-     */
-    public static StatsTracker getTracker(final StatsKey... keys) {
-        return getManager().getTracker(keys);
+    public static SpanTracker getSpanTracker(final String keyName) {
+        try {
+            return getTrackerLocator().getSpanTracker(newKey(keyName));
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
+    }
+
+    public static SpanTracker getSpanTracker(final StatsKey key) {
+        try {
+            return getTrackerLocator().getSpanTracker(key);
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
     }
 
     /**
@@ -201,29 +224,39 @@ public final class Stats {
      * @see StatsManager#getTracker(StatsKey)
      * @see StatsTracker#track()
      */
-    public static StatsTracker track(final String keyName) {
-        return getManager().getTracker(newKey(keyName))
-                           .track();
+    public static SpanTracker start(final String keyName) {
+        try {
+            return getTrackerLocator().getSpanTracker(newKey(keyName))
+                                      .start();
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
     }
 
     /**
      * A convenience method equivalent to calling:
-     * <tt>Stats.getTracker(key).track()</tt>
+     * <tt>Stats.getSpanTracker(key).start()</tt>
      *
      * @param key The {@link StatsKey} for which to return a tracker.
      * @return A {@link StatsTracker}, never <tt>null</tt>.
      *
-     * @see StatsManager#getTracker(StatsKey)
+     * @see StatsManager#getSpanTracker(StatsKey)
      * @see StatsTracker#track()
      */
-    public static StatsTracker track(final StatsKey key) {
-        return getManager().getTracker(key)
-                           .track();
+    public static SpanTracker start(final StatsKey key) {
+        try {
+            return getTrackerLocator().getSpanTracker(key)
+                                      .start();
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
     }
 
     /**
      * A convenience method equivalent to calling:
-     * <tt>Stats.getTracker(keys).track()</tt>.
+     * <tt>Stats.getTracker(keys).start()</tt>.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
      * @return A {@link StatsTracker}, never <tt>null</tt>.
@@ -231,14 +264,19 @@ public final class Stats {
      * @see StatsManager#getTracker(StatsKey...)
      * @see StatsTracker#track()
      */
-    public static StatsTracker track(final StatsKey... keys) {
-        return getManager().getTracker(keys)
-                           .track();
+    public static SpanTracker start(final StatsKey... keys) {
+        try {
+            return getTrackerLocator().getSpanTracker(keys)
+                                      .start();
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
     }
 
     /**
      * Report an incident. Equivalent to calling:
-     * <tt>Stats.getTracker(Stats.newKey(name)).incident()</tt>.
+     * <tt>Stats.getIncidentTracker(Stats.newKey(name)).incident()</tt>.
      *
      * @param keyName The key name for which to report an incident.
      *
@@ -247,13 +285,17 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final String keyName) {
-        getManager().getTracker(newKey(keyName))
-                    .incident();
+        try {
+            getTrackerLocator().getIncidentTracker(newKey(keyName))
+                               .incident();
+        } catch (Exception e) {
+            logger.error("", e);
+        }
     }
 
     /**
      * Report an incident. Equivalent to calling:
-     * <tt>Stats.getTracker(key).incident()</tt>.
+     * <tt>Stats.getIncidentTracker(key).incident()</tt>.
      *
      * @param key The {@link StatsKey} for which to report an incident.
      *
@@ -262,13 +304,17 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final StatsKey key) {
-        getManager().getTracker(key)
-                    .incident();
+        try {
+            getTrackerLocator().getIncidentTracker(key)
+                               .incident();
+        } catch (Exception e) {
+            logger.error("", e);
+        }
     }
 
     /**
      * Report an incident. Equivalent to calling:
-     * <tt>Stats.getTracker(keys).incident()</tt>.
+     * <tt>Stats.getIncidentTracker(keys).incident()</tt>.
      *
      * @param keys The {@link StatsKey}s for which to report an incident.
      *
@@ -277,8 +323,12 @@ public final class Stats {
      * @see StatsTracker#commit()
      */
     public static void incident(final StatsKey... keys) {
-        getManager().getTracker(keys)
-                    .incident();
+        try {
+            getTrackerLocator().getIncidentTracker(keys)
+                               .incident();
+        } catch (Exception e) {
+            logger.error("", e);
+        }
     }
 
     /**
@@ -289,8 +339,13 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final String keyName) {
-        getManager().getTracker(StatsKeyUtils.keyForFailure(newKey(keyName), failure))
-                    .incident();
+        try {
+            getTrackerLocator().getIncidentTracker(StatsKeyUtils.keyForFailure(newKey(keyName), 
+                                                                               failure))
+                               .incident();
+        } catch (Exception e) {
+            logger.error("", e);
+        }
     }
 
     /**
@@ -301,8 +356,12 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final StatsKey key) {
-        getManager().getTracker(StatsKeyUtils.keyForFailure(key, failure))
-                    .incident();
+        try {
+            getTrackerLocator().getIncidentTracker(StatsKeyUtils.keyForFailure(key, failure))
+                               .incident();
+        } catch (Exception e) {
+            logger.error("", e);
+        }
     }
 
     /**
@@ -313,42 +372,92 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final StatsKey... keys) {
-        if (keys.length == 0) {
-            throw new IllegalArgumentException("must supply at least one key");
-        }
+        try {
+            if (keys.length == 0) {
+                throw new IllegalArgumentException("must supply at least one key");
+            }
 
-        StatsManager statsManager = getManager();
+            StatsTrackerLocator trackerLocator = getTrackerLocator();
 
-        for (StatsKey key : keys) {
-            statsManager.getTracker(StatsKeyUtils.keyForFailure(key, failure))
-                        .incident();
+            for (StatsKey key : keys) {
+                trackerLocator.getIncidentTracker(StatsKeyUtils.keyForFailure(key, failure))
+                              .incident();
+            }
+        } catch (Exception e) {
+            logger.error("", e);
         }
     }
 
     /**
-     * Obtain a {@link ManualStatsTracker} for the given key <tt>name</tt> that can be
+     * Obtain an {@link IncidentTracker} for the given key <tt>name</tt> that can be
+     * used to report incidents of events.
+     *
+     * @param keyName The key name for which to return an incident tracker.
+     * @return An {@link IncidentTracker}, never <tt>null</tt>.
+     *
+     * @see StatsManager#getIncidentTracker(StatsKey)
+     */
+    public static IncidentTracker getIncidentTracker(final String keyName) {
+        try {
+            return getTrackerLocator().getIncidentTracker(newKey(keyName));
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
+    }
+
+    /**
+     * Obtain an {@link IncidentTracker} for the given <tt>key</tt> that can be
+     * used to report incidents of events.
+     *
+     * @param key The {@link StatsKey} for which to return an incident tracker.
+     * @return An {@link IncidentTracker}, never <tt>null</tt>.
+     *
+     * @see StatsManager#getIncidentTracker(StatsKey)
+     */
+    public static IncidentTracker getIncidentTracker(final StatsKey key) {
+        try {
+            return getTrackerLocator().getIncidentTracker(key);
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
+    }
+
+    /**
+     * Obtain a {@link ManualTracker} for the given key <tt>name</tt> that can be
      * used to report manually collected statistics.
      *
      * @param keyName The key name for which to return a manual tracker.
-     * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
+     * @return A {@link ManualTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getManualTracker(StatsKey)
      */
-    public static ManualStatsTracker manual(final String keyName) {
-        return getManager().getManualTracker(newKey(keyName));
+    public static ManualTracker getManualTracker(final String keyName) {
+        try {
+            return getTrackerLocator().getManualTracker(newKey(keyName));
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
     }
 
     /**
-     * Obtain a {@link ManualStatsTracker} for the given <tt>key</tt> that can be
+     * Obtain a {@link ManualTracker} for the given <tt>key</tt> that can be
      * used to report manually collected statistics.
      *
      * @param key The {@link StatsKey} for which to return a manual tracker.
-     * @return A {@link ManualStatsTracker}, never <tt>null</tt>.
+     * @return A {@link ManualTracker}, never <tt>null</tt>.
      *
      * @see StatsManager#getManualTracker(StatsKey)
      */
-    public static ManualStatsTracker manual(final StatsKey key) {
-        return getManager().getManualTracker(key);
+    public static ManualTracker getManualTracker(final StatsKey key) {
+        try {
+            return getTrackerLocator().getManualTracker(key);
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullTracker.getInstance();
+        }
     }
 
     /**
@@ -360,8 +469,13 @@ public final class Stats {
      * @see StatsManager#createKey(String)
      */
     public static StatsKey newKey(final String name) {
-        return getManager().getKeyFactory()
-                           .createKey(name);
+        try {
+            return getManager().getKeyFactory()
+                               .createKey(name);
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullStatsKey.getInstance();
+        }
     }
 
     /**
@@ -374,8 +488,13 @@ public final class Stats {
      * @see StatsManager#createKeyBuilder(StatsKey)
      */
     public static StatsKeyBuilder buildKey(final String name) {
-        return getManager().getKeyFactory()
-                           .createKeyBuilder(name);
+        try {
+            return getManager().getKeyFactory()
+                               .createKeyBuilder(name);
+        } catch (Exception e) {
+            logger.error("", e);
+            return NullStatsKeyBuilder.getInstance();
+        }
     }
 
     /**

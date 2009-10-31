@@ -98,6 +98,20 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
     }
 
     @Test
+    public void testSetEnabledWithNoChange() throws Exception {
+        mockery.checking(new Expectations() {{
+            one(mockConfig).isEnabled(); will(returnValue(true));
+        }});
+
+        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        ObjectName name = new ObjectName(getClass().getName() + ":name=test");
+
+        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+
+        mBean.setEnabled(true);
+    }
+
+    @Test
     public void testGetUnit() throws Exception {
 
         mockery.checking(new Expectations() {{
@@ -132,6 +146,20 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
     }
 
     @Test
+    public void testSetUnitWithNoChange() throws Exception {
+        mockery.checking(new Expectations() {{
+            one(mockConfig).getUnit(); will(returnValue("unit1"));
+        }});
+
+        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        ObjectName name = new ObjectName(getClass().getName() + ":name=test");
+
+        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+
+        mBean.setUnit("unit1");
+    }
+
+    @Test
     public void testGetDescription() throws Exception {
 
         mockery.checking(new Expectations() {{
@@ -163,6 +191,20 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
         mBean = registerMBean(mBean, name, StatsConfigMBean.class);
 
         mBean.setDescription("d2");
+    }
+
+    @Test
+    public void testSetDescriptionWithNoChange() throws Exception {
+        mockery.checking(new Expectations() {{
+            one(mockConfig).getDescription(); will(returnValue("d1"));
+        }});
+
+        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        ObjectName name = new ObjectName(getClass().getName() + ":name=test");
+
+        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+
+        mBean.setDescription("d1");
     }
 
 }

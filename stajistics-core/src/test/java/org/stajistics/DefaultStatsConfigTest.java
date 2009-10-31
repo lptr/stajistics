@@ -24,8 +24,8 @@ import org.jmock.Mockery;
 import org.junit.Test;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
-import org.stajistics.tracker.MilliTimeDurationTracker;
-import org.stajistics.tracker.NanoTimeDurationTracker;
+import org.stajistics.tracker.span.MilliTimeDurationTracker;
+import org.stajistics.tracker.span.NanoTimeDurationTracker;
 
 /**
  * 
