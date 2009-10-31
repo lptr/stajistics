@@ -27,7 +27,7 @@ import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractPooledConnectionDecorator;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -38,7 +38,7 @@ public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecora
 
     private final StatsJDBCConfig config;
 
-    private final StatsTracker openClosedTracker;
+    private final SpanTracker openClosedTracker;
     //private final StatsTracker checkInCheckOutTracker;
 
     public StatsPooledConnectionWrapper(final PooledConnection delegate,
@@ -59,7 +59,7 @@ public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecora
                                            .withNameSuffix("checkedOut")
                                            .newKey();
 
-        openClosedTracker = Stats.track(openClosedKey);
+        openClosedTracker = Stats.start(openClosedKey);
         //checkInCheckOutTracker = null;
     }
 

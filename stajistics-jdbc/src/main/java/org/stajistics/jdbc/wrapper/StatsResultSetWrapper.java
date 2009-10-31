@@ -21,7 +21,7 @@ import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractResultSetDecorator;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -32,7 +32,7 @@ public class StatsResultSetWrapper extends AbstractResultSetDecorator {
 
     private final StatsJDBCConfig config;
 
-    private final StatsTracker openClosedTracker;
+    private final SpanTracker openClosedTracker;
 
     public StatsResultSetWrapper(final ResultSet delegate,
                                  final StatsJDBCConfig config) {
@@ -48,7 +48,7 @@ public class StatsResultSetWrapper extends AbstractResultSetDecorator {
                                       .withNameSuffix("open")
                                       .newKey();
 
-        openClosedTracker = Stats.track(openClosedKey);
+        openClosedTracker = Stats.start(openClosedKey);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class StatsResultSetWrapper extends AbstractResultSetDecorator {
         try {
             super.close();
         } finally {
-            openClosedTracker.commit();
+            openClosedTracker.stop();
         }
     }
 

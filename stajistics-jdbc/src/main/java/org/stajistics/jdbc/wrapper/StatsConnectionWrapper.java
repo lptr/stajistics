@@ -25,7 +25,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractConnectionDecorator;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
     private final ProxyFactory<PreparedStatement> preparedStatementProxyFactory;
     private final ProxyFactory<Statement> statementProxyFactory;
 
-    private final StatsTracker openClosedTracker;
+    private final SpanTracker openClosedTracker;
 
     public StatsConnectionWrapper(final Connection delegate,
                                   final StatsJDBCConfig config) {
@@ -61,7 +61,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
                                       .withNameSuffix("open")
                                       .newKey();
 
-        openClosedTracker = Stats.track(openClosedKey);
+        openClosedTracker = Stats.start(openClosedKey);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
         try {
             delegate().close();
         } finally {
-            openClosedTracker.commit();
+            openClosedTracker.stop();
         }
     }
 
