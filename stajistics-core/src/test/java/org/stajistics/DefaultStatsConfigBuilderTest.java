@@ -61,7 +61,7 @@ public class DefaultStatsConfigBuilderTest {
 
     @Test
     public void testConstructWithConfig() {
-        final StatsTrackerFactory trackerFactory = mockery.mock(StatsTrackerFactory.class);
+        final StatsTrackerFactory<?> trackerFactory = mockery.mock(StatsTrackerFactory.class);
         final StatsSessionFactory sessionFactory = mockery.mock(StatsSessionFactory.class);
         final StatsConfig template = mockery.mock(StatsConfig.class);
         mockery.checking(new Expectations() {{
@@ -83,7 +83,7 @@ public class DefaultStatsConfigBuilderTest {
 
     @Test
     public void testWithTrackerFactory() {
-        StatsTrackerFactory trackerFactory = mockery.mock(StatsTrackerFactory.class);
+        StatsTrackerFactory<?> trackerFactory = mockery.mock(StatsTrackerFactory.class);
         builder.withTrackerFactory(trackerFactory);
         assertSame(trackerFactory, builder.newConfig().getTrackerFactory());
     }

@@ -128,7 +128,7 @@ public class StatsProxyTest {
 
         mockStatsManager.getConfigFactory()
                         .createConfigBuilder()
-                        .withTrackerFactory(new StatsTrackerFactory() {
+                        .withTrackerFactory(new StatsTrackerFactory<?>() {
             @Override
             public StatsTracker createTracker(final StatsKey key,
                                               final StatsSessionManager sessionManager) {
@@ -168,7 +168,7 @@ public class StatsProxyTest {
 
         mockStatsManager.getConfigFactory()
                         .createConfigBuilder()
-                        .withTrackerFactory(new StatsTrackerFactory() {
+                        .withTrackerFactory(new StatsTrackerFactory<?>() {
              @Override
              public StatsTracker createTracker(final StatsKey key,
                                                final StatsSessionManager sessionManager) {

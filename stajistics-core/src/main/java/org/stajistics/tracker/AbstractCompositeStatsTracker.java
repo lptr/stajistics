@@ -73,7 +73,8 @@ public abstract class AbstractCompositeStatsTracker<T extends StatsTracker>
 
     @Override
     public StatsTracker reset() {
-        for (int i = 0; i < trackers.length; i++) {
+        int len = trackers.length;
+        for (int i = 0; i < len; i++) {
             trackers[i].reset();
         }
 

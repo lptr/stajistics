@@ -184,7 +184,7 @@ public class StatsTest {
     }
 */  
     @Test
-    public void testTrackWithKeyName() {
+    public void testStartWithKeyName() {
         final String keyName = "test.name";
         final SpanTracker mockTracker = mockery.mock(SpanTracker.class);
 
@@ -193,7 +193,7 @@ public class StatsTest {
         mockery.checking(new Expectations() {{
             one(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
             one(mockKeyFactory).createKey(keyName); will(returnValue(mockKey));
-            one(mockTrackerLocator).getTracker(with(any(StatsKey.class))); will(returnValue(mockTracker));
+            one(mockTrackerLocator).getSpanTracker(with(any(StatsKey.class))); will(returnValue(mockTracker));
             one(mockTracker).start(); will(returnValue(mockTracker));
         }});
 
@@ -205,7 +205,7 @@ public class StatsTest {
         final SpanTracker mockTracker = mockery.mock(SpanTracker.class);
 
         mockery.checking(new Expectations() {{
-            one(mockTrackerLocator).getTracker(with(mockKey)); will(returnValue(mockTracker));
+            one(mockTrackerLocator).getSpanTracker(with(mockKey)); will(returnValue(mockTracker));
             one(mockTracker).start(); will(returnValue(mockTracker));
         }});
 

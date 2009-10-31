@@ -41,7 +41,7 @@ public interface StatsConfig extends Serializable {
      *
      * @return A {@link StatsTrackerFactory} instance, never <tt>null</tt>.
      */
-    StatsTrackerFactory getTrackerFactory();
+    StatsTrackerFactory<?> getTrackerFactory();
 
     /**
      * Obtain the factory that creates {@link StatsSession}s for the associated target.
