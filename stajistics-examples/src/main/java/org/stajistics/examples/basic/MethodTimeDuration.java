@@ -14,6 +14,10 @@
  */
 package org.stajistics.examples.basic;
 
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.tracker.span.SpanTracker;
+
 
 /**
  * 
