@@ -14,9 +14,6 @@
  */
 package org.stajistics.examples.basic;
 
-import org.stajistics.Stats;
-import org.stajistics.StatsKey;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -32,11 +29,11 @@ public class MethodTimeDuration implements Runnable {
 
         for (int i = 0; i < 20; i++) {
 
-            StatsTracker tracker = Stats.track(key);
+            SpanTracker tracker = Stats.start(key);
 
             myMethod();
 
-            tracker.commit();
+            tracker.stop();
         }
 
         System.out.println(Stats.getSessionManager().getSession(key));
