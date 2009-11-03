@@ -42,18 +42,11 @@ import org.stajistics.session.StatsSession;
 public interface StatsTracker extends Serializable {
 
     /**
-     * Obtain the numeric value that was calculated as a result of tracking a span using
-     * {@link #track()} and {@link #commit()}.
+     * Obtain the numeric value that was collected as a result of operating this tracker.
      *
      * @return
      */
     double getValue();
-
-    /**
-     * 
-     * @return
-     */
-    long getTimeStamp();
 
     /**
      * Clear the state of the tracker. This does not revert any changes that may have occurred

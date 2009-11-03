@@ -55,8 +55,8 @@ public class NullTrackerTest {
     }
 
     @Test
-    public void testGetTimeStamp() {
-        assertEquals(0, NullTracker.getInstance().getTimeStamp());
+    public void testGetStartTime() {
+        assertEquals(0, NullTracker.getInstance().getStartTime());
     }
 
     @Test

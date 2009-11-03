@@ -75,6 +75,14 @@ public final class NullTracker
      * {@inheritDoc}
      */
     @Override
+    public long getStartTime() {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IncidentTracker incident() {
         return this;
     }
@@ -84,14 +92,6 @@ public final class NullTracker
      */
     @Override
     public double getValue() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getTimeStamp() {
         return 0;
     }
 

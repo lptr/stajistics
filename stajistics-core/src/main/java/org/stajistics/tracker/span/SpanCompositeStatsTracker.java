@@ -37,6 +37,11 @@ public class SpanCompositeStatsTracker extends AbstractCompositeStatsTracker<Spa
         super(trackers);
     }
 
+    /**
+     * Start all {@link SpanTracker}s.
+     *
+     * @return <tt>this</tt>.
+     */
     @Override
     public SpanTracker start() {
         int len = trackers.length;
@@ -46,6 +51,11 @@ public class SpanCompositeStatsTracker extends AbstractCompositeStatsTracker<Spa
         return this;
     }
 
+    /**
+     * Stop all {@link SpanTracker}s.
+     *
+     * @return <tt>this</tt>.
+     */
     @Override
     public SpanTracker stop() {
         int len = trackers.length;
@@ -55,6 +65,9 @@ public class SpanCompositeStatsTracker extends AbstractCompositeStatsTracker<Spa
         return this;
     }
 
+    /**
+     * Determine if any of the {@link SpanTracker}s are tracking.
+     */
     @Override
     public boolean isTracking() {
         int len = trackers.length;
@@ -64,5 +77,21 @@ public class SpanCompositeStatsTracker extends AbstractCompositeStatsTracker<Spa
             }
         }
         return false;
+    }
+
+    /**
+     * Determine the earliest start time of the {@link SpanTracker}s.
+     */
+    @Override
+    public long getStartTime() {
+        long startTime = Long.MAX_VALUE;
+        int len = trackers.length;
+        for (int i = 0; i < len; i++) {
+            long t = trackers[i].getStartTime();
+            if (t < startTime) {
+                startTime = t;
+            }
+        }
+        return startTime;
     }
 }

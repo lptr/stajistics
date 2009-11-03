@@ -35,6 +35,7 @@ import sun.misc.Perf;
  *
  * @author The Stajistics Project
  */
+@SuppressWarnings("restriction")
 public class PerfTimeDurationTracker extends TimeDurationTracker {
 
     private static final long serialVersionUID = 9134751181550384765L;
@@ -72,7 +73,7 @@ public class PerfTimeDurationTracker extends TimeDurationTracker {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,
-                                              final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
             return new PerfTimeDurationTracker(sessionManager.getOrCreateSession(key));
         }
     }

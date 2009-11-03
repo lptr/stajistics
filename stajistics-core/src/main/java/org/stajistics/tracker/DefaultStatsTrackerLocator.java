@@ -26,6 +26,7 @@ import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.DefaultManualTracker;
 import org.stajistics.tracker.manual.ManualCompositeStatsTracker;
 import org.stajistics.tracker.manual.ManualTracker;
+import org.stajistics.tracker.span.SpanCompositeStatsTracker;
 import org.stajistics.tracker.span.SpanTracker;
 import org.stajistics.tracker.span.TimeDurationTracker;
 
@@ -138,13 +139,13 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
             return getSpanTracker(keys[0]);
         }
 
-        final StatsTracker[] trackers = new StatsTracker[keys.length];
+        final SpanTracker[] trackers = new SpanTracker[keys.length];
 
         for (int i = 0; i < keys.length; i++) {
-            trackers[i] = getTracker(keys[i]);
+            trackers[i] = getSpanTracker(keys[i]);
         }
 
-        throw new UnsupportedOperationException("not yet implemented");
+        return new SpanCompositeStatsTracker(trackers);
     }
     
     /**

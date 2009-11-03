@@ -14,22 +14,44 @@
  */
 package org.stajistics.tracker.manual;
 
+import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.manual.DefaultManualTracker.Factory;
+import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
- * 
- * 
+ * A tracker type that allows direct manipulation of the numeric <i>value</i> to be published
+ * to the associated {@link StatsSession}. Upon creation of a {@link ManualTracker}, the value
+ * is set to <tt>0</tt>.
  *
  * @author The Stajistics Project
  */
 public interface ManualTracker extends StatsTracker {
 
-    public static final Factory FACTORY = DefaultManualTracker.FACTORY;
+    /**
+     * The factory that will produce the default type of {@link ManualTracker} instances.
+     */
+    public static final StatsTrackerFactory<ManualTracker> FACTORY = DefaultManualTracker.FACTORY;
 
+    /**
+     * Add the given <tt>value</tt> to the currently stored value.
+     *
+     * @param value The value to add to the existing value.
+     * @return <tt>this</tt>.
+     */
     ManualTracker addValue(double value);
 
+    /**
+     * Set or replace the currently stored value with the given <tt>value</tt>.
+     *
+     * @param value The value to set.
+     * @return <tt>this</tt>.
+     */
     ManualTracker setValue(double value);
 
+    /**
+     * Publish the manually set value to the {@link StatsSession}.
+     *
+     * @return <tt>this</tt>.
+     */
     ManualTracker commit();
 }

@@ -28,7 +28,6 @@ public abstract class AbstractStatsTracker implements StatsTracker {
 
     protected StatsSession session;
 
-    protected long timeStamp = 0;
     protected double value = 0;
 
     public AbstractStatsTracker(final StatsSession session) {
@@ -51,16 +50,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
      * {@inheritDoc}
      */
     @Override
-    public long getTimeStamp() {
-        return timeStamp;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public StatsTracker reset() {
-        timeStamp = 0;
         value = 0;
         return this;
     }
@@ -89,9 +79,7 @@ public abstract class AbstractStatsTracker implements StatsTracker {
         StringBuilder buf = new StringBuilder(256);
 
         buf.append(getClass().getSimpleName());
-        buf.append("[timeStamp=");
-        buf.append(timeStamp);
-        buf.append(",value=");
+        buf.append("[value=");
         buf.append(value);
         buf.append(",session=");
         buf.append(session);

@@ -62,11 +62,6 @@ public abstract class AbstractCompositeStatsTracker<T extends StatsTracker>
     }
 
     @Override
-    public long getTimeStamp() {
-        return trackers[0].getTimeStamp();
-    }
-
-    @Override
     public double getValue() {
         return trackers[0].getValue();
     }

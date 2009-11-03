@@ -26,6 +26,7 @@ import org.stajistics.session.StatsSession;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.snapshot.binding.AbstractSessionSnapshot;
 import org.stajistics.tracker.CompositeStatsTrackerFactory;
+import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
@@ -63,12 +64,14 @@ public class XMLSessionSnapshot extends AbstractSessionSnapshot {
         dataSet = realSession.collectData();
     }
 
-    private String extractTrackerFactoryClassName(final StatsTrackerFactory factory) {
+    private String extractTrackerFactoryClassName(final StatsTrackerFactory<? extends StatsTracker> factory) {
         if (factory instanceof CompositeStatsTrackerFactory) {
-            Map<String,StatsTrackerFactory> factoryMap = ((CompositeStatsTrackerFactory)factory).getFactoryMap();
+            Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap = 
+                ((CompositeStatsTrackerFactory)factory).getFactoryMap();
 
             StringBuilder buf = new StringBuilder(64 * factoryMap.size());
-            for (Map.Entry<String,StatsTrackerFactory> entry : factoryMap.entrySet()) {
+            for (Map.Entry<String,StatsTrackerFactory<? extends StatsTracker>> entry : 
+                    factoryMap.entrySet()) {
                 buf.append(entry.getKey());
                 buf.append(':');
                 buf.append(entry.getValue().getClass().getName());

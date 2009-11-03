@@ -18,6 +18,9 @@ import org.stajistics.*
 import org.stajistics.event.*
 import org.stajistics.session.*
 import org.stajistics.tracker.*
+import org.stajistics.tracker.incident.*
+import org.stajistics.tracker.manual.*
+import org.stajistics.tracker.span.*
 import org.stajistics.tracker.CompositeStatsTrackerFactory
 /**
  * 
@@ -72,9 +75,9 @@ class StatsConfigDSLInterpreterTest extends GroovyTestCase {
 
     /**
      * This is a tricky test. It verifies that a custom StatsTrackerFactory implementation can
-     * be defined using a closure. The StatsTracker.track() method normally returns 'this', 
-     * but the mock StatsTracker produced by the factory under test returns a different 
-     * StatsTracker instance (not 'this'). By verifying that the mockTracker != mockTracker.track(),
+     * be defined using a closure. The SpanTracker.start() method normally returns 'this', 
+     * but the mock SpanTracker produced by the factory under test returns a different 
+     * SpanTracker instance (not 'this'). By verifying that the mockTracker != mockTracker.start(),
      * we are assured that the mockTracker is in fact the mock, and thus, the correct factory 
      * was used. There is probably a groovier way to test this, but this is the best I could
      * come up with. 
@@ -83,7 +86,7 @@ class StatsConfigDSLInterpreterTest extends GroovyTestCase {
         def configMap = interp.eval("""
             key {
                 tracker { key, sessionMgr ->
-                    { -> { -> } as StatsTracker } as StatsTracker
+                    { -> { -> } as SpanTracker } as SpanTracker
                 }
             }
         """)
@@ -97,7 +100,7 @@ class StatsConfigDSLInterpreterTest extends GroovyTestCase {
         def testFactory = configMap.key.getTrackerFactory()
         def testTracker = testFactory.createTracker(testKey, testSessionManager)
 
-        assertTrue testTracker != testTracker.track()
+        assertTrue testTracker != testTracker.start()
     }
 
     void testEvalStringTrackerFactoryWithClosureOneParameter() {
