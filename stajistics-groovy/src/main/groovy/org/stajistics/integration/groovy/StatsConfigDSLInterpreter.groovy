@@ -69,17 +69,29 @@ class StatsConfigDSLInterpreter {
         }
     }
 
+    private def findTrackerFactory(trackerName, subpackage) {
+        try {
+            Class trackerClass = Class.forName("org.stajistics.tracker.${subpackage}.${trackerName}Tracker")
+            return trackerClass.getField("FACTORY").get(null)
+        } catch (e) {}
+
+        return null
+    }
+
     private def handleTracker(args) {
         def arg = args[0]
         def factory
 
         if (arg instanceof CharSequence) {
-            Class trackerClass = null;
-            try {
-                trackerClass = Class.forName("org.stajistics.tracker.${arg}Tracker")
-                factory = trackerClass.getField("FACTORY").get(null)
-            } catch (e) {
-                factory = Class.forName(arg).newInstance()
+            factory = findTrackerFactory(arg, 'incident');
+            if (factory == null) {
+                factory = findTrackerFactory(arg, 'manual');
+                if (factory == null) {
+                    factory = findTrackerFactory(arg, 'span');
+                    if (factory == null) {
+                        factory = Class.forName(arg).newInstance();
+                    }
+                }
             }
 
         } else if (arg instanceof Map) {
@@ -142,6 +154,9 @@ class StatsConfigDSLInterpreter {
             import org.stajistics.event.*
             import org.stajistics.session.*
             import org.stajistics.tracker.*
+            import org.stajistics.tracker.incident.*
+            import org.stajistics.tracker.manual.*
+            import org.stajistics.tracker.span.*
 
             def closure = {
                 ${dsl}

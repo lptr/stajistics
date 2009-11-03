@@ -26,15 +26,16 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
+public class CompositeStatsTrackerFactory implements StatsTrackerFactory<StatsTracker> {
 
     private static final long serialVersionUID = -423223606572241980L;
 
-    private final Map<String,StatsTrackerFactory> factoryMap;
+    private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap;
     private final String[] nameSuffixes;
-    private final StatsTrackerFactory[] factories;
+    private final StatsTrackerFactory<StatsTracker>[] factories;
 
-    public CompositeStatsTrackerFactory(final Map<String,StatsTrackerFactory> factoryMap) {
+    @SuppressWarnings("unchecked")
+    public CompositeStatsTrackerFactory(final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap) {
         if (factoryMap == null) {
             throw new NullPointerException("factoryMap");
         }
@@ -51,9 +52,9 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
 
         int i = 0;
 
-        for (Map.Entry<String,StatsTrackerFactory> entry : factoryMap.entrySet()) {
+        for (Map.Entry<String,StatsTrackerFactory<? extends StatsTracker>> entry : factoryMap.entrySet()) {
             nameSuffixes[i] = entry.getKey();
-            factories[i] = entry.getValue();
+            factories[i] = (StatsTrackerFactory)entry.getValue();
 
             if (factories[i] == null) {
                 throw new IllegalArgumentException("null factory for nameSuffix: " + nameSuffixes[i]);
@@ -63,7 +64,7 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
         }
     }
 
-    public Map<String,StatsTrackerFactory> getFactoryMap() {
+    public Map<String,StatsTrackerFactory<? extends StatsTracker>> getFactoryMap() {
         return Collections.unmodifiableMap(factoryMap);
     }
 
@@ -92,13 +93,13 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
 
     public static class Builder {
 
-        private final Map<String,StatsTrackerFactory> factoryMap = 
-            new HashMap<String,StatsTrackerFactory>();
+        private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap = 
+            new HashMap<String,StatsTrackerFactory<? extends StatsTracker>>();
 
         protected Builder() {}
 
         public Builder withFactory(final String nameSuffix,
-                                   final StatsTrackerFactory factory) {
+                                   final StatsTrackerFactory<? extends StatsTracker> factory) {
             if (nameSuffix == null) {
                 throw new NullPointerException("nameSuffix");
             }
@@ -114,7 +115,7 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory {
             return this;
         }
 
-        public StatsTrackerFactory build() {
+        public StatsTrackerFactory<?> build() {
             return new CompositeStatsTrackerFactory(factoryMap);
         }
     }

@@ -1,5 +1,7 @@
 package org.stajistics.tracker.span;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.session.StatsSession;
@@ -19,6 +21,7 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSpanStatsTracker.class);
 
+    protected long startTime = 0L;
     protected boolean tracking = false;
 
     public AbstractSpanStatsTracker(final StatsSession session) {
@@ -39,9 +42,9 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
 
         tracking = true;
 
-        timeStamp = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
-        startImpl(timeStamp);
+        startImpl(startTime);
 
         return this;
     }
@@ -81,10 +84,43 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
         return tracking;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getStartTime() {
+        return startTime;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StatsTracker reset() {
         super.reset();
+        startTime = 0L;
         tracking = false;
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder(256);
+
+        buf.append(getClass().getSimpleName());
+        buf.append("[startTime=");
+        buf.append(new Date(startTime));
+        buf.append(",tracking=");
+        buf.append(tracking);
+        buf.append(",value=");
+        buf.append(value);
+        buf.append(",session=");
+        buf.append(session);
+        buf.append(']');
+
+        return buf.toString();
     }
 }

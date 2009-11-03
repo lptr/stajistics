@@ -48,7 +48,7 @@ public class HitFrequencyTracker extends AbstractSpanStatsTracker {
     @Override
     protected void stopImpl(final long now) {
         if (lastHitStamp != 0) {
-            value = timeStamp - lastHitStamp;
+            value = startTime - lastHitStamp;
 
             session.update(this, now);
         }

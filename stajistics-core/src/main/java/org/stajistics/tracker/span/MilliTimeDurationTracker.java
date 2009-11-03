@@ -48,7 +48,7 @@ public class MilliTimeDurationTracker extends AbstractSpanStatsTracker {
             now = System.currentTimeMillis();
         }
 
-        value = now - this.timeStamp;
+        value = now - startTime;
 
         session.track(this, now);
     }

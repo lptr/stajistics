@@ -29,7 +29,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.snapshot.binding.impl.jibx.XMLSessionSnapshot;
 import org.stajistics.snapshot.binding.impl.jibx.XMLStatsSnapshot;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * 
@@ -70,10 +70,11 @@ public class XMLSnapshotPersisterTest {
         StatsManager statsManager = DefaultStatsManager.createWithDefaults();
         StatsKey key1 = statsManager.getKeyFactory()
                                     .createKey("test1");
-        StatsTracker tracker1 = statsManager.getTracker(key1)
-                                            .track();
+        SpanTracker tracker1 = statsManager.getTrackerLocator()
+                                           .getSpanTracker(key1)
+                                           .start();
         Thread.sleep(new Random().nextInt(100));
-        tracker1.commit();
+        tracker1.start();
 
         sessionSnapshots.put(key1, new XMLSessionSnapshot(statsManager.getSessionManager()
                                                                        .getSession(key1),

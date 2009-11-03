@@ -37,8 +37,6 @@ import org.stajistics.snapshot.binding.StatsSnapshot;
  */
 public class DefaultSnapshotController implements SnapshotController {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultSnapshotController.class);
-
     private static final String DEFAULT_SNAPSHOT_BINDING_FACTORY_CLASS_NAME = 
         "org.stajistics.snapshot.binding.XMLSnapshotBindingFactory";
 

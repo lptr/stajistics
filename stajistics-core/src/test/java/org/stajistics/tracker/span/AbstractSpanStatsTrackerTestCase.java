@@ -126,24 +126,24 @@ public abstract class AbstractSpanStatsTrackerTestCase {
     }
 
     @Test
-    public void testGetTimeStamp() {
+    public void testGetStartTime() {
         final SpanTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
             ignoring(mockSession);
         }});
 
-        assertEquals(0, tracker.getTimeStamp());
+        assertEquals(0, tracker.getStartTime());
 
         tracker.start();
 
-        long timeStamp = tracker.getTimeStamp();
+        long timeStamp = tracker.getStartTime();
 
         assertTrue(System.currentTimeMillis() >= timeStamp);
 
         tracker.stop();
 
-        assertEquals(timeStamp, tracker.getTimeStamp());
+        assertEquals(timeStamp, tracker.getStartTime());
     }
 
     @Test
@@ -176,13 +176,13 @@ public abstract class AbstractSpanStatsTrackerTestCase {
 
         boolean isTracking = tracker.isTracking();
         double value = tracker.getValue();
-        long timeStamp = tracker.getTimeStamp();
+        long timeStamp = tracker.getStartTime();
 
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
         assertEquals(value, tracker.getValue(), DELTA);
-        assertEquals(timeStamp, tracker.getTimeStamp());
+        assertEquals(timeStamp, tracker.getStartTime());
     }
 
     @Test
@@ -195,18 +195,18 @@ public abstract class AbstractSpanStatsTrackerTestCase {
 
         boolean isTracking = tracker.isTracking();
         double value = tracker.getValue();
-        long timeStamp = tracker.getTimeStamp();
+        long timeStamp = tracker.getStartTime();
 
         tracker.start();
 
         assertTrue(isTracking != tracker.isTracking());
-        assertTrue(timeStamp != tracker.getTimeStamp());
+        assertTrue(timeStamp != tracker.getStartTime());
 
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
         assertEquals(value, tracker.getValue(), DELTA);
-        assertEquals(timeStamp, tracker.getTimeStamp());
+        assertEquals(timeStamp, tracker.getStartTime());
     }
 
     @Test
@@ -219,25 +219,25 @@ public abstract class AbstractSpanStatsTrackerTestCase {
 
         boolean isTracking = tracker.isTracking();
         double value = tracker.getValue();
-        long timeStamp = tracker.getTimeStamp();
+        long timeStamp = tracker.getStartTime();
 
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
         assertEquals(value, tracker.getValue(), DELTA);
-        assertEquals(timeStamp, tracker.getTimeStamp());
+        assertEquals(timeStamp, tracker.getStartTime());
 
         tracker.start();
 
         assertTrue(isTracking != tracker.isTracking());
-        assertTrue(timeStamp != tracker.getTimeStamp());
+        assertTrue(timeStamp != tracker.getStartTime());
 
         tracker.stop();
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
         assertEquals(value, tracker.getValue(), DELTA);
-        assertEquals(timeStamp, tracker.getTimeStamp());
+        assertEquals(timeStamp, tracker.getStartTime());
     }
 
     @Test
@@ -272,10 +272,10 @@ public abstract class AbstractSpanStatsTrackerTestCase {
 
         assertTrue(tracker.isTracking());
 
-        long stamp = tracker.getTimeStamp();
+        long start = tracker.getStartTime();
         tracker.start();
 
         assertTrue(tracker.isTracking());
-        assertEquals(stamp, tracker.getTimeStamp());
+        assertEquals(start, tracker.getStartTime());
     }
 }

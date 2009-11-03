@@ -50,7 +50,11 @@ public class DefaultManualTracker extends AbstractStatsTracker implements Manual
 
     @Override
     public ManualTracker commit() {
-        //TODO
+
+        final long now = System.currentTimeMillis();
+        session.track(this, now);
+        session.update(this, now);
+
         return this;
     }
 

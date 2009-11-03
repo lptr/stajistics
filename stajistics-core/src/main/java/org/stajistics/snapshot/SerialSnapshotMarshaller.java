@@ -33,6 +33,8 @@ import org.stajistics.snapshot.binding.StatsSnapshot;
  */
 public class SerialSnapshotMarshaller implements SnapshotMarshaller {
 
+    private static final long serialVersionUID = -681490059382954207L;
+
     public static final String CONTENT_TYPE = "application/octet-stream";
     public static final String FILE_EXTENSION = "ser";
 

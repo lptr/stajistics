@@ -17,30 +17,35 @@ package org.stajistics.tracker.span;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
- * 
+ * A tracker type dedicated to collecting statistics related to some span. The span being
+ * measured will be different depending on the context and the SpanTracker implementation,
+ * but is usually related to time.
  *
  * @author The Stajistics Project
  */
 public interface SpanTracker extends StatsTracker {
 
     /**
-     * Begin tracking statistics related to some span. The span being
-     * measured will be different depending on the context and the tracker implementation,
-     * but is usually related to time. The measurement of the span should eventually
-     * be stopped by a call to {@link #commit()}. After this call {@link #isTracking()} will
-     * return <tt>true</tt>. This method does nothing except log a warning if
-     * called when this tracker is already tracking.
+     * <p>Begin tracking statistics related to some span. The measurement of the span should 
+     * eventually be completed by a call to {@link #stop()}.</p>
+     *
+     * <p>After this call {@link #isTracking()} will return <tt>true</tt>.</p>
+     *
+     * <p>This method does nothing except log a warning if called when this tracker is 
+     * already tracking.</p>
      *
      * @return <tt>this</tt>.
      */
     SpanTracker start();
 
     /**
-     * Finish tracking statistics related to some span that was initiated by a 
-     * call to {@link #track()}. After this call {@link #isTracking()} will return <tt>false</tt>.
-     * This method does nothing except log a warning if called when this tracker is
-     * not already tracking.
+     * <p>Finish tracking statistics related to some span that was initiated by a 
+     * call to {@link #start()}.</p>
+     *
+     * <p>After this call {@link #isTracking()} will return <tt>false</tt>.</p>
+     *
+     * <p>This method does nothing except log a warning if called when this tracker is
+     * not already tracking.</p>
      *
      * @return <tt>this</tt>.
      */
@@ -48,10 +53,16 @@ public interface SpanTracker extends StatsTracker {
 
     /**
      * Determine if this tracker is actively collecting statistics from a prior call to
-     * {@link #track()}. If <tt>true</tt> is returned, this tracker is awaiting a call to
-     * {@link #commit()} to finish collecting statistics.
+     * {@link #start()}. If <tt>true</tt> is returned, this tracker is awaiting a call to
+     * {@link #stop()} to finish collecting statistics.
      *
      * @return <tt>true</tt> if statistics are being collected, <tt>false</tt> otherwise.
      */
     boolean isTracking();
+
+    /**
+     * 
+     * @return
+     */
+    long getStartTime();
 }

@@ -83,7 +83,7 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,
-                                              final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
             return new ThreadWaitTimeTracker(sessionManager.getOrCreateSession(key));
         }
     }

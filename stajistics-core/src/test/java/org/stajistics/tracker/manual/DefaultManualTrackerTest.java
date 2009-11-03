@@ -46,8 +46,6 @@ public class DefaultManualTrackerTest {
     @Test
     public void testInitialState() {
         DefaultManualTracker mTracker = new DefaultManualTracker(mockSession);
-
-        assertEquals(0, mTracker.getTimeStamp());
         assertEquals(0.0, mTracker.getValue(), DELTA);
     }
 
