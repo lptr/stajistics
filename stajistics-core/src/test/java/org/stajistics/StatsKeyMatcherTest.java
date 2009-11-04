@@ -15,9 +15,8 @@
 package org.stajistics;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.stajistics.StatsKeyMatcher.all;
-import static org.stajistics.StatsKeyMatcher.none;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,42 +51,115 @@ public class StatsKeyMatcherTest {
     }
 
     @Test
-    public void testFilterKeys() {
+    public void testFilterWithCollection() {
+
+        final StatsKey keyA = newKey("a");
+        final StatsKey keyB = newKey("b");
+        final StatsKey keyC = newKey("c");
+
         Collection<StatsKey> keys = new ArrayList<StatsKey>();
-        keys.add(newKey("a"));
-        keys.add(newKey("b"));
-        keys.add(newKey("c"));
+        keys.add(keyA);
+        keys.add(keyB);
+        keys.add(keyC);
+
+        StatsKeyMatcher.equals("a").filter(keys);
+
+        assertEquals(1, keys.size());
+        assertTrue(keys.contains(keyA));
+        assertFalse(keys.contains(keyB));
+        assertFalse(keys.contains(keyC));
+        assertEquals(keyA, keys.iterator().next());
+    }
+
+    @Test
+    public void testFilterCopyWithCollection() {
+
+        final StatsKey keyA = newKey("a");
+        final StatsKey keyB = newKey("b");
+        final StatsKey keyC = newKey("c");
+
+        Collection<StatsKey> keys = new ArrayList<StatsKey>();
+        keys.add(keyA);
+        keys.add(keyB);
+        keys.add(keyC);
         keys = Collections.unmodifiableCollection(keys);
 
-        assertTrue(keys != all().filterCopy(keys));
-        assertEquals(3, all().filterCopy(keys).size());
-        assertTrue(none().filterCopy(keys).isEmpty());
+        Collection<StatsKey> filteredKeys = StatsKeyMatcher.equals("a").filterCopy(keys);
+
+        assertFalse(keys == filteredKeys);
+        assertFalse(keys.equals(filteredKeys));
+
+        assertEquals(1, filteredKeys.size());
+        assertTrue(filteredKeys.contains(keyA));
+        assertFalse(filteredKeys.contains(keyB));
+        assertFalse(filteredKeys.contains(keyC));
+        assertEquals(keyA, filteredKeys.iterator().next());
+    }
+
+    @Test
+    public void testFilterWithMap() {
+        final StatsKey keyA = newKey("a");
+        final StatsKey keyB = newKey("b");
+
+        final Object o1 = new Object();
+        final Object o2 = new Object();
+
+        Map<StatsKey,Object> keys = new HashMap<StatsKey,Object>();
+        keys.put(keyA, o1);
+        keys.put(keyB, o2);
+
+        StatsKeyMatcher.equals("a").filter(keys);
+
+        assertEquals(1, keys.size());
+        assertTrue(keys.containsKey(keyA));
+        assertFalse(keys.containsKey(keyB));
+        assertEquals(keyA, keys.keySet().iterator().next());
+    }
+
+    @Test
+    public void testFilterCopyWithMap() {
+
+        final StatsKey keyA = newKey("a");
+        final StatsKey keyB = newKey("b");
+
+        final Object o1 = new Object();
+        final Object o2 = new Object();
+
+        Map<StatsKey,Object> keys = new HashMap<StatsKey,Object>();
+        keys.put(keyA, o1);
+        keys.put(keyB, o2);
+        keys = Collections.unmodifiableMap(keys);
+
+        Map<StatsKey,Object> filteredKeys = StatsKeyMatcher.equals("a").filterCopy(keys);
+
+        assertFalse(keys == filteredKeys);
+        assertFalse(keys.equals(filteredKeys));
+
+        assertEquals(1, filteredKeys.size());
+        assertTrue(filteredKeys.containsKey(keyA));
+        assertFalse(filteredKeys.containsKey(keyB));
+        assertEquals(keyA, filteredKeys.keySet().iterator().next());
     }
 
     @Test
     public void testFilterToCollectionWithMap() {
+
+        final StatsKey keyA = newKey("a");
+        final StatsKey keyB = newKey("b");
+
         final Object o1 = new Object();
         final Object o2 = new Object();
 
         Map<StatsKey,Object> map = new HashMap<StatsKey,Object>(2);
-        map.put(newKey("a"), o1);
-        map.put(newKey("b"), o2);
+        map.put(keyA, o1);
+        map.put(keyB, o2);
 
-        assertEquals(2, all().filterToCollection(map).size());
-        assertTrue(none().filterToCollection(map).isEmpty());
+        Collection<Object> result = StatsKeyMatcher.equals("a").filterToCollection(map);
+
+        assertEquals(1, result.size());
+        assertTrue(result.contains(o1));
+        assertFalse(result.contains(o2));
+        assertEquals(o1, result.iterator().next());
     }
 
-    @Test
-    public void testFilterToMapWithMap() {
-        final Object o1 = new Object();
-        final Object o2 = new Object();
-
-        Map<StatsKey,Object> map = new HashMap<StatsKey,Object>(2);
-        map.put(newKey("a"), o1);
-        map.put(newKey("b"), o2);
-
-        assertTrue(map != all().filterCopy(map));
-        assertEquals(2, all().filterToCollection(map).size());
-        assertTrue(none().filterToCollection(map).isEmpty());
-    }
 }

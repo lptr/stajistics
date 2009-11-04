@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.jmock.Expectations;
 import org.junit.Test;
-import org.stajistics.tracker.AbstractCompositeStatsTrackerTest;
+import org.stajistics.tracker.AbstractCompositeStatsTrackerTestCase;
 
 /**
  * 
@@ -12,7 +12,7 @@ import org.stajistics.tracker.AbstractCompositeStatsTrackerTest;
  *
  * @author The Stajistics Project
  */
-public class SpanCompositeStatsTrackerTest extends AbstractCompositeStatsTrackerTest<SpanTracker> {
+public class SpanCompositeStatsTrackerTest extends AbstractCompositeStatsTrackerTestCase<SpanTracker> {
 
     @Override
     protected SpanCompositeStatsTracker createCompositeStatsTracker() {

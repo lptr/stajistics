@@ -20,9 +20,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.jmock.Expectations;
 import org.junit.Test;
-import org.stajistics.tracker.AbstractCompositeStatsTrackerTest;
-import org.stajistics.tracker.CompositeStatsTracker;
+import org.stajistics.tracker.AbstractCompositeStatsTrackerTestCase;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -32,7 +32,7 @@ import org.stajistics.tracker.StatsTracker;
  * @author The Stajistics Project
  */
 public class IncidentCompositeStatsTrackerTest 
-    extends AbstractCompositeStatsTrackerTest<IncidentTracker> {
+    extends AbstractCompositeStatsTrackerTestCase<IncidentTracker> {
 
     @Override
     protected IncidentTracker[] createMockTrackers() {
@@ -44,7 +44,7 @@ public class IncidentCompositeStatsTrackerTest
     }
 
     @Override
-    protected CompositeStatsTracker<IncidentTracker> createCompositeStatsTracker() {
+    protected IncidentCompositeStatsTracker createCompositeStatsTracker() {
         return new IncidentCompositeStatsTracker(mockTrackers);
     }
 
@@ -88,4 +88,18 @@ public class IncidentCompositeStatsTrackerTest
             assertSame(mockTrackers[i++], tracker);
         }
     }
+
+    @Test
+    public void testIncident() {
+
+        mockery.checking(new Expectations() {{
+            for (int i = 0; i < mockTrackers.length; i++) {
+                one(mockTrackers[i]).incident(); will(returnValue(mockTrackers[i]));
+            }
+        }});
+
+        IncidentCompositeStatsTracker cTracker = createCompositeStatsTracker();
+        cTracker.incident();
+    }
+
 }

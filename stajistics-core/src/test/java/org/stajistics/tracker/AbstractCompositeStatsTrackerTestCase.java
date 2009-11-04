@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
  * @author The Stajistics Project
  */
 @RunWith(JMock.class)
-public abstract class AbstractCompositeStatsTrackerTest<T extends StatsTracker> {
+public abstract class AbstractCompositeStatsTrackerTestCase<T extends StatsTracker> {
 
     protected Mockery mockery;
     protected T[] mockTrackers;

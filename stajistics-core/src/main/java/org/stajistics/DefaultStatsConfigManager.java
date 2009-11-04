@@ -43,6 +43,13 @@ import org.stajistics.tracker.span.TimeDurationTracker;
  */
 public class DefaultStatsConfigManager implements StatsConfigManager {
 
+    public static final String PROP_INITIAL_CAPACITY = 
+        StatsConfigManager.class.getName() + ".initialCapacity";
+    public static final String PROP_LOAD_FACTOR = 
+        StatsConfigManager.class.getName() + ".loadFactor";
+    public static final String PROP_CONCURRENCY_LEVEL = 
+        StatsConfigManager.class.getName() + ".concurrencyLevel";
+
     private static final long serialVersionUID = -3448191567386279319L;
 
     private final ConcurrentMap<String,KeyEntry> keyMap = createKeyEntryMap();
@@ -125,12 +132,16 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
     /**
      * A factory method hook for subclasses to override the {@link ConcurrentMap} implementation 
-     * to be used for <tt>statsKey</tt>.
+     * to be used for storing entries.
      *
      * @return A {@link ConcurrentMap}, never <tt>null</tt>.
      */
     protected ConcurrentMap<String,KeyEntry> createKeyEntryMap() {
-        return new ConcurrentHashMap<String,KeyEntry>(128, 0.75f, 32);
+        int initialCapacity = StatsProperties.getIntegerProperty(PROP_INITIAL_CAPACITY, 256);
+        float loadFactor = StatsProperties.getFloatProperty(PROP_LOAD_FACTOR, 0.6f);
+        int concurrencyLevel = StatsProperties.getIntegerProperty(PROP_CONCURRENCY_LEVEL, 64);
+
+        return new ConcurrentHashMap<String,KeyEntry>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
     /**

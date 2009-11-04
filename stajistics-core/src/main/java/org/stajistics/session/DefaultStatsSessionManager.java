@@ -26,6 +26,7 @@ import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
+import org.stajistics.StatsProperties;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 
@@ -37,12 +38,18 @@ import org.stajistics.event.StatsEventType;
  */
 public class DefaultStatsSessionManager implements StatsSessionManager {
 
+    public static final String PROP_INITIAL_CAPACITY = 
+        StatsSessionManager.class.getName() + ".sessionMap.initialCapacity";
+    public static final String PROP_LOAD_FACTOR = 
+        StatsSessionManager.class.getName() + ".sessionMap.loadFactor";
+    public static final String PROP_CONCURRENCY_LEVEL = 
+        StatsSessionManager.class.getName() + ".sessionMap.concurrencyLevel";
+
     private static final long serialVersionUID = 7815229695876668904L;
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultStatsSessionManager.class);
 
-    protected ConcurrentMap<StatsKey,StatsSession> sessionMap = 
-        new ConcurrentHashMap<StatsKey,StatsSession>(128);
+    protected ConcurrentMap<StatsKey,StatsSession> sessionMap = createSessionMap();
 
     protected final StatsConfigManager configManager;
     protected final StatsEventManager eventManager;
@@ -58,6 +65,20 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
 
         this.configManager = configManager;
         this.eventManager = eventManager;
+    }
+
+    /**
+     * A factory method for creating the ConcurrentMap that will store {@link StatsSession}s.
+     *
+     * @return A {@link ConcurrentMap}, never <tt>null</tt>.
+     */
+    protected ConcurrentMap<StatsKey,StatsSession> createSessionMap() {
+
+        int initialCapacity = StatsProperties.getIntegerProperty(PROP_INITIAL_CAPACITY, 256);
+        float loadFactor = StatsProperties.getFloatProperty(PROP_LOAD_FACTOR, 0.6f);
+        int concurrencyLevel = StatsProperties.getIntegerProperty(PROP_CONCURRENCY_LEVEL, 64);
+
+        return new ConcurrentHashMap<StatsKey,StatsSession>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
     /**

@@ -33,6 +33,8 @@ import org.stajistics.tracker.manual.ManualTracker;
  */
 public abstract class TestUtil {
 
+    public static final double DELTA = 0.0000000000001;
+
     private TestUtil() {}
 
     public static void buildStatsKeyExpectations(final Mockery mockery,
