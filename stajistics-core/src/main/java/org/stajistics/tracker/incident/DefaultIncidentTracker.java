@@ -38,7 +38,7 @@ public class DefaultIncidentTracker extends AbstractStatsTracker implements Inci
 
     @Override
     public IncidentTracker incident() {
-        value++;
+        value = 1;
 
         final long now = System.currentTimeMillis();
 

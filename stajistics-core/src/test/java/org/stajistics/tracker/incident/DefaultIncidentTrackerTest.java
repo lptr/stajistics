@@ -15,29 +15,23 @@
 
 package org.stajistics.tracker.incident;
 
+import static org.junit.Assert.assertEquals;
+
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.stajistics.session.StatsSession;
+import org.stajistics.TestUtil;
+import org.stajistics.tracker.AbstractStatsTrackerTestCase;
 
 /**
  * 
  * @author The Stajistics Project
  *
  */
-@RunWith(JMock.class)
-public class DefaultIncidentTrackerTest {
+public class DefaultIncidentTrackerTest extends AbstractStatsTrackerTestCase<IncidentTracker> {
 
-    private Mockery mockery;
-    private StatsSession mockSession;
-
-    @Before
-    public void setUp() throws Exception {
-        mockery = new Mockery();
-        mockSession = mockery.mock(StatsSession.class);
+    @Override
+    protected IncidentTracker createStatsTracker() {
+        return new DefaultIncidentTracker(mockSession);
     }
 
     @Test
@@ -45,10 +39,34 @@ public class DefaultIncidentTrackerTest {
         final IncidentTracker tracker = new DefaultIncidentTracker(mockSession);
 
         mockery.checking(new Expectations() {{
+            exactly(2).of(mockSession).track(with(tracker), with(any(long.class)));
+            exactly(2).of(mockSession).update(with(tracker), with(any(long.class)));
+        }});
+
+        tracker.incident();
+
+        assertEquals(1.0, tracker.getValue(), TestUtil.DELTA);
+
+        tracker.incident();
+
+        assertEquals(1.0, tracker.getValue(), TestUtil.DELTA);
+    }
+
+    @Test
+    public void testReset() {
+        final IncidentTracker tracker = new DefaultIncidentTracker(mockSession);
+
+        mockery.checking(new Expectations() {{
             one(mockSession).track(with(tracker), with(any(long.class)));
             one(mockSession).update(with(tracker), with(any(long.class)));
         }});
-        
+
         tracker.incident();
+
+        assertEquals(1.0, tracker.getValue(), TestUtil.DELTA);
+
+        tracker.reset();
+
+        assertEquals(0.0, tracker.getValue(), TestUtil.DELTA);
     }
 }

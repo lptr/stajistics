@@ -16,12 +16,16 @@ package org.stajistics;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 
  * @author The Stajistics Project
- *
  */
 public abstract class StatsProperties {
+
+    private static final Logger logger = LoggerFactory.getLogger(StatsProperties.class);
 
     private static StatsProperties instance;
 
@@ -43,107 +47,165 @@ public abstract class StatsProperties {
         StatsProperties.instance = instance;
     }
 
-    public static Boolean getBooleanProperty(final String key) {
-        return getInstance().getBooleanPropertyImpl(key, null);
-    }
+    protected abstract Object getPropertyImpl(String key, Object defaultValue);
 
-    public static Boolean getBooleanProperty(final String key,
-                                             final Boolean defaultValue) {
-        return getInstance().getBooleanPropertyImpl(key, defaultValue);
-    }
-
-    protected Boolean getBooleanPropertyImpl(final String key,
-                                             final Boolean defaultValue) {
-        Boolean value = defaultValue;
-        String strValue = getProperty(key);
-        if (strValue != null) {
-            value = Boolean.valueOf(strValue);
-        }
-        return value;
-    }
-
-    public static Double getDoubleProperty(final String key) {
-        return getInstance().getDoublePropertyImpl(key, null);
-    }
-
-    public static Double getDoubleProperty(final String key,
-                                           final Double defaultValue) {
-        return getInstance().getDoublePropertyImpl(key, defaultValue);
-    }
-
-    protected Double getDoublePropertyImpl(final String key,
-                                           final Double defaultValue) {
-        Double value = defaultValue;
-        String strValue = getProperty(key);
-        if (strValue != null) {
-            try {
-                value = Double.parseDouble(strValue);
-            } catch (NumberFormatException nfe) {}
-        }
-        return value;
-    }
-
-    public static Integer getIntegerProperty(final String key) {
-        return getInstance().getIntegerPropertyImpl(key, null);
-    }
-
-    public static Integer getIntegerProperty(final String key,
-                                             final Integer defaultValue) {
-        return getInstance().getIntegerPropertyImpl(key, defaultValue);
-    }
-
-    protected Integer getIntegerPropertyImpl(final String key,
-                                             final Integer defaultValue) {
-        Integer value = defaultValue;
-        String strValue = getProperty(key);
-        if (strValue != null) {
-            try {
-                value = Integer.parseInt(strValue);
-            } catch (NumberFormatException nfe) {}
-        }
-        return value;
-    }
-
-    public static Long getLongProperty(final String key) {
-        return getInstance().getLongPropertyImpl(key, null);
-    }
-
-    public static Long getLongProperty(final String key,
-                                       final Long defaultValue) {
-        return getInstance().getLongPropertyImpl(key, defaultValue);
-    }
-
-    protected Long getLongPropertyImpl(final String key,
-                                       final Long defaultValue) {
-        Long value = defaultValue;
-        String strValue = getProperty(key);
-        if (strValue != null) {
-            try {
-                value = Long.parseLong(strValue);
-            } catch (NumberFormatException nfe) {}
-        }
-        return value;
-    }
+    /* STRING */
 
     public static String getProperty(final String key) {
-        return getInstance().getPropertyImpl(key, null);
+        return getProperty(key, null);
     }
 
     public static String getProperty(final String key,
                                      final String defaultValue) {
-        return getInstance().getPropertyImpl(key, defaultValue);
+        Object value = getInstance().getPropertyImpl(key, defaultValue);
+        return (value != null) ? value.toString() : null;
     }
 
-    protected abstract String getPropertyImpl(String key, String defaultValue);
+    /* BOOLEAN */
+
+    public static Boolean getBooleanProperty(final String key) {
+        return getBooleanProperty(key, null);
+    }
+
+    public static Boolean getBooleanProperty(final String key,
+                                             final Boolean defaultValue) {
+        Boolean value = defaultValue;
+        Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
+
+        if (objectValue != null) {
+            if (objectValue instanceof Boolean) {
+                value = (Boolean)objectValue;
+            } else if (objectValue instanceof String) {
+                value = Boolean.valueOf((String)objectValue);
+            } else {
+                logger.warn("Failed to coerce property {}={} into a boolean", key, objectValue);
+            }
+        }
+
+        return value;
+    }
+
+    /* INTEGER */
+
+    public static Integer getIntegerProperty(final String key) {
+        return getIntegerProperty(key, null);
+    }
+
+    public static Integer getIntegerProperty(final String key,
+                                             final Integer defaultValue) {
+        Integer value = defaultValue;
+        Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
+
+        if (objectValue != null) {
+            if (objectValue instanceof Number) {
+                value = ((Number)objectValue).intValue();
+            } else if (objectValue instanceof String) {
+                try {
+                    value = Integer.parseInt((String)objectValue);
+                } catch (NumberFormatException nfe) {
+                    logger.warn("Failed to parse string property {}={} into an integer", key, objectValue);
+                }
+            } else {
+                logger.warn("Failed to coerce property {}={} into an integer", key, objectValue);
+            }
+        }
+
+        return value;
+    }
+
+    /* LONG */
+
+    public static Long getLongProperty(final String key) {
+        return getLongProperty(key, null);
+    }
+
+    public static Long getLongProperty(final String key,
+                                       final Long defaultValue) {
+        Long value = defaultValue;
+        Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
+
+        if (objectValue != null) {
+            if (objectValue instanceof Number) {
+                value = ((Number)objectValue).longValue();
+            } else if (objectValue instanceof String) {
+                try {
+                    value = Long.parseLong((String)objectValue);
+                } catch (NumberFormatException nfe) {
+                    logger.warn("Failed to parse string property {}={} into a long", key, objectValue);
+                }
+            } else {
+                logger.warn("Failed to coerce property {}={} into a long", key, objectValue);
+            }
+        }
+
+        return value;
+    }
+
+    /* FLOAT */
+
+    public static Double getFloatProperty(final String key) {
+        return getDoubleProperty(key, null);
+    }
+
+    public static Float getFloatProperty(final String key,
+                                         final Float defaultValue) {
+        Float value = defaultValue;
+        Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
+
+        if (objectValue != null) {
+            if (objectValue instanceof Number) {
+                value = ((Number)objectValue).floatValue();
+            } else if (objectValue instanceof String) {
+                try {
+                    value = Float.parseFloat((String)objectValue);
+                } catch (NumberFormatException nfe) {
+                    logger.warn("Failed to parse string property {}={} into a float", key, objectValue);
+                }
+            } else {
+                logger.warn("Failed to coerce property {}={} into a float", key, objectValue);
+            }
+        }
+
+        return value;
+    }
+
+    /* DOUBLE */
+
+    public static Double getDoubleProperty(final String key) {
+        return getDoubleProperty(key, null);
+    }
+
+    public static Double getDoubleProperty(final String key,
+                                           final Double defaultValue) {
+        Double value = defaultValue;
+        Object objectValue = getInstance().getPropertyImpl(key, defaultValue);
+
+        if (objectValue != null) {
+            if (objectValue instanceof Number) {
+                value = ((Number)objectValue).doubleValue();
+            } else if (objectValue instanceof String) {
+                try {
+                    value = Double.parseDouble((String)objectValue);
+                } catch (NumberFormatException nfe) {
+                    logger.warn("Failed to parse string property {}={} into a double", key, objectValue);
+                }
+            } else {
+                logger.warn("Failed to coerce property {}={} into a double", key, objectValue);
+            }
+        }
+
+        return value;
+    }
 
     /* NESTED CLASSES */
 
     public static final class SystemStatsProperties extends StatsProperties {
 
         @Override
-        public String getPropertyImpl(final String key,
-                                      final String defaultValue) {
-            return System.getProperty(key, defaultValue);
+        public Object getPropertyImpl(final String key,
+                                      final Object defaultValue) {
+            String strDefaultValue = (defaultValue == null) ? null : defaultValue.toString();
+            return System.getProperty(key, strDefaultValue);
         }
     }
 
@@ -159,16 +221,14 @@ public abstract class StatsProperties {
         }
 
         @Override
-        protected String getPropertyImpl(final String key, 
-                                         final String defaultValue) {
-            String result = defaultValue;
-
+        protected Object getPropertyImpl(final String key, 
+                                         final Object defaultValue) {
             Object value = propertyMap.get(key);
-            if (value != null) {
-                result = value.toString();
+            if (value == null) {
+                value = defaultValue;
             }
 
-            return result;
+            return value;
         }
     }
 }

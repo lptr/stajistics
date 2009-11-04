@@ -15,15 +15,24 @@
 package org.stajistics.tracker.incident;
 
 import org.stajistics.StatsKey;
+import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
- * A tracker type dedicated to collecting statistics related to occurrences of events.
+ * <p>A tracker type dedicated to collecting statistics related to occurrences of events.
  * This tracker is only concerned with recording the fact that an event occurred; it does not
  * care about the details of the event. The details of an event may be stored in the 
  * attributes if this trackers associated {@link StatsKey} so that event statistics can be
- * separated or aggregated as desired.  
+ * separated or aggregated as desired.</p>  
+ *
+ * Example usage:
+ * <pre>
+ * Stats.getIncidentTracker("myKey")
+ *      .incident();
+ * // or...
+ * Stats.incident("myKey");
+ * </pre>
  *
  * @author The Stajistics Project
  */
@@ -35,10 +44,10 @@ public interface IncidentTracker extends StatsTracker {
     public static final StatsTrackerFactory<IncidentTracker> FACTORY = DefaultIncidentTracker.FACTORY;
 
     /**
-     * Report an occurrence of an event.
+     * Report an occurrence of an event. Sets the <tt>value</tt> field to <tt>1</tt> and immediately
+     * publishes the incident occurrence to the {@link StatsSession}. 
      *
      * @return <tt>this</tt>.
      */
     IncidentTracker incident();
-
 }
