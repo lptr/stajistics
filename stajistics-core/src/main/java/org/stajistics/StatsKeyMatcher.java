@@ -16,7 +16,6 @@ package org.stajistics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,44 +33,71 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static final long serialVersionUID = -1713747126597353487L;
 
-    public static Builder build() {
-        return new Builder();
-    }
-
     /* FACTORY METHODS */
 
+    /**
+     * Create a matcher that matches all keys.
+     *
+     * @return A matcher that matches all keys.
+     */
     public static StatsKeyMatcher all() {
         return AllMatcher.INSTANCE;
     }
 
+    /**
+     * Create a matcher that doesn't match any keys.
+     *
+     * @return A matcher that doesn't match any keys.
+     */
     public static StatsKeyMatcher none() {
         return NoneMatcher.INSTANCE;
     }
 
-    public static StatsKeyMatcher not(final StatsKeyMatcher delegate) {
-        return new NegationMatcher(delegate);
-    }
-
-    public static StatsKeyMatcher and(final StatsKeyMatcher... delegates) {
-        return new CompositeMatcher(CompositeMatcher.Op.AND, Arrays.asList(delegates));
-    }
-
-    public static StatsKeyMatcher or(final StatsKeyMatcher... delegates) {
-        return new CompositeMatcher(CompositeMatcher.Op.OR, Arrays.asList(delegates));
-    }
-
+    /**
+     * Create a matcher that matches only keys that equal the given <tt>key</tt>.
+     *
+     * @param key The key for which equal keys should be matched.
+     * @return An exact match matcher.
+     *
+     * @see StatsKey#equals(Object)
+     */
     public static StatsKeyMatcher exactMatch(final StatsKey key) {
         return new ExactMatcher(key);
     }
 
-    public static StatsKeyMatcher equals(final String keyName) {
+    /**
+     * Create a matcher that matches keys that have names equal to the given <tt>keyName</tt>.
+     *
+     * @param keyName The key name for which keys having an equal name should be matched.
+     *
+     * @return A key name equality matcher.
+     */
+    public static StatsKeyMatcher nameEquals(final String keyName) {
         return new EqualsMatcher(MatchTarget.KEY_NAME, keyName);
     }
 
+    /**
+     * Create a matcher that matches keys that have an attribute name equal to 
+     * the given <tt>attrName</tt>.
+     *
+     * @param attrName The key attribute name for which keys having an equal 
+     *                 attribute name should be matched.
+     *
+     * @return A key attribute name equality matcher.
+     */
     public static StatsKeyMatcher attrNameEquals(final String attrName) {
         return new EqualsMatcher(MatchTarget.ATTR_NAME, attrName);
     }
 
+    /**
+     * Create a matcher that matches keys that have an attribute value equal to 
+     * the given <tt>attrValue</tt>.
+     *
+     * @param attrValue The key attribute value for which keys having an equal 
+     *                  attribute value should be matched.
+     *
+     * @return A key attribute value equality matcher.
+     */
     public static StatsKeyMatcher attrValueEquals(final Object attrValue) {
         return new EqualsMatcher(MatchTarget.ATTR_VALUE, attrValue);
     }
@@ -170,6 +196,57 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     public static StatsKeyMatcher attributeCount(final int count) {
         return new AttrCountMatcher(count);
+    }
+
+    /* COMPOSITION METHODS */
+
+    /**
+     * Create a new matcher that negates the result of calls to {@link #matches(StatsKey)}
+     * on this matcher.
+     *
+     * @return The inverse matcher of this matcher. 
+     */
+    public StatsKeyMatcher not() {
+        return new NegationMatcher(this);
+    }
+
+    /**
+     * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
+     * the conjunction of the results of the same method called on this and the 
+     * passed <tt>matcher</tt>.
+     *
+     * @param matcher The matcher to conjunct with this matcher.
+     *
+     * @return A matcher that ANDs this and the given matcher.
+     */
+    public StatsKeyMatcher and(final StatsKeyMatcher matcher) {
+        return new CompositeMatcher(CompositeMatcher.Op.AND, this, matcher);
+    }
+
+    /**
+     * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
+     * the disjunction of the results of the same method called on this and the 
+     * passed <tt>matcher</tt>.
+     *
+     * @param matcher The matcher to disjunct with this matcher.
+     *
+     * @return A matcher that ORs this and the given matcher.
+     */
+    public StatsKeyMatcher or(final StatsKeyMatcher matcher) {
+        return new CompositeMatcher(CompositeMatcher.Op.OR, this, matcher);
+    }
+
+    /**
+     * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
+     * the exclusive disjunction of the results of the same method called on this and the 
+     * passed <tt>matcher</tt>.
+     *
+     * @param matcher The matcher to exclusively disjunct with this matcher.
+     *
+     * @return A matcher that XORs this and the given matcher.
+     */
+    public StatsKeyMatcher xor(final StatsKeyMatcher matcher) {
+        return new CompositeMatcher(CompositeMatcher.Op.XOR, this, matcher);
     }
 
     /* FILTER METHODS */
@@ -273,96 +350,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     /* NESTED CLASSES */
 
-    public static class Builder {
-
-        private final List<StatsKeyMatcher> matchers = new ArrayList<StatsKeyMatcher>(4);
-        private boolean negateNext = false;
-
-        protected Builder() {}
-
-        private void addMatcher(StatsKeyMatcher matcher) {
-            if (negateNext) {
-                negateNext = false;
-                matcher = StatsKeyMatcher.not(matcher);
-            }
-
-            matchers.add(matcher);
-        }
-
-        public Builder not() {
-            negateNext = !negateNext;
-            return this;
-        }
-
-        public Builder withPrefix(final String prefix) {
-            addMatcher(prefix(prefix));
-            return this;
-        }
-
-        public Builder withAttrNamePrefix(final String prefix) {
-            addMatcher(attrNamePrefix(prefix));
-            return this;
-        }
-
-        public Builder withAttValuePrefix(final String prefix) {
-            addMatcher(attrValuePrefix(prefix));
-            return this;
-        }
-
-        public Builder withSuffix(final String suffix) {
-            addMatcher(suffix(suffix));
-            return this;
-        }
-        
-        public Builder withAttrNameSuffix(final String suffix) {
-            addMatcher(attrNameSuffix(suffix));
-            return this;
-        }
-
-        public Builder withAttrValueSuffix(final String suffix) {
-            addMatcher(attrValueSuffix(suffix));
-            return this;
-        }
-
-        public Builder containing(final String string) {
-            addMatcher(contains(string));
-            return this;
-        }
-
-        public Builder attrNameContaining(final String string) {
-            addMatcher(attrNameContains(string));
-            return this;
-        }
-
-        public Builder attrValueContaining(final String string) {
-            addMatcher(attrValueContains(string));
-            return this;
-        }
-
-        public Builder atDepth(final int depth) {
-            matchers.add(depth(depth));
-            return this;
-        }
-
-        public Builder withAttributeCountOf(final int count) {
-            matchers.add(attributeCount(count));
-            return this;
-        }
-
-        public StatsKeyMatcher matcher() {
-
-            if (matchers.isEmpty()) {
-                return NoneMatcher.INSTANCE;
-            }
-
-            if (matchers.size() == 1) {
-                return matchers.get(0);
-            }
-
-            return new CompositeMatcher(CompositeMatcher.Op.AND, matchers);
-        }
-    }
-
     enum MatchTarget {
         KEY_NAME,
         ATTR_NAME,
@@ -405,60 +392,58 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         enum Op {
             AND,
-            OR
+            OR,
+            XOR
         }
 
         private final Op op;
-        private final List<StatsKeyMatcher> matchers;
+        private final StatsKeyMatcher matcher1;
+        private final StatsKeyMatcher matcher2;
 
         CompositeMatcher(final Op op,
-                         final List<StatsKeyMatcher> matchers) {
+                         final StatsKeyMatcher matcher1,
+                         final StatsKeyMatcher matcher2) {
             if (op == null) {
                 throw new NullPointerException("op");
             }
-            if (matchers == null) {
-                throw new NullPointerException("matchers");
+            if (matcher1 == null) {
+                throw new NullPointerException("matcher1");
             }
-            if (matchers.isEmpty()) {
-                throw new IllegalArgumentException("empty matchers");
+            if (matcher2 == null) {
+                throw new NullPointerException("matcher2");
             }
 
             this.op = op;
-            this.matchers = matchers;
+            this.matcher1 = matcher1;
+            this.matcher2 = matcher2;
         }
 
         @Override
         public boolean matches(final StatsKey key) {
-            int size = matchers.size();
-
             switch (op) {
             case AND:
-                for (int i = 0; i < size; i++) {
-                    if (!matchers.get(i).matches(key)) {
-                        return false;
-                    }
-                }
-                return true;
+                return matcher1.matches(key) && matcher2.matches(key);
+
             case OR:
-                for (int i = 0; i < size; i++) {
-                    if (matchers.get(i).matches(key)) {
-                        return true;
-                    }
-                }
-                return false;
+                return matcher1.matches(key) || matcher2.matches(key);
+
+            case XOR:
+                return matcher1.matches(key) ^ matcher2.matches(key);
             }
-            
+
             throw new Error();
         }
 
         @Override
         public boolean equals(final StatsKeyMatcher other) {
-            return matchers.equals(((CompositeMatcher)other).matchers);
+            CompositeMatcher compositeMatcher = (CompositeMatcher)other;
+            return matcher1.equals(compositeMatcher.matcher1) &&
+                   matcher2.equals(compositeMatcher.matcher2);
         }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ matchers.hashCode();
+            return getClass().hashCode() ^ matcher1.hashCode() ^ matcher2.hashCode();
         }        
     }
 
@@ -471,6 +456,11 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey key) {
             return true;
+        }
+
+        @Override
+        public StatsKeyMatcher not() {
+            return NoneMatcher.INSTANCE;
         }
 
         @Override
@@ -536,6 +526,11 @@ public abstract class StatsKeyMatcher implements Serializable {
         @Override
         public boolean matches(final StatsKey other) {
             return false;
+        }
+
+        @Override
+        public StatsKeyMatcher not() {
+            return AllMatcher.INSTANCE;
         }
 
         @Override

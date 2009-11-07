@@ -62,7 +62,7 @@ public class StatsKeyMatcherTest {
         keys.add(keyB);
         keys.add(keyC);
 
-        StatsKeyMatcher.equals("a").filter(keys);
+        StatsKeyMatcher.nameEquals("a").filter(keys);
 
         assertEquals(1, keys.size());
         assertTrue(keys.contains(keyA));
@@ -84,7 +84,7 @@ public class StatsKeyMatcherTest {
         keys.add(keyC);
         keys = Collections.unmodifiableCollection(keys);
 
-        Collection<StatsKey> filteredKeys = StatsKeyMatcher.equals("a").filterCopy(keys);
+        Collection<StatsKey> filteredKeys = StatsKeyMatcher.nameEquals("a").filterCopy(keys);
 
         assertFalse(keys == filteredKeys);
         assertFalse(keys.equals(filteredKeys));
@@ -108,7 +108,7 @@ public class StatsKeyMatcherTest {
         keys.put(keyA, o1);
         keys.put(keyB, o2);
 
-        StatsKeyMatcher.equals("a").filter(keys);
+        StatsKeyMatcher.nameEquals("a").filter(keys);
 
         assertEquals(1, keys.size());
         assertTrue(keys.containsKey(keyA));
@@ -130,7 +130,7 @@ public class StatsKeyMatcherTest {
         keys.put(keyB, o2);
         keys = Collections.unmodifiableMap(keys);
 
-        Map<StatsKey,Object> filteredKeys = StatsKeyMatcher.equals("a").filterCopy(keys);
+        Map<StatsKey,Object> filteredKeys = StatsKeyMatcher.nameEquals("a").filterCopy(keys);
 
         assertFalse(keys == filteredKeys);
         assertFalse(keys.equals(filteredKeys));
@@ -154,7 +154,7 @@ public class StatsKeyMatcherTest {
         map.put(keyA, o1);
         map.put(keyB, o2);
 
-        Collection<Object> result = StatsKeyMatcher.equals("a").filterToCollection(map);
+        Collection<Object> result = StatsKeyMatcher.nameEquals("a").filterToCollection(map);
 
         assertEquals(1, result.size());
         assertTrue(result.contains(o1));

@@ -16,9 +16,8 @@ package org.stajistics.tracker.manual;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jmock.integration.junit4.JMock;
+import org.jmock.Expectations;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.stajistics.TestUtil;
 import org.stajistics.tracker.AbstractStatsTrackerTestCase;
 
@@ -28,7 +27,6 @@ import org.stajistics.tracker.AbstractStatsTrackerTestCase;
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
 public class DefaultManualTrackerTest extends AbstractStatsTrackerTestCase<ManualTracker> {
 
     @Override
@@ -72,5 +70,17 @@ public class DefaultManualTrackerTest extends AbstractStatsTrackerTestCase<Manua
         tracker.reset();
 
         assertEquals(0.0, tracker.getValue(), TestUtil.DELTA);
+    }
+
+    @Test
+    public void testCommit() {
+        final ManualTracker tracker = new DefaultManualTracker(mockSession);
+
+        mockery.checking(new Expectations() {{
+            one(mockSession).track(with(tracker), with(any(long.class)));
+            one(mockSession).update(with(tracker), with(any(long.class)));
+        }});
+
+        assertEquals(tracker, tracker.commit());
     }
 }

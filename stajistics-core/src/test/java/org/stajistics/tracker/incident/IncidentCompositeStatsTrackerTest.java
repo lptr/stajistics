@@ -14,16 +14,11 @@
  */
 package org.stajistics.tracker.incident;
 
-import static org.junit.Assert.assertSame;
-
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.tracker.AbstractCompositeStatsTrackerTestCase;
-import org.stajistics.tracker.StatsTracker;
 
 /**
  * 
@@ -44,49 +39,18 @@ public class IncidentCompositeStatsTrackerTest
     }
 
     @Override
-    protected IncidentCompositeStatsTracker createCompositeStatsTracker() {
+    protected IncidentCompositeStatsTracker createCompositeStatsTracker(final List<IncidentTracker> mockTrackers) {
         return new IncidentCompositeStatsTracker(mockTrackers);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testConstructWithNullTrackerArray() {
-        new IncidentCompositeStatsTracker((IncidentTracker[])null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testConstructWithNullTrackerList() {
-        new IncidentCompositeStatsTracker((List<IncidentTracker>)null);
+    @Override
+    protected IncidentCompositeStatsTracker createCompositeStatsTracker(final IncidentTracker[] mockTrackers) {
+        return new IncidentCompositeStatsTracker(mockTrackers);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructWithEmptyTrackerArray() {
         new IncidentCompositeStatsTracker();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructWithEmptyTrackerList() {
-        new IncidentCompositeStatsTracker(Collections.<IncidentTracker>emptyList());
-    }
-
-    @Test
-    public void testGetTrackersWhenConstructedWithArray() {
-        IncidentCompositeStatsTracker cTracker = new IncidentCompositeStatsTracker(mockTrackers);
-
-        int i = 0;
-        for (StatsTracker tracker : cTracker.getTrackers()) {
-            assertSame(mockTrackers[i++], tracker);
-        }
-    }
-
-    @Test
-    public void testGetTrackersWhenConstructedWithList() {
-
-        IncidentCompositeStatsTracker cTracker = new IncidentCompositeStatsTracker(Arrays.asList(mockTrackers));
-
-        int i = 0;
-        for (StatsTracker tracker : cTracker.getTrackers()) {
-            assertSame(mockTrackers[i++], tracker);
-        }
     }
 
     @Test
@@ -98,7 +62,7 @@ public class IncidentCompositeStatsTrackerTest
             }
         }});
 
-        IncidentCompositeStatsTracker cTracker = createCompositeStatsTracker();
+        IncidentCompositeStatsTracker cTracker = createCompositeStatsTracker(mockTrackers);
         cTracker.incident();
     }
 

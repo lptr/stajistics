@@ -14,6 +14,10 @@
  */
 package org.stajistics.tracker.manual;
 
+import java.util.List;
+
+import org.jmock.Expectations;
+import org.junit.Test;
 import org.stajistics.tracker.AbstractCompositeStatsTrackerTestCase;
 
 /**
@@ -35,8 +39,55 @@ public class ManualCompositeStatsTrackerTest
     }
 
     @Override
-    protected ManualCompositeStatsTracker createCompositeStatsTracker() {
+    protected ManualCompositeStatsTracker createCompositeStatsTracker(final List<ManualTracker> mockTrackers) {
         return new ManualCompositeStatsTracker(mockTrackers);
     }
 
+    @Override
+    protected ManualCompositeStatsTracker createCompositeStatsTracker(final ManualTracker[] mockTrackers) {
+        return new ManualCompositeStatsTracker(mockTrackers);
+    }
+
+    @Test
+    public void testAddValue() {
+
+        final double value = 2.0;
+
+        mockery.checking(new Expectations() {{
+            for (int i = 0; i < mockTrackers.length; i++) {
+                one(mockTrackers[i]).addValue(with(value)); will(returnValue(mockTrackers[i]));
+            }
+        }});
+
+        ManualCompositeStatsTracker cTracker = createCompositeStatsTracker(mockTrackers);
+        cTracker.addValue(value);
+    }
+
+    @Test
+    public void testSetValue() {
+
+        final double value = 2.0;
+
+        mockery.checking(new Expectations() {{
+            for (int i = 0; i < mockTrackers.length; i++) {
+                one(mockTrackers[i]).setValue(with(value)); will(returnValue(mockTrackers[i]));
+            }
+        }});
+
+        ManualCompositeStatsTracker cTracker = createCompositeStatsTracker(mockTrackers);
+        cTracker.setValue(value);
+    }
+
+    @Test
+    public void testCommit() {
+
+        mockery.checking(new Expectations() {{
+            for (int i = 0; i < mockTrackers.length; i++) {
+                one(mockTrackers[i]).commit(); will(returnValue(mockTrackers[i]));
+            }
+        }});
+
+        ManualCompositeStatsTracker cTracker = createCompositeStatsTracker(mockTrackers);
+        cTracker.commit();
+    }
 }

@@ -20,7 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ * Provides access to configuration properties that are used by Stajistics internals.
+ *
  * @author The Stajistics Project
  */
 public abstract class StatsProperties {
@@ -31,6 +32,11 @@ public abstract class StatsProperties {
 
     public StatsProperties() {}
 
+    /**
+     * Obtain the singleton instance of {@link StatsProperties}.
+     *
+     * @return A {@link StatsProperties} instance, never <tt>null</tt>.
+     */
     public static StatsProperties getInstance() {
         if (instance == null) {
             synchronized (StatsProperties.class) {
@@ -43,6 +49,14 @@ public abstract class StatsProperties {
         return instance;
     }
 
+    /**
+     * Set the given StatsConfig <tt>instance</tt> as the singleton instance. After this call,
+     * calls to {@link #getInstance()} will return <tt>instance</tt>.
+     *
+     * @param instance The {@link StatsProperties} instance to use, or <tt>null</tt> to have 
+     *                 the default implementation loaded upon the next call to 
+     *                 {@link #getInstance()}.
+     */
     public static void load(final StatsProperties instance) {
         StatsProperties.instance = instance;
     }
@@ -51,10 +65,25 @@ public abstract class StatsProperties {
 
     /* STRING */
 
+    /**
+     * Get a String property.
+     *
+     * @param key The key for which to return a value.
+     *
+     * @return The String value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     */
     public static String getProperty(final String key) {
         return getProperty(key, null);
     }
 
+    /**
+     * Get a String property.
+     *
+     * @param key The key for which to return a value.
+     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     *
+     * @return The String value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     */
     public static String getProperty(final String key,
                                      final String defaultValue) {
         Object value = getInstance().getPropertyImpl(key, defaultValue);
@@ -63,10 +92,25 @@ public abstract class StatsProperties {
 
     /* BOOLEAN */
 
+    /**
+     * Get a Boolean property.
+     *
+     * @param key The key for which to return a value.
+     *
+     * @return The Boolean value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     */
     public static Boolean getBooleanProperty(final String key) {
         return getBooleanProperty(key, null);
     }
 
+    /**
+     * Get a Boolean property.
+     *
+     * @param key The key for which to return a value.
+     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     *
+     * @return The Boolean value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     */
     public static Boolean getBooleanProperty(final String key,
                                              final Boolean defaultValue) {
         Boolean value = defaultValue;
@@ -87,10 +131,25 @@ public abstract class StatsProperties {
 
     /* INTEGER */
 
+    /**
+     * Get an Integer property.
+     *
+     * @param key The key for which to return a value.
+     *
+     * @return The Integer value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     */
     public static Integer getIntegerProperty(final String key) {
         return getIntegerProperty(key, null);
     }
 
+    /**
+     * Get an Integer property.
+     *
+     * @param key The key for which to return a value.
+     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     *
+     * @return The Integer value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     */
     public static Integer getIntegerProperty(final String key,
                                              final Integer defaultValue) {
         Integer value = defaultValue;
@@ -115,10 +174,25 @@ public abstract class StatsProperties {
 
     /* LONG */
 
+    /**
+     * Get a Long property.
+     *
+     * @param key The key for which to return a value.
+     *
+     * @return The Long value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     */
     public static Long getLongProperty(final String key) {
         return getLongProperty(key, null);
     }
 
+    /**
+     * Get a Long property.
+     *
+     * @param key The key for which to return a value.
+     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     *
+     * @return The Long value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     */
     public static Long getLongProperty(final String key,
                                        final Long defaultValue) {
         Long value = defaultValue;
@@ -143,10 +217,25 @@ public abstract class StatsProperties {
 
     /* FLOAT */
 
+    /**
+     * Get a Float property.
+     *
+     * @param key The key for which to return a value.
+     *
+     * @return The Float value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     */
     public static Double getFloatProperty(final String key) {
         return getDoubleProperty(key, null);
     }
 
+    /**
+     * Get a Float property.
+     *
+     * @param key The key for which to return a value.
+     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     *
+     * @return The Float value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     */
     public static Float getFloatProperty(final String key,
                                          final Float defaultValue) {
         Float value = defaultValue;
@@ -171,10 +260,25 @@ public abstract class StatsProperties {
 
     /* DOUBLE */
 
+    /**
+     * Get a Double property.
+     *
+     * @param key The key for which to return a value.
+     *
+     * @return The Double value for the given <tt>key</tt>, or <tt>null</tt> if not found.
+     */
     public static Double getDoubleProperty(final String key) {
         return getDoubleProperty(key, null);
     }
 
+    /**
+     * Get a Double property.
+     *
+     * @param key The key for which to return a value.
+     * @param defaultValue The value to return when a value cannot be found for the given <tt>key</tt>.
+     *
+     * @return The Double value for the given <tt>key</tt>, or <tt>defaultValue</tt> if not found.
+     */
     public static Double getDoubleProperty(final String key,
                                            final Double defaultValue) {
         Double value = defaultValue;
@@ -199,6 +303,12 @@ public abstract class StatsProperties {
 
     /* NESTED CLASSES */
 
+    /**
+     * A {@link StatsProperties} implementation that retrieves properties from
+     * System properties (a.k.a. JVM arguments).
+     *
+     * @see System#getProperties()
+     */
     public static final class SystemStatsProperties extends StatsProperties {
 
         @Override
@@ -209,14 +319,21 @@ public abstract class StatsProperties {
         }
     }
 
+    /**
+     * A {@link StatsProperties} implementation that retrieves properties from
+     * a supplied {@link Map}.
+     */
     public static final class MapStatsProperties extends StatsProperties {
 
-        private final Map<String,?> propertyMap;
+        @SuppressWarnings("unchecked")
+        private final Map propertyMap;
 
-        public MapStatsProperties(final Map<String,?> propertyMap) {
+        @SuppressWarnings("unchecked")
+        public MapStatsProperties(final Map propertyMap) {
             if (propertyMap == null) {
                 throw new NullPointerException("propertyMap");
             }
+
             this.propertyMap = propertyMap;
         }
 

@@ -48,7 +48,7 @@ public class ConcurrentAccessTracker extends AbstractSpanStatsTracker {
 
         @Override
         public SpanTracker createTracker(final StatsKey key, 
-                                              final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
             return new ConcurrentAccessTracker(sessionManager.getOrCreateSession(key));
         }
     }

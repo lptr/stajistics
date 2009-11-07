@@ -59,7 +59,7 @@ public class MilliTimeDurationTracker extends AbstractSpanStatsTracker {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,
-                                          final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
             return new MilliTimeDurationTracker(sessionManager.getOrCreateSession(key));
         }
     }
