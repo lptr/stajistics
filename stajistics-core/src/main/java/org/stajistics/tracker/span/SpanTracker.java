@@ -61,8 +61,9 @@ public interface SpanTracker extends StatsTracker {
     boolean isTracking();
 
     /**
-     * 
-     * @return
+     * Determine the most recent time {@link #start()} was called on this tracker.
+     *
+     * @return <tt>this</tt>.
      */
     long getStartTime();
 }

@@ -14,6 +14,9 @@
  */
 package org.stajistics.tracker.span;
 
+import org.jmock.Expectations;
+import org.junit.Test;
+
 
 /**
  * 
@@ -26,5 +29,32 @@ public class HitFrequencyTrackerTest extends AbstractSpanStatsTrackerTestCase {
     @Override
     protected SpanTracker createStatsTracker() {
         return new HitFrequencyTracker(mockSession);
+    }
+
+    @Test
+    public void testStartStopStartStop() {
+        final SpanTracker tracker = createStatsTracker();
+
+        mockery.checking(new Expectations() {{
+            // start()
+            one(mockSession).track(with(tracker), with(any(long.class)));
+            one(mockSession).getLastHitStamp(); will(returnValue(0L));
+
+            // stop()
+            // Does nothing because we are measuring in between hits, and the
+            // first hit of the session cannot be counted.
+
+            // start()
+            one(mockSession).track(with(tracker), with(any(long.class)));
+            one(mockSession).getLastHitStamp(); will(returnValue(1L));
+
+            // stop()
+            one(mockSession).update(with(tracker), with(any(long.class)));
+        }});
+
+        tracker.start();
+        tracker.stop();
+        tracker.start();
+        tracker.stop();
     }
 }

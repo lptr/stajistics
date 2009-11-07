@@ -32,7 +32,7 @@ public class HitFrequencyTracker extends AbstractSpanStatsTracker {
 
     public static final Factory FACTORY = new Factory();
 
-    private long lastHitStamp;
+    private long lastHitStamp = -1;
 
     public HitFrequencyTracker(final StatsSession session) {
         super(session);
@@ -47,7 +47,7 @@ public class HitFrequencyTracker extends AbstractSpanStatsTracker {
 
     @Override
     protected void stopImpl(final long now) {
-        if (lastHitStamp != 0) {
+        if (lastHitStamp > 0) {
             value = startTime - lastHitStamp;
 
             session.update(this, now);
@@ -56,8 +56,10 @@ public class HitFrequencyTracker extends AbstractSpanStatsTracker {
 
     @Override
     public StatsTracker reset() {
-        lastHitStamp = 0;
-        return super.reset();
+        super.reset();
+        lastHitStamp = -1;
+
+        return this;
     }
 
     public static class Factory implements StatsTrackerFactory<SpanTracker> {
@@ -66,7 +68,7 @@ public class HitFrequencyTracker extends AbstractSpanStatsTracker {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,
-                                              final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
             return new HitFrequencyTracker(sessionManager.getOrCreateSession(key));
         }
     }

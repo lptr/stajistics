@@ -75,7 +75,7 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,
-                                              final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
             return new ThreadCPUTimeTracker(sessionManager.getOrCreateSession(key));
         }
     }

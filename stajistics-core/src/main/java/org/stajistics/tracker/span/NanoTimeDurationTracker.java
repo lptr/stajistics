@@ -60,7 +60,7 @@ public class NanoTimeDurationTracker extends TimeDurationTracker {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,
-                                              final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
             return new NanoTimeDurationTracker(sessionManager.getOrCreateSession(key));
         }
     }

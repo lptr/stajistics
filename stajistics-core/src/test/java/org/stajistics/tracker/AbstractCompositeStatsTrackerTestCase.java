@@ -14,6 +14,12 @@
  */
 package org.stajistics.tracker;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -35,12 +41,43 @@ public abstract class AbstractCompositeStatsTrackerTestCase<T extends StatsTrack
 
     protected abstract T[] createMockTrackers();
 
-    protected abstract CompositeStatsTracker<T> createCompositeStatsTracker();
+    protected abstract CompositeStatsTracker<T> createCompositeStatsTracker(T[] mockTrackers);
+
+    protected abstract CompositeStatsTracker<T> createCompositeStatsTracker(List<T> mockTrackers);
 
     @Before
     public void setUp() {
         mockery = new Mockery();
         mockTrackers = createMockTrackers();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructWithNullTrackerArray() {
+        createCompositeStatsTracker((T[])null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructWithNullTrackerList() {
+        createCompositeStatsTracker((List<T>)null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructWithEmptyTrackerList() {
+        createCompositeStatsTracker(Collections.<T>emptyList());
+    }
+
+    @Test
+    public void testGetTrackersWhenConstructedWithArray() {
+        CompositeStatsTracker<T> cTracker = createCompositeStatsTracker(mockTrackers);
+
+        List<T> trackers = cTracker.getTrackers();
+
+        int i = 0;
+        for (StatsTracker tracker : trackers) {
+            assertSame(mockTrackers[i++], tracker);
+        }
+
+        assertEquals(mockTrackers.length, trackers.size());
     }
 
     @Test
@@ -51,7 +88,7 @@ public abstract class AbstractCompositeStatsTrackerTestCase<T extends StatsTrack
             one(mockTrackers[2]).reset();
         }});
 
-        CompositeStatsTracker<T> cTracker = createCompositeStatsTracker();
+        CompositeStatsTracker<T> cTracker = createCompositeStatsTracker(mockTrackers);
         cTracker.reset();
     }
 

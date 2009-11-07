@@ -118,7 +118,7 @@ public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,
-                                              final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
             return new GarbageCollectionTimeTracker(sessionManager.getOrCreateSession(key));
         }
     }

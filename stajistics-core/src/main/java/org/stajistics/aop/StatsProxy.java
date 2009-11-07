@@ -19,10 +19,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyUtils;
 import org.stajistics.StatsManager;
+import org.stajistics.tracker.NullTracker;
+import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
@@ -32,6 +36,8 @@ import org.stajistics.tracker.span.SpanTracker;
  * @author The Stajistics Project
  */
 public class StatsProxy implements InvocationHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(StatsProxy.class);
 
     protected static final Method EQUALS_METHOD;
     static {
@@ -164,10 +170,19 @@ public class StatsProxy implements InvocationHandler {
                                 .newKey();
 
         try {
-            final SpanTracker tracker = statsManager.getTrackerLocator()
-                                                         .getSpanTracker(methodKey)
-                                                         .start();
+            SpanTracker tracker;
+
             try {
+                tracker = statsManager.getTrackerLocator()
+                                      .getSpanTracker(methodKey);
+            } catch (Exception e) {
+                logger.error("Failed to obtain a " + SpanTracker.class.getSimpleName(), e);
+                tracker = NullTracker.getInstance();
+            }
+
+            try {
+                tracker.start();
+
                 if (method.equals(EQUALS_METHOD)) {
                     return target.equals(unwrap(args[0]));
                 }
@@ -186,9 +201,13 @@ public class StatsProxy implements InvocationHandler {
                 cause = t;
             }
 
-            statsManager.getTrackerLocator()
-                        .getIncidentTracker(StatsKeyUtils.keyForFailure(methodKey, cause))
-                        .incident();
+            try {
+                statsManager.getTrackerLocator()
+                            .getIncidentTracker(StatsKeyUtils.keyForFailure(methodKey, cause))
+                            .incident();
+            } catch (Exception e) {
+                logger.error("Failed to obtain and invoke an " + IncidentTracker.class.getSimpleName(), e);
+            }
 
             throw cause;
         }
