@@ -69,7 +69,7 @@
     <testOutputDirectory>target/test-classes</testOutputDirectory>
     <defaultGoal>install</defaultGoal>
     <directory>target</directory>
-    <finalName>${pom.artifactId}-${pom.version}</finalName>
+    <finalName>${project.artifactId}-${project.version}</finalName>
 
     <resources>
       <resource>
@@ -379,11 +379,6 @@
     <dependency>
       <groupId>org.jmock</groupId>
       <artifactId>jmock-junit4</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
