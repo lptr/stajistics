@@ -9,35 +9,4 @@
   <name>Stajistics Core</name>
   <description>Stajistics core API</description>
 
-  <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-core/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-core/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-core</url>
-  </scm>
-
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-
-    <plugins>
-      <plugin>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <configuration>
-          <additionalConfig>
-            <file>
-              <name>.settings/org.eclipse.jdt.core.prefs</name>
-              <content>
-               <![CDATA[org.eclipse.jdt.core.compiler.problem.forbiddenReference=ignore]]>
-              </content>
-            </file>
-          </additionalConfig>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>

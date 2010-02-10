@@ -8,18 +8,12 @@
   <artifactId>stajistics-snapshot-xml</artifactId>
   <name>Stajistics Snapshot XML</name>
 
-  <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-snapshot-xml/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-snapshot-xml/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-snapshot-xml</url>
-  </scm>
-
   <build>
     <plugins>
       <plugin>
         <groupId>org.jibx</groupId>
         <artifactId>maven-jibx-plugin</artifactId>
-        <version>1.2.1</version>
+        <version>1.2.1.1</version>
         <configuration>
           <directory>src/main/resources</directory>
           <includes>
@@ -68,12 +62,6 @@
       <id>jibx.sf.net</id>
       <name>JiBX repository</name>
       <url>http://jibx.sf.net/maven2</url>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
     </repository>
   </repositories>
 
@@ -82,12 +70,6 @@
       <id>jibx.sf.net</id>
       <name>JiBX repository</name>
       <url>http://jibx.sf.net/maven2</url>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
     </pluginRepository>
   </pluginRepositories>
 
