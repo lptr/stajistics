@@ -54,35 +54,24 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
-
+  
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/</url>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/trunk/</url>
   </scm>
+  
+  <properties>
+    <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
+
+    <junit-version>4.4</junit-version>
+    <jmock-version>2.5.1</jmock-version>
+    <slf4j-version>1.5.10</slf4j-version>
+  </properties>
 
   <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-    <testSourceDirectory>src/test/java</testSourceDirectory>
-    <outputDirectory>target/classes</outputDirectory>
-    <testOutputDirectory>target/test-classes</testOutputDirectory>
     <defaultGoal>install</defaultGoal>
-    <directory>target</directory>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
 
     <pluginManagement>
       <plugins>
@@ -101,18 +90,35 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.0</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Implementation-Title>${project.name}</Implementation-Title>
+                <Implementation-VendorId>${project.groupId}</Implementation-VendorId>
+                <Implementation-Version>${project.version}</Implementation-Version>
+              </manifestEntries>
+            </archive>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+                <goal>test-jar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.0.4</version>
           <executions>
             <execution>
               <id>attach-sources</id>
-              <phase>package</phase>
+              <phase>verify</phase>
               <goals>
-                <goal>jar</goal>
+                <goal>jar-no-fork</goal>
+                <goal>test-jar-no-fork</goal>
               </goals>
             </execution>
           </executions>
@@ -120,7 +126,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.2</version>
+          <version>2.5</version>
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -141,12 +147,8 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.4</version>
           <configuration>
             <junitArtifactName>junit:junit-dep</junitArtifactName>
-            <forkMode>once</forkMode>
-            <printSummary>true</printSummary>
-            <useFile>true</useFile>
           </configuration>
         </plugin>
         <plugin>
@@ -176,12 +178,11 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.0-beta-8</version>
+          <version>2.0-beta-9</version>
           <configuration>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
-            <tagBase>https://stajistics.googlecode.com/svn/tags/</tagBase>
           </configuration>
         </plugin>
         <plugin>
@@ -202,38 +203,11 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.0-beta-7</version>
+          <version>2.4</version>
         </plugin>
       </plugins>
     </pluginManagement>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-    </plugins>
-
   </build>
 
   <profiles>
@@ -290,7 +264,6 @@
         </plugins>
       </build>
       <reporting>
-        <outputDirectory>target/site</outputDirectory>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -346,18 +319,6 @@
     <module>stajistics-snapshot-xml</module>
   </modules>
 
-  <repositories>
-    <repository>
-      <id>ibiblio.org</id>
-      <name>ibiblio</name>
-      <layout>default</layout>
-      <url>http://www.ibiblio.org/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -366,7 +327,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
 
@@ -386,9 +346,9 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-      	<groupId>org.slf4j</groupId>
-      	<artifactId>slf4j-api</artifactId>
-      	<version>${slf4j-version}</version>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j-version}</version>
       </dependency>
 
       <!-- test dependencies -->
@@ -428,11 +388,5 @@
       <url>scp://stajistics.org/home/troyk/stajistics.org/</url>
     </site>
   </distributionManagement>
-
-  <properties>
-    <junit-version>4.4</junit-version>
-    <jmock-version>2.5.1</jmock-version>
-    <slf4j-version>1.5.8</slf4j-version>
-  </properties>
 
 </project>
