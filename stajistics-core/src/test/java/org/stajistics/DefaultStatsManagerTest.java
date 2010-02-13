@@ -35,11 +35,12 @@ import org.junit.runner.RunWith;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
+import org.stajistics.task.TaskService;
 import org.stajistics.tracker.StatsTrackerLocator;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -64,6 +65,9 @@ public class DefaultStatsManagerTest {
         assertNotNull(mgr.getSessionManager());
         assertNotNull(mgr.getEventManager());
         assertNotNull(mgr.getSnapshotManager());
+        assertNotNull(mgr.getTrackerLocator());
+        assertNotNull(mgr.getConfigFactory());
+        assertNotNull(mgr.getTaskService());
     }
 
     @Test
@@ -75,7 +79,8 @@ public class DefaultStatsManagerTest {
                                     mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsTrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class));
+                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(TaskService.class));
             fail("Allowed null StatsConfigManager");
         } catch (NullPointerException npe) {
             assertEquals("configManager", npe.getMessage());
@@ -91,7 +96,8 @@ public class DefaultStatsManagerTest {
                                     mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsTrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class));
+                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(TaskService.class));
             fail("Allowed null StatsSessionManager");
         } catch (NullPointerException npe) {
             assertEquals("sessionManager", npe.getMessage());
@@ -107,7 +113,8 @@ public class DefaultStatsManagerTest {
                                     mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsTrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class));
+                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(TaskService.class));
             fail("Allowed null StatsEventManager");
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());
@@ -123,7 +130,8 @@ public class DefaultStatsManagerTest {
                                     null,
                                     mockery.mock(StatsTrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class));
+                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(TaskService.class));
             fail("Allowed null StatsSnapshotManager");
         } catch (NullPointerException npe) {
             assertEquals("snapshotManager", npe.getMessage());
@@ -139,7 +147,8 @@ public class DefaultStatsManagerTest {
                                     mockery.mock(StatsSnapshotManager.class),
                                     null,
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class));
+                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(TaskService.class));
             fail("Allowed null StatsTrackerLocator");
         } catch (NullPointerException npe) {
             assertEquals("trackerLocator", npe.getMessage());
@@ -155,7 +164,8 @@ public class DefaultStatsManagerTest {
                                     mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsTrackerLocator.class),
                                     null,
-                                    mockery.mock(StatsConfigFactory.class));
+                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(TaskService.class));
             fail("Allowed null StatsKeyFactory");
         } catch (NullPointerException npe) {
             assertEquals("keyFactory", npe.getMessage());
@@ -171,10 +181,28 @@ public class DefaultStatsManagerTest {
                                     mockery.mock(StatsSnapshotManager.class),
                                     mockery.mock(StatsTrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    null);
+                                    null,
+                                    mockery.mock(TaskService.class));
             fail("Allowed null StatsConfigFactory");
         } catch (NullPointerException npe) {
             assertEquals("configFactory", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithNullTaskService() {
+        try {
+            new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
+                                    mockery.mock(StatsSessionManager.class),
+                                    mockery.mock(StatsEventManager.class),
+                                    mockery.mock(StatsSnapshotManager.class),
+                                    mockery.mock(StatsTrackerLocator.class),
+                                    mockery.mock(StatsKeyFactory.class),
+                                    mockery.mock(StatsConfigFactory.class),
+                                    null);
+            fail("Allowed null TaskService");
+        } catch (NullPointerException npe) {
+            assertEquals("taskService", npe.getMessage());
         }
     }
 
@@ -187,14 +215,16 @@ public class DefaultStatsManagerTest {
         StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        TaskService taskService = mockery.mock(TaskService.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, 
-                                                   sessionManager, 
+        StatsManager mgr = new DefaultStatsManager(configManager,
+                                                   sessionManager,
                                                    eventManager,
                                                    snapshotManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory);
+                                                   configFactory,
+                                                   taskService);
 
         assertSame(configManager, mgr.getConfigManager());
     }
@@ -208,14 +238,16 @@ public class DefaultStatsManagerTest {
         StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        TaskService taskService = mockery.mock(TaskService.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, 
-                                                   sessionManager, 
+        StatsManager mgr = new DefaultStatsManager(configManager,
+                                                   sessionManager,
                                                    eventManager,
                                                    snapshotManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory);
+                                                   configFactory,
+                                                   taskService);
 
         assertSame(sessionManager, mgr.getSessionManager());
     }
@@ -229,14 +261,16 @@ public class DefaultStatsManagerTest {
         StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        TaskService taskService = mockery.mock(TaskService.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, 
-                                                   sessionManager, 
+        StatsManager mgr = new DefaultStatsManager(configManager,
+                                                   sessionManager,
                                                    eventManager,
                                                    snapshotManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory);
+                                                   configFactory,
+                                                   taskService);
 
         assertSame(eventManager, mgr.getEventManager());
     }
@@ -250,14 +284,16 @@ public class DefaultStatsManagerTest {
         StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        TaskService taskService = mockery.mock(TaskService.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, 
-                                                   sessionManager, 
+        StatsManager mgr = new DefaultStatsManager(configManager,
+                                                   sessionManager,
                                                    eventManager,
                                                    snapshotManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory);
+                                                   configFactory,
+                                                   taskService);
 
         assertSame(snapshotManager, mgr.getSnapshotManager());
     }
@@ -271,14 +307,16 @@ public class DefaultStatsManagerTest {
         StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        TaskService taskService = mockery.mock(TaskService.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, 
-                                                   sessionManager, 
+        StatsManager mgr = new DefaultStatsManager(configManager,
+                                                   sessionManager,
                                                    eventManager,
                                                    snapshotManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory);
+                                                   configFactory,
+                                                   taskService);
 
         assertSame(trackerLocator, mgr.getTrackerLocator());
     }
@@ -292,14 +330,16 @@ public class DefaultStatsManagerTest {
         StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        TaskService taskService = mockery.mock(TaskService.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, 
-                                                   sessionManager, 
+        StatsManager mgr = new DefaultStatsManager(configManager,
+                                                   sessionManager,
                                                    eventManager,
                                                    snapshotManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory);
+                                                   configFactory,
+                                                   taskService);
 
         assertSame(keyFactory, mgr.getKeyFactory());
     }
@@ -313,14 +353,16 @@ public class DefaultStatsManagerTest {
         StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        TaskService taskService = mockery.mock(TaskService.class);
 
-        StatsManager mgr = new DefaultStatsManager(configManager, 
-                                                   sessionManager, 
+        StatsManager mgr = new DefaultStatsManager(configManager,
+                                                   sessionManager,
                                                    eventManager,
                                                    snapshotManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory);
+                                                   configFactory,
+                                                   taskService);
 
         assertSame(configFactory, mgr.getConfigFactory());
     }

@@ -22,9 +22,10 @@ import java.util.concurrent.RejectedExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
+import org.stajistics.task.TaskService;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  */
 public class AsynchronousStatsEventManager extends SynchronousStatsEventManager {
@@ -33,32 +34,21 @@ public class AsynchronousStatsEventManager extends SynchronousStatsEventManager 
 
     private static final Logger logger = LoggerFactory.getLogger(AsynchronousStatsEventManager.class);
 
-    private final ExecutorService executor;
+    private final TaskService taskService;
 
-    public AsynchronousStatsEventManager() {
-        this(Executors.newFixedThreadPool(3));
-    }
-
-    public AsynchronousStatsEventManager(final ExecutorService executor) {
-        if (executor == null) {
-            throw new NullPointerException("executor");
+    public AsynchronousStatsEventManager(final TaskService taskService) {
+        if (taskService == null) {
+            throw new NullPointerException("taskService");
         }
 
-        this.executor = executor;
+        this.taskService = taskService;
     }
 
     @Override
-    public void fireEvent(final StatsEventType eventType, 
-                          final StatsKey key, 
+    public void fireEvent(final StatsEventType eventType,
+                          final StatsKey key,
                           final Object target) {
-        try {
-            executor.submit(new EventCallable(eventType, key, target));
-
-        } catch (RejectedExecutionException ree) {
-            logger.error("Failed to fire event asynchronously, falling back on synchronous execution", 
-                       ree);
-            super.fireEvent(eventType, key, target);
-        }
+        taskService.submit(getClass(), new EventCallable(eventType, key, target));
     }
 
     /* INNER CLASSES */

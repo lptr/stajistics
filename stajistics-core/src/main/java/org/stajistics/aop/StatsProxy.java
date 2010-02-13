@@ -30,8 +30,8 @@ import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -78,11 +78,11 @@ public class StatsProxy implements InvocationHandler {
 
     /**
      * The type which receives the result of this method call must be an interface.
-     * 
+     *
      * @param <T>
      * @param key
      * @param target
-     * @return 
+     * @return
      */
     @SuppressWarnings("unchecked")
     public static <T> T wrap(final StatsManager statsManager,
@@ -98,7 +98,7 @@ public class StatsProxy implements InvocationHandler {
                                          final StatsKey key,
                                          final U target,
                                          final Class<T> iface) {
-        return wrap(statsManager, key, target, (Class<T>[])new Class[] { iface });
+        return wrap(statsManager, key, target, new Class[] { iface });
     }
 
     @SuppressWarnings("unchecked")
@@ -109,8 +109,8 @@ public class StatsProxy implements InvocationHandler {
         ClassLoader classLoader = Thread.currentThread()
                                         .getContextClassLoader();
 
-        T proxy = (T) Proxy.newProxyInstance(classLoader, 
-                                             ifaces, 
+        T proxy = (T) Proxy.newProxyInstance(classLoader,
+                                             ifaces,
                                              new StatsProxy(statsManager, key, target));
         return proxy;
     }
@@ -162,8 +162,8 @@ public class StatsProxy implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(final Object proxy, 
-                         final Method method, 
+    public Object invoke(final Object proxy,
+                         final Method method,
                          final Object[] args) throws Throwable {
         StatsKey methodKey = key.buildCopy()
                                 .withAttribute(ATTR_METHOD, getMethodString(method))

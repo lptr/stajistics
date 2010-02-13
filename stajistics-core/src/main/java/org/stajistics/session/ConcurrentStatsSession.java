@@ -32,9 +32,9 @@ import org.stajistics.util.AtomicDouble;
 /**
  * An implementation of {@link StatsSession} that reads and writes data fields atomically
  * without locking. This allows scalable updates that minimize the runtime overhead of statistics
- * collection. However, the cost of using this implementation is that the result of 
+ * collection. However, the cost of using this implementation is that the result of
  * {@link #collectData()} may not contain values that are not consistent with one another.
- * 
+ *
  * @author The Stajistics Project
  */
 public class ConcurrentStatsSession extends AbstractStatsSession {
@@ -58,14 +58,14 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         super(key, eventManager);
     }
 
-    public ConcurrentStatsSession(final StatsKey key, 
-                                  final StatsEventManager eventManager, 
+    public ConcurrentStatsSession(final StatsKey key,
+                                  final StatsEventManager eventManager,
                                   final DataRecorder... dataRecorders) {
         super(key, eventManager, dataRecorders);
     }
 
-    public ConcurrentStatsSession(final StatsKey key, 
-                                  final StatsEventManager eventManager, 
+    public ConcurrentStatsSession(final StatsKey key,
+                                  final StatsEventManager eventManager,
                                   final List<DataRecorder> dataRecorders) {
         super(key, eventManager, dataRecorders);
     }
@@ -74,7 +74,7 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
      * {@inheritDoc}
      */
     @Override
-    public void track(final StatsTracker tracker, 
+    public void track(final StatsTracker tracker,
                       long now) {
         if (now < 0) {
             now = System.currentTimeMillis();
@@ -137,7 +137,7 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
 
         // First
         if (first.get() == null) {
-            first.compareAndSet(null, new Double(currentValue));
+            first.compareAndSet(null, currentValue);
         }
 
         // Last
@@ -190,7 +190,7 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
             return Double.NaN;
         }
 
-        return firstValue.doubleValue();
+        return firstValue;
     }
 
     /**

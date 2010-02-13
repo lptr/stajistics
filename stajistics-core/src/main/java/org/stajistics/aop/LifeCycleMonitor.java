@@ -26,8 +26,8 @@ import org.stajistics.StatsKey;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -43,7 +43,7 @@ public class LifeCycleMonitor<T> {
     private static LifeCycleMonitor<Object> defaultInstance;
 
     public LifeCycleMonitor() {
-        
+
     }
 
     public static LifeCycleMonitor<Object> getDefaultInstance() {
@@ -129,7 +129,6 @@ public class LifeCycleMonitor<T> {
                 while (thread == currentThread) {
                     ref = refQueue.remove();
                     LifeCycleMonitor.this.remove(ref);
-                    ref = null;
                 }
 
             } catch (InterruptedException e) {

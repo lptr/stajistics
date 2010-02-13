@@ -27,10 +27,7 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.DefaultStatsManager;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyUtils;
-import org.stajistics.StatsManager;
+import org.stajistics.*;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
@@ -38,7 +35,7 @@ import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  */
 @RunWith(JMock.class)
@@ -64,6 +61,7 @@ public class StatsProxyTest {
 
         // TODO: these should be _actually_ mocked
         mockStatsManager = DefaultStatsManager.createWithDefaults();
+        Stats.loadManager(mockStatsManager);
         mockKey = mockStatsManager.getKeyFactory().createKey("test");
 
         mockService = mockery.mock(Service.class);
@@ -103,9 +101,9 @@ public class StatsProxyTest {
     @Test
     public void testWrapWithKeyTargetInterfaceArray() {
         Service serviceImpl = new ServiceImpl();
-        serviceImpl = StatsProxy.wrap(mockStatsManager, 
-                                      mockKey, 
-                                      serviceImpl, 
+        serviceImpl = StatsProxy.wrap(mockStatsManager,
+                                      mockKey,
+                                      serviceImpl,
                                       new Class<?>[] { Service.class, Service2.class });
         @SuppressWarnings("unused")
         Service2 service2 = (Service2)serviceImpl;
@@ -142,7 +140,7 @@ public class StatsProxyTest {
             one(mockService).query();
         }});
 
-        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService); 
+        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
 
         serviceProxy.query();
     }
@@ -191,7 +189,7 @@ public class StatsProxyTest {
             one(mockService).query(); will(throwException(exception));
         }});
 
-        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService); 
+        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
 
         try {
             serviceProxy.query();

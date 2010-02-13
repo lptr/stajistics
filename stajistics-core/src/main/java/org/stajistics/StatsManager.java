@@ -19,10 +19,11 @@ import java.io.Serializable;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
+import org.stajistics.task.TaskService;
 import org.stajistics.tracker.StatsTrackerLocator;
 
 /**
- * Acts as an aggregator of other managers and factories. Maintains a master enabled switch for 
+ * Acts as an aggregator of other managers and factories. Maintains a master enabled switch for
  * statistics collection.
  *
  * @author The Stajistics Project
@@ -78,6 +79,9 @@ public interface StatsManager extends Serializable {
      */
     StatsConfigFactory getConfigFactory();
 
+
+    TaskService getTaskService();
+
     /**
      * Determine if statistics collection is enabled.
      *
@@ -92,6 +96,6 @@ public interface StatsManager extends Serializable {
      */
     void setEnabled(boolean enabled);
 
-
+    void shutdown();
 
 }

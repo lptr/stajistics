@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
+import org.stajistics.task.TaskService;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerLocator;
 import org.stajistics.tracker.incident.IncidentTracker;
@@ -35,8 +36,8 @@ import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -143,47 +144,6 @@ public class StatsTest {
     }
 
     @Test
-    public void testGetTrackerWithKeyName() {
-        final String keyName = "test.name";
-        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
-
-        final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
-
-        mockery.checking(new Expectations() {{
-            one(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
-            one(mockKeyFactory).createKey(keyName); will(returnValue(mockKey));
-            one(mockTrackerLocator).getTracker(with(any(StatsKey.class))); will(returnValue(mockTracker));
-        }});
-
-        assertEquals(mockTracker, Stats.getTracker(keyName));
-    }
-
-    @Test
-    public void testGetTrackerWithStatsKey() {
-        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
-
-        mockery.checking(new Expectations() {{
-            one(mockTrackerLocator).getTracker(with(mockKey)); will(returnValue(mockTracker));
-        }});
-
-        assertSame(mockTracker, Stats.getTracker(mockKey));
-    }
-/*
-    @Test
-    public void testGetTrackerWithStatsKeys() {
-        final SpanTracker mockTracker = mockery.mock(SpanTracker.class);
-
-        final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
-
-        mockery.checking(new Expectations() {{
-            one(mockTrackerLocator).getSpanTracker(with(new StatsKey[] { mockKey, mockKey2 })); 
-            will(returnValue(mockTracker));
-        }});
-
-        assertSame(mockTracker, Stats.getSpanTracker(mockKey, mockKey2));
-    }
-*/  
-    @Test
     public void testStartWithKeyName() {
         final String keyName = "test.name";
         final SpanTracker mockTracker = mockery.mock(SpanTracker.class);
@@ -219,7 +179,7 @@ public class StatsTest {
         final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
 
         mockery.checking(new Expectations() {{
-            one(mockTrackerLocator).getTracker(with(new StatsKey[] { mockKey, mockKey2 })); 
+            one(mockTrackerLocator).getTracker(with(new StatsKey[] { mockKey, mockKey2 }));
             will(returnValue(mockTracker));
             one(mockTracker).track(); will(returnValue(mockTracker));
         }});
@@ -243,7 +203,7 @@ public class StatsTest {
 
         Stats.incident(keyName);
     }
-    
+
     @Test
     public void testIncidentWithStatsKey() {
         final IncidentTracker mockTracker = mockery.mock(IncidentTracker.class);
@@ -263,7 +223,7 @@ public class StatsTest {
         final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
 
         mockery.checking(new Expectations() {{
-            one(mockTrackerLocator).getIncidentTracker(with(new StatsKey[] { mockKey, mockKey2 })); 
+            one(mockTrackerLocator).getIncidentTracker(with(new StatsKey[] { mockKey, mockKey2 }));
             will(returnValue(mockTracker));
             one(mockTracker).incident(); will(returnValue(mockTracker));
         }});
@@ -282,7 +242,7 @@ public class StatsTest {
         final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
 
         final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
-        final StatsKeyBuilder mockKeyBuilder = mockery.mock(StatsKeyBuilder.class); 
+        final StatsKeyBuilder mockKeyBuilder = mockery.mock(StatsKeyBuilder.class);
 
         final Exception e = new Exception();
 
@@ -308,7 +268,7 @@ public class StatsTest {
         final IncidentTracker mockTracker = mockery.mock(IncidentTracker.class);
 
         final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
-        final StatsKeyBuilder mockKeyBuilder = mockery.mock(StatsKeyBuilder.class); 
+        final StatsKeyBuilder mockKeyBuilder = mockery.mock(StatsKeyBuilder.class);
 
         final Exception e = new Exception();
 
@@ -433,6 +393,11 @@ public class StatsTest {
         }
 
         @Override
+        public TaskService getTaskService() {
+            return null;
+        }
+
+        @Override
         public boolean isEnabled() {
             return false;
         }
@@ -440,5 +405,7 @@ public class StatsTest {
         @Override
         public void setEnabled(boolean enabled) {}
 
+        @Override
+        public void shutdown() {}
     }
 }

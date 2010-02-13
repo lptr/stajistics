@@ -22,7 +22,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * 
+ *
  *
  * @author The Stajistics Project
  */
@@ -93,7 +93,7 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory<StatsTr
 
     public static class Builder {
 
-        private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap = 
+        private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap =
             new HashMap<String,StatsTrackerFactory<? extends StatsTracker>>();
 
         protected Builder() {}
