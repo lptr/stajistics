@@ -522,6 +522,9 @@ public final class Stats {
                            .createConfigBuilder();
     }
 
+    /**
+     * @see StatsManager#shutdown() 
+     */
     public static void shutdown() {
         getManager().shutdown();
     }
