@@ -22,11 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigManager;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyMatcher;
-import org.stajistics.StatsProperties;
+import org.stajistics.*;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 
@@ -38,11 +34,11 @@ import org.stajistics.event.StatsEventType;
  */
 public class DefaultStatsSessionManager implements StatsSessionManager {
 
-    public static final String PROP_INITIAL_CAPACITY = 
+    public static final String PROP_INITIAL_CAPACITY =
         StatsSessionManager.class.getName() + ".sessionMap.initialCapacity";
-    public static final String PROP_LOAD_FACTOR = 
+    public static final String PROP_LOAD_FACTOR =
         StatsSessionManager.class.getName() + ".sessionMap.loadFactor";
-    public static final String PROP_CONCURRENCY_LEVEL = 
+    public static final String PROP_CONCURRENCY_LEVEL =
         StatsSessionManager.class.getName() + ".sessionMap.concurrencyLevel";
 
     private static final long serialVersionUID = 7815229695876668904L;
@@ -168,7 +164,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
             eventManager.fireEvent(StatsEventType.SESSION_DESTROYED, key, session);
         }
 
-        return session; 
+        return session;
     }
 
     /**
@@ -179,7 +175,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
      */
     protected StatsSession createSession(final StatsKey key) {
         StatsConfig config = configManager.getConfig(key);
-        return config.getSessionFactory().createSession(key, eventManager);
+        return config.getSessionFactory().createSession(key, Stats.getManager()); //TODO: How to get StatsManager properly
     }
 
     /**

@@ -33,8 +33,8 @@ import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -60,8 +60,12 @@ public abstract class AbstractStatsSessionTestCase {
         mockTracker = mockery.mock(StatsTracker.class);
         mockEventManager = mockery.mock(StatsEventManager.class);
 
+        initMocks();
+
         session = createStatsSession();
     }
+
+    protected void initMocks() {}
 
     protected StatsSession createStatsSession() {
         return new ConcurrentStatsSession(mockKey, mockEventManager);
@@ -134,8 +138,8 @@ public abstract class AbstractStatsSessionTestCase {
     public void testClearFiresSessionClearedEvent() {
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.SESSION_CLEARED), 
-                                            with(mockKey), 
+            one(mockEventManager).fireEvent(with(StatsEventType.SESSION_CLEARED),
+                                            with(mockKey),
                                             with(session));
         }});
 
@@ -182,14 +186,14 @@ public abstract class AbstractStatsSessionTestCase {
     public void testTrackFiresTrackerTrackingEvent() {
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.TRACKER_TRACKING), 
-                                            with(mockKey), 
+            one(mockEventManager).fireEvent(with(StatsEventType.TRACKER_TRACKING),
+                                            with(mockKey),
                                             with(mockTracker));
         }});
 
         session.track(mockTracker, 0L);
     }
-    
+
     @Test
     public void testUpdate() {
         mockery.checking(new Expectations() {{
@@ -228,15 +232,15 @@ public abstract class AbstractStatsSessionTestCase {
     public void testUpdateFiresTrackerCommittedEvent() {
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.TRACKER_COMMITTED), 
-                                            with(mockKey), 
+            one(mockEventManager).fireEvent(with(StatsEventType.TRACKER_COMMITTED),
+                                            with(mockKey),
                                             with(mockTracker));
             ignoring(mockTracker).getValue(); will(returnValue(1.0));
         }});
 
         session.update(mockTracker, 0L);
     }
-    
+
     @Test
     public void testTrackAndUpdate() {
         mockery.checking(new Expectations() {{

@@ -15,7 +15,7 @@
 package org.stajistics.session;
 
 import org.stajistics.StatsKey;
-import org.stajistics.event.StatsEventManager;
+import org.stajistics.StatsManager;
 import org.stajistics.session.recorder.DistributionDataRecorder;
 
 /**
@@ -37,7 +37,7 @@ public class DefaultSessionFactory implements StatsSessionFactory {
 
     @Override
     public StatsSession createSession(final StatsKey key,
-                                      final StatsEventManager eventManager) {
-        return new ConcurrentStatsSession(key, eventManager, new DistributionDataRecorder());
+                                      final StatsManager manager) {
+        return new ConcurrentStatsSession(key, manager.getEventManager(), new DistributionDataRecorder());
     }
 }

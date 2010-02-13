@@ -23,6 +23,8 @@ import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.DefaultStatsSnapshotManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
+import org.stajistics.task.SimpleTaskService;
+import org.stajistics.task.TaskService;
 import org.stajistics.tracker.DefaultStatsTrackerLocator;
 import org.stajistics.tracker.StatsTrackerLocator;
 
@@ -36,7 +38,7 @@ public class DefaultStatsManager implements StatsManager {
 
     private static final long serialVersionUID = 6464098983922060895L;
 
-    private static final String SYS_PROP_MANAGEMENT_ENABLED = StatsManagement.class.getName() + ".enabled";
+    private static final String PROP_MANAGEMENT_ENABLED = StatsManagement.class.getName() + ".enabled";
 
     private volatile boolean enabled = true;
 
@@ -47,7 +49,7 @@ public class DefaultStatsManager implements StatsManager {
     protected final StatsTrackerLocator trackerLocator;
     protected final StatsKeyFactory keyFactory;
     protected final StatsConfigFactory configFactory;
-
+    protected final TaskService taskService;
 
     /**
      * Construct a DefaultStatsManager using the given set of managers.
@@ -66,7 +68,8 @@ public class DefaultStatsManager implements StatsManager {
                                final StatsSnapshotManager snapshotManager,
                                final StatsTrackerLocator trackerLocator,
                                final StatsKeyFactory keyFactory,
-                               final StatsConfigFactory configFactory) {
+                               final StatsConfigFactory configFactory,
+                               final TaskService taskService) {
 
         if (configManager == null) {
             throw new NullPointerException("configManager");
@@ -89,6 +92,9 @@ public class DefaultStatsManager implements StatsManager {
         if (configFactory == null) {
             throw new NullPointerException("configFactory");
         }
+        if (taskService == null) {
+            throw new NullPointerException("taskService");
+        }
 
         this.keyFactory = keyFactory;
         this.configManager = configManager;
@@ -97,6 +103,7 @@ public class DefaultStatsManager implements StatsManager {
         this.trackerLocator = trackerLocator;
         this.eventManager = eventManager;
         this.configFactory = configFactory;
+        this.taskService = taskService;
     }
 
     /**
@@ -115,6 +122,7 @@ public class DefaultStatsManager implements StatsManager {
         StatsSnapshotManager snapshotManager = DefaultStatsSnapshotManager.createWithDefaults();
         StatsTrackerLocator trackerLocator = new DefaultStatsTrackerLocator(configManager, sessionManager);
         StatsConfigFactory configFactory = new DefaultStatsConfigFactory(configManager);
+        TaskService taskService = new SimpleTaskService();
 
         DefaultStatsManager manager = new DefaultStatsManager(configManager,
                                                               sessionManager,
@@ -122,9 +130,10 @@ public class DefaultStatsManager implements StatsManager {
                                                               snapshotManager,
                                                               trackerLocator,
                                                               keyFactory,
-                                                              configFactory);
+                                                              configFactory,
+                                                              taskService);
 
-        if (StatsProperties.getBooleanProperty(SYS_PROP_MANAGEMENT_ENABLED, true)) {
+        if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
             StatsManagement management = new DefaultStatsManagement();
             management.registerConfigManagerMBean(manager);
             management.registerSessionManagerMBean(manager);
@@ -197,6 +206,14 @@ public class DefaultStatsManager implements StatsManager {
      * {@inheritDoc}
      */
     @Override
+    public TaskService getTaskService() {
+        return taskService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -210,4 +227,16 @@ public class DefaultStatsManager implements StatsManager {
         this.trackerLocator.setEnabled(enabled); // ??????
     }
 
+    public void shutdown() {
+        setEnabled(false);
+        taskService.shutdown();
+    }
+
+    /* NESTED CLASSES */
+
+    public static class Builder {
+
+
+
+    }
 }

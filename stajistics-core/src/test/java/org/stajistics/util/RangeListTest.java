@@ -27,8 +27,8 @@ import java.util.List;
 import org.junit.Test;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -38,27 +38,21 @@ public class RangeListTest {
 
     // no overlap
     private static final List<Range> TEST_RANGES1 = new ArrayList<Range>(
-            Arrays.asList(new Range[] {
-                    new Range(0, 2),
-                    new Range(4, 6),
-                    new Range(8, 10)
-            }));
+            Arrays.asList(new Range(0, 2),
+                          new Range(4, 6),
+                          new Range(8, 10)));
 
     // no overlap
     private static final List<Range> TEST_RANGES2 = new ArrayList<Range>(
-            Arrays.asList(new Range[] {
-                    new Range(0, 2),
-                    new Range(3, 5),
-                    new Range(6, 8)
-            }));
+            Arrays.asList(new Range(0, 2),
+                          new Range(3, 5),
+                          new Range(6, 8)));
 
     // overlap for inclusive range end
     private static final List<Range> TEST_RANGES3 = new ArrayList<Range>(
-            Arrays.asList(new Range[] {
-                    new Range(0, 2),
-                    new Range(2, 4),
-                    new Range(4, 6)
-            }));
+            Arrays.asList(new Range(0, 2),
+                          new Range(2, 4),
+                          new Range(4, 6)));
 
     // overlap
     private static final List<Range> TEST_RANGES4 = new ArrayList<Range>(
@@ -179,7 +173,7 @@ public class RangeListTest {
                 final Range r = testRanges.get(j);
 
                 for (double v = r.getBegin(); v < r.getEnd(); v++) {
-                    assertEquals("TEST_RANGES" + (i + 1) + ", Range: " + j + ", value: " + v, 
+                    assertEquals("TEST_RANGES" + (i + 1) + ", Range: " + j + ", value: " + v,
                                  j, rl.indexOfRangeContaining(v));
                 }
             }

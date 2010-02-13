@@ -12,27 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session;
+package org.stajistics.task;
 
 import java.io.Serializable;
-
-import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
- * A factory for {@link StatsSession} instances.
- *
  * @author The Stajistics Project
  */
-public interface StatsSessionFactory extends Serializable {
+public interface TaskService extends Serializable {
 
-    /**
-     * Create a {@link StatsSession} instance for the given <tt>key</tt>.
-     *
-     * @param key The key for which to create a {@link org.stajistics.session.StatsSession}.
-     * @param manager
-     * @return A {@link StatsSession} instance, never <tt>null</tt>.
-     */
-    StatsSession createSession(StatsKey key, StatsManager manager);
+    <T> Future<T> submit(Class<?> source, Callable<T> task);
+
+    void shutdown();
 
 }

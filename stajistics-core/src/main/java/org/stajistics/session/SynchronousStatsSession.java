@@ -30,12 +30,12 @@ import org.stajistics.tracker.StatsTracker;
 
 /**
  * An implementation of {@link StatsSession} that reads ands writes data fields atomically
- * and locks calls to {@link #track(StatsTracker, long)}, {@link #update(StatsTracker, long)}, 
- * {@link #collectData()}, and {@link #clear()}. This allows guaranteed consistency between the 
- * values contained in the result of {@link #collectData()}, however, at the cost of increased 
+ * and locks calls to {@link #track(StatsTracker, long)}, {@link #update(StatsTracker, long)},
+ * {@link #collectData()}, and {@link #clear()}. This allows guaranteed consistency between the
+ * values contained in the result of {@link #collectData()}, however, at the cost of increased
  * statistics collection overhead and reduced scalability.
  *
- * The other methods that are not mentioned above are not locked, but since this class 
+ * The other methods that are not mentioned above are not locked, but since this class
  * extends {@link ConcurrentStatsSession}, thread safety is retained.
  *
  * @author The Stajistics Project
@@ -70,8 +70,8 @@ public class SynchronousStatsSession extends AbstractStatsSession {
     /**
      * {@inheritDoc}
      */
-    public SynchronousStatsSession(final StatsKey key, 
-                                   final StatsEventManager eventManager, 
+    public SynchronousStatsSession(final StatsKey key,
+                                   final StatsEventManager eventManager,
                                    final DataRecorder... dataRecorders) {
         super(key, eventManager, dataRecorders);
     }
@@ -79,8 +79,8 @@ public class SynchronousStatsSession extends AbstractStatsSession {
     /**
      * {@inheritDoc}
      */
-    public SynchronousStatsSession(final StatsKey key, 
-                                   final StatsEventManager eventManager, 
+    public SynchronousStatsSession(final StatsKey key,
+                                   final StatsEventManager eventManager,
                                    final List<DataRecorder> dataRecorders) {
         super(key, eventManager, dataRecorders);
     }
@@ -89,7 +89,7 @@ public class SynchronousStatsSession extends AbstractStatsSession {
      * {@inheritDoc}
      */
     @Override
-    public void track(final StatsTracker tracker, 
+    public void track(final StatsTracker tracker,
                       long now) {
         lock.lock();
         try {
@@ -165,7 +165,7 @@ public class SynchronousStatsSession extends AbstractStatsSession {
 
             // First
             if (first == null) {
-                first = Double.valueOf(currentValue);
+                first = currentValue;
             }
 
             // Last

@@ -18,8 +18,8 @@ import org.stajistics.TestUtil;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -120,7 +120,7 @@ public class DefaultStatsTrackerLocatorTest {
     @Test
     public void testGetTrackerWithNullKey() {
         try {
-            trackerLocator.getTracker((StatsKey)null);
+            trackerLocator.getTracker(null);
             fail("Allowed getTracker with null StatsKey");
 
         } catch (NullPointerException npe) {
@@ -152,7 +152,7 @@ public class DefaultStatsTrackerLocatorTest {
 
         assertEquals(NullTracker.getInstance(), trackerLocator.getIncidentTracker(mockKey));
     }
-    
+
     @Test
     public void testGetManualTrackerWhenDisabled() {
         trackerLocator.setEnabled(false);

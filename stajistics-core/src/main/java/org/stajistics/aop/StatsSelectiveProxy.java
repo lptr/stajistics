@@ -25,9 +25,9 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 
 /**
- * 
+ *
  * @author The Stajistics Project
- * 
+ *
  */
 public class StatsSelectiveProxy extends StatsProxy {
 
@@ -49,7 +49,7 @@ public class StatsSelectiveProxy extends StatsProxy {
     /**
      * The type which receives the result of this method call must be an
      * interface.
-     * 
+     *
      * @param <T>
      * @param key
      * @param target
@@ -71,8 +71,7 @@ public class StatsSelectiveProxy extends StatsProxy {
                                          final U target,
                                          final SelectionCriteria criteria,
                                          final Class<T> iface) {
-        return wrap(statsManager, key, target, criteria,
-                    (Class<T>[]) new Class[] { iface });
+        return wrap(statsManager, key, target, criteria, new Class[] { iface });
     }
 
     @SuppressWarnings("unchecked")
@@ -182,7 +181,7 @@ public class StatsSelectiveProxy extends StatsProxy {
             }
         }
     }
-    
+
     public static class EnabledCriteria implements SelectionCriteria {
 
         private final AtomicBoolean enabled;
@@ -234,7 +233,7 @@ public class StatsSelectiveProxy extends StatsProxy {
             this.method = method;
             this.include = include;
         }
-        
+
         @Override
         public boolean select(final Method method, final Object[] args) {
             return (this.method.equals(method) == include);

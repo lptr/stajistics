@@ -111,7 +111,13 @@ public abstract class AbstractStatsKey implements StatsKey {
             return false;
         }
 
-        StatsKey otherKey = (StatsKey)other;
+        StatsKey otherKey;
+        try {
+            // This approach avoids an instanceof call in the normal case
+            otherKey = (StatsKey)other;
+        } catch (ClassCastException cce) {
+            return false;
+        }
 
         if (this.getAttributeCount() != otherKey.getAttributeCount()) {
             return false;

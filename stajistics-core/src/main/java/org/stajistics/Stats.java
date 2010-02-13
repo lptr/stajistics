@@ -26,14 +26,14 @@ import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * <p>A facade to the Stajistics core API. Maintains a singleton default instance of a 
- * {@link StatsManager}. Provides static convenience methods for manipulating the 
+ * <p>A facade to the Stajistics core API. Maintains a singleton default instance of a
+ * {@link StatsManager}. Provides static convenience methods for manipulating the
  * underlying API.</p>
  *
  * <p>The methods in this class that return {@link StatsTracker} instances do not throw
  * Exceptions, checked nor unchecked. Rather, these methods catch and log Exceptions and return
- * a no-operation {@link StatsTracker} instance. The necessity in this design is to shield a 
- * client application from any problems related to invoking statistics collection, possibly caused 
+ * a no-operation {@link StatsTracker} instance. The necessity in this design is to shield a
+ * client application from any problems related to invoking statistics collection, possibly caused
  * by misconfiguration. To bypass this Exception-swallowing behaviour, the use of this facade
  * can be discarded and the underlying API can be accessed directly.</p>
  *
@@ -68,7 +68,7 @@ public final class Stats {
 
     /**
      * Obtain the sole {@link StatsManager} instance.
-     * The sole StatsManager instance can be specified using the {@link #loadManager(Stats)} method.
+     * The sole StatsManager instance can be specified using the {@link #loadManager(StatsManager)} method.
      * If an instance has not previously been loaded, a call to this method will
      * instantiate and load a {@link DefaultStatsManager}.
      *
@@ -95,8 +95,8 @@ public final class Stats {
             manager = loadStatsManagerFromSystemProperties();
 
         } catch (Exception e) {
-            logger.error("Failed to load " + StatsManager.class.getSimpleName() + 
-                           ": " + e.toString(), 
+            logger.error("Failed to load " + StatsManager.class.getSimpleName() +
+                           ": " + e.toString(),
                          e);
         }
 
@@ -170,51 +170,12 @@ public final class Stats {
     }
 
     /**
-     * Obtain a {@link StatsTracker} for the given <tt>keyName</tt> that can be
-     * used to collect statistics. The returned {@link StatsTracker} will need to be cast
-     * into one of the more specific sub-interfaces in order to be useful in statistics collection.
-     * Equivalent to calling <tt>Stats.getTracker(Stats.newKey(name))</tt>.
-     *
-     * @param keyName The key name for which to return a tracker.
-     * @return A {@link StatsTracker} instance, 
-     *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
-     */
-    public static StatsTracker getTracker(final String keyName) {
-        try {
-            return getTrackerLocator().getTracker(newKey(keyName));
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + StatsTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
-    }
-
-    /**
-     * Obtain a {@link StatsTracker} for the given <tt>key</tt> that can be
-     * used to collect statistics. The returned {@link StatsTracker} will need to be cast
-     * into one of the more specific sub-interfaces in order to be useful in statistics collection.
-     *
-     * @param key The {@link StatsKey} for which to return a tracker.
-     * @return A {@link StatsTracker} instance, 
-     *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
-     *
-     * @see StatsManager#getTracker(StatsKey)
-     */
-    public static StatsTracker getTracker(final StatsKey key) {
-        try {
-            return getTrackerLocator().getTracker(key);
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + StatsTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
-    }
-
-    /**
      * Obtain a {@link SpanTracker} for the given <tt>keyName</tt> that can be used
-     * to collect statistics related to some span. Equivalent to calling 
+     * to collect statistics related to some span. Equivalent to calling
      * <tt>Stats.getSpanTracker(Stats.newKey(name))</tt>.
      *
      * @param keyName The key name for which to return a tracker.
-     * @return A {@link SpanTracker} instance, 
+     * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final String keyName) {
@@ -231,7 +192,7 @@ public final class Stats {
      * to collect statistics related to some span.
      *
      * @param key The {@link StatsKey} for which to return a tracker.
-     * @return A {@link SpanTracker} instance, 
+     * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final StatsKey key) {
@@ -248,7 +209,7 @@ public final class Stats {
      * to collect statistics related to some span.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
-     * @return A {@link SpanTracker} instance, 
+     * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final StatsKey... keys) {
@@ -265,11 +226,11 @@ public final class Stats {
      * <tt>Stats.getSpanTracker(Stats.newKey(name)).start()</tt>.
      *
      * @param keyName The key name for which to return a tracker.
-     * @return A {@link SpanTracker} instance, 
+     * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#getSpanTracker(StatsKey)
-     * @see StatsTracker#start()
+     * @see StatsTrackerLocator#getSpanTracker(StatsKey)
+     * @see SpanTracker#start()
      */
     public static SpanTracker start(final String keyName) {
         try {
@@ -286,11 +247,11 @@ public final class Stats {
      * <tt>Stats.getSpanTracker(key).start()</tt>
      *
      * @param key The {@link StatsKey} for which to return a tracker.
-     * @return A {@link SpanTracker} instance, 
+     * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#getSpanTracker(StatsKey)
-     * @see StatsTracker#start()
+     * @see StatsTrackerLocator#getSpanTracker(StatsKey)
+     * @see SpanTracker#start()
      */
     public static SpanTracker start(final StatsKey key) {
         try {
@@ -307,11 +268,11 @@ public final class Stats {
      * <tt>Stats.getSpanTracker(keys).start()</tt>.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
-     * @return A {@link SpanTracker} instance, 
+     * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#getSpanTracker(StatsKey...)
-     * @see StatsTracker#start()
+     * @see StatsTrackerLocator#getSpanTracker(StatsKey...)
+     * @see SpanTracker#start()
      */
     public static SpanTracker start(final StatsKey... keys) {
         try {
@@ -328,10 +289,10 @@ public final class Stats {
      * used to report incidents of events.
      *
      * @param keyName The key name for which to return an incident tracker.
-     * @return An {@link IncidentTracker} instance, 
+     * @return An {@link IncidentTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#getIncidentTracker(StatsKey)
+     * @see StatsTrackerLocator#getIncidentTracker(StatsKey)
      */
     public static IncidentTracker getIncidentTracker(final String keyName) {
         try {
@@ -347,10 +308,10 @@ public final class Stats {
      * used to report incidents of events.
      *
      * @param key The {@link StatsKey} for which to return an incident tracker.
-     * @return An {@link IncidentTracker} instance, 
+     * @return An {@link IncidentTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#getIncidentTracker(StatsKey)
+     * @see StatsTrackerLocator#getIncidentTracker(StatsKey)
      */
     public static IncidentTracker getIncidentTracker(final StatsKey key) {
         try {
@@ -367,7 +328,7 @@ public final class Stats {
      *
      * @param keyName The key name for which to report an incident.
      *
-     * @see StatsManager#getIncidentTracker(StatsKey...)
+     * @see StatsTrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
     public static void incident(final String keyName) {
@@ -385,7 +346,7 @@ public final class Stats {
      *
      * @param key The {@link StatsKey} for which to report an incident.
      *
-     * @see StatsManager#getIncidentTracker(StatsKey...)
+     * @see StatsTrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
     public static void incident(final StatsKey key) {
@@ -403,7 +364,7 @@ public final class Stats {
      *
      * @param keys The {@link StatsKey}s for which to report an incident.
      *
-     * @see StatsManager#getTracker(StatsKey...)
+     * @see StatsTrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
     public static void incident(final StatsKey... keys) {
@@ -424,7 +385,7 @@ public final class Stats {
     public static void failure(final Throwable failure,
                                final String keyName) {
         try {
-            getTrackerLocator().getIncidentTracker(StatsKeyUtils.keyForFailure(newKey(keyName), 
+            getTrackerLocator().getIncidentTracker(StatsKeyUtils.keyForFailure(newKey(keyName),
                                                                                failure))
                                .incident();
         } catch (Exception e) {
@@ -477,10 +438,10 @@ public final class Stats {
      * used to report manually collected statistics.
      *
      * @param keyName The key name for which to return a manual tracker.
-     * @return A {@link StatsTracker} instance, 
+     * @return A {@link StatsTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#getManualTracker(StatsKey)
+     * @see StatsTrackerLocator#getManualTracker(StatsKey)
      */
     public static ManualTracker getManualTracker(final String keyName) {
         try {
@@ -496,10 +457,10 @@ public final class Stats {
      * used to report manually collected statistics.
      *
      * @param key The {@link StatsKey} for which to return a manual tracker.
-     * @return A {@link StatsTracker} instance, 
+     * @return A {@link StatsTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#getManualTracker(StatsKey)
+     * @see StatsTrackerLocator#getManualTracker(StatsKey)
      */
     public static ManualTracker getManualTracker(final StatsKey key) {
         try {
@@ -514,10 +475,10 @@ public final class Stats {
      * Create a new {@link StatsKey} from the given <tt>name</tt>.
      *
      * @param name The name of the key to create.
-     * @return A new {@link StatsKey} instance or a {@link NullStatsKey} 
+     * @return A new {@link StatsKey} instance or a {@link NullStatsKey}
      *         if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#createKey(String)
+     * @see StatsKeyFactory#createKey(String)
      */
     public static StatsKey newKey(final String name) {
         try {
@@ -534,10 +495,10 @@ public final class Stats {
      * for the given <tt>name</tt>.
      *
      * @param name The name of the key that the builder will create.
-     * @return A {@link StatsKeyBuilder} which can be used to define key attributes, 
+     * @return A {@link StatsKeyBuilder} which can be used to define key attributes,
      *         or a {@link NullStatsKeyBuilder} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsManager#createKeyBuilder(StatsKey)
+     * @see StatsKeyFactory#createKeyBuilder(StatsKey)
      */
     public static StatsKeyBuilder buildKey(final String name) {
         try {
@@ -554,11 +515,14 @@ public final class Stats {
      *
      * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
      *
-     * @see StatsManager#createConfigBuilder()
+     * @see StatsConfigFactory#createConfigBuilder()
      */
     public static StatsConfigBuilder buildConfig() {
         return getManager().getConfigFactory()
                            .createConfigBuilder();
     }
 
+    public static void shutdown() {
+        getManager().shutdown();
+    }
 }
