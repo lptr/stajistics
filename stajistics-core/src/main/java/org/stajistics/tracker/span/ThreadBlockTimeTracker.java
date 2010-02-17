@@ -20,7 +20,6 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -77,7 +76,7 @@ public class ThreadBlockTimeTracker extends AbstractThreadInfoStatsTracker {
         return this;
     }
 
-    public static class Factory implements StatsTrackerFactory<SpanTracker> {
+    public static class Factory extends AbstractSpanStatsTrackerFactory {
 
         private static final long serialVersionUID = -5193134539484694370L;
 

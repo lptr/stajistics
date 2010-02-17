@@ -26,24 +26,31 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public class CompositeStatsTrackerFactory implements StatsTrackerFactory<StatsTracker> {
+public class CompositeStatsTrackerFactory<T extends StatsTracker> implements StatsTrackerFactory<T> {
 
     private static final long serialVersionUID = -423223606572241980L;
 
     private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap;
     private final String[] nameSuffixes;
     private final StatsTrackerFactory<StatsTracker>[] factories;
+    private final Class<T> trackerType;
+
 
     @SuppressWarnings("unchecked")
-    public CompositeStatsTrackerFactory(final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap) {
+    public CompositeStatsTrackerFactory(final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap,
+                                        final Class<T> trackerType) {
         if (factoryMap == null) {
             throw new NullPointerException("factoryMap");
         }
         if (factoryMap.isEmpty()) {
             throw new IllegalArgumentException("factoryMap is empty");
         }
+        if (trackerType == null) {
+            throw new NullPointerException("type");
+        }
 
         this.factoryMap = factoryMap;
+        this.trackerType = trackerType;
 
         int size = factoryMap.size();
 
@@ -68,12 +75,12 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory<StatsTr
         return Collections.unmodifiableMap(factoryMap);
     }
 
-    public static Builder build() {
-        return new Builder();
+    public static <T extends StatsTracker> Builder<T> build(Class<T> trackerType) {
+        return new Builder<T>(trackerType);
     }
 
     @Override
-    public StatsTracker createTracker(final StatsKey key,
+    public T createTracker(final StatsKey key,
                                       final StatsSessionManager sessionManager) {
 
         StatsTracker[] trackers = new StatsTracker[factories.length];
@@ -90,16 +97,27 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory<StatsTr
 
         //return new CompositeStatsTracker(trackers);
     }
+    
+    @Override
+    public Class<T> getTrackerType() {
+        return trackerType;
+    }
 
-    public static class Builder {
+    public static class Builder<T extends StatsTracker> {
 
         private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap =
             new HashMap<String,StatsTrackerFactory<? extends StatsTracker>>();
+        private final Class<T> trackerType;
 
-        protected Builder() {}
+        protected Builder(Class<T> trackerType) {
+            if (trackerType == null) {
+                throw new NullPointerException("trackerType");
+            }
+            this.trackerType = trackerType;
+        }
 
-        public Builder withFactory(final String nameSuffix,
-                                   final StatsTrackerFactory<? extends StatsTracker> factory) {
+        public Builder<T> withFactory(final String nameSuffix,
+                                   final StatsTrackerFactory<? extends T> factory) {
             if (nameSuffix == null) {
                 throw new NullPointerException("nameSuffix");
             }
@@ -109,14 +127,17 @@ public class CompositeStatsTrackerFactory implements StatsTrackerFactory<StatsTr
             if (factory == null) {
                 throw new NullPointerException("factory");
             }
+            if (!trackerType.isAssignableFrom(factory.getTrackerType())) {
+                throw new IllegalArgumentException("factory is not compatible: " + trackerType + " != " + factory.getTrackerType());
+            }
 
             factoryMap.put(nameSuffix, factory);
 
             return this;
         }
 
-        public StatsTrackerFactory<?> build() {
-            return new CompositeStatsTrackerFactory(factoryMap);
+        public StatsTrackerFactory<T> build() {
+            return new CompositeStatsTrackerFactory<T>(factoryMap, trackerType);
         }
     }
 

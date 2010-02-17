@@ -29,4 +29,5 @@ public interface StatsTrackerFactory<T extends StatsTracker> extends Serializabl
 
     T createTracker(StatsKey key, StatsSessionManager sessionManager);
 
+    Class<T> getTrackerType();
 }

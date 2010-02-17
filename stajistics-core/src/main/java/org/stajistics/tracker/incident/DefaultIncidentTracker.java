@@ -57,5 +57,10 @@ public class DefaultIncidentTracker extends AbstractStatsTracker implements Inci
                                                   final StatsSessionManager sessionManager) {
             return new DefaultIncidentTracker(sessionManager.getOrCreateSession(key));
         }
+        
+        @Override
+        public Class<IncidentTracker> getTrackerType() {
+            return IncidentTracker.class;
+        }
     }
 }

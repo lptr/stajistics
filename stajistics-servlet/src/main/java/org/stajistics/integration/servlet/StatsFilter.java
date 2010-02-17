@@ -31,7 +31,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
+import org.stajistics.StatsConfig;
+import org.stajistics.StatsConfigBuilder;
 import org.stajistics.StatsKey;
+import org.stajistics.tracker.incident.DefaultIncidentTracker;
+import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
@@ -90,6 +94,7 @@ public class StatsFilter implements Filter {
             exceptionKey = key.buildCopy()
                               .withNameSuffix(exceptionKeyNameSuffix)
                               .newKey();
+            configureIncidentTracker(exceptionKey);
         }
 
         // Response codes
@@ -103,9 +108,26 @@ public class StatsFilter implements Filter {
             responseCodeKey = key.buildCopy()
                                  .withNameSuffix(responseCodeKeyNameSuffix)
                                  .newKey();
+            configureIncidentTracker(responseCodeKey);
         }
 
         logger.info("{} initialized", getClass().getSimpleName());
+    }
+
+    private void configureIncidentTracker(StatsKey key) {
+        StatsConfig originalConfig = Stats.getConfigManager().getConfig(key);
+        // Do we have an incident tracker configured already?
+        if (originalConfig != null
+                && IncidentTracker.class
+                        .isAssignableFrom(originalConfig.getTrackerFactory().getTrackerType())) {
+            return;
+        }
+        
+        // If not, configure one based on the (possibly) existing config
+        StatsConfigBuilder newConfigBuilder = Stats.getManager().getConfigFactory().createConfigBuilder(
+                originalConfig);
+        newConfigBuilder.withTrackerFactory(DefaultIncidentTracker.FACTORY);
+        newConfigBuilder.setConfigFor(key);
     }
 
     private String[] parseBindings(final FilterConfig config,

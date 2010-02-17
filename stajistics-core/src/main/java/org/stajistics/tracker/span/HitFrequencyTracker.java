@@ -18,7 +18,6 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -62,7 +61,7 @@ public class HitFrequencyTracker extends AbstractSpanStatsTracker {
         return this;
     }
 
-    public static class Factory implements StatsTrackerFactory<SpanTracker> {
+    public static class Factory extends AbstractSpanStatsTrackerFactory {
 
         private static final long serialVersionUID = -8890462896053927987L;
 

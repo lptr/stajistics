@@ -27,7 +27,11 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.*;
+import org.stajistics.DefaultStatsManager;
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyUtils;
+import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
@@ -133,6 +137,11 @@ public class StatsProxyTest {
 
                 return mockTracker;
             }
+            
+            @Override
+            public Class<StatsTracker> getTrackerType() {
+                return StatsTracker.class;
+            }
          })
          .setConfigFor(methodKey);
 
@@ -179,6 +188,11 @@ public class StatsProxyTest {
                  }
 
                  throw new Error("key is neither the methodKey nor the exceptionKey");
+             }
+             
+             @Override
+             public Class<StatsTracker> getTrackerType() {
+                 return StatsTracker.class;
              }
          })
          .setConfigFor(methodKey);

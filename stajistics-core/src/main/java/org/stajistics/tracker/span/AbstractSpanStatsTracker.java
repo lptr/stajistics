@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractStatsTracker;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * 
@@ -122,5 +123,15 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
         buf.append(']');
 
         return buf.toString();
+    }
+    
+    public abstract static class AbstractSpanStatsTrackerFactory implements StatsTrackerFactory<SpanTracker> {
+
+        private static final long serialVersionUID = 3336411412975834284L;
+
+        @Override
+        public Class<SpanTracker> getTrackerType() {
+            return SpanTracker.class;
+        }
     }
 }

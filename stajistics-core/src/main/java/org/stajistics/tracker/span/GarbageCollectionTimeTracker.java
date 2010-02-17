@@ -22,7 +22,6 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * TODO: This tracker currently depends on the ordering of ManagementFactory.getGarbageCollectorMXBeans(). Is that safe?
@@ -112,7 +111,7 @@ public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
         return this;
     }
 
-    public static class Factory implements StatsTrackerFactory<SpanTracker> {
+    public static class Factory extends AbstractSpanStatsTrackerFactory {
 
         private static final long serialVersionUID = -4982332914285248619L;
 
