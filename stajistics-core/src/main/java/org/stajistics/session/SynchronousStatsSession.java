@@ -258,6 +258,8 @@ public class SynchronousStatsSession extends AbstractStatsSession {
         for (DataRecorder dataRecorder : dataRecorders) {
             dataRecorder.restore(dataSet);
         }
+
+        logger.trace("Restore: {}", this);
     }
 
     /**
@@ -278,6 +280,8 @@ public class SynchronousStatsSession extends AbstractStatsSession {
         for (DataRecorder dataRecorder : dataRecorders) {
             dataRecorder.clear();
         }
+
+        logger.trace("Clear: {}", this);
 
         eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
     }
