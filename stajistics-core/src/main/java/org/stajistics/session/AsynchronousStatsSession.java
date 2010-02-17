@@ -101,13 +101,13 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
                 firstHitStamp = now;
             }
             lastHitStamp = now;
-
-            logger.trace("Track: {}", this);
-
-            eventManager.fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
         } finally {
             stateLock.unlock();
         }
+
+        logger.trace("Track: {}", this);
+
+        eventManager.fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
     }
 
     /**
@@ -184,13 +184,13 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             for (DataRecorder dataRecorder : dataRecorders) {
                 dataRecorder.update(this, tracker, now);
             }
-
-            logger.trace("Commit: {}", this);
-
-            eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
         } finally {
             stateLock.unlock();
         }
+
+        logger.trace("Commit: {}", this);
+
+        eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }
 
     /**
@@ -262,6 +262,8 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         } finally {
             stateLock.unlock();
         }
+
+        logger.trace("Restored {}", this);
     }
 
     /**
@@ -288,12 +290,14 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             for (DataRecorder dataRecorder : dataRecorders) {
                 dataRecorder.clear();
             }
-
-            eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
         } finally {
             stateLock.unlock();
             updateQueueProcessingLock.unlock();
         }
+
+        logger.trace("Cleared {}", this);
+
+        eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
     }
 
     @Override
