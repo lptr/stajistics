@@ -14,12 +14,16 @@
  */
 package org.stajistics.task;
 
-import org.stajistics.Stats;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsProperties;
-import org.stajistics.aop.StatsDecorator;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import java.util.concurrent.*;
+import org.stajistics.StatsProperties;
 
 /**
  * @author The Stajistics Project
@@ -88,6 +92,11 @@ public class SimpleTaskService implements TaskService {
     public <T> Future<T> submit(final Class<?> source,
                                 final Callable<T> task) {
         return executor.submit(task);
+    }
+
+    @Override
+    public void execute(Class<?> source, Runnable task) {
+        executor.execute(task);
     }
 
     @Override

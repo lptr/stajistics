@@ -23,6 +23,8 @@ import java.util.concurrent.Future;
  */
 public interface TaskService extends Serializable {
 
+    void execute(Class<?> source, Runnable task);
+
     <T> Future<T> submit(Class<?> source, Callable<T> task);
 
     void shutdown();
