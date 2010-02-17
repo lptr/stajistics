@@ -17,7 +17,6 @@ package org.stajistics.tracker.span;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
  * A tracker that tracks time duration with nanosecond precision 
@@ -54,7 +53,7 @@ public class NanoTimeDurationTracker extends TimeDurationTracker {
         session.update(this, now);
     }
 
-    public static class Factory implements StatsTrackerFactory<SpanTracker> {
+    public static class Factory extends AbstractSpanStatsTrackerFactory {
 
         private static final long serialVersionUID = 3938040539764698610L;
 

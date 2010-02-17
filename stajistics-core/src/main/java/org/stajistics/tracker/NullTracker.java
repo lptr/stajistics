@@ -162,5 +162,10 @@ public final class NullTracker
                                           final StatsSessionManager sessionManager) {
             return NullTracker.getInstance();
         }
+        
+        @Override
+        public Class<StatsTracker> getTrackerType() {
+            return StatsTracker.class;
+        }
     }
 }

@@ -67,5 +67,10 @@ public class DefaultManualTracker extends AbstractStatsTracker implements Manual
                                                 final StatsSessionManager sessionManager) {
             return new DefaultManualTracker(sessionManager.getOrCreateSession(key));
         }
+        
+        @Override
+        public Class<ManualTracker> getTrackerType() {
+            return ManualTracker.class;
+        }
     }
 }
