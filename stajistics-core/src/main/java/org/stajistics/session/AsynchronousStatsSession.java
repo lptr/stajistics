@@ -263,7 +263,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             stateLock.unlock();
         }
 
-        logger.trace("Restored {}", this);
+        logger.trace("Restore: {}", this);
     }
 
     /**
@@ -295,7 +295,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             updateQueueProcessingLock.unlock();
         }
 
-        logger.trace("Cleared {}", this);
+        logger.trace("Clear: {}", this);
 
         eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
     }
