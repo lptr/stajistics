@@ -15,9 +15,6 @@
 package org.stajistics.event;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +26,6 @@ import org.stajistics.task.TaskService;
  * @author The Stajistics Project
  */
 public class AsynchronousStatsEventManager extends SynchronousStatsEventManager {
-
-    private static final long serialVersionUID = 6326350529119061206L;
 
     private static final Logger logger = LoggerFactory.getLogger(AsynchronousStatsEventManager.class);
 

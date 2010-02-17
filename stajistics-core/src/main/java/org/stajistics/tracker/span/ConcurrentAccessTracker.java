@@ -26,8 +26,6 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class ConcurrentAccessTracker extends AbstractSpanStatsTracker {
 
-    private static final long serialVersionUID = -7660432341032497747L;
-
     public static final Factory FACTORY = new Factory();
 
     public ConcurrentAccessTracker(final StatsSession statsSession) {
@@ -42,8 +40,6 @@ public class ConcurrentAccessTracker extends AbstractSpanStatsTracker {
     }
 
     public static class Factory extends AbstractSpanStatsTrackerFactory {
-
-        private static final long serialVersionUID = -5572631384426151379L;
 
         @Override
         public SpanTracker createTracker(final StatsKey key, 

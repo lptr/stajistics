@@ -37,8 +37,6 @@ import sun.misc.Perf;
 @SuppressWarnings("restriction")
 public class PerfTimeDurationTracker extends TimeDurationTracker {
 
-    private static final long serialVersionUID = 9134751181550384765L;
-
     private static final Perf PERF = Perf.getPerf();
 
     private static final double CONVERSION = 1e3 / PERF.highResFrequency();
@@ -67,8 +65,6 @@ public class PerfTimeDurationTracker extends TimeDurationTracker {
     }
 
     public static class Factory extends AbstractSpanStatsTrackerFactory {
-
-        private static final long serialVersionUID = 6891282563577243942L;
 
         @Override
         public SpanTracker createTracker(final StatsKey key,

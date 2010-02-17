@@ -27,8 +27,6 @@ import org.stajistics.tracker.AbstractCompositeStatsTracker;
 public class SpanCompositeStatsTracker extends AbstractCompositeStatsTracker<SpanTracker> 
     implements SpanTracker {
 
-    private static final long serialVersionUID = -5248420844132582820L;
-
     public SpanCompositeStatsTracker(final SpanTracker... trackers) {
         super(trackers);
     }

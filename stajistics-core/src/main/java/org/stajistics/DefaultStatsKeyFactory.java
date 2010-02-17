@@ -23,8 +23,6 @@ package org.stajistics;
  */
 public class DefaultStatsKeyFactory implements StatsKeyFactory {
 
-    private static final long serialVersionUID = 1231029297050473946L;
-
     /**
      * {@inheritDoc}
      */

@@ -30,8 +30,6 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class ImmutableStatsSession implements StatsSession {
 
-    private static final long serialVersionUID = -1491982324221671738L;
-
     private final StatsKey key;
     private final DataSet dataSet;
 

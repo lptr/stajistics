@@ -18,8 +18,6 @@ import org.stajistics.tracker.StatsTrackerFactory;
 public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker 
     implements SpanTracker {
 
-    private static final long serialVersionUID = 2051648853298387629L;
-
     private static final Logger logger = LoggerFactory.getLogger(AbstractSpanStatsTracker.class);
 
     protected long startTime = 0L;
@@ -126,8 +124,6 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
     }
     
     public abstract static class AbstractSpanStatsTrackerFactory implements StatsTrackerFactory<SpanTracker> {
-
-        private static final long serialVersionUID = 3336411412975834284L;
 
         @Override
         public Class<SpanTracker> getTrackerType() {

@@ -26,8 +26,6 @@ import java.util.Set;
  */
 class DefaultMetaData implements MetaData {
 
-    private static final long serialVersionUID = -6675695777952035296L;
-
     private static final String DELIMITER = "__" + DefaultMetaData.class.getSimpleName() + "__";
 
     private final Map<String,Object> dataMap;

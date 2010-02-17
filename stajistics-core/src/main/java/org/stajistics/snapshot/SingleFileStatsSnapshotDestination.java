@@ -32,8 +32,6 @@ import org.stajistics.snapshot.binding.StatsSnapshot;
  */
 public class SingleFileStatsSnapshotDestination implements StatsSnapshotDestination {
 
-    private static final long serialVersionUID = -6322386948582007294L;
-
     private final String fileName;
 
     public SingleFileStatsSnapshotDestination(final String fileName) {

@@ -24,8 +24,6 @@ import java.io.Serializable;
  */
 public class Threashold implements Serializable {
 
-    private static final long serialVersionUID = 5904831715667273061L;
-
     private final ThreasholdType type;
     private final double value;
 

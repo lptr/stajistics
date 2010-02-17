@@ -31,8 +31,6 @@ import java.util.regex.Pattern;
  */
 public abstract class StatsKeyMatcher implements Serializable {
 
-    private static final long serialVersionUID = -1713747126597353487L;
-
     /* FACTORY METHODS */
 
     /**
@@ -358,8 +356,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class NegationMatcher extends StatsKeyMatcher {
 
-        private static final long serialVersionUID = -4636379636104878297L;
-        
         private final StatsKeyMatcher delegate;
 
         NegationMatcher(final StatsKeyMatcher delegate) {
@@ -387,8 +383,6 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     private static class CompositeMatcher extends StatsKeyMatcher {
-
-        private static final long serialVersionUID = 8608713955660143865L;
 
         enum Op {
             AND,
@@ -448,8 +442,6 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     private static class AllMatcher extends StatsKeyMatcher {
-
-        private static final long serialVersionUID = 6746094078692655632L;
 
         private static final StatsKeyMatcher INSTANCE = new AllMatcher();
 
@@ -519,8 +511,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class NoneMatcher extends StatsKeyMatcher {
 
-        private static final long serialVersionUID = -4349112693642153977L;
-
         private static final StatsKeyMatcher INSTANCE = new NoneMatcher();
 
         @Override
@@ -581,8 +571,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class ExactMatcher extends StatsKeyMatcher {
 
-        private static final long serialVersionUID = 245584307182832189L;
-
         private final StatsKey testKey;
 
         ExactMatcher(final StatsKey testKey) {
@@ -610,8 +598,6 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     private static class EqualsMatcher extends StatsKeyMatcher {
-
-        private static final long serialVersionUID = 1535095975670889953L;
 
         private final MatchTarget target;
         private final Object test;
@@ -666,7 +652,6 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     private static class PrefixMatcher extends StatsKeyMatcher {
-        private static final long serialVersionUID = -7895894285409549318L;
 
         private final MatchTarget target;
         private final String prefix;
@@ -722,8 +707,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class DescendentMatcher extends PrefixMatcher {
 
-        private static final long serialVersionUID = -6981649453441657393L;
-
         public DescendentMatcher(final String keyName) {
             super(MatchTarget.KEY_NAME, formatKeyName(keyName));
         }
@@ -741,8 +724,6 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     private static class SuffixMatcher extends StatsKeyMatcher {
-
-        private static final long serialVersionUID = -1759972536606378962L;
 
         private final MatchTarget target;
         private final String suffix;
@@ -798,8 +779,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class ContainsMatcher extends StatsKeyMatcher {
         
-        private static final long serialVersionUID = -7458113352734576005L;
-
         private final MatchTarget target;
         private final String string;
 
@@ -854,8 +833,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class DepthMatcher extends StatsKeyMatcher {
 
-        private static final long serialVersionUID = 8257312819320924383L;
-        
         private final int depth;
 
         DepthMatcher(int depth) {
@@ -897,8 +874,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class AttrCountMatcher extends StatsKeyMatcher {
 
-        private static final long serialVersionUID = -3050588776658645358L;
-        
         private final int count;
 
         public AttrCountMatcher(int count) {
@@ -931,8 +906,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class LengthMatcher extends StatsKeyMatcher {
      
-        private static final long serialVersionUID = 6015505212005788047L;
-
         private final MatchTarget target;
         private final int length;
         
@@ -987,8 +960,6 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     private static class RegExMatcher extends StatsKeyMatcher {
 
-        private static final long serialVersionUID = -2528695735803677384L;
-        
         private final MatchTarget target;
         private final Pattern pattern;
         

@@ -25,8 +25,6 @@ import org.stajistics.session.recorder.DistributionDataRecorder;
  */
 public class DefaultSessionFactory implements StatsSessionFactory {
 
-    private static final long serialVersionUID = 4695968690675973898L;
-
     private static DefaultSessionFactory instance = new DefaultSessionFactory();
 
     private DefaultSessionFactory() {}

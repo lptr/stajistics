@@ -39,8 +39,6 @@ import org.stajistics.util.AtomicDouble;
  */
 public class ConcurrentStatsSession extends AbstractStatsSession {
 
-    private static final long serialVersionUID = -5265957157097835416L;
-
     private static final Logger logger = LoggerFactory.getLogger(ConcurrentStatsSession.class);
 
     protected final AtomicLong hits = new AtomicLong(0);

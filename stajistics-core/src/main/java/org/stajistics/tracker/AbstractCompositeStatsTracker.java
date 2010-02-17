@@ -30,8 +30,6 @@ import org.stajistics.session.StatsSession;
 public abstract class AbstractCompositeStatsTracker<T extends StatsTracker>
     implements CompositeStatsTracker<T>, StatsTracker {
 
-    private static final long serialVersionUID = -8066988741529163928L;
-
     protected final T[] trackers;
 
     public AbstractCompositeStatsTracker(final T... trackers) {

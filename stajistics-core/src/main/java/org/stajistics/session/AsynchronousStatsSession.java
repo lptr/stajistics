@@ -39,9 +39,7 @@ import org.stajistics.util.AtomicDouble;
  *
  * @author The Stajistics Project
  */
-public class AsynchronousStatsSession extends AbstractStatsSession
-{
-    private static final long serialVersionUID = 1367248462643181008L;
+public class AsynchronousStatsSession extends AbstractStatsSession {
 
     private static final Logger logger = LoggerFactory.getLogger(AsynchronousStatsSession.class);
 

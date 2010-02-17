@@ -38,8 +38,6 @@ import org.stajistics.tracker.span.TimeDurationTracker;
  */
 public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
 
-    private static final long serialVersionUID = -4026080316204068690L;
-
     private static final Logger logger = LoggerFactory.getLogger(DefaultStatsTrackerLocator.class);
 
     private final StatsConfigManager configManager;

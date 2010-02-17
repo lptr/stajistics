@@ -24,8 +24,6 @@ import java.util.Map;
  */
 public final class NullStatsKey implements StatsKey {
 
-    private static final long serialVersionUID = 6441310707399203190L;
-
     private static final NullStatsKey instance = new NullStatsKey();
 
     private NullStatsKey() {}

@@ -42,8 +42,6 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class SynchronousStatsSession extends AbstractStatsSession {
 
-    private static final long serialVersionUID = -32360770003453383L;
-
     private static final Logger logger = LoggerFactory.getLogger(SynchronousStatsSession.class);
 
     protected final Lock lock = new ReentrantLock();

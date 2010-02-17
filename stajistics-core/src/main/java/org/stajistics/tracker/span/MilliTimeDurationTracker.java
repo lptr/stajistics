@@ -33,8 +33,6 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class MilliTimeDurationTracker extends AbstractSpanStatsTracker {
 
-    private static final long serialVersionUID = 4156520024679062924L;
-
     public static final Factory FACTORY = new Factory();
 
     public MilliTimeDurationTracker(final StatsSession session) {
@@ -53,8 +51,6 @@ public class MilliTimeDurationTracker extends AbstractSpanStatsTracker {
     }
 
     public static class Factory extends AbstractSpanStatsTrackerFactory {
-
-        private static final long serialVersionUID = -3375825127543236566L;
 
         @Override
         public SpanTracker createTracker(final StatsKey key,

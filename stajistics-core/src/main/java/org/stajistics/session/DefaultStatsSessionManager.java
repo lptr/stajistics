@@ -22,7 +22,12 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.*;
+import org.stajistics.Stats;
+import org.stajistics.StatsConfig;
+import org.stajistics.StatsConfigManager;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
+import org.stajistics.StatsProperties;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 
@@ -40,8 +45,6 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
         StatsSessionManager.class.getName() + ".sessionMap.loadFactor";
     public static final String PROP_CONCURRENCY_LEVEL =
         StatsSessionManager.class.getName() + ".sessionMap.concurrencyLevel";
-
-    private static final long serialVersionUID = 7815229695876668904L;
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultStatsSessionManager.class);
 

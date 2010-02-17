@@ -27,8 +27,6 @@ import java.util.Map;
  */
 public class DefaultStatsKey extends AbstractStatsKey {
 
-    private static final long serialVersionUID = -9052397460294109721L;
-
     protected final Map<String,Object> attributes;
 
     /**

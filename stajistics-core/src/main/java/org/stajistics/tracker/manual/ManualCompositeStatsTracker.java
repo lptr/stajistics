@@ -28,8 +28,6 @@ public class ManualCompositeStatsTracker
     extends AbstractCompositeStatsTracker<ManualTracker>
     implements ManualTracker {
 
-    private static final long serialVersionUID = -213407626510448696L;
-
     public ManualCompositeStatsTracker(final ManualTracker... trackers) {
         super(trackers);
     }

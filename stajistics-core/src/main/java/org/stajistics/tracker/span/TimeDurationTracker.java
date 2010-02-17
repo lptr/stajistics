@@ -28,8 +28,6 @@ import org.stajistics.tracker.StatsTrackerFactory;
  */
 public abstract class TimeDurationTracker extends AbstractSpanStatsTracker {
 
-    private static final long serialVersionUID = 4156520024679062924L;
-
     public static final StatsTrackerFactory<SpanTracker> FACTORY;
 
     static {

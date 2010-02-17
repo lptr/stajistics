@@ -28,8 +28,6 @@ import org.stajistics.tracker.StatsTrackerFactory;
  */
 public class DefaultIncidentTracker extends AbstractStatsTracker implements IncidentTracker {
 
-    private static final long serialVersionUID = -2931781680123245941L;
-
     public static final Factory FACTORY = new Factory();
 
     public DefaultIncidentTracker(final StatsSession session) {
@@ -49,8 +47,6 @@ public class DefaultIncidentTracker extends AbstractStatsTracker implements Inci
     }
 
     public static class Factory implements StatsTrackerFactory<IncidentTracker> {
-
-        private static final long serialVersionUID = 7771746449128030926L;
 
         @Override
         public IncidentTracker createTracker(final StatsKey key,

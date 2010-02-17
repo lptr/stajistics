@@ -26,8 +26,6 @@ import java.util.Map;
  */
 public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
-    private static final long serialVersionUID = -628973928521539542L;
-
     protected StatsKeyFactory keyFactory;
     protected String name;
 

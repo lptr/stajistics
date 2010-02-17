@@ -35,8 +35,6 @@ import org.stajistics.session.recorder.DataRecorder;
  */
 public abstract class AbstractStatsSession implements StatsSession {
 
-    private static final long serialVersionUID = -8272245650612477055L;
-
     protected static final DecimalFormat DECIMAL_FORMAT;
     static {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);

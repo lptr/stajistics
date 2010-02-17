@@ -21,8 +21,6 @@ package org.stajistics;
  */
 public class DefaultStatsConfigFactory implements StatsConfigFactory {
 
-    private static final long serialVersionUID = 512664734977970885L;
-
     protected final StatsConfigManager configManager;
 
     /**

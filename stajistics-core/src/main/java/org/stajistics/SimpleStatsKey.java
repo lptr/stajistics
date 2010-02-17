@@ -27,8 +27,6 @@ import java.util.Map;
  */
 public class SimpleStatsKey extends AbstractStatsKey {
 
-    private static final long serialVersionUID = -8631853852832561419L;
-
     /**
      * Create a new instance.
      *

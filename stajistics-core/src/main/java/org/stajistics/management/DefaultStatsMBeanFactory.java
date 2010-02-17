@@ -27,8 +27,6 @@ import org.stajistics.session.StatsSession;
  */
 public class DefaultStatsMBeanFactory implements StatsMBeanFactory {
 
-    private static final long serialVersionUID = 4934468666587889695L;
-
     @Override
     public StatsConfigManagerMBean createConfigManagerMBean(final StatsManager statsManager) {
         return new DefaultStatsConfigManagerMBean(statsManager.getConfigManager());

@@ -28,8 +28,6 @@ import java.util.List;
  */
 public class RangeList implements Iterable<Range>,Serializable {
 
-    private static final long serialVersionUID = -624182966963157184L;
-
     private final Range[] ranges;
 
     private final boolean exclusiveRangeEnd;
