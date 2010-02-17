@@ -14,13 +14,11 @@
  */
 package org.stajistics.session;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,55 +31,44 @@ import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.StatsTracker;
-import org.stajistics.util.AtomicDouble;
 
 /**
- *
+ * 
  * @author The Stajistics Project
  */
 public class AsynchronousStatsSession extends AbstractStatsSession {
 
     private static final Logger logger = LoggerFactory.getLogger(AsynchronousStatsSession.class);
 
-    private final AtomicLong hits = new AtomicLong(0);
-    private final AtomicLong firstHitStamp = new AtomicLong(-1);
+    private volatile long hits = 0;
+    private volatile long firstHitStamp = -1;
     private volatile long lastHitStamp = -1;
-    private final AtomicLong commits = new AtomicLong(0);
+    private volatile long commits = 0;
 
-    private final AtomicReference<Double> first = new AtomicReference<Double>(null);
+    private volatile Double first = null;
     private volatile double last = Double.NaN;
-    private final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
-    private final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
-    private final AtomicDouble sum = new AtomicDouble(0);
+    private volatile double min = Double.POSITIVE_INFINITY;
+    private volatile double max = Double.NEGATIVE_INFINITY;
+    private volatile double sum = 0;
+    
+    private final Lock stateLock = new ReentrantLock();
 
     private final TaskService taskService;
 
-    private final Lock callQueueLock = new ReentrantLock();
-    private final Queue<Callable<Void>> callQueue = new ConcurrentLinkedQueue<Callable<Void>>();
+    private final BlockingQueue<TrackerEntry> updateQueue = new LinkedBlockingQueue<TrackerEntry>();
+    private final Lock updateQueueProcessingLock = new ReentrantLock();
 
     public AsynchronousStatsSession(final StatsKey key,
                                     final StatsEventManager eventManager,
                                     final TaskService taskService) {
-        super(key, eventManager);
-
-        if (taskService == null) {
-            throw new NullPointerException("taskService");
-        }
-
-        this.taskService = taskService;
+        this(key, eventManager, taskService, (List<DataRecorder>) null);
     }
 
     public AsynchronousStatsSession(final StatsKey key,
                                     final StatsEventManager eventManager,
                                     final TaskService taskService,
                                     final DataRecorder... dataRecorders) {
-        super(key, eventManager, dataRecorders);
-
-        if (taskService == null) {
-            throw new NullPointerException("taskService");
-        }
-
-        this.taskService = taskService;
+        this(key, eventManager, taskService, Arrays.asList(dataRecorders));
     }
 
     public AsynchronousStatsSession(final StatsKey key,
@@ -97,47 +84,30 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         this.taskService = taskService;
     }
 
-    private void scheduleCall(final Callable<Void> call) {
-        callQueue.add(call);
-
-        ProcessQueueTask processQueueTask = new ProcessQueueTask();
-        taskService.submit(getClass(), processQueueTask);
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void track(final StatsTracker tracker,
-                      final long now)
-    {
-        TrackCall call = new TrackCall(tracker, now);
-        scheduleCall(call);
-    }
-
-    /**
-     * Called by {@link org.stajistics.session.AsynchronousStatsSession.TrackCall}.
-     *
-     * @param tracker
-     * @param now
-     */
-    private synchronized void trackImpl(final StatsTracker tracker,
-                                        long now)
-    {
+    public void track(final StatsTracker tracker, long now) {
         if (now < 0) {
             now = System.currentTimeMillis();
         }
 
-        hits.incrementAndGet();
+        stateLock.lock();
+        try {
+            hits++;
 
-        if (firstHitStamp.get() == -1) {
-            firstHitStamp.compareAndSet(-1, now);
+            if (firstHitStamp == -1) {
+                firstHitStamp = now;
+            }
+            lastHitStamp = now;
+
+            logger.trace("Track: {}", this);
+
+            eventManager.fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
+        } finally {
+            stateLock.unlock();
         }
-        lastHitStamp = now;
-
-        logger.trace("Track: {}", this);
-
-        eventManager.fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
     }
 
     /**
@@ -145,7 +115,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
      */
     @Override
     public long getHits() {
-        return hits.get();
+        return hits;
     }
 
     /**
@@ -153,7 +123,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
      */
     @Override
     public long getFirstHitStamp() {
-        return firstHitStamp.get();
+        return firstHitStamp;
     }
 
     /**
@@ -169,55 +139,58 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
      */
     @Override
     public long getCommits() {
-        return commits.get();
+        return commits;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void update(final StatsTracker tracker,
-                       final long now)
-    {
-        UpdateCall call = new UpdateCall(tracker, now);
-        scheduleCall(call);
+    public void update(final StatsTracker tracker, final long now) {
+        updateQueue.add(new TrackerEntry(tracker, now));
+
+        ProcessQueueTask processQueueTask = new ProcessQueueTask();
+        taskService.execute(getClass(), processQueueTask);
     }
 
-    private synchronized void updateImpl(final StatsTracker tracker,
-                                         final long now)
-    {
+    private void updateImpl(final StatsTracker tracker, final long now) {
         final double currentValue = tracker.getValue();
 
-        commits.incrementAndGet();
+        stateLock.lock();
+        try {
+            commits++;
 
-        // First
-        if (first.get() == null) {
-            first.compareAndSet(null, currentValue);
+            // First
+            if (first == null) {
+                first = currentValue;
+            }
+
+            // Last
+            last = currentValue;
+
+            // Min
+            if (currentValue < min) {
+                min = currentValue;
+            }
+
+            // Max
+            if (currentValue > max) {
+                max = currentValue;
+            }
+
+            // Sum
+            sum += currentValue;
+
+            for (DataRecorder dataRecorder : dataRecorders) {
+                dataRecorder.update(this, tracker, now);
+            }
+
+            logger.trace("Commit: {}", this);
+
+            eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
+        } finally {
+            stateLock.unlock();
         }
-
-        // Last
-        last = currentValue;
-
-        // Min
-        if (currentValue < min.get()) {
-            min.set(currentValue);
-        }
-
-        // Max
-        if (currentValue > max.get()) {
-            max.set(currentValue);
-        }
-
-        // Sum
-        sum.addAndGet(currentValue);
-
-        for (DataRecorder dataRecorder : dataRecorders) {
-            dataRecorder.update(this, tracker, now);
-        }
-
-        logger.trace("Commit: {}", this);
-
-        eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }
 
     /**
@@ -225,7 +198,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
      */
     @Override
     public double getFirst() {
-        Double firstValue = first.get();
+        Double firstValue = first;
 
         if (firstValue == null) {
             return Double.NaN;
@@ -247,7 +220,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
      */
     @Override
     public double getMin() {
-        return min.get();
+        return min;
     }
 
     /**
@@ -255,7 +228,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
      */
     @Override
     public double getMax() {
-        return max.get();
+        return max;
     }
 
     /**
@@ -263,27 +236,31 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
      */
     @Override
     public double getSum() {
-        return sum.get();
+        return sum;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void restore(final DataSet dataSet)
-    {
-        hits.set(dataSet.getField(DataSet.Field.COMMITS, Long.class));
-        firstHitStamp.set(dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Date.class).getTime());
-        lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Date.class).getTime();
-        commits.set(dataSet.getField(DataSet.Field.COMMITS, Long.class));
-        first.set(dataSet.getField(DataSet.Field.FIRST, Double.class));
-        last = dataSet.getField(DataSet.Field.LAST, Double.class);
-        min.set(dataSet.getField(DataSet.Field.MIN, Double.class));
-        max.set(dataSet.getField(DataSet.Field.MAX, Double.class));
-        sum.set(dataSet.getField(DataSet.Field.SUM, Double.class));
+    public void restore(final DataSet dataSet) {
+        stateLock.lock();
+        try {
+            hits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
+            firstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Date.class).getTime();
+            lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Date.class).getTime();
+            commits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
+            first = dataSet.getField(DataSet.Field.FIRST, Double.class);
+            last = dataSet.getField(DataSet.Field.LAST, Double.class);
+            min = dataSet.getField(DataSet.Field.MIN, Double.class);
+            max = dataSet.getField(DataSet.Field.MAX, Double.class);
+            sum = dataSet.getField(DataSet.Field.SUM, Double.class);
 
-        for (DataRecorder dataRecorder : dataRecorders) {
-            dataRecorder.restore(dataSet);
+            for (DataRecorder dataRecorder : dataRecorders) {
+                dataRecorder.restore(dataSet);
+            }
+        } finally {
+            stateLock.unlock();
         }
     }
 
@@ -291,94 +268,79 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void clear()
-    {
-        hits.set(0);
-        firstHitStamp.set(-1);
-        lastHitStamp = -1;
-        commits.set(0);
-        first.set(null);
-        last = Double.NaN;
-        min.set(Double.POSITIVE_INFINITY);
-        max.set(Double.NEGATIVE_INFINITY);
-        sum.set(0);
+    public void clear() {
+        // Must always lock update queue first to avoid deadlocks
+        updateQueueProcessingLock.lock();
+        stateLock.lock();
+        try {
+            updateQueue.clear();
 
-        for (DataRecorder dataRecorder : dataRecorders) {
-            dataRecorder.clear();
+            hits = 0;
+            firstHitStamp = -1;
+            lastHitStamp = -1;
+            commits = 0;
+            first = null;
+            last = Double.NaN;
+            min = Double.POSITIVE_INFINITY;
+            max = Double.NEGATIVE_INFINITY;
+            sum = 0;
+
+            for (DataRecorder dataRecorder : dataRecorders) {
+                dataRecorder.clear();
+            }
+
+            eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
+        } finally {
+            stateLock.unlock();
+            updateQueueProcessingLock.unlock();
         }
+    }
 
-        eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
+    @Override
+    public DataSet collectData() {
+        stateLock.lock();
+        try {
+            return super.collectData();
+        } finally {
+            stateLock.unlock();
+        }
     }
 
     /* INNER CLASSES */
 
-    private final class ProcessQueueTask implements Callable<Void> {
+    private final class ProcessQueueTask implements Runnable {
+
         @Override
-        public Void call() {
-
-            while (callQueue.peek() != null) {
-                if (!callQueueLock.tryLock()) {
-                    // Another task is processing the queue,
-                    // so don't bother blocking and holding up an executor thread
-                    break;
-                }
-
+        public void run() {
+            if (!updateQueue.isEmpty()) {
+                // Do not allow other threads to process entries
+                updateQueueProcessingLock.lock();
                 try {
-                    for (;;) {
-                        Callable<Void> callable = callQueue.poll();
-                        if (callable == null) {
-                            // No more calls to invoke
-                            break;
-                        }
-
-                        try {
-                            callable.call();
-                        } catch (Exception e) {
-                            logger.error("Failed to call " + callable, e);
+                    // Re-query queue size to avoid allocating a buffer if some
+                    // other thread has already processed the events
+                    int count = updateQueue.size();
+                    if (count > 0) {
+                        TrackerEntry[] entries = updateQueue.toArray(new TrackerEntry[count]);
+                        updateQueue.clear();
+                        for (TrackerEntry entry : entries) {
+                            updateImpl(entry.tracker, entry.now);
                         }
                     }
                 } finally {
-                    callQueueLock.unlock();
+                    updateQueueProcessingLock.unlock();
                 }
             }
-
-            return null;
         }
     }
 
-    private final class TrackCall implements Callable<Void> {
+    private static final class TrackerEntry {
 
         private final StatsTracker tracker;
         private final long now;
 
-        TrackCall(final StatsTracker tracker,
-                  final long now) {
+        TrackerEntry(final StatsTracker tracker, final long now) {
             this.tracker = tracker;
             this.now = now;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            trackImpl(tracker, now);
-            return null;
-        }
-    }
-
-    private final class UpdateCall implements Callable<Void> {
-
-        private final StatsTracker tracker;
-        private final long now;
-
-        UpdateCall(final StatsTracker tracker,
-                   final long now) {
-            this.tracker = tracker;
-            this.now = now;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            updateImpl(tracker, now);
-            return null;
         }
     }
 

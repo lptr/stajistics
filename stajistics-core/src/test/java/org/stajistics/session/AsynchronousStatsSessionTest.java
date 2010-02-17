@@ -14,23 +14,15 @@
  */
 package org.stajistics.session;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.junit.Before;
-import org.junit.Test;
-import org.stajistics.StatsKey;
-import org.stajistics.TestUtil;
-import org.stajistics.event.StatsEventManager;
-import org.stajistics.session.recorder.DataRecorder;
-import org.stajistics.task.TaskService;
-import org.stajistics.tracker.StatsTracker;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.stajistics.session.recorder.DataRecorder;
+import org.stajistics.task.TaskService;
 
 /**
  * @author The Stajistics Project
@@ -54,10 +46,16 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
             }
 
             @Override
+            public void execute(Class<?> source, Runnable task) {
+                task.run();
+            }
+
+            @Override
             public void shutdown() {}
         };
     }
 
+    @Override
     protected StatsSession createStatsSession() {
         return new AsynchronousStatsSession(mockKey, mockEventManager, mockTaskService);
     }
