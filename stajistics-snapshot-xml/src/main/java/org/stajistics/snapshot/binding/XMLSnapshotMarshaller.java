@@ -39,8 +39,6 @@ import org.stajistics.snapshot.binding.impl.jibx.XMLStatsSnapshot;
  */
 public class XMLSnapshotMarshaller implements SnapshotMarshaller {
 
-    private static final long serialVersionUID = 7357285120783625486L;
-
     public static final String CONTENT_TYPE = "application/stajistics-snapshot+xml";
     public static final String FILE_EXTENSION = "xml";
 

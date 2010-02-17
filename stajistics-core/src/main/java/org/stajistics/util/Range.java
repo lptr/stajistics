@@ -29,8 +29,6 @@ import java.util.NoSuchElementException;
  */
 public class Range implements Iterable<Double>,Serializable {
 
-    private static final long serialVersionUID = -8211762782354142278L;
-
     protected static final boolean DEFAULT_EXCLUSIVE_RANGE_END = true;
 
     private static final DecimalFormat DECIMAL_FORMAT;

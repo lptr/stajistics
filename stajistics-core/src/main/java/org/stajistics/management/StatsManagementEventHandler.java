@@ -29,8 +29,6 @@ import org.stajistics.session.StatsSession;
  */
 public class StatsManagementEventHandler implements StatsEventHandler {
 
-    private static final long serialVersionUID = -93613489864344404L;
-
     private final StatsManager statsManager;
     private final StatsManagement statsManagement;
 

@@ -27,8 +27,6 @@ public class IncidentCompositeStatsTracker
     extends AbstractCompositeStatsTracker<IncidentTracker> 
     implements IncidentTracker {
 
-    private static final long serialVersionUID = 2483520513106039968L;
-
     public IncidentCompositeStatsTracker(final IncidentTracker... trackers) {
         super(trackers);
     }

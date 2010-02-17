@@ -39,8 +39,6 @@ import org.stajistics.session.StatsSession;
  */
 public class DefaultStatsManagement implements StatsManagement,Serializable {
 
-    private static final long serialVersionUID = -9078257122643636861L;
-
     private static Logger logger = LoggerFactory.getLogger(DefaultStatsManagement.class);
 
     static final String DOMAIN = org.stajistics.Stats.class.getPackage().getName();

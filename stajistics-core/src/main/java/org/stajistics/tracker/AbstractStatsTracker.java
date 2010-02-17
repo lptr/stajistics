@@ -24,8 +24,6 @@ import org.stajistics.session.StatsSession;
  */
 public abstract class AbstractStatsTracker implements StatsTracker {
 
-    private static final long serialVersionUID = 7869543246230561742L;
-
     protected StatsSession session;
 
     protected double value = 0;

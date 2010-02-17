@@ -36,8 +36,6 @@ import org.stajistics.tracker.StatsTrackerLocator;
  */
 public class DefaultStatsManager implements StatsManager {
 
-    private static final long serialVersionUID = 6464098983922060895L;
-
     private static final String PROP_MANAGEMENT_ENABLED = StatsManagement.class.getName() + ".enabled";
 
     private volatile boolean enabled = true;

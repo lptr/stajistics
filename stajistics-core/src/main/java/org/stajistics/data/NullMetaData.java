@@ -24,8 +24,6 @@ import java.util.Set;
  */
 public class NullMetaData implements MetaData {
 
-    private static final long serialVersionUID = -1289847083902235009L;
-
     private static final NullMetaData INSTANCE = new NullMetaData();
 
     private NullMetaData() {}

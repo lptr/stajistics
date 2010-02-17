@@ -29,8 +29,6 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
 
-    private static final long serialVersionUID = -7002240478983381253L;
-
     public static final Factory FACTORY = new Factory();
 
     private long startWaitTime;
@@ -77,8 +75,6 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     public static class Factory extends AbstractSpanStatsTrackerFactory {
-
-        private static final long serialVersionUID = -8619178718908795549L;
 
         @Override
         public SpanTracker createTracker(final StatsKey key,

@@ -275,8 +275,6 @@ public class StatsDataBaseURL {
 
     public static class FormatException extends RuntimeException {
 
-        private static final long serialVersionUID = 5948270015734158089L;
-
         public FormatException(final String msg) {
             super(msg);
         }

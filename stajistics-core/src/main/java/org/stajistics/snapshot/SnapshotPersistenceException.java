@@ -22,8 +22,6 @@ package org.stajistics.snapshot;
  */
 public class SnapshotPersistenceException extends Exception {
 
-    private static final long serialVersionUID = 59978813690583156L;
-
     public SnapshotPersistenceException(final String message) {
         super(message);
     }

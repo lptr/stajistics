@@ -21,8 +21,6 @@ package org.stajistics;
  */
 public final class NullStatsKeyBuilder implements StatsKeyBuilder {
 
-    private static final long serialVersionUID = 8942085184706941947L;
-
     private static final NullStatsKeyBuilder INSTANCE = new NullStatsKeyBuilder();
 
     private NullStatsKeyBuilder() {}

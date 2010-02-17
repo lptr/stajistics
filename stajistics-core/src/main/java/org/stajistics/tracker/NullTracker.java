@@ -32,8 +32,6 @@ import org.stajistics.tracker.span.SpanTracker;
 public final class NullTracker
     implements StatsTracker,SpanTracker,IncidentTracker,ManualTracker {
 
-    private static final long serialVersionUID = -4347885685828741849L;
-
     public static final StatsTrackerFactory<StatsTracker> FACTORY = new Factory();
 
     private static final NullTracker INSTANCE = new NullTracker();
@@ -154,8 +152,6 @@ public final class NullTracker
     /* NESTED CLASSES */
 
     public static final class Factory implements StatsTrackerFactory<StatsTracker> {
-
-        private static final long serialVersionUID = 701871274011770267L;
 
         @Override
         public StatsTracker createTracker(final StatsKey key, 

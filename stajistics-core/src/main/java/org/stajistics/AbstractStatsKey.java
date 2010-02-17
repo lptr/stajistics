@@ -28,8 +28,6 @@ import java.util.Map;
  */
 public abstract class AbstractStatsKey implements StatsKey {
 
-    private static final long serialVersionUID = 3175918652708917322L;
-
     private final StatsKeyFactory keyFactory;
     private final String name;
 

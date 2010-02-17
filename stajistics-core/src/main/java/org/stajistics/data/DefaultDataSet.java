@@ -26,9 +26,7 @@ import java.util.Set;
  */
 public class DefaultDataSet implements DataSet {
 
-    private static final long serialVersionUID = 3617870089402050877L;
-
-    private Map<String,Object> dataMap = createDataMap();
+    private final Map<String,Object> dataMap = createDataMap();
     private Map<String,Object> metaDataMap = null;
 
     private MetaData metaData = null;

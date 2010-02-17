@@ -24,8 +24,6 @@ import org.stajistics.tracker.StatsTrackerFactory;
  */
 public class DefaultStatsConfig implements StatsConfig {
 
-    private static final long serialVersionUID = -1182665810255326267L;
-
     private final boolean enabled;
 
     private final StatsTrackerFactory<?> trackerFactory;

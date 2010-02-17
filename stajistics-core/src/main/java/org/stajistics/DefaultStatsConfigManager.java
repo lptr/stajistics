@@ -50,8 +50,6 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     public static final String PROP_CONCURRENCY_LEVEL = 
         StatsConfigManager.class.getName() + ".concurrencyLevel";
 
-    private static final long serialVersionUID = -3448191567386279319L;
-
     private final ConcurrentMap<String,KeyEntry> keyMap = createKeyEntryMap();
 
     private final KeyEntry rootKeyEntry;
@@ -429,8 +427,6 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
 
 final class KeyEntry implements StatsKeyAssociation<StatsConfig>,Serializable {
-
-    private static final long serialVersionUID = -4512523435953782607L;
 
     private final StatsKey key;
 

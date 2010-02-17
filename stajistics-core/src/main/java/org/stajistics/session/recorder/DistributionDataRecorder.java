@@ -31,8 +31,6 @@ import org.stajistics.util.Misc;
  */
 public class DistributionDataRecorder implements DataRecorder {
 
-    private static final long serialVersionUID = -3659348358082223974L;
-
     private static final Set<String> SUPPORTED_FIELD_NAMES = 
         Collections.unmodifiableSet(Misc.getStaticFieldValues(Field.class, String.class));
 

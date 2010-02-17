@@ -27,8 +27,6 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class HitFrequencyTracker extends AbstractSpanStatsTracker {
 
-    private static final long serialVersionUID = -1521973662156082666L;
-
     public static final Factory FACTORY = new Factory();
 
     private long lastHitStamp = -1;
@@ -62,8 +60,6 @@ public class HitFrequencyTracker extends AbstractSpanStatsTracker {
     }
 
     public static class Factory extends AbstractSpanStatsTrackerFactory {
-
-        private static final long serialVersionUID = -8890462896053927987L;
 
         @Override
         public SpanTracker createTracker(final StatsKey key,

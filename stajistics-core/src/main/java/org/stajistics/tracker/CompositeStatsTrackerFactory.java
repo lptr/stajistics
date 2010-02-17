@@ -28,8 +28,6 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class CompositeStatsTrackerFactory<T extends StatsTracker> implements StatsTrackerFactory<T> {
 
-    private static final long serialVersionUID = -423223606572241980L;
-
     private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap;
     private final String[] nameSuffixes;
     private final StatsTrackerFactory<StatsTracker>[] factories;

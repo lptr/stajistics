@@ -37,8 +37,6 @@ import org.stajistics.StatsKeyMatcher;
  */
 public class SynchronousStatsEventManager implements StatsEventManager {
 
-    private static final long serialVersionUID = -1747663767850867849L;
-
     private static final Logger logger = LoggerFactory.getLogger(SynchronousStatsEventManager.class);
 
     private final List<StatsEventHandler> globalEventHandlers = createEventHandlerList();

@@ -31,8 +31,6 @@ import org.stajistics.tracker.StatsTracker;
  */
 public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
 
-    private static final long serialVersionUID = -1668165910427204823L;
-
     public static final Factory FACTORY = new Factory();
 
     private String[] startCGNames = null;
@@ -112,8 +110,6 @@ public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
     }
 
     public static class Factory extends AbstractSpanStatsTrackerFactory {
-
-        private static final long serialVersionUID = -4982332914285248619L;
 
         @Override
         public SpanTracker createTracker(final StatsKey key,

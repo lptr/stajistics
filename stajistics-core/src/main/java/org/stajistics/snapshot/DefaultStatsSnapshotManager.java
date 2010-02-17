@@ -26,8 +26,6 @@ import org.stajistics.snapshot.binding.StatsSnapshot;
  */
 public class DefaultStatsSnapshotManager implements StatsSnapshotManager {
 
-    private static final long serialVersionUID = 5679286432055594788L;
-
     private final SnapshotMarshaller marshaller;
 
     public DefaultStatsSnapshotManager(final SnapshotMarshaller marshaller) {

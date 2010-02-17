@@ -28,8 +28,6 @@ import org.stajistics.StatsKeyMatcher;
  */
 public class GroovyStatsConfigManager implements StatsConfigManager {
 
-    private static final long serialVersionUID = 6528583012811270653L;
-
     private final StatsConfigManager delegate;
 
     private final StatsConfigDSLInterpreter interp = new StatsConfigDSLInterpreter();
