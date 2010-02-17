@@ -174,7 +174,7 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
             dataRecorder.update(this, tracker, now);
         }
 
-        logger.info("Commit: {}", this);
+        logger.trace("Commit: {}", this);
 
         eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }

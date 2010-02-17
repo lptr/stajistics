@@ -194,7 +194,7 @@ public class SynchronousStatsSession extends AbstractStatsSession {
             lock.unlock();
         }
 
-        logger.info("Commit: {}", this);
+        logger.trace("Commit: {}", this);
 
         // Fire the event outside of the lock
         eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
