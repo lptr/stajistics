@@ -226,7 +226,9 @@ public class StatsFilter implements Filter {
             }
 
         } catch (Throwable t) {
-            Stats.failure(t, exceptionKey);
+            if (exceptionKey != null) {
+                Stats.failure(t, exceptionKey);
+            }
 
             if (t instanceof IOException) {
                 throw (IOException)t;
