@@ -384,11 +384,11 @@ public class DefaultStatsManagerTest {
 
         // Populate the data structures a bit
         StatsKey key1 = manager.getKeyFactory().createKey("test1");
-        manager.getTrackerLocator().getSpanTracker(key1).start().stop();
+        manager.getTrackerLocator().getSpanTracker(key1).track().commit();
         StatsKey key2 = manager.getKeyFactory().createKey("test2");
-        manager.getTrackerLocator().getSpanTracker(key2).start().stop();
+        manager.getTrackerLocator().getSpanTracker(key2).track().commit();
         StatsKey key3 = manager.getKeyFactory().createKey("test3");
-        manager.getTrackerLocator().getSpanTracker(key3).start().stop();
+        manager.getTrackerLocator().getSpanTracker(key3).track().commit();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(4 * 1024);
         ObjectOutputStream out = new ObjectOutputStream(baos);

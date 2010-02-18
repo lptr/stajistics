@@ -52,7 +52,7 @@ public class StatsHttpSessionListener implements HttpSessionListener {
                              .withAttribute("servletContext", servletContextName)
                              .newKey();
 
-        SpanTracker tracker = Stats.start(key, ctxKey);
+        SpanTracker tracker = Stats.track(key, ctxKey);
 
         event.getSession()
              .setAttribute(ATTR_TRACKER, tracker);
@@ -63,7 +63,7 @@ public class StatsHttpSessionListener implements HttpSessionListener {
         SpanTracker tracker = (SpanTracker)event.getSession()
                                                 .getAttribute(ATTR_TRACKER);
         if (tracker != null) {
-            tracker.stop();
+            tracker.commit();
 
         } else {
             logger.warn("Missing request attribute; cannot track statistics: {}", ATTR_TRACKER);

@@ -57,15 +57,7 @@ public final class NullTracker
      * {@inheritDoc}
      */
     @Override
-    public SpanTracker start() {
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SpanTracker stop() {
+    public SpanTracker track() {
         return this;
     }
 
@@ -137,9 +129,7 @@ public final class NullTracker
      * {@inheritDoc}
      */
     @Override
-    public ManualTracker commit() {
-        return this;
-    }
+    public void commit() {}
 
     /**
      * {@inheritDoc}

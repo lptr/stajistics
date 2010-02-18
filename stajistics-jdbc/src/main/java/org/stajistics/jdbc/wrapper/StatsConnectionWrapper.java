@@ -61,7 +61,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
                                       .withNameSuffix("open")
                                       .newKey();
 
-        openClosedTracker = Stats.start(openClosedKey);
+        openClosedTracker = Stats.track(openClosedKey);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
         try {
             delegate().close();
         } finally {
-            openClosedTracker.stop();
+            openClosedTracker.commit();
         }
     }
 

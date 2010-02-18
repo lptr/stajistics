@@ -59,7 +59,7 @@ public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecora
                                            .withNameSuffix("checkedOut")
                                            .newKey();
 
-        openClosedTracker = Stats.start(openClosedKey);
+        openClosedTracker = Stats.track(openClosedKey);
         //checkInCheckOutTracker = null;
     }
 

@@ -73,7 +73,7 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
                                       .withNameSuffix("open")
                                       .newKey();
 
-        openClosedTracker = Stats.start(openClosedKey);
+        openClosedTracker = Stats.track(openClosedKey);
     }
 
     public String getSQL() {
@@ -95,7 +95,7 @@ public class StatsCallableStatementWrapper extends AbstractCallableStatementDeco
         try {
             delegate().close();
         } finally {
-            openClosedTracker.stop();
+            openClosedTracker.commit();
         }
     }
 

@@ -40,9 +40,9 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
                 try {
                     task.call();
                 } catch (Exception e) {
-                    throw new RuntimeException("");
+                    throw new RuntimeException(e);
                 }
-                return null; //TODO: needed?
+                return null;
             }
 
             @Override

@@ -230,7 +230,7 @@ public class StatsFilter implements Filter {
             throws IOException, ServletException {
 
         SpanTracker tracker = getSpanTracker(request);
-        tracker.start();
+        tracker.track();
 
         try {
             StatsHttpServletResponse statsResponse = null;
@@ -265,7 +265,7 @@ public class StatsFilter implements Filter {
             throw new RuntimeException(t);
 
         } finally {
-            tracker.stop();
+            tracker.commit();
         }
     }
 

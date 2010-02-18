@@ -154,10 +154,10 @@ public class StatsTest {
             one(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
             one(mockKeyFactory).createKey(keyName); will(returnValue(mockKey));
             one(mockTrackerLocator).getSpanTracker(with(any(StatsKey.class))); will(returnValue(mockTracker));
-            one(mockTracker).start(); will(returnValue(mockTracker));
+            one(mockTracker).track(); will(returnValue(mockTracker));
         }});
 
-        assertEquals(mockTracker, Stats.start(keyName));
+        assertEquals(mockTracker, Stats.track(keyName));
     }
 
     @Test
@@ -166,10 +166,10 @@ public class StatsTest {
 
         mockery.checking(new Expectations() {{
             one(mockTrackerLocator).getSpanTracker(with(mockKey)); will(returnValue(mockTracker));
-            one(mockTracker).start(); will(returnValue(mockTracker));
+            one(mockTracker).track(); will(returnValue(mockTracker));
         }});
 
-        assertEquals(mockTracker, Stats.start(mockKey));
+        assertEquals(mockTracker, Stats.track(mockKey));
     }
 /*
     @Test

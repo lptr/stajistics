@@ -67,7 +67,7 @@ public class StatsStatementWrapper extends AbstractStatementDecorator {
                                       .withNameSuffix("open")
                                       .newKey();
 
-        openClosedTracker = Stats.start(openClosedKey);
+        openClosedTracker = Stats.track(openClosedKey);
     }
 
     private void handleSQL(final String sql) {
@@ -90,7 +90,7 @@ public class StatsStatementWrapper extends AbstractStatementDecorator {
         try {
             super.close();
         } finally {
-            openClosedTracker.stop();
+            openClosedTracker.commit();
         }
     }
 

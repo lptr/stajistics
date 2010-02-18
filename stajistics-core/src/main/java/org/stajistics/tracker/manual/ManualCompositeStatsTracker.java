@@ -55,11 +55,10 @@ public class ManualCompositeStatsTracker
     }
 
     @Override
-    public ManualTracker commit() {
+    public void commit() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
             trackers[i].commit();
         }
-        return this;
     }
 }

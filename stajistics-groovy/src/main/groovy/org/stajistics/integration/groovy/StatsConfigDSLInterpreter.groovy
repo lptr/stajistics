@@ -101,7 +101,7 @@ class StatsConfigDSLInterpreter {
                 factories.put(keyName, handleTracker([trackerFactory]))
             }
 
-            factory = new CompositeStatsTrackerFactory(factories)
+            factory = new CompositeStatsTrackerFactory(factories, StatsTracker.class)
 
         } else if (arg instanceof Closure) {
             if (arg.maximumNumberOfParameters != 2) {

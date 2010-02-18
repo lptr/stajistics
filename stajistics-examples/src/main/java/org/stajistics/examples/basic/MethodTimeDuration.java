@@ -33,11 +33,11 @@ public class MethodTimeDuration implements Runnable {
 
         for (int i = 0; i < 20; i++) {
 
-            SpanTracker tracker = Stats.start(key);
+            SpanTracker tracker = Stats.track(key);
 
             myMethod();
 
-            tracker.stop();
+            tracker.commit();
         }
 
         System.out.println(Stats.getSessionManager().getSession(key));

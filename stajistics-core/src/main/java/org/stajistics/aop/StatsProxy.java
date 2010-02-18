@@ -181,7 +181,7 @@ public class StatsProxy implements InvocationHandler {
             }
 
             try {
-                tracker.start();
+                tracker.track();
 
                 if (method.equals(EQUALS_METHOD)) {
                     return target.equals(unwrap(args[0]));
@@ -190,7 +190,7 @@ public class StatsProxy implements InvocationHandler {
                 return method.invoke(target, args);
 
             } finally {
-                tracker.stop();
+                tracker.commit();
             }
 
         } catch (Throwable t) {

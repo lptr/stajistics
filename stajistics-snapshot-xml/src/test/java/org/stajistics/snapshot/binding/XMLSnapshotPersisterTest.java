@@ -72,9 +72,9 @@ public class XMLSnapshotPersisterTest {
                                     .createKey("test1");
         SpanTracker tracker1 = statsManager.getTrackerLocator()
                                            .getSpanTracker(key1)
-                                           .start();
+                                           .track();
         Thread.sleep(new Random().nextInt(100));
-        tracker1.start();
+        tracker1.commit();
 
         sessionSnapshots.put(key1, new XMLSessionSnapshot(statsManager.getSessionManager()
                                                                        .getSession(key1),

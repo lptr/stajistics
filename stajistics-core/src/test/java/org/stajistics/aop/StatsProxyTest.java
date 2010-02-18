@@ -124,8 +124,8 @@ public class StatsProxyTest {
         final SpanTracker mockTracker = mockery.mock(SpanTracker.class);
 
         mockery.checking(new Expectations() {{
-            one(mockTracker).start(); will(returnValue(mockTracker));
-            one(mockTracker).stop(); will(returnValue(mockTracker));
+            one(mockTracker).track(); will(returnValue(mockTracker));
+            one(mockTracker).commit();
         }});
 
         mockStatsManager.getConfigFactory()
@@ -168,9 +168,9 @@ public class StatsProxyTest {
         final IncidentTracker exceptionTracker = mockery.mock(IncidentTracker.class, "exceptionTracker");
 
         mockery.checking(new Expectations() {{
-            one(methodTracker).start(); will(returnValue(methodTracker));
+            one(methodTracker).track(); will(returnValue(methodTracker));
             one(exceptionTracker).incident(); will(returnValue(exceptionTracker));
-            one(methodTracker).stop(); will(returnValue(methodTracker));
+            one(methodTracker).commit();
         }});
 
         mockStatsManager.getConfigFactory()

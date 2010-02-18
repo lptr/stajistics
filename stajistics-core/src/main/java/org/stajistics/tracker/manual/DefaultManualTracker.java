@@ -47,13 +47,10 @@ public class DefaultManualTracker extends AbstractStatsTracker implements Manual
     }
 
     @Override
-    public ManualTracker commit() {
-
+    public void commit() {
         final long now = System.currentTimeMillis();
         session.track(this, now);
         session.update(this, now);
-
-        return this;
     }
 
     public static class Factory implements StatsTrackerFactory<ManualTracker> {

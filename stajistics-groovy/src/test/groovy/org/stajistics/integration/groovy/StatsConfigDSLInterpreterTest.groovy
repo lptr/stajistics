@@ -75,14 +75,15 @@ class StatsConfigDSLInterpreterTest extends GroovyTestCase {
 
     /**
      * This is a tricky test. It verifies that a custom StatsTrackerFactory implementation can
-     * be defined using a closure. The SpanTracker.start() method normally returns 'this', 
+     * be defined using a closure. The SpanTracker.track() method normally returns 'this', 
      * but the mock SpanTracker produced by the factory under test returns a different 
-     * SpanTracker instance (not 'this'). By verifying that the mockTracker != mockTracker.start(),
+     * SpanTracker instance (not 'this'). By verifying that the mockTracker != mockTracker.track(),
      * we are assured that the mockTracker is in fact the mock, and thus, the correct factory 
      * was used. There is probably a groovier way to test this, but this is the best I could
      * come up with. 
      */
     void testEvalStringTrackerFactoryWithClosure() {
+
         def configMap = interp.eval("""
             key {
                 tracker { key, sessionMgr ->
@@ -100,7 +101,7 @@ class StatsConfigDSLInterpreterTest extends GroovyTestCase {
         def testFactory = configMap.key.getTrackerFactory()
         def testTracker = testFactory.createTracker(testKey, testSessionManager)
 
-        assertTrue testTracker != testTracker.start()
+        assertTrue testTracker != testTracker.track()
     }
 
     void testEvalStringTrackerFactoryWithClosureOneParameter() {

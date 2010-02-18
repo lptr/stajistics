@@ -49,11 +49,11 @@ public class StatsDecorator {
             @Override
             public void run() {
                 try {
-                    SpanTracker tracker = Stats.start(key);
+                    SpanTracker tracker = Stats.track(key);
                     try {
                         r.run();
                     } finally {
-                        tracker.stop();
+                        tracker.commit();
                     }
 
                 } catch (Throwable t) {
@@ -70,11 +70,11 @@ public class StatsDecorator {
             @Override
             public T call() throws Exception {
                 try {
-                    SpanTracker tracker = Stats.start(key);
+                    SpanTracker tracker = Stats.track(key);
                     try {
                         return c.call();
                     } finally {
-                        tracker.stop();
+                        tracker.commit();
                     }
 
                 } catch (Throwable t) {
@@ -93,11 +93,11 @@ public class StatsDecorator {
             public void update(final Observable o, 
                                final Object arg) {
                 try {
-                    SpanTracker tracker = Stats.start(key);
+                    SpanTracker tracker = Stats.track(key);
                     try {
                         observer.update(o, arg);
                     } finally {
-                        tracker.stop();
+                        tracker.commit();
                     }
 
                 } catch (Throwable t) {
