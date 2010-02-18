@@ -17,11 +17,10 @@ package org.stajistics.session;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
+import org.stajistics.task.SimpleTaskService;
 import org.stajistics.task.TaskService;
 
 /**
@@ -33,26 +32,7 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
 
     @Override
     protected void initMocks() {
-        mockTaskService = new TaskService() {
-
-            @Override
-            public <T> Future<T> submit(Class<?> source, Callable<T> task) {
-                try {
-                    task.call();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                return null;
-            }
-
-            @Override
-            public void execute(Class<?> source, Runnable task) {
-                task.run();
-            }
-
-            @Override
-            public void shutdown() {}
-        };
+        mockTaskService = new SimpleTaskService();
     }
 
     @Override
