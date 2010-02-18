@@ -83,7 +83,7 @@ public class ManualCompositeStatsTrackerTest
 
         mockery.checking(new Expectations() {{
             for (int i = 0; i < mockTrackers.length; i++) {
-                one(mockTrackers[i]).commit(); will(returnValue(mockTrackers[i]));
+                one(mockTrackers[i]).commit();
             }
         }});
 

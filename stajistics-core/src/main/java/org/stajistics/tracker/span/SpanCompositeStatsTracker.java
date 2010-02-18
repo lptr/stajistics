@@ -36,31 +36,30 @@ public class SpanCompositeStatsTracker extends AbstractCompositeStatsTracker<Spa
     }
 
     /**
-     * Start all {@link SpanTracker}s.
+     * Start tracking on all {@link SpanTracker}s.
      *
      * @return <tt>this</tt>.
      */
     @Override
-    public SpanTracker start() {
+    public SpanTracker track() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
-            trackers[i].start();
+            trackers[i].track();
         }
         return this;
     }
 
     /**
-     * Stop all {@link SpanTracker}s.
+     * Commit all {@link SpanTracker}s.
      *
      * @return <tt>this</tt>.
      */
     @Override
-    public SpanTracker stop() {
+    public void commit() {
         int len = trackers.length;
         for (int i = 0; i < len; i++) {
-            trackers[i].stop();
+            trackers[i].commit();
         }
-        return this;
     }
 
     /**

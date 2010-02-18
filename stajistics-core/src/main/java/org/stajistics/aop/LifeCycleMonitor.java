@@ -62,7 +62,7 @@ public class LifeCycleMonitor<T> {
     public void monitor(final T object,
                         final StatsKey key) {
 
-        SpanTracker tracker = Stats.start(key);
+        SpanTracker tracker = Stats.track(key);
 
         Reference<T> ref = new PhantomReference<T>(object, refQueue);
         trackerMap.put(ref, tracker);
@@ -83,7 +83,7 @@ public class LifeCycleMonitor<T> {
     protected void remove(final Reference<? extends T> ref) {
         SpanTracker tracker = trackerMap.remove(ref);
         if (tracker != null) {
-            tracker.stop();
+            tracker.commit();
         }
     }
 

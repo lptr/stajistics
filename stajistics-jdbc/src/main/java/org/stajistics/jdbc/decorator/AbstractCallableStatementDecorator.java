@@ -57,7 +57,7 @@ public class AbstractCallableStatementDecorator extends AbstractWrapper implemen
 
     @Override
     protected final CallableStatement delegate() {
-        return delegate();
+        return delegate;
     }
 
     /**

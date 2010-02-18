@@ -79,25 +79,25 @@ public class SpanCompositeStatsTrackerTest extends AbstractCompositeStatsTracker
     @Test
     public void testStart() {
         mockery.checking(new Expectations() {{
-            one(mockTrackers[0]).start();
-            one(mockTrackers[1]).start();
-            one(mockTrackers[2]).start();
+            one(mockTrackers[0]).track();
+            one(mockTrackers[1]).track();
+            one(mockTrackers[2]).track();
         }});
 
         SpanCompositeStatsTracker cTracker = createCompositeStatsTracker(mockTrackers);
-        cTracker.start();
+        cTracker.track();
     }
 
     @Test
     public void testStop() {
         mockery.checking(new Expectations() {{
-            one(mockTrackers[0]).stop();
-            one(mockTrackers[1]).stop();
-            one(mockTrackers[2]).stop();
+            one(mockTrackers[0]).commit();
+            one(mockTrackers[1]).commit();
+            one(mockTrackers[2]).commit();
         }});
 
         SpanCompositeStatsTracker cTracker = createCompositeStatsTracker(mockTrackers);
-        cTracker.stop();
+        cTracker.commit();
     }
 
     @Test

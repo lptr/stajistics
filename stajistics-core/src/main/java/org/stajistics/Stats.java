@@ -223,63 +223,63 @@ public final class Stats {
 
     /**
      * A convenience method equivalent to calling:
-     * <tt>Stats.getSpanTracker(Stats.newKey(name)).start()</tt>.
+     * <tt>Stats.getSpanTracker(Stats.newKey(name)).track()</tt>.
      *
      * @param keyName The key name for which to return a tracker.
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
      * @see StatsTrackerLocator#getSpanTracker(StatsKey)
-     * @see SpanTracker#start()
+     * @see SpanTracker#track()
      */
-    public static SpanTracker start(final String keyName) {
+    public static SpanTracker track(final String keyName) {
         try {
             return getTrackerLocator().getSpanTracker(newKey(keyName))
-                                      .start();
+                                      .track();
         } catch (Exception e) {
-            logger.error("Failed to obtain and start a " + SpanTracker.class.getSimpleName(), e);
+            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
             return NullTracker.getInstance();
         }
     }
 
     /**
      * A convenience method equivalent to calling:
-     * <tt>Stats.getSpanTracker(key).start()</tt>
+     * <tt>Stats.getSpanTracker(key).track()</tt>
      *
      * @param key The {@link StatsKey} for which to return a tracker.
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
      * @see StatsTrackerLocator#getSpanTracker(StatsKey)
-     * @see SpanTracker#start()
+     * @see SpanTracker#track()
      */
-    public static SpanTracker start(final StatsKey key) {
+    public static SpanTracker track(final StatsKey key) {
         try {
             return getTrackerLocator().getSpanTracker(key)
-                                      .start();
+                                      .track();
         } catch (Exception e) {
-            logger.error("Failed to obtain and start a " + SpanTracker.class.getSimpleName(), e);
+            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
             return NullTracker.getInstance();
         }
     }
 
     /**
      * A convenience method equivalent to calling:
-     * <tt>Stats.getSpanTracker(keys).start()</tt>.
+     * <tt>Stats.getSpanTracker(keys).track()</tt>.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
      * @see StatsTrackerLocator#getSpanTracker(StatsKey...)
-     * @see SpanTracker#start()
+     * @see SpanTracker#track()
      */
-    public static SpanTracker start(final StatsKey... keys) {
+    public static SpanTracker track(final StatsKey... keys) {
         try {
             return getTrackerLocator().getSpanTracker(keys)
-                                      .start();
+                                      .track();
         } catch (Exception e) {
-            logger.error("Failed to obtain and start a " + SpanTracker.class.getSimpleName(), e);
+            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
             return NullTracker.getInstance();
         }
     }

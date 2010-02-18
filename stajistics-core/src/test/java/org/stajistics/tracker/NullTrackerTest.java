@@ -39,14 +39,8 @@ public class NullTrackerTest {
     @Test
     public void testStart() {
         assertSame(NullTracker.getInstance(),
-                   NullTracker.getInstance().start());
+                   NullTracker.getInstance().track());
         assertFalse(NullTracker.getInstance().isTracking());
-    }
-
-    @Test
-    public void testStop() {
-        assertSame(NullTracker.getInstance(),
-                   NullTracker.getInstance().stop());
     }
 
     @Test

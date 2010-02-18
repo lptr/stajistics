@@ -43,7 +43,7 @@ public abstract class AbstractSpanStatsTrackerTestCase
             ignoring(mockSession).getLastHitStamp();
         }});
 
-        tracker.start();
+        tracker.track();
 
         assertEquals(0, tracker.getValue(), 0);
     }
@@ -60,8 +60,8 @@ public abstract class AbstractSpanStatsTrackerTestCase
             ignoring(mockSession).getCommits();
         }});
 
-        tracker.start();
-        tracker.stop();
+        tracker.track();
+        tracker.commit();
     }
 
     @Test
@@ -74,13 +74,13 @@ public abstract class AbstractSpanStatsTrackerTestCase
 
         assertEquals(0, tracker.getStartTime());
 
-        tracker.start();
+        tracker.track();
 
         long timeStamp = tracker.getStartTime();
 
         assertTrue(System.currentTimeMillis() >= timeStamp);
 
-        tracker.stop();
+        tracker.commit();
 
         assertEquals(timeStamp, tracker.getStartTime());
     }
@@ -95,11 +95,11 @@ public abstract class AbstractSpanStatsTrackerTestCase
 
         assertFalse(tracker.isTracking());
 
-        tracker.start();
+        tracker.track();
 
         assertTrue(tracker.isTracking());
 
-        tracker.stop();
+        tracker.commit();
 
         assertFalse(tracker.isTracking());
     }
@@ -136,7 +136,7 @@ public abstract class AbstractSpanStatsTrackerTestCase
         double value = tracker.getValue();
         long timeStamp = tracker.getStartTime();
 
-        tracker.start();
+        tracker.track();
 
         assertTrue(isTracking != tracker.isTracking());
         assertTrue(timeStamp != tracker.getStartTime());
@@ -166,12 +166,12 @@ public abstract class AbstractSpanStatsTrackerTestCase
         assertEquals(value, tracker.getValue(), TestUtil.DELTA);
         assertEquals(timeStamp, tracker.getStartTime());
 
-        tracker.start();
+        tracker.track();
 
         assertTrue(isTracking != tracker.isTracking());
         assertTrue(timeStamp != tracker.getStartTime());
 
-        tracker.stop();
+        tracker.commit();
         tracker.reset();
 
         assertEquals(isTracking, tracker.isTracking());
@@ -192,7 +192,7 @@ public abstract class AbstractSpanStatsTrackerTestCase
         }});
 
         assertFalse(tracker.isTracking());
-        tracker.start();
+        tracker.track();
         assertTrue(tracker.isTracking());
     }
 
@@ -207,12 +207,12 @@ public abstract class AbstractSpanStatsTrackerTestCase
             ignoring(mockSession).getCommits();
         }});
 
-        tracker.start();
+        tracker.track();
 
         assertTrue(tracker.isTracking());
 
         long start = tracker.getStartTime();
-        tracker.start();
+        tracker.track();
 
         assertTrue(tracker.isTracking());
         assertEquals(start, tracker.getStartTime());

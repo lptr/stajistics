@@ -48,7 +48,7 @@ public class StatsResultSetWrapper extends AbstractResultSetDecorator {
                                       .withNameSuffix("open")
                                       .newKey();
 
-        openClosedTracker = Stats.start(openClosedKey);
+        openClosedTracker = Stats.track(openClosedKey);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class StatsResultSetWrapper extends AbstractResultSetDecorator {
         try {
             super.close();
         } finally {
-            openClosedTracker.stop();
+            openClosedTracker.commit();
         }
     }
 

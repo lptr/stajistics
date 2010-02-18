@@ -74,7 +74,7 @@ public class StatsPreparedStatementWrapper extends AbstractPreparedStatementDeco
                                       .withNameSuffix("open")
                                       .newKey();
 
-        openClosedTracker = Stats.start(openClosedKey);        
+        openClosedTracker = Stats.track(openClosedKey);        
     }
 
     public String getSQL() {
@@ -101,7 +101,7 @@ public class StatsPreparedStatementWrapper extends AbstractPreparedStatementDeco
         try {
             super.close();
         } finally {
-            openClosedTracker.stop();
+            openClosedTracker.commit();
         }
     }
 

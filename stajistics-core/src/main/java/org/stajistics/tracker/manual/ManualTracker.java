@@ -50,8 +50,6 @@ public interface ManualTracker extends StatsTracker {
 
     /**
      * Publish the manually set value to the {@link StatsSession}.
-     *
-     * @return <tt>this</tt>.
      */
-    ManualTracker commit();
+    void commit();
 }

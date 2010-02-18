@@ -81,6 +81,6 @@ public class DefaultManualTrackerTest extends AbstractStatsTrackerTestCase<Manua
             one(mockSession).update(with(tracker), with(any(long.class)));
         }});
 
-        assertEquals(tracker, tracker.commit());
+        tracker.commit();
     }
 }

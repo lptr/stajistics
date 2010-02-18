@@ -36,25 +36,25 @@ public class HitFrequencyTrackerTest extends AbstractSpanStatsTrackerTestCase {
         final SpanTracker tracker = createStatsTracker();
 
         mockery.checking(new Expectations() {{
-            // start()
+            // track()
             one(mockSession).track(with(tracker), with(any(long.class)));
             one(mockSession).getLastHitStamp(); will(returnValue(0L));
 
-            // stop()
+            // commit()
             // Does nothing because we are measuring in between hits, and the
             // first hit of the session cannot be counted.
 
-            // start()
+            // track()
             one(mockSession).track(with(tracker), with(any(long.class)));
             one(mockSession).getLastHitStamp(); will(returnValue(1L));
 
-            // stop()
+            // commit()
             one(mockSession).update(with(tracker), with(any(long.class)));
         }});
 
-        tracker.start();
-        tracker.stop();
-        tracker.start();
-        tracker.stop();
+        tracker.track();
+        tracker.commit();
+        tracker.track();
+        tracker.commit();
     }
 }

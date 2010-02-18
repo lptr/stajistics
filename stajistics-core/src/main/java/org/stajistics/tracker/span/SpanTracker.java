@@ -27,7 +27,7 @@ public interface SpanTracker extends StatsTracker {
 
     /**
      * <p>Begin tracking statistics related to some span. The measurement of the span should 
-     * eventually be completed by a call to {@link #stop()}.</p>
+     * eventually be completed by a call to {@link #commit()}.</p>
      *
      * <p>After this call {@link #isTracking()} will return <tt>true</tt>.</p>
      *
@@ -36,11 +36,11 @@ public interface SpanTracker extends StatsTracker {
      *
      * @return <tt>this</tt>.
      */
-    SpanTracker start();
+    SpanTracker track();
 
     /**
      * <p>Finish tracking statistics related to some span that was initiated by a 
-     * call to {@link #start()}.</p>
+     * call to {@link #track()}.</p>
      *
      * <p>After this call {@link #isTracking()} will return <tt>false</tt>.</p>
      *
@@ -49,19 +49,19 @@ public interface SpanTracker extends StatsTracker {
      *
      * @return <tt>this</tt>.
      */
-    SpanTracker stop();
+    void commit();
 
     /**
      * Determine if this tracker is actively collecting statistics from a prior call to
-     * {@link #start()}. If <tt>true</tt> is returned, this tracker is awaiting a call to
-     * {@link #stop()} to finish collecting statistics.
+     * {@link #track()}. If <tt>true</tt> is returned, this tracker is awaiting a call to
+     * {@link #commit()} to finish collecting statistics.
      *
      * @return <tt>true</tt> if statistics are being collected, <tt>false</tt> otherwise.
      */
     boolean isTracking();
 
     /**
-     * Determine the most recent time {@link #start()} was called on this tracker.
+     * Determine the most recent time {@link #track()} was called on this tracker.
      *
      * @return <tt>this</tt>.
      */

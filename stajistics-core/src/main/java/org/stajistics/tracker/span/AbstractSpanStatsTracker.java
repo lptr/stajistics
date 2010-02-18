@@ -31,10 +31,10 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
      * {@inheritDoc}
      */
     @Override
-    public final SpanTracker start() {
+    public final SpanTracker track() {
 
         if (tracking) {
-            logger.warn("start() called when already started: {}", this);
+            logger.warn("track() called when already tracking: {}", this);
 
             return this;
         }
@@ -56,19 +56,17 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
      * {@inheritDoc}
      */
     @Override
-    public final SpanTracker stop() {
+    public final void commit() {
 
         if (!tracking) {
-            logger.warn("stop() called when not started: {}", this);
+            logger.warn("commit() called when not tracking: {}", this);
 
-            return this;
+            return;
         }
 
         tracking = false;
 
         stopImpl(-1);
-
-        return this;
     }
 
     protected void stopImpl(final long now) {
