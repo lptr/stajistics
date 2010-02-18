@@ -23,7 +23,7 @@ import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.snapshot.DefaultStatsSnapshotManager;
 import org.stajistics.snapshot.StatsSnapshotManager;
-import org.stajistics.task.SimpleTaskService;
+import org.stajistics.task.ThreadPoolTaskService;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.DefaultStatsTrackerLocator;
 import org.stajistics.tracker.StatsTrackerLocator;
@@ -120,7 +120,7 @@ public class DefaultStatsManager implements StatsManager {
         StatsSnapshotManager snapshotManager = DefaultStatsSnapshotManager.createWithDefaults();
         StatsTrackerLocator trackerLocator = new DefaultStatsTrackerLocator(configManager, sessionManager);
         StatsConfigFactory configFactory = new DefaultStatsConfigFactory(configManager);
-        TaskService taskService = new SimpleTaskService();
+        TaskService taskService = new ThreadPoolTaskService();
 
         DefaultStatsManager manager = new DefaultStatsManager(configManager,
                                                               sessionManager,
