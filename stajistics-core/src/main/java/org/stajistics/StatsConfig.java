@@ -18,6 +18,7 @@ import java.io.Serializable;
 
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
+import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
 
@@ -49,6 +50,13 @@ public interface StatsConfig extends Serializable {
      * @return A {@link StatsSessionFactory} instance, never <tt>null</tt>.
      */
     StatsSessionFactory getSessionFactory();
+
+    /**
+     * Obtain the factory that creates {@link org.stajistics.session.recorder.DataRecorder}s for a session.
+     *
+     * @return A {@link DataRecorderFactory} instance, never <tt>null</tt>.
+     */
+    DataRecorderFactory getDataRecorderFactory();
 
     /**
      * Get the unit applicable to the data that is collected for the associated target.

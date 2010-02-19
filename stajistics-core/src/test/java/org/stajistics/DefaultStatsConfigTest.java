@@ -24,12 +24,13 @@ import org.jmock.Mockery;
 import org.junit.Test;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
+import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.MilliTimeDurationTracker;
 import org.stajistics.tracker.span.NanoTimeDurationTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -39,9 +40,10 @@ public class DefaultStatsConfigTest {
     public void testConstructWithNullTrackerFactory() {
         try {
             new DefaultStatsConfig(true,
-                                   null, 
-                                   DefaultSessionFactory.getInstance(), 
-                                   "unit", 
+                                   null,
+                                   DefaultSessionFactory.getInstance(),
+                                   DefaultDataRecorderFactory.getInstance(),
+                                   "unit",
                                    "description");
             fail("Allowed construction with null StatsTrackerFactory");
         } catch (NullPointerException npe) {
@@ -53,9 +55,10 @@ public class DefaultStatsConfigTest {
     public void testConstructWithNullSessionFactory() {
         try {
             new DefaultStatsConfig(true,
-                                   MilliTimeDurationTracker.FACTORY, 
-                                   null, 
-                                   "unit", 
+                                   MilliTimeDurationTracker.FACTORY,
+                                   null,
+                                   DefaultDataRecorderFactory.getInstance(),
+                                   "unit",
                                    "description");
             fail("Allowed construction with null StatsSessionFactory");
         } catch (NullPointerException npe) {
@@ -67,9 +70,10 @@ public class DefaultStatsConfigTest {
     public void testConstructionWithNullUnit() {
         try {
             new DefaultStatsConfig(true,
-                                   MilliTimeDurationTracker.FACTORY, 
-                                   DefaultSessionFactory.getInstance(), 
-                                   null, 
+                                   MilliTimeDurationTracker.FACTORY,
+                                   DefaultSessionFactory.getInstance(),
+                                   DefaultDataRecorderFactory.getInstance(),
+                                   null,
                                    "description");
             fail("Allowed construction with null unit");
         } catch (NullPointerException npe) {
@@ -81,9 +85,10 @@ public class DefaultStatsConfigTest {
     public void testConstructionWithEmptyUnit() {
         try {
             new DefaultStatsConfig(true,
-                                   MilliTimeDurationTracker.FACTORY, 
-                                   DefaultSessionFactory.getInstance(), 
-                                   "", 
+                                   MilliTimeDurationTracker.FACTORY,
+                                   DefaultSessionFactory.getInstance(),
+                                   DefaultDataRecorderFactory.getInstance(),
+                                   "",
                                    "description");
             fail("Allowed construction with empty unit");
         } catch (IllegalArgumentException iae) {
@@ -94,35 +99,39 @@ public class DefaultStatsConfigTest {
     @Test
     public void testConstructionWithNullDescription() {
         new DefaultStatsConfig(true,
-                               MilliTimeDurationTracker.FACTORY, 
-                               DefaultSessionFactory.getInstance(), 
-                               "unit", 
+                               MilliTimeDurationTracker.FACTORY,
+                               DefaultSessionFactory.getInstance(),
+                               DefaultDataRecorderFactory.getInstance(),
+                               "unit",
                                null);
     }
 
     @Test
     public void testIsEnabled() {
         StatsConfig config = new DefaultStatsConfig(true,
-                                                    MilliTimeDurationTracker.FACTORY, 
-                                                    DefaultSessionFactory.getInstance(), 
-                                                    "unit", 
+                                                    MilliTimeDurationTracker.FACTORY,
+                                                    DefaultSessionFactory.getInstance(),
+                                                    DefaultDataRecorderFactory.getInstance(),
+                                                    "unit",
                                                     "description");
         assertTrue(config.isEnabled());
 
         config = new DefaultStatsConfig(false,
-                                        MilliTimeDurationTracker.FACTORY, 
-                                        DefaultSessionFactory.getInstance(), 
-                                        "unit", 
+                                        MilliTimeDurationTracker.FACTORY,
+                                        DefaultSessionFactory.getInstance(),
+                                        DefaultDataRecorderFactory.getInstance(),
+                                        "unit",
                                         "description");
         assertFalse(config.isEnabled());
     }
-    
+
     @Test
     public void testGetTrackerFactory() {
         StatsConfig config = new DefaultStatsConfig(true,
-                                                    MilliTimeDurationTracker.FACTORY, 
-                                                    DefaultSessionFactory.getInstance(), 
-                                                    "unit", 
+                                                    MilliTimeDurationTracker.FACTORY,
+                                                    DefaultSessionFactory.getInstance(),
+                                                    DefaultDataRecorderFactory.getInstance(),
+                                                    "unit",
                                                     "description");
         assertSame(MilliTimeDurationTracker.FACTORY, config.getTrackerFactory());
     }
@@ -130,9 +139,10 @@ public class DefaultStatsConfigTest {
     @Test
     public void testGetSessionFactory() {
         StatsConfig config = new DefaultStatsConfig(true,
-                                                    MilliTimeDurationTracker.FACTORY, 
-                                                    DefaultSessionFactory.getInstance(), 
-                                                    "unit", 
+                                                    MilliTimeDurationTracker.FACTORY,
+                                                    DefaultSessionFactory.getInstance(),
+                                                    DefaultDataRecorderFactory.getInstance(),
+                                                    "unit",
                                                     "description");
         assertSame(DefaultSessionFactory.getInstance(), config.getSessionFactory());
     }
@@ -140,8 +150,9 @@ public class DefaultStatsConfigTest {
     @Test
     public void testGetUnit() {
         StatsConfig config = new DefaultStatsConfig(true,
-                                                    MilliTimeDurationTracker.FACTORY, 
-                                                    DefaultSessionFactory.getInstance(), 
+                                                    MilliTimeDurationTracker.FACTORY,
+                                                    DefaultSessionFactory.getInstance(),
+                                                    DefaultDataRecorderFactory.getInstance(),
                                                     "unit",
                                                     "description");
         assertEquals("unit", config.getUnit());
@@ -150,9 +161,10 @@ public class DefaultStatsConfigTest {
     @Test
     public void testGetDescription() {
         StatsConfig config = new DefaultStatsConfig(true,
-                                                    MilliTimeDurationTracker.FACTORY, 
-                                                    DefaultSessionFactory.getInstance(), 
-                                                    "unit", 
+                                                    MilliTimeDurationTracker.FACTORY,
+                                                    DefaultSessionFactory.getInstance(),
+                                                    DefaultDataRecorderFactory.getInstance(),
+                                                    "unit",
                                                     "description");
         assertEquals("description", config.getDescription());
     }
@@ -160,9 +172,10 @@ public class DefaultStatsConfigTest {
     @Test
     public void testEqualsWithDifferentType() {
         StatsConfig config = new DefaultStatsConfig(true,
-                                                    MilliTimeDurationTracker.FACTORY, 
-                                                    DefaultSessionFactory.getInstance(), 
-                                                    "unit", 
+                                                    MilliTimeDurationTracker.FACTORY,
+                                                    DefaultSessionFactory.getInstance(),
+                                                    DefaultDataRecorderFactory.getInstance(),
+                                                    "unit",
                                                     "description");
 
         assertFalse(config.equals("not-a-config"));
@@ -171,14 +184,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testEqualsWithSameEverything() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         assertEquals(config1, config2);
     }
@@ -186,14 +201,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testEqualsWithDifferentEnabled() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(false,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         assertFalse(config1.equals(config2));
     }
@@ -201,14 +218,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testEqualsWithDifferentTrackerFactory() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     NanoTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     NanoTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         assertFalse(config1.equals(config2));
     }
@@ -216,14 +235,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testEqualsWithDifferentSessionFactory() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     new Mockery().mock(StatsSessionFactory.class), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     new Mockery().mock(StatsSessionFactory.class),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         assertFalse(config1.equals(config2));
     }
@@ -231,14 +252,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testEqualsWithDifferentUnit() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit1", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit1",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit2", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit2",
                                                      "description");
         assertFalse(config1.equals(config2));
     }
@@ -246,14 +269,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testEqualsWithDifferentDescription() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description1");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description2");
         assertFalse(config1.equals(config2));
     }
@@ -261,14 +286,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testHashcodeWithSameEverything() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         assertEquals(config1.hashCode(), config2.hashCode());
     }
@@ -276,14 +303,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testHashcodeWithDifferentEnabled() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(false,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         assertFalse(config1.hashCode() == config2.hashCode());
     }
@@ -291,14 +320,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testHashcodeWithDifferentTrackerFactory() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     NanoTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     NanoTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         assertFalse(config1.hashCode() == config2.hashCode());
     }
@@ -306,14 +337,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testHashcodeWithDifferentSessionFactory() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     new Mockery().mock(StatsSessionFactory.class), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     new Mockery().mock(StatsSessionFactory.class),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description");
         assertFalse(config1.hashCode() == config2.hashCode());
     }
@@ -321,14 +354,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testHashcodeWithDifferentUnit() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit1", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit1",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit2", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit2",
                                                      "description");
         assertFalse(config1.hashCode() == config2.hashCode());
     }
@@ -336,14 +371,16 @@ public class DefaultStatsConfigTest {
     @Test
     public void testHashcodeWithDifferentDescription() {
         StatsConfig config1 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description1");
         StatsConfig config2 = new DefaultStatsConfig(true,
-                                                     MilliTimeDurationTracker.FACTORY, 
-                                                     DefaultSessionFactory.getInstance(), 
-                                                     "unit", 
+                                                     MilliTimeDurationTracker.FACTORY,
+                                                     DefaultSessionFactory.getInstance(),
+                                                     DefaultDataRecorderFactory.getInstance(),
+                                                     "unit",
                                                      "description2");
         assertFalse(config1.hashCode() == config2.hashCode());
     }
@@ -351,9 +388,10 @@ public class DefaultStatsConfigTest {
     @Test
     public void testToString() {
         StatsConfig config = new DefaultStatsConfig(true,
-                                                    MilliTimeDurationTracker.FACTORY, 
-                                                    DefaultSessionFactory.getInstance(), 
-                                                    "unit", 
+                                                    MilliTimeDurationTracker.FACTORY,
+                                                    DefaultSessionFactory.getInstance(),
+                                                    DefaultDataRecorderFactory.getInstance(),
+                                                    "unit",
                                                     "description");
 
         String str = config.toString();

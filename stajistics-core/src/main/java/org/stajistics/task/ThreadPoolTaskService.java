@@ -31,7 +31,6 @@ import org.stajistics.StatsProperties;
 public class ThreadPoolTaskService implements TaskService {
 
     private static final String PROP_CORE_POOL_SIZE = ThreadPoolTaskService.class.getName() + ".corePoolSize";
-    private static final int DEFAULT_CORE_POOL_SIZE = 10;
 
     private static final String PROP_MAX_POOL_SIZE = ThreadPoolTaskService.class.getName() + ".maxPoolSize";
     private static final int DEFAULT_MAX_POOL_SIZE = 20;
@@ -47,8 +46,9 @@ public class ThreadPoolTaskService implements TaskService {
 
     public ThreadPoolTaskService() {
 
+        int noCPUs = Runtime.getRuntime().availableProcessors();
         int corePoolSize = StatsProperties.getIntegerProperty(PROP_CORE_POOL_SIZE,
-                                                              DEFAULT_CORE_POOL_SIZE);
+                                                              noCPUs);
         int maxPoolSize = StatsProperties.getIntegerProperty(PROP_MAX_POOL_SIZE,
                                                              DEFAULT_MAX_POOL_SIZE);
 

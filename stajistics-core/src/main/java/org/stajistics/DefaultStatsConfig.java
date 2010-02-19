@@ -15,6 +15,7 @@
 package org.stajistics;
 
 import org.stajistics.session.StatsSessionFactory;
+import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
@@ -28,6 +29,7 @@ public class DefaultStatsConfig implements StatsConfig {
 
     private final StatsTrackerFactory<?> trackerFactory;
     private final StatsSessionFactory sessionFactory;
+    private final DataRecorderFactory dataRecorderFactory;
 
     private final String unit;
     private final String description;
@@ -41,6 +43,7 @@ public class DefaultStatsConfig implements StatsConfig {
         this(template.isEnabled(),
              template.getTrackerFactory(),
              template.getSessionFactory(),
+             template.getDataRecorderFactory(),
              template.getUnit(),
              template.getDescription());
     }
@@ -61,6 +64,7 @@ public class DefaultStatsConfig implements StatsConfig {
     public DefaultStatsConfig(final boolean enabled,
                               final StatsTrackerFactory<?> trackerFactory,
                               final StatsSessionFactory sessionFactory,
+                              final DataRecorderFactory dataRecorderFactory,
                               final String unit,
                               final String description) {
 
@@ -69,6 +73,9 @@ public class DefaultStatsConfig implements StatsConfig {
         }
         if (sessionFactory == null) {
             throw new NullPointerException("sessionFactory");
+        }
+        if (dataRecorderFactory == null) {
+            throw new NullPointerException("dataRecorderFactory");
         }
         if (unit == null) {
             throw new NullPointerException("unit");
@@ -80,53 +87,41 @@ public class DefaultStatsConfig implements StatsConfig {
         this.enabled = enabled;
         this.trackerFactory = trackerFactory;
         this.sessionFactory = sessionFactory;
+        this.dataRecorderFactory = dataRecorderFactory;
         this.unit = unit;
         this.description = description;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getUnit() {
         return unit;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getDescription() {
         return description;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsSessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsTrackerFactory<?> getTrackerFactory() {
         return trackerFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public DataRecorderFactory getDataRecorderFactory() {
+        return dataRecorderFactory;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         return (obj instanceof StatsConfig) && equals((StatsConfig)obj);
@@ -156,9 +151,6 @@ public class DefaultStatsConfig implements StatsConfig {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return Boolean.valueOf(enabled).hashCode() ^
@@ -168,9 +160,6 @@ public class DefaultStatsConfig implements StatsConfig {
                ((description == null) ? 0 : description.hashCode());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();

@@ -33,21 +33,22 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.DefaultSessionFactory;
+import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
 
 /**
- * The default implementation of {@link StatsConfigManager}. Clients typically do not instantiate 
- * this class directly. Instead use {@link Stats#getConfigManager()}. 
+ * The default implementation of {@link StatsConfigManager}. Clients typically do not instantiate
+ * this class directly. Instead use {@link Stats#getConfigManager()}.
  *
  * @author The Stajistics Project
  */
 public class DefaultStatsConfigManager implements StatsConfigManager {
 
-    public static final String PROP_INITIAL_CAPACITY = 
+    public static final String PROP_INITIAL_CAPACITY =
         StatsConfigManager.class.getName() + ".initialCapacity";
-    public static final String PROP_LOAD_FACTOR = 
+    public static final String PROP_LOAD_FACTOR =
         StatsConfigManager.class.getName() + ".loadFactor";
-    public static final String PROP_CONCURRENCY_LEVEL = 
+    public static final String PROP_CONCURRENCY_LEVEL =
         StatsConfigManager.class.getName() + ".concurrencyLevel";
 
     private final ConcurrentMap<String,KeyEntry> keyMap = createKeyEntryMap();
@@ -82,7 +83,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
      * @param rootConfig The root {@link StatsConfig} from which to inherit in the absence of configuration.
      * @param configMap A Map of key names to configurations. May be <tt>null</tt>.
      *
-     * @throws NullPointerException If <tt>eventManager</tt>, <tt>keyFactory</tt>, 
+     * @throws NullPointerException If <tt>eventManager</tt>, <tt>keyFactory</tt>,
      *                              or <tt>rootConfig</tt> is <tt>null</tt>.
      */
     public DefaultStatsConfigManager(final StatsEventManager eventManager,
@@ -103,11 +104,11 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         this.keyFactory = keyFactory;
 
         rootKeyEntry = new KeyEntry(NullStatsKey.getInstance(),
-                                    null, 
+                                    null,
                                     rootConfig);
 
         if (configMap != null) {
-            // If the configMap is not already intentionally ordered, sort it to ensure 
+            // If the configMap is not already intentionally ordered, sort it to ensure
             // predictable extraction. This is important because it affects the kinds of events
             // generated (i.e. CONFIG_CREATED vs. CONFIG_CHANGED)
             if (!(configMap instanceof SortedMap<?,?>) && !(configMap instanceof LinkedHashMap<?,?>)) {
@@ -123,13 +124,14 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     private static StatsConfig createDefaultConfig() {
         return new DefaultStatsConfig(true,
                                       TimeDurationTracker.FACTORY,
-                                      DefaultSessionFactory.getInstance(), 
+                                      DefaultSessionFactory.getInstance(),
+                                      DefaultDataRecorderFactory.getInstance(),
                                       StatsConstants.DEFAULT_UNIT,
                                       null);
     }
 
     /**
-     * A factory method hook for subclasses to override the {@link ConcurrentMap} implementation 
+     * A factory method hook for subclasses to override the {@link ConcurrentMap} implementation
      * to be used for storing entries.
      *
      * @return A {@link ConcurrentMap}, never <tt>null</tt>.
@@ -301,9 +303,9 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     /*
      * This is kind of a scary method. Needs some refactoring.
      */
-    private KeyEntry createEntry(final StatsKey key, 
+    private KeyEntry createEntry(final StatsKey key,
                                  StatsConfig config,
-                                 final boolean updateConfig, 
+                                 final boolean updateConfig,
                                  final boolean updateLocked) {
 
         boolean goingUp = true;
@@ -363,7 +365,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
         if (!newEntries.isEmpty()) {
             for (KeyEntry e : newEntries) {
-                eventManager.fireEvent(StatsEventType.CONFIG_CREATED, 
+                eventManager.fireEvent(StatsEventType.CONFIG_CREATED,
                                        e.getKey(),
                                        e.getConfig());
             }
@@ -372,7 +374,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return entry;
     }
 
-    private void updateEntry(KeyEntry entry, 
+    private void updateEntry(KeyEntry entry,
                              final StatsConfig config,
                              final boolean updateLocked) {
         Iterator<KeyEntry> entryItr = null;
@@ -395,7 +397,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                 entry = entryItr.next();
 
                 eventManager.fireEvent(StatsEventType.CONFIG_CHANGED,
-                                       entry.getKey(), 
+                                       entry.getKey(),
                                        entry.getConfig());
             }
         }
@@ -417,8 +419,8 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         while (entryItr.hasNext()) {
             entry = entryItr.next();
 
-            eventManager.fireEvent(StatsEventType.CONFIG_DESTROYED, 
-                                   entry.getKey(), 
+            eventManager.fireEvent(StatsEventType.CONFIG_DESTROYED,
+                                   entry.getKey(),
                                    entry.getConfig());
         }
     }
@@ -438,7 +440,7 @@ final class KeyEntry implements StatsKeyAssociation<StatsConfig>,Serializable {
     private final AtomicReference<StatsConfig> config = new AtomicReference<StatsConfig>(null);
 
     KeyEntry(final StatsKey key,
-             final KeyEntry parentEntry, 
+             final KeyEntry parentEntry,
              final StatsConfig config) {
 
         if (key == null) {
@@ -478,7 +480,7 @@ final class KeyEntry implements StatsKeyAssociation<StatsConfig>,Serializable {
     }
 
     /**
-     * 
+     *
      * @param config
      * @return <tt>true</tt> if the config changed;
      */
