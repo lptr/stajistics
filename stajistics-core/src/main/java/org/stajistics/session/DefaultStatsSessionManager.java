@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -30,6 +31,7 @@ import org.stajistics.StatsKeyMatcher;
 import org.stajistics.StatsProperties;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
+import org.stajistics.session.recorder.DataRecorder;
 
 /**
  * The default implementation of {@link StatsSessionManager}. All operations are done in a
@@ -178,7 +180,14 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
      */
     protected StatsSession createSession(final StatsKey key) {
         StatsConfig config = configManager.getConfig(key);
-        return config.getSessionFactory().createSession(key, Stats.getManager()); //TODO: How to get StatsManager properly
+
+        DataRecorder[] dataRecorders = config.getDataRecorderFactory()
+                                             .createDataRecorders();
+
+        //TODO: How to get StatsManager properly
+        return config.getSessionFactory().createSession(key,
+                                                        Stats.getManager(),
+                                                        dataRecorders);
     }
 
     /**

@@ -17,6 +17,7 @@ package org.stajistics;
 import java.io.Serializable;
 
 import org.stajistics.session.StatsSessionFactory;
+import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
@@ -50,6 +51,9 @@ public interface StatsConfigBuilder extends Serializable {
      */
     StatsConfigBuilder withSessionFactory(StatsSessionFactory sessionFactory);
 
+    
+    StatsConfigBuilder withDataRecorderFactory(DataRecorderFactory dataRecorderFactory);
+
     /**
      * Build the configuration with the given <tt>unit</tt>.
      *
@@ -67,7 +71,7 @@ public interface StatsConfigBuilder extends Serializable {
     StatsConfigBuilder withDescription(String description);
 
     /**
-     * Create a new immutable {@link StatsConfig} instance based on the builders currently 
+     * Create a new immutable {@link StatsConfig} instance based on the builders currently
      * configured state. Can be invoked multiple times and the state can be modified further
      * in between invocations.
      *

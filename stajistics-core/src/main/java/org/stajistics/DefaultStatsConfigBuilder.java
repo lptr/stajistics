@@ -16,6 +16,8 @@ package org.stajistics;
 
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
+import org.stajistics.session.recorder.DataRecorderFactory;
+import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
 
@@ -32,13 +34,14 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     protected boolean enabled = true;
     protected StatsTrackerFactory<?> trackerFactory;
     protected StatsSessionFactory sessionFactory;
+    protected DataRecorderFactory dataRecorderFactory;
     protected String unit;
     protected String description;
 
     /**
      * Create a new instance.
      *
-     * @param configManager The {@link StatsConfigManager} to support 
+     * @param configManager The {@link StatsConfigManager} to support
      *                      {@link #setConfigFor(StatsKey)} calls. Must not be <tt>null</tt>.
      * @throws NullPointerException If <tt>configManager</tt> is <tt>null</tt>.
      */
@@ -49,7 +52,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     /**
      * Create a new instance.
      *
-     * @param configManager The {@link StatsConfigManager} to support 
+     * @param configManager The {@link StatsConfigManager} to support
      *                      {@link #setConfigFor(StatsKey)} calls. Must not be <tt>null</tt>.
      * @param config The {@link StatsConfig} from which to copy configuration as a starting point.
      *
@@ -67,6 +70,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
             enabled = config.isEnabled();
             trackerFactory = config.getTrackerFactory();
             sessionFactory = config.getSessionFactory();
+            dataRecorderFactory = config.getDataRecorderFactory();
             unit = config.getUnit();
             description = config.getDescription();
         }
@@ -104,6 +108,16 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         }
 
         this.trackerFactory = trackerFactory;
+        return this;
+    }
+
+    @Override
+    public StatsConfigBuilder withDataRecorderFactory(final DataRecorderFactory dataRecorderFactory) {
+        if (dataRecorderFactory == null) {
+            throw new NullPointerException("dataRecorderFactory");
+        }
+
+        this.dataRecorderFactory = dataRecorderFactory;
         return this;
     }
 
@@ -147,6 +161,10 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return DefaultSessionFactory.getInstance();
     }
 
+    protected DataRecorderFactory createDefaultDataRecorderFactory() {
+        return DefaultDataRecorderFactory.getInstance();
+    }
+
     /**
      * A factory method for getting the default unit.
      *
@@ -164,6 +182,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
 
         StatsTrackerFactory<?> trackerFactory = this.trackerFactory;
         StatsSessionFactory sessionFactory = this.sessionFactory;
+        DataRecorderFactory dataRecorderFactory = this.dataRecorderFactory;
         String unit = this.unit;
 
         if (trackerFactory == null) {
@@ -172,6 +191,9 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         if (sessionFactory == null) {
             sessionFactory = createDefaultSessionFactory();
         }
+        if (dataRecorderFactory == null) {
+            dataRecorderFactory = createDefaultDataRecorderFactory();
+        }
         if (unit == null) {
             unit = createDefaultUnit();
         }
@@ -179,6 +201,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return new DefaultStatsConfig(enabled,
                                       trackerFactory,
                                       sessionFactory,
+                                      dataRecorderFactory,
                                       unit,
                                       this.description);
     }

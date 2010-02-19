@@ -15,9 +15,11 @@
 package org.stajistics.session;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.session.recorder.DataRecorder;
 
 /**
  * A factory for {@link StatsSession} instances.
@@ -33,6 +35,8 @@ public interface StatsSessionFactory extends Serializable {
      * @param manager
      * @return A {@link StatsSession} instance, never <tt>null</tt>.
      */
-    StatsSession createSession(StatsKey key, StatsManager manager);
+    StatsSession createSession(StatsKey key,
+                               StatsManager manager,
+                               DataRecorder[] dataRecorders);
 
 }

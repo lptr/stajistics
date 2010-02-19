@@ -16,7 +16,9 @@ package org.stajistics.session;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
-import org.stajistics.session.recorder.DistributionDataRecorder;
+import org.stajistics.session.recorder.DataRecorder;
+
+import java.util.List;
 
 /**
  * The default factory for creating {@link StatsSession} instances.
@@ -25,17 +27,18 @@ import org.stajistics.session.recorder.DistributionDataRecorder;
  */
 public class DefaultSessionFactory implements StatsSessionFactory {
 
-    private static DefaultSessionFactory instance = new DefaultSessionFactory();
+    private static DefaultSessionFactory INSTANCE = new DefaultSessionFactory();
 
     private DefaultSessionFactory() {}
 
     public static DefaultSessionFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override
     public StatsSession createSession(final StatsKey key,
-                                      final StatsManager manager) {
-        return new ConcurrentStatsSession(key, manager.getEventManager(), new DistributionDataRecorder());
+                                      final StatsManager manager,
+                                      final DataRecorder[] dataRecorders) {
+        return new ConcurrentStatsSession(key, manager.getEventManager(), dataRecorders);
     }
 }
