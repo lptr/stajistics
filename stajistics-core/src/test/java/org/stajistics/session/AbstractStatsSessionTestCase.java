@@ -16,8 +16,6 @@ package org.stajistics.session;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -74,7 +72,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullKey() {
         try {
-            new ConcurrentStatsSession(null, mockEventManager, (List<DataRecorder>)null);
+            new ConcurrentStatsSession(null, mockEventManager, (DataRecorder[])null);
 
         } catch (NullPointerException npe) {
             assertEquals("key", npe.getMessage());
@@ -84,7 +82,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullEventManager() {
         try {
-            new ConcurrentStatsSession(mockKey, null, (List<DataRecorder>)null);
+            new ConcurrentStatsSession(mockKey, null, (DataRecorder[])null);
 
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());

@@ -58,25 +58,16 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
         this.sessionManager = sessionManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsTracker getTracker(final StatsKey key) {
         if (key == null) {
@@ -145,10 +136,7 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
 
         return new SpanCompositeStatsTracker(trackers);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public IncidentTracker getIncidentTracker(final StatsKey key) {
         StatsTracker tracker = getTracker(key);
@@ -167,9 +155,6 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
         return DefaultIncidentTracker.FACTORY.createTracker(key, sessionManager);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IncidentTracker getIncidentTracker(final StatsKey... keys) {
 
@@ -198,9 +183,6 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
         return new IncidentCompositeStatsTracker(trackers);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ManualTracker getManualTracker(final StatsKey key) {
         StatsTracker tracker = getTracker(key);
@@ -219,9 +201,6 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
         return DefaultManualTracker.FACTORY.createTracker(key, sessionManager);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ManualTracker getManualTracker(final StatsKey... keys) {
 

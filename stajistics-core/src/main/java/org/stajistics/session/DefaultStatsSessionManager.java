@@ -82,49 +82,31 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
         return new ConcurrentHashMap<StatsKey,StatsSession>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getSessionCount() {
         return sessionMap.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Set<StatsKey> getKeys() {
         return Collections.unmodifiableSet(sessionMap.keySet());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Collection<StatsSession> getSessions() {
         return Collections.unmodifiableCollection(sessionMap.values());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Collection<StatsSession> getSessions(final StatsKeyMatcher keyMatcher) {
         return keyMatcher.filterToCollection(sessionMap);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsSession getSession(final StatsKey key) {
         return sessionMap.get(key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsSession getOrCreateSession(final StatsKey key) {
         if (key == null) {
@@ -150,17 +132,11 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
         return session;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean remove(final StatsSession statsSession) {
         return remove(statsSession.getKey()) != null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsSession remove(final StatsKey key) {
         StatsSession session = sessionMap.remove(key);
@@ -190,9 +166,6 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
                                                         dataRecorders);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void clear() {
         Set<StatsKey> keySet = sessionMap.keySet();
@@ -201,9 +174,6 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void clearAllSessions() {
         for (StatsSession session : sessionMap.values()) {

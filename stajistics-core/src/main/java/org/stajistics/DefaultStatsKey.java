@@ -52,33 +52,21 @@ public class DefaultStatsKey extends AbstractStatsKey {
         setHashCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object getAttribute(final String name) {
         return attributes.get(name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Map<String,Object> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getAttributeCount() {
         return attributes.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void appendAttributes(final StringBuilder buf) {
         buf.append(attributes);

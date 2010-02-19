@@ -56,9 +56,6 @@ public class SingleAttributeStatsKey extends AbstractStatsKey {
         setHashCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Object getAttribute(final String name) {
         if (name.equals(attrName)) {
@@ -68,9 +65,6 @@ public class SingleAttributeStatsKey extends AbstractStatsKey {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Map<String,Object> getAttributes() {
         if (attrName == null) {
@@ -80,17 +74,11 @@ public class SingleAttributeStatsKey extends AbstractStatsKey {
         return Collections.singletonMap(attrName, attrValue);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getAttributeCount() {
         return attrName == null ? 0 : 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void appendAttributes(final StringBuilder buf) {
         buf.append('{');

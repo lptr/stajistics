@@ -28,6 +28,7 @@ public enum StatsEventType {
 
     SESSION_CREATED(1),
     SESSION_CLEARED(1),
+    SESSION_RESTORED(1),
     SESSION_DESTROYED(1),
 
     TRACKER_TRACKING(2),

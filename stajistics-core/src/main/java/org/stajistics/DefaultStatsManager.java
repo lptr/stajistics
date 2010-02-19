@@ -144,81 +144,51 @@ public class DefaultStatsManager implements StatsManager {
         return manager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigManager getConfigManager() {
         return configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsSessionManager getSessionManager() {
         return sessionManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsEventManager getEventManager() {
         return eventManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsSnapshotManager getSnapshotManager() {
         return snapshotManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsTrackerLocator getTrackerLocator() {
         return trackerLocator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsKeyFactory getKeyFactory() {
         return keyFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigFactory getConfigFactory() {
         return configFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public TaskService getTaskService() {
         return taskService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;

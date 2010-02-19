@@ -15,7 +15,6 @@
 package org.stajistics.session;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
@@ -31,8 +30,10 @@ public interface StatsSessionFactory extends Serializable {
     /**
      * Create a {@link StatsSession} instance for the given <tt>key</tt>.
      *
-     * @param key The key for which to create a {@link org.stajistics.session.StatsSession}.
-     * @param manager
+     * @param key The key for which to create a {@link StatsSession}.
+     * @param manager The {@link StatsManager} instance which can be used to find dependencies
+     *                to pass into a new {@link StatsSession}.
+     * @param dataRecorders The array of DataRecorders to be passed into the new {@link StatsSession}.
      * @return A {@link StatsSession} instance, never <tt>null</tt>.
      */
     StatsSession createSession(StatsKey key,

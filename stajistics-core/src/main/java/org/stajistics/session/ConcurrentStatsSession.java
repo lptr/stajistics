@@ -52,25 +52,12 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
     protected final AtomicDouble sum = new AtomicDouble(0);
 
-    public ConcurrentStatsSession(final StatsKey key, final StatsEventManager eventManager) {
-        super(key, eventManager);
-    }
-
     public ConcurrentStatsSession(final StatsKey key,
                                   final StatsEventManager eventManager,
                                   final DataRecorder... dataRecorders) {
         super(key, eventManager, dataRecorders);
     }
 
-    public ConcurrentStatsSession(final StatsKey key,
-                                  final StatsEventManager eventManager,
-                                  final List<DataRecorder> dataRecorders) {
-        super(key, eventManager, dataRecorders);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void track(final StatsTracker tracker,
                       long now) {
@@ -90,41 +77,26 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         eventManager.fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getHits() {
         return hits.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getFirstHitStamp() {
         return firstHitStamp.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getLastHitStamp() {
         return lastHitStamp;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getCommits() {
         return commits.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void update(final StatsTracker tracker, long now) {
 
@@ -177,9 +149,6 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getFirst() {
         Double firstValue = first.get();
@@ -191,33 +160,21 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         return firstValue;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getLast() {
         return last;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getMin() {
         return min.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getMax() {
         return max.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getSum() {
         return sum.get();
@@ -240,11 +197,10 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         }
 
         logger.trace("Restore: {}", this);
+
+        eventManager.fireEvent(StatsEventType.SESSION_RESTORED, key, this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void clear() {
         hits.set(0);

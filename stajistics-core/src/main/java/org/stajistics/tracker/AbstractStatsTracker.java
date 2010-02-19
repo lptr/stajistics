@@ -36,42 +36,27 @@ public abstract class AbstractStatsTracker implements StatsTracker {
         this.session = session;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getValue() {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsTracker reset() {
         value = 0;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsKey getKey() {
         return session.getKey();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsSession getSession() {
         return session;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(256);
