@@ -16,8 +16,6 @@ package org.stajistics.session;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
 
@@ -36,7 +34,7 @@ public class ConcurrentStatsSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullKey() {
         try {
-            new ConcurrentStatsSession(null, mockEventManager, (List<DataRecorder>)null);
+            new ConcurrentStatsSession(null, mockEventManager, (DataRecorder[])null);
 
         } catch (NullPointerException npe) {
             assertEquals("key", npe.getMessage());
@@ -47,7 +45,7 @@ public class ConcurrentStatsSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullEventManager() {
         try {
-            new ConcurrentStatsSession(mockKey, null, (List<DataRecorder>)null);
+            new ConcurrentStatsSession(mockKey, null, (DataRecorder[])null);
 
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());

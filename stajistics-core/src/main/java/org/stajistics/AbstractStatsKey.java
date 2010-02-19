@@ -51,9 +51,6 @@ public abstract class AbstractStatsKey implements StatsKey {
         this.keyFactory = keyFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final StatsKeyBuilder buildCopy() {
         if (keyFactory == null) {
@@ -63,9 +60,6 @@ public abstract class AbstractStatsKey implements StatsKey {
         return keyFactory.createKeyBuilder(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final String getName() {
         return name;
@@ -83,17 +77,11 @@ public abstract class AbstractStatsKey implements StatsKey {
         this.hashCode = h;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final int hashCode() {
         return hashCode;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final boolean equals(final Object other) {
         if (other == null) {
@@ -176,9 +164,6 @@ public abstract class AbstractStatsKey implements StatsKey {
         return i;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         int attrCount = getAttributeCount();

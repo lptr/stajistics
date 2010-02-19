@@ -45,95 +45,59 @@ public final class NullTracker
         return INSTANCE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isTracking() {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public SpanTracker track() {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getStartTime() {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IncidentTracker incident() {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getValue() {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsTracker reset() {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsKey getKey() {
         return NullStatsKey.getInstance();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsSession getSession() {
         return session;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ManualTracker setValue(double value) {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ManualTracker addValue(double value) {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void commit() {}
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return getClass().getSimpleName();

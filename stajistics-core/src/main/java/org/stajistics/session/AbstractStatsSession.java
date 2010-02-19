@@ -16,7 +16,6 @@ package org.stajistics.session;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -35,6 +34,8 @@ import org.stajistics.session.recorder.DataRecorder;
  */
 public abstract class AbstractStatsSession implements StatsSession {
 
+    protected static final DataRecorder[] EMPTY_DATA_RECORDER_ARRAY = new DataRecorder[0];
+
     protected static final DecimalFormat DECIMAL_FORMAT;
     static {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
@@ -46,21 +47,11 @@ public abstract class AbstractStatsSession implements StatsSession {
     protected final StatsKey key;
     protected final StatsEventManager eventManager;
 
-    protected final List<DataRecorder> dataRecorders;
-
-    public AbstractStatsSession(final StatsKey key, final StatsEventManager eventManager) {
-        this(key, eventManager, (List<DataRecorder>)null);
-    }
+    protected final DataRecorder[] dataRecorders;
 
     public AbstractStatsSession(final StatsKey key, 
                                 final StatsEventManager eventManager, 
                                 final DataRecorder... dataRecorders) {
-        this(key, eventManager, Arrays.asList(dataRecorders));
-    }
-
-    public AbstractStatsSession(final StatsKey key, 
-                                final StatsEventManager eventManager, 
-                                final List<DataRecorder> dataRecorders) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -71,32 +62,24 @@ public abstract class AbstractStatsSession implements StatsSession {
         this.key = key;
         this.eventManager = eventManager;
 
-        if (dataRecorders == null || dataRecorders.isEmpty()) {
-            this.dataRecorders = Collections.emptyList();
+        if (dataRecorders == null) {
+            this.dataRecorders = EMPTY_DATA_RECORDER_ARRAY;
         } else {
-            this.dataRecorders = new ArrayList<DataRecorder>(dataRecorders);
+            // TBD: Copy array?
+            this.dataRecorders = dataRecorders;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsKey getKey() {
         return key;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<DataRecorder> getDataRecorders() {
-        return Collections.unmodifiableList(dataRecorders);
+        return Collections.unmodifiableList(Arrays.asList(dataRecorders));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DataSet collectData() {
 

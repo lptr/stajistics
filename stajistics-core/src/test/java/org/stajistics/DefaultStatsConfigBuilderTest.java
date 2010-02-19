@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.stajistics.session.StatsSessionFactory;
+import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.StatsTrackerFactory;
 
 /**
@@ -63,11 +64,13 @@ public class DefaultStatsConfigBuilderTest {
     public void testConstructWithConfig() {
         final StatsTrackerFactory<?> trackerFactory = mockery.mock(StatsTrackerFactory.class);
         final StatsSessionFactory sessionFactory = mockery.mock(StatsSessionFactory.class);
+        final DataRecorderFactory dataRecorderFactory = mockery.mock(DataRecorderFactory.class);
         final StatsConfig template = mockery.mock(StatsConfig.class);
         mockery.checking(new Expectations() {{
             atLeast(1).of(template).isEnabled(); will(returnValue(true));
             atLeast(1).of(template).getTrackerFactory(); will(returnValue(trackerFactory));
             atLeast(1).of(template).getSessionFactory(); will(returnValue(sessionFactory));
+            atLeast(1).of(template).getDataRecorderFactory(); will(returnValue(dataRecorderFactory));
             atLeast(1).of(template).getUnit(); will(returnValue("testUnit"));
             atLeast(1).of(template).getDescription(); will(returnValue("testDescription"));
         }});

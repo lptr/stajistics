@@ -144,17 +144,11 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return new ConcurrentHashMap<String,KeyEntry>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfig getRootConfig() {
         return rootKeyEntry.getConfig();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setRootConfig(StatsConfig config) {
         if (config == null) {
@@ -164,33 +158,21 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         updateEntry(rootKeyEntry, config, false);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Set<String> getKeyNames() {
         return keyMap.keySet();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getConfigCount() {
         return keyMap.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setConfig(final String keyName, final StatsConfig config) {
         setConfig(keyFactory.createKey(keyName), config);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setConfig(final StatsKey key, final StatsConfig config) {
         if (key == null) {
@@ -209,9 +191,6 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         // updateLock is unlock()ed by createEntry or updateEntry (before events are fired)
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfig getConfig(final StatsKey key) {
         KeyEntry entry = entryFor(key);
@@ -222,9 +201,6 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return entry.getConfig();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfig getOrCreateConfig(StatsKey key) {
         KeyEntry entry = entryFor(key);
@@ -235,17 +211,11 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return entry.getConfig();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfig removeConfig(String keyName) {
         return removeConfig(keyFactory.createKey(keyName));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfig removeConfig(final StatsKey key) {
         KeyEntry entry = entryFor(key);
@@ -258,25 +228,16 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Map<StatsKey,StatsConfig> getConfigs() {
         return getConfigs(StatsKeyMatcher.all());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Map<StatsKey,StatsConfig> getConfigs(final StatsKeyMatcher matcher) {
         return matcher.filterToMap(keyMap.values());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void clearConfigs() {
         destroyEntry(rootKeyEntry);

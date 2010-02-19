@@ -38,17 +38,11 @@ public class DefaultStatsConfigFactory implements StatsConfigFactory {
         this.configManager = configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigBuilder createConfigBuilder() {
         return new DefaultStatsConfigBuilder(configManager);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigBuilder createConfigBuilder(final StatsConfig template) {
         return new DefaultStatsConfigBuilder(configManager, template);

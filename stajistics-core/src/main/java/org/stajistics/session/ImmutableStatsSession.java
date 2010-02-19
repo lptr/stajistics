@@ -55,9 +55,6 @@ public class ImmutableStatsSession implements StatsSession {
         this.dataSet = dataSet;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsKey getKey() {
         return key;
@@ -71,9 +68,6 @@ public class ImmutableStatsSession implements StatsSession {
         return Collections.emptyList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DataSet collectData() {
         return dataSet;
@@ -85,73 +79,46 @@ public class ImmutableStatsSession implements StatsSession {
     @Override
     public void restore(DataSet dataSet) {}
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getFirst() {
         return dataSet.getField(DataSet.Field.FIRST, Double.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getFirstHitStamp() {
         return dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Long.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getHits() {
         return dataSet.getField(DataSet.Field.HITS, Long.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getCommits() {
         return dataSet.getField(DataSet.Field.COMMITS, Long.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getLast() {
         return dataSet.getField(DataSet.Field.LAST, Double.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getLastHitStamp() {
         return dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Long.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getMax() {
         return dataSet.getField(DataSet.Field.MAX, Double.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getMin() {
         return dataSet.getField(DataSet.Field.MIN, Double.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getSum() {
         return dataSet.getField(DataSet.Field.SUM, Double.class);

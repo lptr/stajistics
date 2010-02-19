@@ -27,9 +27,6 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
         super(session);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final SpanTracker track() {
 
@@ -52,9 +49,6 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
         session.track(this, now);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final void commit() {
 
@@ -73,25 +67,16 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
         session.update(this, now);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isTracking() {
         return tracking;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getStartTime() {
         return startTime;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsTracker reset() {
         super.reset();
@@ -100,9 +85,6 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder(256);

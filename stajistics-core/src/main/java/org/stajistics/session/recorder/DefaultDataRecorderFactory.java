@@ -14,8 +14,6 @@
  */
 package org.stajistics.session.recorder;
 
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author The Stajistics Project

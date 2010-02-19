@@ -14,12 +14,12 @@
  */
 package org.stajistics.session.recorder;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * @author The Stajistics Project
  */
-public interface DataRecorderFactory {
+public interface DataRecorderFactory extends Serializable {
 
     DataRecorder[] createDataRecorders();
 

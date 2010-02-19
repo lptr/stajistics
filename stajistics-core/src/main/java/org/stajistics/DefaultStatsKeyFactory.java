@@ -23,25 +23,16 @@ package org.stajistics;
  */
 public class DefaultStatsKeyFactory implements StatsKeyFactory {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsKey createKey(final String name) {
         return new SimpleStatsKey(name, this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsKeyBuilder createKeyBuilder(final String name) {
         return new DefaultStatsKeyBuilder(name, this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsKeyBuilder createKeyBuilder(final StatsKey template) {
         return new DefaultStatsKeyBuilder(template, this);

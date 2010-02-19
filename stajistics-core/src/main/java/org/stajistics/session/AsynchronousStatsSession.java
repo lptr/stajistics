@@ -60,21 +60,8 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
 
     public AsynchronousStatsSession(final StatsKey key,
                                     final StatsEventManager eventManager,
-                                    final TaskService taskService) {
-        this(key, eventManager, taskService, (List<DataRecorder>) null);
-    }
-
-    public AsynchronousStatsSession(final StatsKey key,
-                                    final StatsEventManager eventManager,
                                     final TaskService taskService,
                                     final DataRecorder... dataRecorders) {
-        this(key, eventManager, taskService, Arrays.asList(dataRecorders));
-    }
-
-    public AsynchronousStatsSession(final StatsKey key,
-                                    final StatsEventManager eventManager,
-                                    final TaskService taskService,
-                                    final List<DataRecorder> dataRecorders) {
         super(key, eventManager, dataRecorders);
 
         if (taskService == null) {
@@ -84,9 +71,6 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         this.taskService = taskService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void track(final StatsTracker tracker, long now) {
         if (now < 0) {
@@ -110,41 +94,26 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         eventManager.fireEvent(StatsEventType.TRACKER_TRACKING, key, tracker);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getHits() {
         return hits;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getFirstHitStamp() {
         return firstHitStamp;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getLastHitStamp() {
         return lastHitStamp;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getCommits() {
         return commits;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void update(final StatsTracker tracker, final long now) {
         updateQueue.add(new TrackerEntry(tracker, now));
@@ -193,9 +162,6 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         eventManager.fireEvent(StatsEventType.TRACKER_COMMITTED, key, tracker);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getFirst() {
         Double firstValue = first;
@@ -207,41 +173,26 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         return firstValue;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getLast() {
         return last;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getMin() {
         return min;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getMax() {
         return max;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double getSum() {
         return sum;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void restore(final DataSet dataSet) {
         stateLock.lock();
@@ -264,11 +215,10 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         }
 
         logger.trace("Restore: {}", this);
+
+        eventManager.fireEvent(StatsEventType.SESSION_RESTORED, key, this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void clear() {
         // Must always lock update queue first to avoid deadlocks

@@ -76,18 +76,12 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigBuilder withEnabledState(final boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigBuilder withSessionFactory(final StatsSessionFactory sessionFactory) {
         if (sessionFactory == null) {
@@ -98,9 +92,6 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigBuilder withTrackerFactory(final StatsTrackerFactory<?> trackerFactory) {
         if (trackerFactory == null) {
@@ -121,9 +112,6 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigBuilder withUnit(final String unit) {
         if (unit == null) {
@@ -134,9 +122,6 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfigBuilder withDescription(final String description) {
         this.description = description;
@@ -174,9 +159,6 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return StatsConstants.DEFAULT_UNIT;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public StatsConfig newConfig() {
 
@@ -206,9 +188,6 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
                                       this.description);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setConfigFor(final StatsKey key) {
         configManager.setConfig(key, newConfig());

@@ -26,9 +26,15 @@ public final class Stajistics {
     protected static final String PROP_NAME = "library.name";
     protected static final String PROP_VERSION = "library.version";
 
-    private static final String name = replaceNull(Stajistics.class.getPackage().getImplementationTitle(), "Stajistics");
-    private static final String version = replaceNull(Stajistics.class.getPackage().getImplementationTitle(), "0.0");
-    
+    private static final String name = replaceNull(Stajistics.class
+                                                             .getPackage()
+                                                             .getImplementationTitle(), 
+                                                   "Stajistics");
+    private static final String version = replaceNull(Stajistics.class
+                                                                .getPackage()
+                                                                .getImplementationTitle(), 
+                                                      "0.0");
+
     private static String replaceNull(String value, String defaultValue) {
     	return value == null ? defaultValue : value;
     }

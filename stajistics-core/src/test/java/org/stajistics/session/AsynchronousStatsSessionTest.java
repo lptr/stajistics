@@ -16,8 +16,6 @@ package org.stajistics.session;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.SimpleTaskService;
@@ -44,7 +42,7 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullKey() {
         try {
-            new AsynchronousStatsSession(null, mockEventManager, mockTaskService, (List<DataRecorder>)null);
+            new AsynchronousStatsSession(null, mockEventManager, mockTaskService, (DataRecorder[])null);
 
         } catch (NullPointerException npe) {
             assertEquals("key", npe.getMessage());
@@ -55,7 +53,7 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullEventManager() {
         try {
-            new AsynchronousStatsSession(mockKey, null, mockTaskService, (List<DataRecorder>)null);
+            new AsynchronousStatsSession(mockKey, null, mockTaskService, (DataRecorder[])null);
 
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());
@@ -65,7 +63,7 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullTaskService() {
         try {
-            new AsynchronousStatsSession(mockKey, mockEventManager, null, (List<DataRecorder>)null);
+            new AsynchronousStatsSession(mockKey, mockEventManager, null, (DataRecorder[])null);
 
         } catch (NullPointerException npe) {
             assertEquals("taskService", npe.getMessage());

@@ -18,8 +18,6 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.session.recorder.DataRecorder;
 
-import java.util.List;
-
 /**
  * The default factory for creating {@link StatsSession} instances.
  *
@@ -39,6 +37,8 @@ public class DefaultSessionFactory implements StatsSessionFactory {
     public StatsSession createSession(final StatsKey key,
                                       final StatsManager manager,
                                       final DataRecorder[] dataRecorders) {
-        return new ConcurrentStatsSession(key, manager.getEventManager(), dataRecorders);
+        return new ConcurrentStatsSession(key, 
+                                          manager.getEventManager(), 
+                                          dataRecorders);
     }
 }
