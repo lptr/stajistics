@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * 
- * 
+ *
+ *
  * @author The Stajistics Project
  */
 public abstract class StatsKeyMatcher implements Serializable {
@@ -75,10 +75,10 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /**
-     * Create a matcher that matches keys that have an attribute name equal to 
+     * Create a matcher that matches keys that have an attribute name equal to
      * the given <tt>attrName</tt>.
      *
-     * @param attrName The key attribute name for which keys having an equal 
+     * @param attrName The key attribute name for which keys having an equal
      *                 attribute name should be matched.
      *
      * @return A key attribute name equality matcher.
@@ -88,10 +88,10 @@ public abstract class StatsKeyMatcher implements Serializable {
     }
 
     /**
-     * Create a matcher that matches keys that have an attribute value equal to 
+     * Create a matcher that matches keys that have an attribute value equal to
      * the given <tt>attrValue</tt>.
      *
-     * @param attrValue The key attribute value for which keys having an equal 
+     * @param attrValue The key attribute value for which keys having an equal
      *                  attribute value should be matched.
      *
      * @return A key attribute value equality matcher.
@@ -202,7 +202,7 @@ public abstract class StatsKeyMatcher implements Serializable {
      * Create a new matcher that negates the result of calls to {@link #matches(StatsKey)}
      * on this matcher.
      *
-     * @return The inverse matcher of this matcher. 
+     * @return The inverse matcher of this matcher.
      */
     public StatsKeyMatcher not() {
         return new NegationMatcher(this);
@@ -210,7 +210,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     /**
      * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
-     * the conjunction of the results of the same method called on this and the 
+     * the conjunction of the results of the same method called on this and the
      * passed <tt>matcher</tt>.
      *
      * @param matcher The matcher to conjunct with this matcher.
@@ -223,7 +223,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     /**
      * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
-     * the disjunction of the results of the same method called on this and the 
+     * the disjunction of the results of the same method called on this and the
      * passed <tt>matcher</tt>.
      *
      * @param matcher The matcher to disjunct with this matcher.
@@ -236,7 +236,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
     /**
      * Create a new composite matcher for which the {@link #matches(StatsKey)} method returns
-     * the exclusive disjunction of the results of the same method called on this and the 
+     * the exclusive disjunction of the results of the same method called on this and the
      * passed <tt>matcher</tt>.
      *
      * @param matcher The matcher to exclusively disjunct with this matcher.
@@ -328,17 +328,13 @@ public abstract class StatsKeyMatcher implements Serializable {
     public final boolean equals(final Object obj) {
         if (obj == null) {
             return false;
-        }        
+        }
 
         if (!getClass().equals(obj.getClass())) {
             return false;
         }
 
-        if (!(obj instanceof StatsKeyMatcher)) {
-            return false;
-        }
-
-        return equals((StatsKeyMatcher)obj);
+        return (obj instanceof StatsKeyMatcher) && equals((StatsKeyMatcher)obj);
     }
 
     public abstract boolean equals(StatsKeyMatcher matcher);
@@ -378,7 +374,8 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ delegate.hashCode();
+            return getClass().hashCode() +
+                   31 * delegate.hashCode();
         }
     }
 
@@ -437,8 +434,10 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ matcher1.hashCode() ^ matcher2.hashCode();
-        }        
+            return getClass().hashCode() +
+                   31 * matcher1.hashCode() +
+                   31 * matcher2.hashCode();
+        }
     }
 
     private static class AllMatcher extends StatsKeyMatcher {
@@ -593,7 +592,8 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ testKey.hashCode();
+            return getClass().hashCode() +
+                   31 * testKey.hashCode();
         }
     }
 
@@ -647,7 +647,9 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ target.hashCode() ^ test.hashCode();
+            return getClass().hashCode() +
+                   31 * target.hashCode() +
+                   31 * test.hashCode();
         }
     }
 
@@ -697,11 +699,13 @@ public abstract class StatsKeyMatcher implements Serializable {
             PrefixMatcher prefixMatcher = (PrefixMatcher)other;
             return target == prefixMatcher.target &&
                    prefix.equals(prefixMatcher.prefix);
-        }        
+        }
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ target.hashCode() ^ prefix.hashCode();
+            return getClass().hashCode() +
+                   31 * target.hashCode() +
+                   31 * prefix.hashCode();
         }
     }
 
@@ -773,12 +777,14 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ target.hashCode() ^ suffix.hashCode();
+            return getClass().hashCode() +
+                   31 * target.hashCode() +
+                   31 * suffix.hashCode();
         }
     }
 
     private static class ContainsMatcher extends StatsKeyMatcher {
-        
+
         private final MatchTarget target;
         private final String string;
 
@@ -827,7 +833,9 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ target.hashCode() ^ string.hashCode();
+            return getClass().hashCode() +
+                   31 * target.hashCode() +
+                   31 * string.hashCode();
         }
     }
 
@@ -852,8 +860,8 @@ public abstract class StatsKeyMatcher implements Serializable {
             int count = 0;
             final char[] chars = name.toCharArray();
 
-            for (int i = 0; i < chars.length; i++) {
-                if (chars[i] == StatsConstants.KEY_HIERARCHY_DELIMITER) {
+            for (char c : chars) {
+                if (c == StatsConstants.KEY_HIERARCHY_DELIMITER) {
                     count++;
                 }
             }
@@ -868,7 +876,8 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ depth;
+            return getClass().hashCode() +
+                   31 * depth;
         }
     }
 
@@ -900,15 +909,16 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ count; 
+            return getClass().hashCode() +
+                   31 * count;
         }
     }
 
     private static class LengthMatcher extends StatsKeyMatcher {
-     
+
         private final MatchTarget target;
         private final int length;
-        
+
         LengthMatcher(final MatchTarget target,
                       int length) {
             if (target == null) {
@@ -921,7 +931,7 @@ public abstract class StatsKeyMatcher implements Serializable {
             this.target = target;
             this.length = length;
         }
-        
+
         @Override
         public boolean matches(final StatsKey key) {
             switch (target) {
@@ -954,7 +964,9 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ target.hashCode() ^ length;
+            return getClass().hashCode() +
+                   31 * target.hashCode() +
+                   31 * length;
         }
     }
 
@@ -962,7 +974,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         private final MatchTarget target;
         private final Pattern pattern;
-        
+
         public RegExMatcher(final MatchTarget target,
                             final Pattern pattern) {
             if (target == null) {
@@ -1009,7 +1021,9 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         @Override
         public int hashCode() {
-            return getClass().hashCode() ^ target.hashCode() ^ pattern.hashCode();
+            return getClass().hashCode() +
+                   31 * target.hashCode() +
+                   31 * pattern.hashCode();
         }
     }
 }

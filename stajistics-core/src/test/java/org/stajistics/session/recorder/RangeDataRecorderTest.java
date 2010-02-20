@@ -14,20 +14,21 @@
  */
 package org.stajistics.session.recorder;
 
-import java.io.Serializable;
+import org.stajistics.util.RangeList;
 
 /**
- * Creates DataRecorder instances.
- *
  * @author The Stajistics Project
  */
-public interface DataRecorderFactory extends Serializable {
+public class RangeDataRecorderTest extends AbstractDataRecorderTestCase {
 
-    /**
-     * Create an array of {@link DataRecorder} instances.
-     * @return An array of {@link DataRecorder} instances, never <tt>null</tt>,
-     *         but possibly empty.
-     */
-    DataRecorder[] createDataRecorders();
+    protected RangeList rangeList;
 
+    @Override
+    protected DataRecorder createDataRecorder() {
+        rangeList = RangeList.build()
+                             .addRange(1, 2)
+                             .addRange(3, 4)
+                             .rangeList();
+        return new RangeDataRecorder(rangeList);
+    }
 }

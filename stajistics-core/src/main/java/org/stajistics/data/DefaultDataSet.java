@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -112,9 +112,9 @@ public class DefaultDataSet implements DataSet {
     public int hashCode() {
         int hash = dataMap.hashCode();
         if (metaDataMap != null) {
-            hash ^= metaDataMap.hashCode();
-            hash ^= metaData.hashCode();
-            hash ^= metaDataSet.hashCode();
+            hash += 31 * metaDataMap.hashCode();
+            hash += 31 * metaData.hashCode();
+            hash += 31 * metaDataSet.hashCode();
         }
         return hash;
     }

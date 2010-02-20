@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
@@ -29,10 +31,12 @@ import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.recorder.DataRecorder;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  */
 public abstract class AbstractStatsSession implements StatsSession {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractStatsSession.class);
 
     protected static final DataRecorder[] EMPTY_DATA_RECORDER_ARRAY = new DataRecorder[0];
 
@@ -49,8 +53,8 @@ public abstract class AbstractStatsSession implements StatsSession {
 
     protected final DataRecorder[] dataRecorders;
 
-    public AbstractStatsSession(final StatsKey key, 
-                                final StatsEventManager eventManager, 
+    public AbstractStatsSession(final StatsKey key,
+                                final StatsEventManager eventManager,
                                 final DataRecorder... dataRecorders) {
         if (key == null) {
             throw new NullPointerException("key");
@@ -118,12 +122,16 @@ public abstract class AbstractStatsSession implements StatsSession {
 
         final int dataRecorderCount = dataRecorders.length;
         for (int i = 0; i < dataRecorderCount; i++) {
-            if (dataRecorders[i].getSupportedFieldNames()
-                                .contains(name)) {
-                Object result = dataRecorders[i].getField(this, name);
-                if (result != null) {
-                    return result;
+            try {
+                if (dataRecorders[i].getSupportedFieldNames()
+                                    .contains(name)) {
+                    Object result = dataRecorders[i].getField(this, name);
+                    if (result != null) {
+                        return result;
+                    }
                 }
+            } catch (Exception e) {
+                logger.error("Failed to getField '" + name + "' from " + dataRecorders[i], e);
             }
         }
 
@@ -147,7 +155,11 @@ public abstract class AbstractStatsSession implements StatsSession {
         dataSet.setField(DataSet.Field.SUM, getSum());
 
         for (DataRecorder dataRecorder : dataRecorders) {
-            dataRecorder.collectData(this, dataSet);
+            try {
+                dataRecorder.collectData(this, dataSet);
+            } catch (Exception e) {
+                logger.error("Failed to collectData from " + dataRecorder, e);
+            }
         }
 
         return dataSet;

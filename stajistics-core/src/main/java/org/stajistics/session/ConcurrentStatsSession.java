@@ -15,7 +15,6 @@
 package org.stajistics.session;
 
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,8 +32,14 @@ import org.stajistics.util.AtomicDouble;
 /**
  * An implementation of {@link StatsSession} that reads and writes data fields atomically
  * without locking. This allows scalable updates that minimize the runtime overhead of statistics
- * collection. However, the cost of using this implementation is that the result of
- * {@link #collectData()} may not contain values that are not consistent with one another.
+ * collection. However, the cost of using this implementation is that the {@link DataSet} returned from
+ * {@link #collectData()} may contain values that are not related to one another.
+ * For example, the DataSet may contain all the data from update #1, but only half of the data
+ * from update #2 (because update #2 is executing simultaneously to the {@link #collectData()} call).
+ * For a {@link StatsSession} implementation that guarantees data integrity,
+ * see {@link org.stajistics.session.AsynchronousStatsSession}.
+ *
+ * @see org.stajistics.session.AsynchronousStatsSession
  *
  * @author The Stajistics Project
  */
@@ -56,8 +61,8 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     public ConcurrentStatsSession(final StatsKey key,
                                   final StatsEventManager eventManager,
                                   final DataRecorder... dataRecorders) {
-        super(key, 
-              eventManager, 
+        super(key,
+              eventManager,
               DataRecorders.lockingIfNeeded(dataRecorders));
     }
 
@@ -144,7 +149,11 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         sum.addAndGet(currentValue);
 
         for (DataRecorder dataRecorder : dataRecorders) {
-            dataRecorder.update(this, tracker, now);
+            try {
+                dataRecorder.update(this, tracker, now);
+            } catch (Exception e) {
+                logger.error("Failed to update " + dataRecorder, e);
+            }
         }
 
         logger.trace("Commit: {}", this);
@@ -196,7 +205,11 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         sum.set(dataSet.getField(DataSet.Field.SUM, Double.class));
 
         for (DataRecorder dataRecorder : dataRecorders) {
-            dataRecorder.restore(dataSet);
+            try {
+                dataRecorder.restore(dataSet);
+            } catch (Exception e) {
+                logger.error("Failed to restore " + dataRecorder, e);
+            }
         }
 
         logger.trace("Restore: {}", this);
@@ -217,7 +230,11 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         sum.set(0);
 
         for (DataRecorder dataRecorder : dataRecorders) {
-            dataRecorder.clear();
+            try {
+                dataRecorder.clear();
+            } catch (Exception e) {
+                logger.error("Failed to clear " + dataRecorder, e);
+            }
         }
 
         logger.trace("Clear: {}", this);

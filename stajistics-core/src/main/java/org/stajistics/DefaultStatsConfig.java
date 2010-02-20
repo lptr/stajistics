@@ -51,14 +51,15 @@ public class DefaultStatsConfig implements StatsConfig {
     /**
      * Construct a new instance supplying the configuration values.
      *
-     * @param enabled The result of {@link #isEnabled()}.
-     * @param trackerFactory The result of {@link #getTrackerFactory()}.
-     * @param sessionFactory The result of {@link #getSessionFactory()}.
-     * @param unit The result of {@link #getUnit()}.
-     * @param description The result of {@link #getDescription()}. May be <tt>null</tt>.
+     * @param enabled The return value of {@link #isEnabled()}.
+     * @param trackerFactory The return value of {@link #getTrackerFactory()}.
+     * @param sessionFactory The return value of {@link #getSessionFactory()}.
+     * @param dataRecorderFactory The return value of {@link #getDataRecorderFactory()}.
+     * @param unit The return value of {@link #getUnit()}.
+     * @param description The return value of {@link #getDescription()}. May be <tt>null</tt>.
      *
      * @throws NullPointerException If <tt>enabled</tt>, <tt>trackerFactory</tt>,
-     *         <tt>sessionFactory</tt>, or <tt>unit</tt> are <tt>null</tt>.
+     *         <tt>sessionFactory</tt>, <tt>dataRecorderFactory</tt>, or <tt>unit</tt> are <tt>null</tt>.
      * @throws IllegalArgumentException If <tt>unit</tt> is zero length.
      */
     public DefaultStatsConfig(final boolean enabled,
@@ -153,11 +154,11 @@ public class DefaultStatsConfig implements StatsConfig {
 
     @Override
     public int hashCode() {
-        return Boolean.valueOf(enabled).hashCode() ^
-               trackerFactory.hashCode() ^
-               sessionFactory.hashCode() ^
-               unit.hashCode() ^
-               ((description == null) ? 0 : description.hashCode());
+        return Boolean.valueOf(enabled).hashCode() +
+               31 * trackerFactory.hashCode() +
+               31 * sessionFactory.hashCode() +
+               31 * unit.hashCode() +
+               ((description == null) ? 0 : 31 * description.hashCode());
     }
 
     @Override
