@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  */
 package org.stajistics.session;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
@@ -33,7 +31,24 @@ import org.stajistics.task.TaskService;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
+ * An implementation of {@link StatsSession} that can potentially pad the tracker,
+ * and thus the client of the tracker, from blocking on calls to {@link #track(StatsTracker, long)},
+ * and {@link #update(StatsTracker, long)}. When either of these calls are made, they are
+ * queued for execution by the associated {@link TaskService}, which will typically invoke them in
+ * a background thread. This queuing behaviour does impose the overhead of queue entry object
+ * creation on the client of a tracker, but this is necessary to fulfil the main purpose of
+ * this implementation. {@link #collectData()} may be called on an instance of this class
+ * and the resulting {@link DataSet} is guaranteed to contain data fields that are related to
+ * one another for a given update. For example, if {@link #collectData()} is
+ * called at the same time as a update #2, the resulting {@link DataSet} will contain data
+ * related only to update #1 or update #2. It will not contain the data from a partially recorded
+ * update. Furthermore, it allows this data integrity without having to block the client
+ * of the {@link StatsTracker}, which could sacrifice performance. If better performance is
+ * preferred at the cost of potentially inconsistent data, see
+ * {@link org.stajistics.session.ConcurrentStatsSession}.
+ *
+ * @see org.stajistics.session.ConcurrentStatsSession
+ *
  * @author The Stajistics Project
  */
 public class AsynchronousStatsSession extends AbstractStatsSession {
@@ -50,33 +65,57 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
     private volatile double min = Double.POSITIVE_INFINITY;
     private volatile double max = Double.NEGATIVE_INFINITY;
     private volatile double sum = 0;
-    
-    private final Lock stateLock = new ReentrantLock();
 
     private final TaskService taskService;
 
-    private final BlockingQueue<TrackerEntry> updateQueue = new LinkedBlockingQueue<TrackerEntry>();
+    private final BlockingQueue<TrackerEntry> updateQueue;
     private final Lock updateQueueProcessingLock = new ReentrantLock();
+
+    private final Lock stateLock = new ReentrantLock();
 
     public AsynchronousStatsSession(final StatsKey key,
                                     final StatsEventManager eventManager,
                                     final TaskService taskService,
+                                    final DataRecorder... dataRecorders) {
+        this(key,
+             eventManager,
+             taskService,
+             new LinkedBlockingQueue<TrackerEntry>(),
+             dataRecorders);
+    }
+
+    public AsynchronousStatsSession(final StatsKey key,
+                                    final StatsEventManager eventManager,
+                                    final TaskService taskService,
+                                    final BlockingQueue<TrackerEntry> updateQueue,
                                     final DataRecorder... dataRecorders) {
         super(key, eventManager, dataRecorders);
 
         if (taskService == null) {
             throw new NullPointerException("taskService");
         }
+        if (updateQueue == null) {
+            throw new NullPointerException("updateQueue");
+        }
 
         this.taskService = taskService;
+        this.updateQueue = updateQueue;
     }
 
     @Override
     public void track(final StatsTracker tracker, long now) {
-        if (now < 0) {
-            now = System.currentTimeMillis();
-        }
+        try {
+            updateQueue.add(new TrackerEntry(tracker, now, true));
 
+            ProcessQueueTask processQueueTask = new ProcessQueueTask();
+            taskService.execute(getClass(), processQueueTask);
+        } catch (Exception e) {
+            logger.error("Failed to queue track task", e);
+        }
+    }
+
+    private void trackImpl(final StatsTracker tracker,
+                           final long now) {
         stateLock.lock();
         try {
             hits++;
@@ -84,7 +123,9 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             if (firstHitStamp == -1) {
                 firstHitStamp = now;
             }
+
             lastHitStamp = now;
+
         } finally {
             stateLock.unlock();
         }
@@ -116,10 +157,14 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
 
     @Override
     public void update(final StatsTracker tracker, final long now) {
-        updateQueue.add(new TrackerEntry(tracker, now));
+        try {
+            updateQueue.add(new TrackerEntry(tracker, now, false));
 
-        ProcessQueueTask processQueueTask = new ProcessQueueTask();
-        taskService.execute(getClass(), processQueueTask);
+            ProcessQueueTask processQueueTask = new ProcessQueueTask();
+            taskService.execute(getClass(), processQueueTask);
+        } catch (Exception e) {
+            logger.error("Failed to queue update task", e);
+        }
     }
 
     private void updateImpl(final StatsTracker tracker, final long now) {
@@ -151,7 +196,11 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             sum += currentValue;
 
             for (DataRecorder dataRecorder : dataRecorders) {
-                dataRecorder.update(this, tracker, now);
+                try {
+                    dataRecorder.update(this, tracker, now);
+                } catch (Exception e) {
+                    logger.error("Failed to update " + dataRecorder, e);
+                }
             }
         } finally {
             stateLock.unlock();
@@ -208,7 +257,11 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             sum = dataSet.getField(DataSet.Field.SUM, Double.class);
 
             for (DataRecorder dataRecorder : dataRecorders) {
-                dataRecorder.restore(dataSet);
+                try {
+                    dataRecorder.restore(dataSet);
+                } catch (Exception e) {
+                    logger.error("failed to restore " + dataRecorder, e);
+                }
             }
         } finally {
             stateLock.unlock();
@@ -238,7 +291,11 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             sum = 0;
 
             for (DataRecorder dataRecorder : dataRecorders) {
-                dataRecorder.clear();
+                try {
+                    dataRecorder.clear();
+                } catch (Exception e) {
+                    logger.error("Failed to clear " + dataRecorder, e);
+                }
             }
         } finally {
             stateLock.unlock();
@@ -266,6 +323,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
 
         @Override
         public void run() {
+            // Only do work if there is something in the updateQueue
             if (!updateQueue.isEmpty()) {
                 // Do not allow other threads to process entries
                 updateQueueProcessingLock.lock();
@@ -274,10 +332,26 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
                     // other thread has already processed the events
                     int count = updateQueue.size();
                     if (count > 0) {
-                        TrackerEntry[] entries = updateQueue.toArray(new TrackerEntry[count]);
-                        updateQueue.clear();
+                        // Extract all entries using poll() to avoid obtaining
+                        // the queue write lock which would block a tracker client.
+                        // A call to updateQueue.toArray(...) is likely to lock the entire queue.
+                        // Drain the queue as soon as possible then process later so that
+                        // other task threads can "short circuit" more effectively.
+                        TrackerEntry[] entries = new TrackerEntry[count];
+                        for (int i = 0; i < count; i++) {
+                            entries[i] = updateQueue.poll();
+                            assert entries[i] != null;
+                        }
+
+                        // Do the updates within the updateQueueProcessingLock
+                        // to ensure they are executed linearly in the exact
+                        // order in which they were submitted.
                         for (TrackerEntry entry : entries) {
-                            updateImpl(entry.tracker, entry.now);
+                            if (entry.track) {
+                                trackImpl(entry.tracker, entry.now);
+                            } else {
+                                updateImpl(entry.tracker, entry.now);
+                            }
                         }
                     }
                 } finally {
@@ -287,14 +361,18 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         }
     }
 
-    private static final class TrackerEntry {
+    public static final class TrackerEntry {
 
         private final StatsTracker tracker;
         private final long now;
+        private final boolean track;
 
-        TrackerEntry(final StatsTracker tracker, final long now) {
+        private TrackerEntry(final StatsTracker tracker,
+                             final long now,
+                             final boolean track) {
             this.tracker = tracker;
             this.now = now;
+            this.track = track;
         }
     }
 

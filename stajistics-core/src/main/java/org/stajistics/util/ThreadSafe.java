@@ -20,6 +20,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Client types annotated with ThreadSafe indicate that they can safely be operated by multiple threads.
+ *
  * @author The Stajistics Project
  */
 @Target(ElementType.TYPE)

@@ -23,7 +23,8 @@ import org.stajistics.tracker.span.TimeDurationTracker;
 
 /**
  * The default implementation of a {@link StatsConfigBuilder}. Do not instantiate this class
- * directly. Instead use {@link StatsManager#createConfigBuilder()}, or {@link Stats#buildConfig()}.
+ * directly. Instead use {@link org.stajistics.StatsManager#getConfigFactory()},
+ * or {@link Stats#buildConfig()}.
  *
  * @author The Stajistics Project
  */

@@ -86,7 +86,7 @@ public final class NullStatsKey implements StatsKey {
     }
 
     /**
-     * @return <tt>true</tt> if <tt>obj</tt> is the same instance returned by 
+     * @return <tt>true</tt> if <tt>obj</tt> is the same instance returned by
      *         {@link #getInstance()}, <tt>false</tt> otherwise.
      */
     @Override

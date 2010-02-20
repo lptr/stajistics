@@ -56,8 +56,10 @@ public class DefaultStatsManager implements StatsManager {
      * @param sessionManager The {@link StatsSessionManager} to use. Must not be <tt>null</tt>.
      * @param eventManager The {@link StatsEventManager} to use. Must not be <tt>null</tt>.
      * @param snapshotManager The {@link StatsSnapshotManager} to use. Must not be <tt>null</tt>.
+     * @param trackerLocator The {@link StatsTrackerLocator} to use. Must not be <tt>null</tt>.
      * @param keyFactory The {@link StatsKeyFactory} to use. Must not be <tt>null</tt>.
      * @param configFactory The {@link StatsConfigFactory} to use. Must not be <tt>null</tt>.
+     * @param taskService The {@link TaskService} to use. Must not be <tt>null</tt>.
      * @throws NullPointerException If any parameter is <tt>null</tt>.
      */
     public DefaultStatsManager(final StatsConfigManager configManager,

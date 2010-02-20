@@ -45,7 +45,7 @@ public interface StatsSession extends Serializable {
     List<DataRecorder> getDataRecorders();
 
     /**
-     * Get the number of hits, or the number of times a {@link StatsTracker} associated with 
+     * Get the number of hits, or the number of times a {@link StatsTracker} associated with
      * this session's {@link StatsKey} has called {@link #track(StatsTracker, long)}.
      *
      * @return The positive number of hits to this session.
@@ -120,10 +120,10 @@ public interface StatsSession extends Serializable {
     double getSum();
 
     /**
-     * TODO
+     * Obtain the value of a single field from this session.
      *
-     * @param name
-     * @return
+     * @param name The name of the field for which to return the value.
+     * @return The value of the requested field, or <tt>null</tt> if not found.
      */
     Object getField(String name);
 
@@ -131,12 +131,10 @@ public interface StatsSession extends Serializable {
      * Obtain a {@link DataSet} that is populated with all data collected for this session.
      * The {@link DataSet} is populated with default data stored by this session, such as hits and
      * commits, as well as data stored by the {@link DataRecorder}s associated with this session.
-     * Depending on the implementation, this call may block calls to 
+     * Depending on the implementation, this call may block calls to
      * {@link #track(StatsTracker, long)} or {@link #update(StatsTracker, long)}.
      *
      * @return A {@link DataSet} full of data, never <tt>null</tt>.
-     *
-     * @see DataRecorder#collectData(StatsSession, org.stajistics.data.MutableDataSet)
      */
     DataSet collectData();
 
@@ -152,11 +150,9 @@ public interface StatsSession extends Serializable {
      * Do not call directly. Normally called by a {@link StatsTracker} implementation.
      * Increments the hits for this session by one.
      *
-     * @param tracker The {@link StatsTracker} that, after this call, will be tracking 
+     * @param tracker The {@link StatsTracker} that, after this call, will be tracking
      *        data for this session.
      * @param now The time stamp of the current time if known, otherwise <tt>-1</tt>.
-     *
-     * @see StatsTracker#track()
      */
     void track(StatsTracker tracker, long now);
 
@@ -164,12 +160,11 @@ public interface StatsSession extends Serializable {
      * Do not call directly. Normally called by a {@link StatsTracker} implementation.
      * Increments the commits for this session by one. The value reported by the given
      * <tt>tracker</tt>'s {@link StatsTracker#getValue()} method is processed and
-     * offered to the {@link DataRecorder}s associated with this session. 
+     * offered to the {@link DataRecorder}s associated with this session.
      *
      * @param tracker The {@link StatsTracker} that collected the data for this update.
      * @param now The time stamp of the current time if known, otherwise <tt>-1</tt>.
      *
-     * @see StatsTracker#commit()
      * @see StatsTracker#getValue()
      * @see DataRecorder
      * @see #getDataRecorders()

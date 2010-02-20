@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -37,22 +37,42 @@ public interface DataRecorder extends Serializable {
     Set<String> getSupportedFieldNames();
 
     /**
-     * 
+     * Get the value of a single field.
      *
-     * @param session
-     * @param name
-     * @return
+     * @param session The session that owns this DataRecorder instance.
+     * @param name The name of the field.
+     * @return The field value, or <tt>null</tt> if not found.
      */
     Object getField(StatsSession session, String name);
 
+    /**
+     * Examine the tracker collected value, perform calculations, and store
+     * the new data.
+     *
+     * @param session The session that owns this DataRecorder instance.
+     * @param tracker The tracker that is triggering the update.
+     * @param now The current time.
+     */
     void update(StatsSession session, StatsTracker tracker, long now);
 
+    /**
+     * Populate internal data structures with the data provided in the given <tt>dataSet</tt>.
+     *
+     * @param dataSet The DataSet from which to extract data.
+     */
     void restore(DataSet dataSet);
 
+    /**
+     * Prepare recorded data and add data fields to the given <tt>dataSet</tt>.
+     * The data fields added defined by the Set returned by {@link #getSupportedFieldNames()}.
+     *
+     * @param session The session that owns this DataRecorder instance.
+     * @param dataSet The DataSet to populate with data fields.
+     */
     void collectData(StatsSession session, DataSet dataSet);
 
     /**
-     * Clear all stored data. After this call the externally visible state will 
+     * Clear all stored data. After this call the externally visible state will
      * equal that of a newly created instance.
      */
     void clear();

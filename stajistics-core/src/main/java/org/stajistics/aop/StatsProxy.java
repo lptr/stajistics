@@ -135,11 +135,7 @@ public class StatsProxy implements InvocationHandler {
             return false;
         }
 
-        if (!(Proxy.getInvocationHandler(object) instanceof StatsProxy)) {
-            return false;
-        }
-
-        return true;
+        return Proxy.getInvocationHandler(object) instanceof StatsProxy;
     }
 
     protected static String getMethodString(final Method method) {
@@ -153,9 +149,10 @@ public class StatsProxy implements InvocationHandler {
 
         StringBuilder buf = new StringBuilder(methodName.length() + (params.length * 16));
 
-        for (int i = 0; i < params.length; i++) {
+        for (Class<?> param : params) {
             buf.append('_');
-            buf.append(params[i].getClass().getSimpleName());
+            buf.append(param.getClass()
+                            .getSimpleName());
         }
 
         return buf.toString();

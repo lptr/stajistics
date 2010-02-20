@@ -22,17 +22,13 @@ package org.stajistics;
  */
 public final class Stajistics {
 
-    protected static final String PROPS_FILE = "library.properties";
-    protected static final String PROP_NAME = "library.name";
-    protected static final String PROP_VERSION = "library.version";
-
     private static final String name = replaceNull(Stajistics.class
                                                              .getPackage()
-                                                             .getImplementationTitle(), 
+                                                             .getImplementationTitle(),
                                                    "Stajistics");
     private static final String version = replaceNull(Stajistics.class
                                                                 .getPackage()
-                                                                .getImplementationTitle(), 
+                                                                .getImplementationTitle(),
                                                       "0.0");
 
     private static String replaceNull(String value, String defaultValue) {
