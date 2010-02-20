@@ -411,7 +411,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
                                         final Class<?> mBeanType,
                                         final StatsKey key,
                                         final ObjectName objectName) {
-        if (logger.isInfoEnabled()) {
+        if (logger.isDebugEnabled()) {
             StringBuilder buf = new StringBuilder(256);
             if (register) {
                 buf.append("Registered ");
@@ -429,7 +429,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
             buf.append(", ObjectName: ");
             buf.append(objectName);
 
-            logger.info(buf.toString());
+            logger.debug(buf.toString());
         }
     }
 

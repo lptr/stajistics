@@ -26,6 +26,7 @@ import java.util.List;
  *
  * @author The Stajistics Project
  */
+@ThreadSafe
 public class RangeList implements Iterable<Range>,Serializable {
 
     private final Range[] ranges;

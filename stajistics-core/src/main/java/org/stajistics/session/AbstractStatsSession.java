@@ -65,7 +65,6 @@ public abstract class AbstractStatsSession implements StatsSession {
         if (dataRecorders == null) {
             this.dataRecorders = EMPTY_DATA_RECORDER_ARRAY;
         } else {
-            // TBD: Copy array?
             this.dataRecorders = dataRecorders;
         }
     }
@@ -81,9 +80,61 @@ public abstract class AbstractStatsSession implements StatsSession {
     }
 
     @Override
+    public Object getField(String name) {
+        // Intern the name to allow fast reference equality checks
+        name = name.intern();
+
+        // Check basic fields
+
+        if (name == DataSet.Field.HITS) {
+            return getHits();
+        }
+        if (name == DataSet.Field.FIRST_HIT_STAMP) {
+            return getFirstHitStamp();
+        }
+        if (name == DataSet.Field.LAST_HIT_STAMP) {
+            return getLastHitStamp();
+        }
+        if (name == DataSet.Field.COMMITS) {
+            return getCommits();
+        }
+        if (name == DataSet.Field.FIRST) {
+            return getFirst();
+        }
+        if (name == DataSet.Field.LAST) {
+            return getLast();
+        }
+        if (name == DataSet.Field.MIN) {
+            return getMin();
+        }
+        if (name == DataSet.Field.MAX) {
+            return getMax();
+        }
+        if (name == DataSet.Field.SUM) {
+            return getSum();
+        }
+
+        // Check DataRecorder fields
+
+        final int dataRecorderCount = dataRecorders.length;
+        for (int i = 0; i < dataRecorderCount; i++) {
+            if (dataRecorders[i].getSupportedFieldNames()
+                                .contains(name)) {
+                Object result = dataRecorders[i].getField(this, name);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+
+        // Not found
+        return null;
+    }
+
+    @Override
     public DataSet collectData() {
 
-        DataSet dataSet = new DefaultDataSet();
+        final DataSet dataSet = new DefaultDataSet();
 
         dataSet.setField(DataSet.Field.HITS, getHits());
         dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));

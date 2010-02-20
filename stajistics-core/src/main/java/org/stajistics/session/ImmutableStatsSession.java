@@ -69,6 +69,11 @@ public class ImmutableStatsSession implements StatsSession {
     }
 
     @Override
+    public Object getField(final String name) {
+        return dataSet.getField(name);
+    }
+
+    @Override
     public DataSet collectData() {
         return dataSet;
     }

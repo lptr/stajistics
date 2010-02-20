@@ -34,7 +34,7 @@ public class ConcurrentStatsSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullKey() {
         try {
-            new ConcurrentStatsSession(null, mockEventManager, (DataRecorder[])null);
+            new ConcurrentStatsSession(null, mockEventManager, new DataRecorder[0]);
 
         } catch (NullPointerException npe) {
             assertEquals("key", npe.getMessage());
@@ -45,7 +45,7 @@ public class ConcurrentStatsSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullEventManager() {
         try {
-            new ConcurrentStatsSession(mockKey, null, (DataRecorder[])null);
+            new ConcurrentStatsSession(mockKey, null, new DataRecorder[0]);
 
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());

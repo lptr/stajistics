@@ -120,6 +120,14 @@ public interface StatsSession extends Serializable {
     double getSum();
 
     /**
+     * TODO
+     *
+     * @param name
+     * @return
+     */
+    Object getField(String name);
+
+    /**
      * Obtain a {@link DataSet} that is populated with all data collected for this session.
      * The {@link DataSet} is populated with default data stored by this session, such as hits and
      * commits, as well as data stored by the {@link DataRecorder}s associated with this session.

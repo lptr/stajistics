@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author The Stajistics Project
  */
+@ThreadSafe
 public class AtomicDouble extends Number {
 
     private final AtomicLong value = new AtomicLong();

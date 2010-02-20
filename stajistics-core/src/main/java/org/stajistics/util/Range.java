@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
  *
  * @author The Stajistics Project
  */
+@ThreadSafe
 public class Range implements Iterable<Double>,Serializable {
 
     protected static final boolean DEFAULT_EXCLUSIVE_RANGE_END = true;

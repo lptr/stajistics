@@ -22,6 +22,7 @@ import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
 import org.stajistics.util.Misc;
+import org.stajistics.util.ThreadSafe;
 
 /**
  * 
@@ -29,6 +30,7 @@ import org.stajistics.util.Misc;
  *
  * @author The Stajistics Project
  */
+@ThreadSafe
 public class DistributionDataRecorder implements DataRecorder {
 
     private static final Set<String> SUPPORTED_FIELD_NAMES = 
@@ -72,6 +74,40 @@ public class DistributionDataRecorder implements DataRecorder {
         product.set(dataSet.getField(Field.PRODUCT, Double.class));
         sumOfSquares.set(dataSet.getField(Field.SUM_OF_SQUARES, Double.class));
         sumOfInverses.set(dataSet.getField(Field.SUM_OF_INVERSES, Double.class));
+    }
+
+    @Override
+    public Object getField(final StatsSession session,
+                           String name) {
+        // Intern the name to allow fast reference equality checks
+        name = name.intern();
+
+        if (name == Field.PRODUCT) {
+            return product.get();
+        }
+        if (name == Field.SUM_OF_SQUARES) {
+            return sumOfSquares.get();
+        }
+        if (name == Field.SUM_OF_INVERSES) {
+            return sumOfInverses.get();
+        }
+        if (name == Field.ARITHMETIC_MEAN) {
+            return getArithmeticMean(session);
+        }
+        if (name == Field.GEOMETRIC_MEAN) {
+            return getGeometricMean(session);
+        }
+        if (name == Field.HARMONIC_MEAN) {
+            return getHarmonicMean(session);
+        }
+        if (name == Field.QUADRATIC_MEAN) {
+            return getQuadraticMean(session);
+        }
+        if (name == Field.STANDARD_DEVIATION) {
+            return getStandardDeviation(session);
+        }
+
+        return null;
     }
 
     @Override

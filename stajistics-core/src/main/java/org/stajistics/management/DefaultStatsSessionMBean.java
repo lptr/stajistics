@@ -31,6 +31,7 @@ import javax.management.ReflectionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.StatsProperties;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSessionManager;
 
@@ -45,6 +46,14 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     private static final Logger sessionLogger = LoggerFactory
             .getLogger(DefaultStatsSessionManagerMBean.SESSION_DUMP_LOGGER_NAME);
 
+    private static final String PROP_CACHE_DATA_SET = 
+        DefaultStatsSessionMBean.class.getName() + ".cacheDataSet";
+    private static final boolean DEFAULT_CACHE_DATA_SET = true;
+
+    private static final String PROP_CACHED_DATA_SET_LIFE_SPAN = 
+        DefaultStatsSessionMBean.class.getName() + ".cachedDataSetLifeSpanMillis";
+    private static final long DEFAULT_CACHED_DATA_SET_LIFE_SPAN = 2000; // 2 seconds
+
     protected static final String ATTR_IMPLEMENTATION = "Implementation";
     protected static final String ATTR_DATA_RECORDERS = "DataRecorders";
 
@@ -54,8 +63,6 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     protected static final String OP_COLLECT_DATA = "collectData";
 
     protected static final String FIELD_PREFIX = "_";
-
-    private static final long CACHED_DATA_SET_LIFE_SPAN = 2000; // 2 seconds
 
     protected final StatsSessionManager sessionManager;
     protected final org.stajistics.session.StatsSession session;
@@ -86,33 +93,43 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     }
 
     /* Manages a very short-lived cached DataSet for the purposes of throttling
-     * calls to StatsSession#collectData(). This is important for when
-     * #getAttribute(String) is called multiple times consecutively.
+     * calls to StatsSession#collectData().
      */
-    private synchronized DataSet getDataSet() {
+    private DataSet getDataSet() {
 
-        final long now = System.currentTimeMillis();
-
-        DataSet dataSet = null;
-
-        if (cachedDataSetRef != null) {
-            dataSet = cachedDataSetRef.get();
+        // If not caching
+        if (!StatsProperties.getBooleanProperty(PROP_CACHE_DATA_SET, 
+                                                DEFAULT_CACHE_DATA_SET)) {
+            return session.collectData();
         }
 
-        if (dataSet != null) {
-            if (now - cachedDataSetLastAccess > CACHED_DATA_SET_LIFE_SPAN) {
-                dataSet = null;
+        synchronized (this) {
+            final long now = System.currentTimeMillis();
+
+            DataSet dataSet = null;
+
+            if (cachedDataSetRef != null) {
+                dataSet = cachedDataSetRef.get();
             }
+
+            final long cacheLifeSpan = StatsProperties.getLongProperty(PROP_CACHED_DATA_SET_LIFE_SPAN, 
+                                                                       DEFAULT_CACHED_DATA_SET_LIFE_SPAN);
+
+            if (dataSet != null) {
+                if (now - cachedDataSetLastAccess > cacheLifeSpan) {
+                    dataSet = null;
+                }
+            }
+
+            if (dataSet == null) {
+                dataSet = session.collectData();
+    
+                cachedDataSetLastAccess = now;
+                cachedDataSetRef = new WeakReference<DataSet>(dataSet);
+            }
+
+            return dataSet;
         }
-
-        if (dataSet == null) {
-            dataSet = session.collectData();
-
-            cachedDataSetLastAccess = now;
-            cachedDataSetRef = new WeakReference<DataSet>(dataSet);
-        }
-
-        return dataSet;
     }
 
     @Override
@@ -131,14 +148,19 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
             throw new AttributeNotFoundException(attribute);
         }
 
-        attribute = attribute.substring(FIELD_PREFIX.length());
+        if (attribute.startsWith(FIELD_PREFIX)) {
+            attribute = attribute.substring(FIELD_PREFIX.length());
 
-        DataSet dataSet = getDataSet();
-        Object value = dataSet.getField(attribute);
-        if (value == null) {
-            throw new AttributeNotFoundException(attribute);
+            Object value = session.getField(attribute);
+            if (value == null) {
+                throw new AttributeNotFoundException(attribute);
+            }
+
+            return value;
         }
-        return value;
+
+        // Not found
+        return null;
     }
 
     @Override
