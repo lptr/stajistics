@@ -29,7 +29,21 @@ import org.stajistics.tracker.StatsTracker;
  */
 public interface DataRecorder extends Serializable {
 
+    /**
+     * Obtain a Set of field names on which this DataRecorder operates.
+     *
+     * @return A Set of supported field names, never empty, and never <tt>null</tt>.
+     */
     Set<String> getSupportedFieldNames();
+
+    /**
+     * 
+     *
+     * @param session
+     * @param name
+     * @return
+     */
+    Object getField(StatsSession session, String name);
 
     void update(StatsSession session, StatsTracker tracker, long now);
 
@@ -37,6 +51,10 @@ public interface DataRecorder extends Serializable {
 
     void collectData(StatsSession session, DataSet dataSet);
 
+    /**
+     * Clear all stored data. After this call the externally visible state will 
+     * equal that of a newly created instance.
+     */
     void clear();
 
 }

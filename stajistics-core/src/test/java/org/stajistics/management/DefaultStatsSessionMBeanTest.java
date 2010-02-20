@@ -86,11 +86,14 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
     public void testGetDataSetField() throws Exception {
 
         mockery.checking(new Expectations() {{
+            // For MBean registration
             allowing(mockDataSet).size(); will(returnValue(1));
             allowing(mockDataSet).getFieldNames(); will(returnValue(new HashSet<String>(Collections.singletonList("test"))));
             allowing(mockDataSet).getField(with("test")); will(returnValue("value"));
-
             allowing(mockSession).collectData(); will(returnValue(mockDataSet));
+
+            // For this test
+            allowing(mockSession).getField(with("test")); will(returnValue("value"));
         }});
 
         StatsSessionMBean mBean = createSessionMBean(mockSession);

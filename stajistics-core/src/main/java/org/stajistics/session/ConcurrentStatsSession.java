@@ -26,6 +26,7 @@ import org.stajistics.data.DataSet;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
+import org.stajistics.session.recorder.DataRecorders;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
 
@@ -55,7 +56,9 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     public ConcurrentStatsSession(final StatsKey key,
                                   final StatsEventManager eventManager,
                                   final DataRecorder... dataRecorders) {
-        super(key, eventManager, dataRecorders);
+        super(key, 
+              eventManager, 
+              DataRecorders.lockingIfNeeded(dataRecorders));
     }
 
     @Override

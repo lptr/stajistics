@@ -21,11 +21,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.Range;
 import org.stajistics.util.RangeList;
+import org.stajistics.util.ThreadSafe;
 
 /**
  * 
@@ -33,7 +36,10 @@ import org.stajistics.util.RangeList;
  *
  * @author The Stajistics Project
  */
+@ThreadSafe
 public class RangeDataRecorder implements DataRecorder {
+
+    private static final Logger logger = LoggerFactory.getLogger(RangeDataRecorder.class);
 
     private final RangeList rangeList;
     private final AtomicLong[] hits;
@@ -84,6 +90,23 @@ public class RangeDataRecorder implements DataRecorder {
     }
 
     @Override
+    public Object getField(final StatsSession session,
+                           final String name) {
+        List<Range> ranges = rangeList.getRanges();
+        final int rangeCount = ranges.size();
+        for (int i = 0; i < rangeCount; i++) {
+            if (ranges.get(i)
+                      .getName()
+                      .equals(name)) {
+                return hits[i].get();
+            }
+        }
+
+        // Not found
+        return null;
+    }
+
+    @Override
     public void collectData(final StatsSession session, final DataSet dataSet) {
         List<Range> ranges = rangeList.getRanges();
         final int rangeCount = ranges.size();
@@ -107,7 +130,8 @@ public class RangeDataRecorder implements DataRecorder {
 
             if (value == null) {
                 // The full range list is not present, so do not limp along with partial data
-                // TODO: log a message
+                logger.warn("Dropping restore() call due to partial field data. Missing: {}", 
+                            range.getName());
                 return;
             }
 
