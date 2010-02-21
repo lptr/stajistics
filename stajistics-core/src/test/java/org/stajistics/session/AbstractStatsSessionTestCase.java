@@ -16,6 +16,8 @@ package org.stajistics.session;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -25,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
 import org.stajistics.data.DataSet;
+import org.stajistics.data.DataSet.Field;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
@@ -96,10 +99,24 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(-1, session.getLastHitStamp());
         assertEquals(0, session.getCommits());
         assertEquals(Double.NaN, session.getFirst(), DELTA);
-        assertEquals(Double.POSITIVE_INFINITY, session.getMin(), DELTA);
-        assertEquals(Double.NEGATIVE_INFINITY, session.getMax(), DELTA);
+        assertEquals(Double.NaN, session.getMin(), DELTA);
+        assertEquals(Double.NaN, session.getMax(), DELTA);
         assertEquals(Double.NaN, session.getLast(), DELTA);
         assertEquals(0, session.getSum(), DELTA);
+    }
+    
+    @Test
+    public void testInitialCollectData() {
+        DataSet data = session.collectData();
+        assertEquals(0, (long) data.getField(Field.HITS, Long.class));
+        assertEquals(-1, data.getField(Field.FIRST_HIT_STAMP, Date.class).getTime());
+        assertEquals(-1, data.getField(Field.LAST_HIT_STAMP, Date.class).getTime());
+        assertEquals(0, (long) data.getField(Field.COMMITS, Long.class));
+        assertEquals(Double.NaN, data.getField(Field.FIRST, Double.class), DELTA);
+        assertEquals(Double.NaN, data.getField(Field.MIN, Double.class), DELTA);
+        assertEquals(Double.NaN, data.getField(Field.MAX, Double.class), DELTA);
+        assertEquals(Double.NaN, data.getField(Field.LAST, Double.class), DELTA);
+        assertEquals(0, data.getField(Field.SUM, Double.class), DELTA);
     }
 
     @Test
@@ -160,8 +177,8 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(firstNow, session.getLastHitStamp());
         assertEquals(0, session.getCommits());
         assertEquals(Double.NaN, session.getFirst(), DELTA);
-        assertEquals(Double.POSITIVE_INFINITY, session.getMin(), DELTA);
-        assertEquals(Double.NEGATIVE_INFINITY, session.getMax(), DELTA);
+        assertEquals(Double.NaN, session.getMin(), DELTA);
+        assertEquals(Double.NaN, session.getMax(), DELTA);
         assertEquals(Double.NaN, session.getLast(), DELTA);
         assertEquals(0, session.getSum(), DELTA);
 
@@ -174,8 +191,8 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(secondNow, session.getLastHitStamp());
         assertEquals(0, session.getCommits());
         assertEquals(Double.NaN, session.getFirst(), DELTA);
-        assertEquals(Double.POSITIVE_INFINITY, session.getMin(), DELTA);
-        assertEquals(Double.NEGATIVE_INFINITY, session.getMax(), DELTA);
+        assertEquals(Double.NaN, session.getMin(), DELTA);
+        assertEquals(Double.NaN, session.getMax(), DELTA);
         assertEquals(Double.NaN, session.getLast(), DELTA);
         assertEquals(0, session.getSum(), DELTA);
     }
@@ -309,6 +326,36 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(session.getMax(), anotherSession.getMax(), DELTA);
         assertEquals(session.getLast(), anotherSession.getLast(), DELTA);
         assertEquals(session.getSum(), anotherSession.getSum(), DELTA);
+    }
+    
+    @Test
+    public void testEmptyRestore() {
+
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+            allowing(mockTracker).getValue(); will(returnValue(1.0));
+        }});
+        
+        DataSet dataSet = session.collectData();
+
+        for (int i = 0; i < 10; i++) {
+            session.track(mockTracker, System.currentTimeMillis());
+            session.update(mockTracker, System.currentTimeMillis());
+        }
+
+        StatsSession emptySession = createStatsSession();
+
+        session.restore(dataSet);
+
+        assertEquals(session.getHits(), emptySession.getHits());
+        assertEquals(session.getFirstHitStamp(), emptySession.getFirstHitStamp());
+        assertEquals(session.getLastHitStamp(), emptySession.getLastHitStamp());
+        assertEquals(session.getCommits(), emptySession.getCommits());
+        assertEquals(session.getFirst(), emptySession.getFirst(), DELTA);
+        assertEquals(session.getMin(), emptySession.getMin(), DELTA);
+        assertEquals(session.getMax(), emptySession.getMax(), DELTA);
+        assertEquals(session.getLast(), emptySession.getLast(), DELTA);
+        assertEquals(session.getSum(), emptySession.getSum(), DELTA);
     }
 
 }
