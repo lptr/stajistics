@@ -32,22 +32,29 @@ import org.stajistics.tracker.StatsTracker;
 
 /**
  * An implementation of {@link StatsSession} that can potentially pad the
- * tracker, and thus the client of the tracker, from blocking on calls to
- * {@link #track(StatsTracker, long)}, and {@link #update(StatsTracker, long)}.
- * When either of these calls are made, they are queued for execution by the
+ * tracker, and thus the client of the tracker, from blocking on
+ * {@link #update(StatsTracker, long)} calls.
+ * 
+ * <p>
+ * Calls to {@link #update(StatsTracker, long)} are queued for execution by the
  * associated {@link TaskService}, which will typically invoke them in a
  * background thread. This queuing behaviour does impose the overhead of queue
  * entry object creation on the client of a tracker, but this is necessary to
- * fulfil the main purpose of this implementation. {@link #collectData()} may be
- * called on an instance of this class and the resulting {@link DataSet} is
- * guaranteed to contain data fields that are related to one another for a given
- * update. For example, if {@link #collectData()} is called at the same time as
- * a update #2, the resulting {@link DataSet} will contain data related only to
- * update #1 or update #2. It will not contain the data from a partially
- * recorded update. Furthermore, it allows this data integrity without having to
- * block the client of the {@link StatsTracker}, which could sacrifice
- * performance. If better performance is preferred at the cost of potentially
- * inconsistent data, see {@link org.stajistics.session.ConcurrentStatsSession}.
+ * fulfill the main purpose of this implementation.
+ * 
+ * <p>
+ * {@link #collectData()} may be called on an instance of this class and the
+ * resulting {@link DataSet} is guaranteed to contain data fields that are
+ * related to one another for a given update. For example, if
+ * {@link #collectData()} is called at the same time as a update #2, the
+ * resulting {@link DataSet} will contain data related only to update #1 or
+ * update #2. It will not contain the data from a partially recorded update.
+ * Furthermore, it allows this data integrity without having to block the client
+ * of the {@link StatsTracker}, which could sacrifice performance.
+ * 
+ * <p>
+ * If better performance is preferred at the cost of potentially inconsistent
+ * data, see {@link org.stajistics.session.ConcurrentStatsSession}.
  * 
  * @see org.stajistics.session.ConcurrentStatsSession
  * 
