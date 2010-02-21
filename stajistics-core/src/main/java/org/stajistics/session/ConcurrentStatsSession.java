@@ -179,11 +179,17 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
 
     @Override
     public double getMin() {
+        if (commits.get() == 0) {
+            return EMPTY_VALUE;
+        }
         return min.get();
     }
 
     @Override
     public double getMax() {
+        if (commits.get() == 0) {
+            return EMPTY_VALUE;
+        }
         return max.get();
     }
 
@@ -194,15 +200,24 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
 
     @Override
     public void restore(final DataSet dataSet) {
-        hits.set(dataSet.getField(DataSet.Field.COMMITS, Long.class));
+        Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
+        hits.set(restoredCommits);
         firstHitStamp.set(dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Date.class).getTime());
         lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Date.class).getTime();
-        commits.set(dataSet.getField(DataSet.Field.COMMITS, Long.class));
-        first.set(dataSet.getField(DataSet.Field.FIRST, Double.class));
-        last = dataSet.getField(DataSet.Field.LAST, Double.class);
-        min.set(dataSet.getField(DataSet.Field.MIN, Double.class));
-        max.set(dataSet.getField(DataSet.Field.MAX, Double.class));
-        sum.set(dataSet.getField(DataSet.Field.SUM, Double.class));
+        commits.set(restoredCommits);
+        if (restoredCommits > 0) {
+            first.set(dataSet.getField(DataSet.Field.FIRST, Double.class));
+            last = dataSet.getField(DataSet.Field.LAST, Double.class);
+            min.set(dataSet.getField(DataSet.Field.MIN, Double.class));
+            max.set(dataSet.getField(DataSet.Field.MAX, Double.class));
+            sum.set(dataSet.getField(DataSet.Field.SUM, Double.class));
+        } else {
+            first.set(null);
+            last = Double.NaN;
+            min.set(Double.POSITIVE_INFINITY);
+            max.set(Double.NEGATIVE_INFINITY);
+            sum.set(0);
+        }
 
         for (DataRecorder dataRecorder : dataRecorders) {
             try {

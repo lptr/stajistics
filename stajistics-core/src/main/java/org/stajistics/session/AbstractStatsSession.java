@@ -25,16 +25,23 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsProperties;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.recorder.DataRecorder;
 
 /**
- *
+ * 
  * @author The Stajistics Project
  */
 public abstract class AbstractStatsSession implements StatsSession {
+
+    private static final String PROP_USE_ZEROS_FOR_EMPTY_VALUE = AbstractStatsSession.class.getName()
+            + ".useZerosForEmpty";
+
+    protected static final Double EMPTY_VALUE = StatsProperties.getBooleanProperty(
+            PROP_USE_ZEROS_FOR_EMPTY_VALUE, false) ? 0 : Double.NaN;
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractStatsSession.class);
 
@@ -123,8 +130,7 @@ public abstract class AbstractStatsSession implements StatsSession {
         final int dataRecorderCount = dataRecorders.length;
         for (int i = 0; i < dataRecorderCount; i++) {
             try {
-                if (dataRecorders[i].getSupportedFieldNames()
-                                    .contains(name)) {
+                if (dataRecorders[i].getSupportedFieldNames().contains(name)) {
                     Object result = dataRecorders[i].getField(this, name);
                     if (result != null) {
                         return result;
@@ -147,12 +153,21 @@ public abstract class AbstractStatsSession implements StatsSession {
         dataSet.setField(DataSet.Field.HITS, getHits());
         dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
         dataSet.setField(DataSet.Field.LAST_HIT_STAMP, new Date(getLastHitStamp()));
-        dataSet.setField(DataSet.Field.COMMITS, getCommits());
-        dataSet.setField(DataSet.Field.FIRST, getFirst());
-        dataSet.setField(DataSet.Field.LAST, getLast());
-        dataSet.setField(DataSet.Field.MIN, getMin());
-        dataSet.setField(DataSet.Field.MAX, getMax());
-        dataSet.setField(DataSet.Field.SUM, getSum());
+        long commits = getCommits();
+        dataSet.setField(DataSet.Field.COMMITS, commits);
+        if (commits > 0) {
+            dataSet.setField(DataSet.Field.FIRST, getFirst());
+            dataSet.setField(DataSet.Field.LAST, getLast());
+            dataSet.setField(DataSet.Field.MIN, getMin());
+            dataSet.setField(DataSet.Field.MAX, getMax());
+            dataSet.setField(DataSet.Field.SUM, getSum());
+        } else {
+            dataSet.setField(DataSet.Field.FIRST, EMPTY_VALUE);
+            dataSet.setField(DataSet.Field.LAST, EMPTY_VALUE);
+            dataSet.setField(DataSet.Field.MIN, EMPTY_VALUE);
+            dataSet.setField(DataSet.Field.MAX, EMPTY_VALUE);
+            dataSet.setField(DataSet.Field.SUM, 0.0);
+        }
 
         for (DataRecorder dataRecorder : dataRecorders) {
             try {
