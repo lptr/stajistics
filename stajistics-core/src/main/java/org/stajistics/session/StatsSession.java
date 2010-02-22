@@ -131,12 +131,21 @@ public interface StatsSession extends Serializable {
      * Obtain a {@link DataSet} that is populated with all data collected for this session.
      * The {@link DataSet} is populated with default data stored by this session, such as hits and
      * commits, as well as data stored by the {@link DataRecorder}s associated with this session.
-     * Depending on the implementation, this call may block calls to
-     * {@link #track(StatsTracker, long)} or {@link #update(StatsTracker, long)}.
      *
      * @return A {@link DataSet} full of data, never <tt>null</tt>.
      */
     DataSet collectData();
+
+    /**
+     * Obtain a {@link DataSet} that is populated with all data collected for
+     * this session and then clear the session. The {@link DataSet} is populated
+     * with default data stored by this session, such as hits and commits, as
+     * well as data stored by the {@link DataRecorder}s associated with this
+     * session.
+     * 
+     * @return A {@link DataSet} full of data, never <tt>null</tt>.
+     */
+    DataSet drainData();
 
     /**
      * Re-populate internal data fields and {@link DataRecorder}s using the given

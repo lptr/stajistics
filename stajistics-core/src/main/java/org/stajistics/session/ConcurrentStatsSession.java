@@ -257,4 +257,10 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);
     }
 
+    @Override
+    public DataSet drainData() {
+        DataSet data = collectData();
+        clear();
+        return data;
+    }
 }
