@@ -78,6 +78,11 @@ public class ImmutableStatsSession implements StatsSession {
         return dataSet;
     }
 
+    @Override
+    public DataSet drainData() {
+        return dataSet;
+    }
+
     /**
      * Does nothing.
      */
