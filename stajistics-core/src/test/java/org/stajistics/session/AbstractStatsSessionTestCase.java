@@ -16,8 +16,6 @@ package org.stajistics.session;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Date;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -109,8 +107,8 @@ public abstract class AbstractStatsSessionTestCase {
     public void testInitialCollectData() {
         DataSet data = session.collectData();
         assertEquals(0, (long) data.getField(Field.HITS, Long.class));
-        assertEquals(-1, data.getField(Field.FIRST_HIT_STAMP, Date.class).getTime());
-        assertEquals(-1, data.getField(Field.LAST_HIT_STAMP, Date.class).getTime());
+        assertEquals(-1, (long) data.getField(Field.FIRST_HIT_STAMP, Long.class));
+        assertEquals(-1, (long) data.getField(Field.LAST_HIT_STAMP, Long.class));
         assertEquals(0, (long) data.getField(Field.COMMITS, Long.class));
         assertEquals(Double.NaN, data.getField(Field.FIRST, Double.class), DELTA);
         assertEquals(Double.NaN, data.getField(Field.MIN, Double.class), DELTA);

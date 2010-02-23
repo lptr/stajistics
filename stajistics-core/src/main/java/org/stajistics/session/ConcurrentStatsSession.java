@@ -14,7 +14,6 @@
  */
 package org.stajistics.session;
 
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -202,8 +201,8 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     public void restore(final DataSet dataSet) {
         Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
         hits.set(restoredCommits);
-        firstHitStamp.set(dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Date.class).getTime());
-        lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Date.class).getTime();
+        firstHitStamp.set(dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Long.class));
+        lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Long.class);
         commits.set(restoredCommits);
         if (restoredCommits > 0) {
             first.set(dataSet.getField(DataSet.Field.FIRST, Double.class));

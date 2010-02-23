@@ -1,7 +1,5 @@
 package org.stajistics.tracker.span;
 
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.session.StatsSession;
@@ -91,7 +89,7 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
 
         buf.append(getClass().getSimpleName());
         buf.append("[startTime=");
-        buf.append(new Date(startTime));
+        buf.append(startTime);
         buf.append(",tracking=");
         buf.append(tracking);
         buf.append(",value=");
