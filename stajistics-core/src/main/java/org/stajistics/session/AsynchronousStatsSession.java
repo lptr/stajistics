@@ -14,7 +14,6 @@
  */
 package org.stajistics.session;
 
-import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -272,8 +271,8 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         stateLock.lock();
         try {
             hits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
-            firstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Date.class).getTime();
-            lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Date.class).getTime();
+            firstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Long.class);
+            lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Long.class);
             commits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
             if (commits > 0) {
                 first = dataSet.getField(DataSet.Field.FIRST, Double.class);

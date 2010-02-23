@@ -25,8 +25,8 @@ public abstract class AbstractStatsSnapshot implements StatsSnapshot {
     public int hashCode() {
         return getSchemaVersion().hashCode() ^
                getStajisticsVersion().hashCode() ^
-               getStartTimeStamp().hashCode() ^
-               getEndTimeStamp().hashCode() ^
+               (int) getStartTimeStamp() ^
+               (int) getEndTimeStamp() ^
                getApplicationEnvironment().hashCode() ^
                getSystemEnvironment().hashCode() ^
                getSessionSnapshots().hashCode();
@@ -44,10 +44,10 @@ public abstract class AbstractStatsSnapshot implements StatsSnapshot {
         if (!getStajisticsVersion().equals(other.getStajisticsVersion())) {
             return false;
         }
-        if (!getStartTimeStamp().equals(other.getStartTimeStamp())) {
+        if (getStartTimeStamp() != other.getStartTimeStamp()) {
             return false;
         }
-        if (!getEndTimeStamp().equals(other.getEndTimeStamp())) {
+        if (getEndTimeStamp() != other.getEndTimeStamp()) {
             return false;
         }
         if (!getApplicationEnvironment().equals(other.getApplicationEnvironment())) {

@@ -18,7 +18,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -151,8 +150,8 @@ public abstract class AbstractStatsSession implements StatsSession {
         final DataSet dataSet = new DefaultDataSet();
 
         dataSet.setField(DataSet.Field.HITS, getHits());
-        dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, new Date(getFirstHitStamp()));
-        dataSet.setField(DataSet.Field.LAST_HIT_STAMP, new Date(getLastHitStamp()));
+        dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, getFirstHitStamp());
+        dataSet.setField(DataSet.Field.LAST_HIT_STAMP, getLastHitStamp());
         long commits = getCommits();
         dataSet.setField(DataSet.Field.COMMITS, commits);
         if (commits > 0) {
@@ -191,9 +190,9 @@ public abstract class AbstractStatsSession implements StatsSession {
         buf.append(",hits=");
         buf.append(getHits());
         buf.append(",firstHitStamp=");
-        buf.append(new Date(getFirstHitStamp()));
+        buf.append(getFirstHitStamp());
         buf.append(",lastHitStamp=");
-        buf.append(new Date(getLastHitStamp()));
+        buf.append(getLastHitStamp());
         buf.append(",commits=");
         buf.append(getCommits());
         buf.append(",first=");

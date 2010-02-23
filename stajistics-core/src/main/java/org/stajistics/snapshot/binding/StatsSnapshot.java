@@ -14,7 +14,6 @@
  */
 package org.stajistics.snapshot.binding;
 
-import java.util.Date;
 import java.util.Map;
 
 import org.stajistics.StatsKey;
@@ -30,11 +29,11 @@ public interface StatsSnapshot {
 
     String getStajisticsVersion();
 
-    Date getStartTimeStamp();
+    long getStartTimeStamp();
 
-    Date getEndTimeStamp();
+    long getEndTimeStamp();
 
-    void setTimeStamp(Date timeStamp);
+    void setTimeStamp(long timeStamp);
 
     SystemEnvironment getSystemEnvironment();
 
