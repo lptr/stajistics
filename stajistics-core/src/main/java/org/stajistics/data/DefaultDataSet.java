@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public class DefaultDataSet implements DataSet {
+public class DefaultDataSet extends AbstractDataContainer implements DataSet {
 
     private final Map<String,Object> dataMap = createDataMap();
     private Map<String,Object> metaDataMap = null;
@@ -60,12 +60,11 @@ public class DefaultDataSet implements DataSet {
 
     @Override
     public Object getField(final String name) {
-        return dataMap.get(name);
-    }
+        if (name == null) {
+            throw new NullPointerException("name");
+        }
 
-    @Override
-    public <T> T getField(final String name, final Class<T> type) {
-        return type.cast(getField(name));
+        return dataMap.get(name);
     }
 
     @Override

@@ -59,16 +59,16 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
 
     private static final Logger logger = LoggerFactory.getLogger(AsynchronousStatsSession.class);
 
-    private volatile long hits = 0;
-    private volatile long firstHitStamp = -1;
-    private volatile long lastHitStamp = -1;
-    private volatile long commits = 0;
+    private volatile long hits = DataSet.Field.Default.HITS;
+    private volatile long firstHitStamp = DataSet.Field.Default.FIRST_HIT_STAMP;
+    private volatile long lastHitStamp = DataSet.Field.Default.LAST_HIT_STAMP;
+    private volatile long commits = DataSet.Field.Default.COMMITS;
 
-    private volatile Double first = null;
-    private volatile double last = Double.NaN;
+    private volatile Double first = null; // The proper default is taken care of in getFirst()
+    private volatile double last = DataSet.Field.Default.LAST;
     private volatile double min = Double.POSITIVE_INFINITY;
     private volatile double max = Double.NEGATIVE_INFINITY;
-    private volatile double sum = 0;
+    private volatile double sum = DataSet.Field.Default.SUM;
 
     private final TaskService taskService;
 
@@ -113,17 +113,6 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             logger.error("Failed to queue task: " + entry, e);
         }
     }
-    
-    private <T> T submitAndWaitForTask(final Callable<T> task)  {
-        Future<T> future = taskService.submit(getClass(), task);
-        try {
-            return future.get();
-        } catch (ExecutionException ex) {
-            throw new RuntimeException(ex.getCause());
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
 
     @Override
     public void track(final StatsTracker tracker, long now) {
@@ -135,7 +124,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         try {
             hits++;
 
-            if (firstHitStamp == -1) {
+            if (firstHitStamp == DataSet.Field.Default.FIRST_HIT_STAMP) {
                 firstHitStamp = now;
             }
 
@@ -224,7 +213,7 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         Double firstValue = first;
 
         if (firstValue == null) {
-            return Double.NaN;
+            return DataSet.Field.Default.FIRST;
         }
 
         return firstValue;
@@ -237,28 +226,20 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
 
     @Override
     public double getMin() {
-        stateLock.lock();
-        try {
-            if (commits == 0) {
-                return EMPTY_VALUE;
-            }
-            return min;
-        } finally {
-            stateLock.unlock();
+        Double result = min;
+        if (result.equals(Double.POSITIVE_INFINITY)) {
+            result = DataSet.Field.Default.MIN;
         }
+        return result;
     }
 
     @Override
     public double getMax() {
-        stateLock.lock();
-        try {
-            if (commits == 0) {
-                return EMPTY_VALUE;
-            }
-            return max;
-        } finally {
-            stateLock.unlock();
+        Double result = max;
+        if (result.equals(Double.NEGATIVE_INFINITY)) {
+            result = DataSet.Field.Default.MAX;
         }
+        return result;
     }
 
     @Override
@@ -268,31 +249,58 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
 
     @Override
     public void restore(final DataSet dataSet) {
+        if (dataSet == null) {
+            throw new NullPointerException("dataSet");
+        }
+
         stateLock.lock();
         try {
-            hits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
-            firstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Long.class);
-            lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Long.class);
-            commits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
-            if (commits > 0) {
-                first = dataSet.getField(DataSet.Field.FIRST, Double.class);
-                last = dataSet.getField(DataSet.Field.LAST, Double.class);
-                min = dataSet.getField(DataSet.Field.MIN, Double.class);
-                max = dataSet.getField(DataSet.Field.MAX, Double.class);
-                sum = dataSet.getField(DataSet.Field.SUM, Double.class);
-            } else {
-                first = null;
-                last = Double.NaN;
-                min = Double.POSITIVE_INFINITY;
-                max = Double.NEGATIVE_INFINITY;
-                sum = 0;
-            }
+            clear();
 
-            for (DataRecorder dataRecorder : dataRecorders) {
-                try {
-                    dataRecorder.restore(dataSet);
-                } catch (Exception e) {
-                    logger.error("failed to restore " + dataRecorder, e);
+            if (!dataSet.isEmpty()) {
+                
+                Long restoredHits = dataSet.getField(DataSet.Field.HITS,
+                                                     DataSet.Field.Default.HITS);
+                Long restoredFirstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, 
+                                                              DataSet.Field.Default.FIRST_HIT_STAMP);
+                Long restoredLastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, 
+                                                             DataSet.Field.Default.LAST_HIT_STAMP);
+
+                // Only restore if hits, firstHitStamp, and lastHitStamp are defined
+                if (restoredHits > DataSet.Field.Default.HITS &&
+                        restoredFirstHitStamp > DataSet.Field.Default.FIRST_HIT_STAMP &&
+                        restoredLastHitStamp > DataSet.Field.Default.LAST_HIT_STAMP) {
+
+                    hits = restoredHits;
+                    firstHitStamp = restoredFirstHitStamp;
+                    lastHitStamp = restoredLastHitStamp;
+
+                    Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS,
+                                                            DataSet.Field.Default.COMMITS);
+                    Double restoredFirst = dataSet.getField(DataSet.Field.FIRST, Double.class);
+                    Double restoredLast = dataSet.getField(DataSet.Field.LAST, Double.class);
+
+                    // Only restore "update()" data if commits, first, and last are defined
+                    if (restoredCommits > DataSet.Field.Default.COMMITS &&
+                            restoredFirst != null && 
+                            restoredLast != null) {
+
+                        commits = restoredCommits;
+                        first = restoredFirst;
+                        last = restoredLast;
+                        min = dataSet.getField(DataSet.Field.MIN, DataSet.Field.Default.MIN);
+                        max = dataSet.getField(DataSet.Field.MAX, DataSet.Field.Default.MAX);
+                        sum = dataSet.getField(DataSet.Field.SUM, DataSet.Field.Default.SUM);
+
+                        // Restore DataRecorders
+                        for (DataRecorder dataRecorder : dataRecorders) {
+                            try {
+                                dataRecorder.restore(dataSet);
+                            } catch (Exception e) {
+                                logger.error("Failed to restore " + dataRecorder, e);
+                            }
+                        }
+                    }
                 }
             }
         } finally {
@@ -306,21 +314,28 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
 
     @Override
     public void clear() {
-        submitAndWaitForTask(new ClearTask());
+        updateQueueProcessingLock.lock();
+        try {
+            updateQueue.clear(); // Must be called while holding updateQueueProcessingLock
+            clearState();
+        } finally {
+            updateQueueProcessingLock.unlock();
+        }
+        fireCleared();
     }
 
     private void clearState() {
         stateLock.lock();
         try {
-            hits = 0;
-            firstHitStamp = -1;
-            lastHitStamp = -1;
-            commits = 0;
-            first = null;
-            last = Double.NaN;
-            min = Double.POSITIVE_INFINITY;
-            max = Double.NEGATIVE_INFINITY;
-            sum = 0;
+            hits = DataSet.Field.Default.HITS;
+            firstHitStamp = DataSet.Field.Default.FIRST_HIT_STAMP;
+            lastHitStamp = DataSet.Field.Default.LAST_HIT_STAMP;
+            commits = DataSet.Field.Default.COMMITS;
+            first = null; // The proper default is taken care of in getFirst()
+            last = DataSet.Field.Default.LAST;
+            min = DataSet.Field.Default.MIN;
+            max = DataSet.Field.Default.MAX;
+            sum = DataSet.Field.Default.SUM;
 
             for (DataRecorder dataRecorder : dataRecorders) {
                 try {
@@ -349,12 +364,28 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             stateLock.unlock();
         }
     }
-    
+
     @Override
     public DataSet drainData() {
-        return submitAndWaitForTask(new DrainDataTask());
+        DataSet data;
+
+        // Do not allow other threads to process entries
+        updateQueueProcessingLock.lock();
+        try {
+            processUpdateQueue();
+            data = collectData();
+            clearState();
+        } finally {
+            updateQueueProcessingLock.unlock();
+        }
+
+        fireCleared();
+        return data;
     }
 
+    /*
+     * NOTE: Must be called while holding updateQueueProcessingLock
+     */ 
     private void processUpdateQueue() {
         // Re-query queue size to avoid allocating a buffer if some
         // other thread has already processed the events
@@ -418,43 +449,11 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             this.now = now;
             this.track = track;
         }
-        
+
         @Override
         public String toString() {
             return tracker + " @ " + now + " " + (track ? "track" : "update");
         }
     }
 
-    private final class DrainDataTask implements Callable<DataSet> {
-        @Override
-        public DataSet call() throws Exception {
-            // Do not allow other threads to process entries
-            updateQueueProcessingLock.lock();
-            DataSet data;
-            try {
-                processUpdateQueue();
-                data = collectData();
-                clearState();
-            } finally {
-                updateQueueProcessingLock.unlock();
-            }
-            fireCleared();
-            return data;
-        }
-    }
-
-    private final class ClearTask implements Callable<Void> {
-        @Override
-        public Void call() throws Exception {
-            updateQueueProcessingLock.lock();
-            try {
-                updateQueue.clear();
-                clearState();
-            } finally {
-                updateQueueProcessingLock.unlock();
-            }
-            fireCleared();
-            return null;
-        }
-    }
 }

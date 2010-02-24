@@ -34,8 +34,8 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
     }
 
     @Override
-    protected StatsSession createStatsSession() {
-        return new AsynchronousStatsSession(mockKey, mockEventManager, mockTaskService);
+    protected StatsSession createStatsSession(final DataRecorder[] dataRecorders) {
+        return new AsynchronousStatsSession(mockKey, mockEventManager, mockTaskService, dataRecorders);
     }
 
     @Override

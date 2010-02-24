@@ -48,22 +48,6 @@ public final class DataRecorders {
     }
 
     /**
-     * Determine if all elements of <tt>dataRecorders</tt> are annotated with {@link ThreadSafe}.
-     *
-     * @param dataRecorders The array of {@link DataRecorder}s to test.
-     * @return <tt>true</tt> if all <tt>dataRecorders</tt> are thread safe, <tt>false</tt> otherwise.
-     */
-    public static boolean areThreadSafe(final DataRecorder[] dataRecorders) {
-        for (DataRecorder dataRecorder : dataRecorders) {
-            if (!isThreadSafe(dataRecorder)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Decorate <tt>dataRecorder</tt> with a wrapper that implements locking on all method calls.
      * This will create a new {@link Lock} instance to protect method calls. Equivalent
      * to calling <tt>locking(DataRecorder, null)</tt>.
@@ -121,6 +105,10 @@ public final class DataRecorders {
      */
     public static DataRecorder[] locking(final DataRecorder[] dataRecorders,
                                          final Lock lock) {
+        if (dataRecorders == null) {
+            return null;
+        }
+
         DataRecorder[] result = new DataRecorder[dataRecorders.length];
 
         for (int i = 0; i < dataRecorders.length; i++) {
@@ -132,7 +120,7 @@ public final class DataRecorders {
 
     /**
      * Decorates the given <tt>dataRecorder</tt> using the {@link #locking(DataRecorder, Lock)} method
-     * but only if {@link #isThreadSafe(DataRecorder)} returns true for the <tt>dataRecorder</tt>.
+     * but only if {@link #isThreadSafe(DataRecorder)} returns <tt>false</tt> for the <tt>dataRecorder</tt>.
      * Equivalent to calling <tt>lockingIfNeeded(DataRecorder, null)</tt>.
      *
      * @param dataRecorder The {@link DataRecorder} to wrap if it is not thread safe.
@@ -147,7 +135,7 @@ public final class DataRecorders {
 
     /**
      * Decorates the given <tt>dataRecorder</tt> using the {@link #locking(DataRecorder, Lock)} method
-     * but only if {@link #isThreadSafe(DataRecorder)} returns true for the <tt>dataRecorder</tt>.
+     * but only if {@link #isThreadSafe(DataRecorder)} returns <tt>false</tt> for the <tt>dataRecorder</tt>.
      *
      * @param dataRecorder The {@link DataRecorder} to wrap if it is not thread safe.
      * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt> method calls 
@@ -170,7 +158,7 @@ public final class DataRecorders {
      * A convenience method for wrapping elements of <tt>dataRecorders</tt> in the same 
      * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}, however, 
      * an element will only be wrapped if {@link #isThreadSafe(DataRecorder)} returns 
-     * <tt>true</tt> for it. This will create a new {@link Lock} for each element that needs to be decorated. 
+     * <tt>false</tt> for it. This will create a new {@link Lock} for each element that needs to be decorated. 
      * Equivalent to calling <tt>lockingIfNeeded(DataRecorder[], null)</tt>.
      *
      * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
@@ -186,7 +174,7 @@ public final class DataRecorders {
      * A convenience method for wrapping elements of <tt>dataRecorders</tt> in the same 
      * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}, however, 
      * an element will only be wrapped if {@link #isThreadSafe(DataRecorder)} returns 
-     * <tt>true</tt> for it.
+     * <tt>false</tt> for it.
      *
      * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
      * @param lock The shared {@link Lock} to use to lock all method calls of each <tt>dataRecorders</tt> element.
@@ -197,6 +185,10 @@ public final class DataRecorders {
      */
     public static DataRecorder[] lockingIfNeeded(final DataRecorder[] dataRecorders,
                                                  final Lock lock) {
+        if (dataRecorders == null) {
+            return null;
+        }
+        
         DataRecorder[] result = new DataRecorder[dataRecorders.length];
 
         for (int i = 0; i < dataRecorders.length; i++) {

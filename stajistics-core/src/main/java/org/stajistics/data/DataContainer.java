@@ -22,14 +22,37 @@ import java.util.Set;
  */
 public interface DataContainer {
 
+    /**
+     * Obtain the number of fields in this DataContainer.
+     *
+     * @return The current number of fields.
+     */
     int size();
 
+    /**
+     * Determine if this DataContainer is empty.
+     *
+     * @return <tt>true</tt> if there are zero elements, <tt>false</tt> otherwise.
+     */
     boolean isEmpty();
 
     Object getField(String name);
 
-    <T> T getField(String name, Class<T> type);
+    <T> T getField(String name, Class<T> type) throws ClassCastException;
 
+    /**
+     * 
+     * @param <T>
+     * @param name The name of the field to retrieve.
+     * @param defaultValue The value to return if the field doesn't exist or is not of type <tt>T</tt>.
+     * @return The field value, or <tt>defaultValue</tt> if not found or if the value is not of type <tt>T</tt>.
+     */
+    <T> T getField(String name, T defaultValue);
+
+    /**
+     * Obtains a Set of field names that are contained in this DataContainer.
+     * @return The Set of field names, never <tt>null</tt>.
+     */
     Set<String> getFieldNames();
 
     void setField(String name, Object value);
@@ -47,5 +70,6 @@ public interface DataContainer {
         Object getValue();
 
         <T> T getValue(Class<T> type);
+
     }
 }

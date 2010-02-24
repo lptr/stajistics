@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.Set;
  * 
  * @author The Stajistics Project
  */
-class DefaultMetaData implements MetaData {
+class DefaultMetaData extends AbstractDataContainer implements MetaData {
 
     private static final String DELIMITER = "__" + DefaultMetaData.class.getSimpleName() + "__";
 
@@ -47,11 +47,6 @@ class DefaultMetaData implements MetaData {
     @Override
     public Object getField(final String name) {
         return dataMap.get(keyFor(name));
-    }
-
-    @Override
-    public <T> T getField(final String name, final Class<T> type) {
-        return type.cast(getField(name));
     }
 
     @Override
