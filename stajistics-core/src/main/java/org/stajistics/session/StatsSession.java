@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
+import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.StatsTracker;
 
@@ -137,27 +138,33 @@ public interface StatsSession extends Serializable {
     DataSet collectData();
 
     /**
-     * Obtain a {@link DataSet} that is populated with all data collected for
+     * <p>Obtain a {@link DataSet} that is populated with all data collected for
      * this session and then clear the session. The {@link DataSet} is populated
      * with default data stored by this session, such as hits and commits, as
      * well as data stored by the {@link DataRecorder}s associated with this
-     * session.
-     * 
+     * session.</p>
+     *
+     * <p>Fires a {@link StatsEventType#SESSION_CLEARED} event.</p>
+     *
      * @return A {@link DataSet} full of data, never <tt>null</tt>.
      */
     DataSet drainData();
 
     /**
-     * Re-populate internal data fields and {@link DataRecorder}s using the given
-     * <tt>dataSet</tt>. This will clear any previously recorded data.
+     * <p>Re-populate internal data fields and {@link DataRecorder}s using the given
+     * <tt>dataSet</tt>. This will clear any previously recorded data.</p>
+     *
+     * <p>Fires a {@link StatsEventType#SESSION_RESTORED} event.</p>
      *
      * @param dataSet The data set with which to populate this session.
      */
     void restore(DataSet dataSet);
 
     /**
-     * Do not call directly. Normally called by a {@link StatsTracker} implementation.
-     * Increments the hits for this session by one.
+     * <p>Do not call directly. Normally called by a {@link StatsTracker} implementation.
+     * Increments the hits for this session by one.</p>
+     *
+     * <p>Fires a {@link StatsEventType#TRACKER_TRACKING} event for the passed <tt>tracker</tt>.</p>
      *
      * @param tracker The {@link StatsTracker} that, after this call, will be tracking
      *        data for this session.
@@ -166,10 +173,12 @@ public interface StatsSession extends Serializable {
     void track(StatsTracker tracker, long now);
 
     /**
-     * Do not call directly. Normally called by a {@link StatsTracker} implementation.
+     * <p>Do not call directly. Normally called by a {@link StatsTracker} implementation.
      * Increments the commits for this session by one. The value reported by the given
      * <tt>tracker</tt>'s {@link StatsTracker#getValue()} method is processed and
-     * offered to the {@link DataRecorder}s associated with this session.
+     * offered to the {@link DataRecorder}s associated with this session.</p>
+     *
+     * <p>Fires a {@link StatsEventType#TRACKER_COMMITTED} event for the passed <tt>tracker</tt>.</p>
      *
      * @param tracker The {@link StatsTracker} that collected the data for this update.
      * @param now The time stamp of the current time if known, otherwise <tt>-1</tt>.
@@ -181,8 +190,10 @@ public interface StatsSession extends Serializable {
     void update(StatsTracker tracker, long now);
 
     /**
-     * Clear all data recorded for this session. Resets all fields to initial values and
-     * calls {@link DataRecorder#clear()} on all {@link DataRecorder} associated with this session.
+     * <p>Clear all data recorded for this session. Resets all fields to initial values and
+     * calls {@link DataRecorder#clear()} on all {@link DataRecorder} associated with this session.</p>
+     *
+     * <p>Fires a {@link StatsEventType#SESSION_CLEARED} event.</p>
      */
     void clear();
 

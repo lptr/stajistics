@@ -26,8 +26,8 @@ import org.stajistics.session.recorder.DataRecorder;
  */
 public class ConcurrentStatsSessionTest extends AbstractStatsSessionTestCase {
 
-    protected StatsSession createStatsSession() {
-        return new ConcurrentStatsSession(mockKey, mockEventManager);
+    protected StatsSession createStatsSession(final DataRecorder[] dataRecorders) {
+        return new ConcurrentStatsSession(mockKey, mockEventManager, dataRecorders);
     }
 
     @Override

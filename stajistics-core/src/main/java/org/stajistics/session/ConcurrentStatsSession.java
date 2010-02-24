@@ -46,16 +46,18 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
 
     private static final Logger logger = LoggerFactory.getLogger(ConcurrentStatsSession.class);
 
-    protected final AtomicLong hits = new AtomicLong(0);
-    protected final AtomicLong firstHitStamp = new AtomicLong(-1);
-    protected volatile long lastHitStamp = -1;
-    protected final AtomicLong commits = new AtomicLong(0);
+    protected final AtomicLong hits = new AtomicLong(DataSet.Field.Default.HITS);
+    protected final AtomicLong firstHitStamp = new AtomicLong(DataSet.Field.Default.FIRST_HIT_STAMP);
+    protected volatile long lastHitStamp = DataSet.Field.Default.LAST_HIT_STAMP;
+    protected final AtomicLong commits = new AtomicLong(DataSet.Field.Default.COMMITS);
 
+    // The proper default is taken care of in getFirst()
     protected final AtomicReference<Double> first = new AtomicReference<Double>(null);
-    protected volatile double last = Double.NaN;
+
+    protected volatile double last = DataSet.Field.Default.LAST;
     protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
     protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
-    protected final AtomicDouble sum = new AtomicDouble(0);
+    protected final AtomicDouble sum = new AtomicDouble(DataSet.Field.Default.SUM);
 
     public ConcurrentStatsSession(final StatsKey key,
                                   final StatsEventManager eventManager,
@@ -74,8 +76,8 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
 
         hits.incrementAndGet();
 
-        if (firstHitStamp.get() == -1) {
-            firstHitStamp.compareAndSet(-1, now);
+        if (firstHitStamp.get() == DataSet.Field.Default.FIRST_HIT_STAMP) {
+            firstHitStamp.compareAndSet(DataSet.Field.Default.FIRST_HIT_STAMP, now);
         }
         lastHitStamp = now;
 
@@ -165,7 +167,7 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         Double firstValue = first.get();
 
         if (firstValue == null) {
-            return Double.NaN;
+            return DataSet.Field.Default.FIRST;
         }
 
         return firstValue;
@@ -178,18 +180,20 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
 
     @Override
     public double getMin() {
-        if (commits.get() == 0) {
-            return EMPTY_VALUE;
+        Double result = min.get();
+        if (result.equals(Double.POSITIVE_INFINITY)) {
+            result = DataSet.Field.Default.MIN;
         }
-        return min.get();
+        return result;
     }
 
     @Override
     public double getMax() {
-        if (commits.get() == 0) {
-            return EMPTY_VALUE;
+        Double result = max.get();
+        if (result.equals(Double.NEGATIVE_INFINITY)) {
+            result = DataSet.Field.Default.MAX;
         }
-        return max.get();
+        return result;
     }
 
     @Override
@@ -199,30 +203,56 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
 
     @Override
     public void restore(final DataSet dataSet) {
-        Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS, Long.class);
-        hits.set(restoredCommits);
-        firstHitStamp.set(dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Long.class));
-        lastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Long.class);
-        commits.set(restoredCommits);
-        if (restoredCommits > 0) {
-            first.set(dataSet.getField(DataSet.Field.FIRST, Double.class));
-            last = dataSet.getField(DataSet.Field.LAST, Double.class);
-            min.set(dataSet.getField(DataSet.Field.MIN, Double.class));
-            max.set(dataSet.getField(DataSet.Field.MAX, Double.class));
-            sum.set(dataSet.getField(DataSet.Field.SUM, Double.class));
-        } else {
-            first.set(null);
-            last = Double.NaN;
-            min.set(Double.POSITIVE_INFINITY);
-            max.set(Double.NEGATIVE_INFINITY);
-            sum.set(0);
+        if (dataSet == null) {
+            throw new NullPointerException("dataSet");
         }
 
-        for (DataRecorder dataRecorder : dataRecorders) {
-            try {
-                dataRecorder.restore(dataSet);
-            } catch (Exception e) {
-                logger.error("Failed to restore " + dataRecorder, e);
+        clearState();
+
+        if (!dataSet.isEmpty()) {
+
+            Long restoredHits = dataSet.getField(DataSet.Field.HITS,
+                                                 DataSet.Field.Default.HITS);
+            Long restoredFirstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, 
+                                                          DataSet.Field.Default.FIRST_HIT_STAMP);
+            Long restoredLastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, 
+                                                         DataSet.Field.Default.LAST_HIT_STAMP);
+
+            // Only restore if hits, firstHitStamp, and lastHitStamp are defined
+            if (restoredHits > DataSet.Field.Default.HITS &&
+                    restoredFirstHitStamp > DataSet.Field.Default.FIRST_HIT_STAMP &&
+                    restoredLastHitStamp > DataSet.Field.Default.LAST_HIT_STAMP) {
+
+                hits.set(restoredHits);
+                firstHitStamp.set(restoredFirstHitStamp);
+                lastHitStamp = restoredLastHitStamp;
+
+                Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS,
+                                                        DataSet.Field.Default.COMMITS);
+                Double restoredFirst = dataSet.getField(DataSet.Field.FIRST, Double.class);
+                Double restoredLast = dataSet.getField(DataSet.Field.LAST, Double.class);
+
+                // Only restore "update()" data if commits, first, and last are defined
+                if (restoredCommits > DataSet.Field.Default.COMMITS &&
+                        restoredFirst != null && 
+                        restoredLast != null) {
+
+                    commits.set(restoredCommits);
+                    first.set(restoredFirst);
+                    last = restoredLast;
+                    min.set(dataSet.getField(DataSet.Field.MIN, DataSet.Field.Default.MIN));
+                    max.set(dataSet.getField(DataSet.Field.MAX, DataSet.Field.Default.MAX));
+                    sum.set(dataSet.getField(DataSet.Field.SUM, DataSet.Field.Default.SUM));
+
+                    // Restore DataRecorders
+                    for (DataRecorder dataRecorder : dataRecorders) {
+                        try {
+                            dataRecorder.restore(dataSet);
+                        } catch (Exception e) {
+                            logger.error("Failed to restore " + dataRecorder, e);
+                        }
+                    }
+                }
             }
         }
 
@@ -233,15 +263,20 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
 
     @Override
     public void clear() {
-        hits.set(0);
-        firstHitStamp.set(-1);
-        lastHitStamp = -1;
-        commits.set(0);
-        first.set(null);
-        last = Double.NaN;
-        min.set(Double.POSITIVE_INFINITY);
-        max.set(Double.NEGATIVE_INFINITY);
-        sum.set(0);
+        clearState();
+        fireCleared();
+    }
+
+    private void clearState() {
+        hits.set(DataSet.Field.Default.HITS);
+        firstHitStamp.set(DataSet.Field.Default.FIRST_HIT_STAMP);
+        lastHitStamp = DataSet.Field.Default.LAST_HIT_STAMP;
+        commits.set(DataSet.Field.Default.COMMITS);
+        first.set(null); // The proper default is taken care of in getFirst()
+        last = DataSet.Field.Default.LAST;
+        min.set(DataSet.Field.Default.MIN);
+        max.set(DataSet.Field.Default.MAX);
+        sum.set(DataSet.Field.Default.SUM);
 
         for (DataRecorder dataRecorder : dataRecorders) {
             try {
@@ -250,7 +285,9 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
                 logger.error("Failed to clear " + dataRecorder, e);
             }
         }
+    }
 
+    private void fireCleared() {
         logger.trace("Clear: {}", this);
 
         eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);

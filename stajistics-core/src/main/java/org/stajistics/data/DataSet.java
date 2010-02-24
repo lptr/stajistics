@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,18 @@ public interface DataSet extends DataContainer,Serializable {
         public static final String MIN = "min";
         public static final String MAX = "max";
         public static final String SUM = "sum";
+
+        interface Default {
+            public static final Long HITS = 0L;
+            public static final Long FIRST_HIT_STAMP = -1L;
+            public static final Long LAST_HIT_STAMP = -1L;
+            public static final Long COMMITS = 0L;
+            public static final Double FIRST = Double.NaN;
+            public static final Double LAST = Double.NaN;
+            public static final Double MIN = Double.NaN;
+            public static final Double MAX = Double.NaN;
+            public static final Double SUM = 0D;
+        }
     }
 
     MetaData getMetaData();

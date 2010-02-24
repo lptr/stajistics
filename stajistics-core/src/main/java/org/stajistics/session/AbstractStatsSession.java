@@ -36,12 +36,6 @@ import org.stajistics.session.recorder.DataRecorder;
  */
 public abstract class AbstractStatsSession implements StatsSession {
 
-    private static final String PROP_USE_ZEROS_FOR_EMPTY_VALUE = AbstractStatsSession.class.getName()
-            + ".useZerosForEmpty";
-
-    protected static final Double EMPTY_VALUE = StatsProperties.getBooleanProperty(
-            PROP_USE_ZEROS_FOR_EMPTY_VALUE, false) ? 0 : Double.NaN;
-
     private static final Logger logger = LoggerFactory.getLogger(AbstractStatsSession.class);
 
     protected static final DataRecorder[] EMPTY_DATA_RECORDER_ARRAY = new DataRecorder[0];
@@ -152,21 +146,12 @@ public abstract class AbstractStatsSession implements StatsSession {
         dataSet.setField(DataSet.Field.HITS, getHits());
         dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, getFirstHitStamp());
         dataSet.setField(DataSet.Field.LAST_HIT_STAMP, getLastHitStamp());
-        long commits = getCommits();
-        dataSet.setField(DataSet.Field.COMMITS, commits);
-        if (commits > 0) {
-            dataSet.setField(DataSet.Field.FIRST, getFirst());
-            dataSet.setField(DataSet.Field.LAST, getLast());
-            dataSet.setField(DataSet.Field.MIN, getMin());
-            dataSet.setField(DataSet.Field.MAX, getMax());
-            dataSet.setField(DataSet.Field.SUM, getSum());
-        } else {
-            dataSet.setField(DataSet.Field.FIRST, EMPTY_VALUE);
-            dataSet.setField(DataSet.Field.LAST, EMPTY_VALUE);
-            dataSet.setField(DataSet.Field.MIN, EMPTY_VALUE);
-            dataSet.setField(DataSet.Field.MAX, EMPTY_VALUE);
-            dataSet.setField(DataSet.Field.SUM, 0.0);
-        }
+        dataSet.setField(DataSet.Field.COMMITS, getCommits());
+        dataSet.setField(DataSet.Field.FIRST, getFirst());
+        dataSet.setField(DataSet.Field.LAST, getLast());
+        dataSet.setField(DataSet.Field.MIN, getMin());
+        dataSet.setField(DataSet.Field.MAX, getMax());
+        dataSet.setField(DataSet.Field.SUM, getSum());
 
         for (DataRecorder dataRecorder : dataRecorders) {
             try {

@@ -64,6 +64,11 @@ public final class NullDataSet implements DataSet {
     }
 
     @Override
+    public <T> T getField(String name, T defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
     public Set<String> getFieldNames() {
         return Collections.emptySet();
     }

@@ -42,6 +42,10 @@ public class NullMetaData implements MetaData {
         return null;
     }
 
+    public <T> T getField(String name, T defaultValue) {
+        return defaultValue;
+    }
+
     @Override
     public Set<String> getFieldNames() {
         return Collections.emptySet();
