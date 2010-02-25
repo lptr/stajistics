@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public interface StatsConfigBuilder extends Serializable {
     /**
      * Build the configuration with the given {@link StatsTrackerFactory}.
      *
-     * @param trackerFactory The {@link StatsTrackerFactory} instance use.
+     * @param trackerFactory The {@link StatsTrackerFactory} instance to use.
      * @return <tt>this</tt>.
      */
     StatsConfigBuilder withTrackerFactory(StatsTrackerFactory<?> trackerFactory);
@@ -46,12 +46,17 @@ public interface StatsConfigBuilder extends Serializable {
     /**
      * Build the configuration with the given {@link StatsSessionFactory}.
      *
-     * @param sessionFactory The {@link StatsSessionFactory} instance use.
+     * @param sessionFactory The {@link StatsSessionFactory} instance to use.
      * @return <tt>this</tt>.
      */
     StatsConfigBuilder withSessionFactory(StatsSessionFactory sessionFactory);
 
-    
+    /**
+     * Build the configuration with the given {@link DataRecorderFactory}.
+     *
+     * @param dataRecorderFactory The {@link DataRecorderFactory} instance to use.
+     * @return <tt>this</tt>.
+     */
     StatsConfigBuilder withDataRecorderFactory(DataRecorderFactory dataRecorderFactory);
 
     /**

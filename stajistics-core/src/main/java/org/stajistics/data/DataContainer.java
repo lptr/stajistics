@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@ package org.stajistics.data;
 import java.util.Set;
 
 /**
- * 
+ * Stores a mapping of name-value pairs, where the values may be arbitrary types.
+ *
  * @author The Stajistics Project
  */
 public interface DataContainer {
@@ -36,11 +37,28 @@ public interface DataContainer {
      */
     boolean isEmpty();
 
+    /**
+     * Get the value of a single field by the given <tt>name</tt>.
+     *
+     * @param name The name of the field to retrieve.
+     * @return The field value, or <tt>null</tt> if not found or if <tt>name</tt> is <tt>null</tt>.
+     */
     Object getField(String name);
 
+    /**
+     * Get the value of a single field by the given <tt>name</tt>. Coerce the 
+     * resulting value into the given type <tt>type</tt>.
+     *
+     * @param <T> The expected type of the value. 
+     * @param name The name of the field to retrieve.
+     * @param type The type into which to coerce the value, if found.
+     * @return The field value, or <tt>null</tt> if not found.
+     * @throws ClassCastException If the existing value cannot be coerced into the given <tt>type</tt>.
+     */
     <T> T getField(String name, Class<T> type) throws ClassCastException;
 
     /**
+     * Get the value of a single field by the given <tt>name</tt>.
      * 
      * @param <T>
      * @param name The name of the field to retrieve.
@@ -55,14 +73,34 @@ public interface DataContainer {
      */
     Set<String> getFieldNames();
 
+    /**
+     * Store a name-value pair in this DataContainer, replacing a possibly existing field
+     * having the same <tt>name</tt>.
+     *
+     * @param name The name of the field to add.
+     * @param value The value of the field to add.
+     */
     void setField(String name, Object value);
 
+    /**
+     * Remove the field defined by <tt>name</tt> from this DataContainer.
+     *
+     * @param name The name of the field to remove.
+     * @return The removed field value if found, <tt>null</tt> if not found.
+     */
     Object removeField(String name);
 
+    /**
+     * Clear all stored name-value pairs.
+     */
     void clear();
 
     /* NESTED INTERFACES */
 
+    /**
+     * A {@link DataContainer} entry which provides access to a 
+     * field name and it's associated value.
+     */
     interface Entry {
 
         String getName();

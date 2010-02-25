@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
     private Map<String,Object> metaDataMap = null;
 
     private MetaData metaData = null;
-    private MetaDataSet metaDataSet = null;
+    private FieldMetaDataSet fieldMetaDataSet = null;
 
     public DefaultDataSet() {}
 
@@ -42,7 +42,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
         if (metaDataMap == null) {
             metaDataMap = createDataMap();
             metaData = new DefaultMetaData(metaDataMap, "");
-            metaDataSet = new DefaultMetaDataSet(metaDataMap);
+            fieldMetaDataSet = new DefaultFieldMetaDataSet(metaDataMap);
         }
     }
 
@@ -53,15 +53,15 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
     }
 
     @Override
-    public MetaDataSet getFieldMetaDataSet() {
+    public FieldMetaDataSet getFieldMetaDataSet() {
         ensureMetaDataInitialized();
-        return metaDataSet;
+        return fieldMetaDataSet;
     }
 
     @Override
     public Object getField(final String name) {
         if (name == null) {
-            throw new NullPointerException("name");
+            return null;
         }
 
         return dataMap.get(name);
@@ -113,7 +113,7 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
         if (metaDataMap != null) {
             hash += 31 * metaDataMap.hashCode();
             hash += 31 * metaData.hashCode();
-            hash += 31 * metaDataSet.hashCode();
+            hash += 31 * fieldMetaDataSet.hashCode();
         }
         return hash;
     }

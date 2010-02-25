@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,11 @@ public interface StatsManager extends Serializable {
      */
     StatsConfigFactory getConfigFactory();
 
-
+    /**
+     * Get the {@link TaskService}.
+     *
+     * @return The {@link TaskService}, never <tt>null</tt>.
+     */
     TaskService getTaskService();
 
     /**
@@ -96,6 +100,12 @@ public interface StatsManager extends Serializable {
      */
     void setEnabled(boolean enabled);
 
+    /**
+     * Firstly, set the manager state to disabled, then proceed to clean up any resources
+     * associated with statistics collection. A future call to {@link #setEnabled(boolean)} passing
+     * <tt>true</tt>, followed by any request to collect statistics will reinitialize any 
+     * necessary resources.
+     */
     void shutdown();
 
 }

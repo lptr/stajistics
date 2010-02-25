@@ -17,15 +17,21 @@ package org.stajistics.data;
 import java.io.Serializable;
 
 /**
- * 
- * 
+ * <p>Stores statistical data and meta data as a mapping of key-value pairs known as fields. 
+ * Statistical data is stored as fields, while meta data that is not directly related to
+ * statistics can be stored at the scope of the DataSet instance, as well as at the scope
+ * of a single field of the DataSet instance.</p>
+ *
+ * <p>DataSet implementations are generally optimized for reduced memory consumption
+ * and fast reads and writes of single fields, while iteration of all fields or meta data
+ * fields may be less performant than a regular O(n) iteration.</p>
  *
  * @author The Stajistics Project
  */
 public interface DataSet extends DataContainer,Serializable {
 
     /**
-     * Common field names
+     * Common field names.
      */
     interface Field {
         public static final String HITS = "hits";
@@ -38,6 +44,9 @@ public interface DataSet extends DataContainer,Serializable {
         public static final String MAX = "max";
         public static final String SUM = "sum";
 
+        /**
+         * Default values for common field names. 
+         */
         interface Default {
             public static final Long HITS = 0L;
             public static final Long FIRST_HIT_STAMP = -1L;
@@ -51,8 +60,19 @@ public interface DataSet extends DataContainer,Serializable {
         }
     }
 
+    /**
+     * Obtain a {@link MetaData} instance which contains meta data related to this DataSet.
+     *
+     * @return A {@link MetaData} instance, never <tt>null</tt>.
+     */
     MetaData getMetaData();
 
-    MetaDataSet getFieldMetaDataSet();
+    /**
+     * Obtain a {@link FieldMetaDataSet} instance which provides access to meta data associated with
+     * individual fields of this DataSet.
+     *
+     * @return A {@link FieldMetaDataSet} instance, never <tt>null</tt>.
+     */
+    FieldMetaDataSet getFieldMetaDataSet();
 
 }

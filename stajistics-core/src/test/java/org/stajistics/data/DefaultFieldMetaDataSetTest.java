@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,21 +32,21 @@ import org.junit.Test;
  * @author The Stajistics Project
  *
  */
-public class DefaultMetaDataSetTest {
+public class DefaultFieldMetaDataSetTest {
 
     private Map<String,Object> map;
-    private MetaDataSet metaDataSet;
+    private FieldMetaDataSet fieldMetaDataSet;
 
     @Before
     public void setUp() {
         map = new HashMap<String,Object>();
-        metaDataSet = new DefaultMetaDataSet(map);
+        fieldMetaDataSet = new DefaultFieldMetaDataSet(map);
     }
 
     @Test
     public void testConstructWithNullMap() {
         try {
-            new DefaultMetaDataSet(null);
+            new DefaultFieldMetaDataSet(null);
             fail("Allowed construction with null metaDataMap");
         } catch (NullPointerException npe) {
             assertEquals("metaDataMap", npe.getMessage());
@@ -55,24 +55,24 @@ public class DefaultMetaDataSetTest {
 
     @Test
     public void testGetMetaData() {
-        MetaData metaData1 = metaDataSet.getMetaData("test1");
+        MetaData metaData1 = fieldMetaDataSet.getMetaData("test1");
         assertNotNull(metaData1);
-        assertSame(metaData1, metaDataSet.getMetaData("test1"));
-        MetaData metaData2 = metaDataSet.getMetaData("test2");
+        assertSame(metaData1, fieldMetaDataSet.getMetaData("test1"));
+        MetaData metaData2 = fieldMetaDataSet.getMetaData("test2");
         assertNotNull(metaData2);
-        assertSame(metaData2, metaDataSet.getMetaData("test2"));
+        assertSame(metaData2, fieldMetaDataSet.getMetaData("test2"));
         assertFalse(metaData1 == metaData2);
         assertFalse(metaData1.equals(metaData2));
     }
 
     @Test
     public void testClear() {
-        MetaData metaData = metaDataSet.getMetaData("test");
+        MetaData metaData = fieldMetaDataSet.getMetaData("test");
         metaData.setField("test", "value");
         assertEquals("value", metaData.getField("test"));
-        metaDataSet.clear();
+        fieldMetaDataSet.clear();
         assertNull(metaData.getField("test"));
-        metaData = metaDataSet.getMetaData("test");
+        metaData = fieldMetaDataSet.getMetaData("test");
         assertNull(metaData.getField("test"));
     }
     

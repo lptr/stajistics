@@ -16,23 +16,22 @@ package org.stajistics.data;
 
 
 /**
+ * A convenience base implementation of {@link DataContainer}.
  *
  * @author The Stajistics Project
  */
 public abstract class AbstractDataContainer implements DataContainer {
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getField(final String name, final Class<T> type) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
-        if (type == null) {
-            throw new NullPointerException("type");
-        }
-
         Object value = getField(name);
         if (value == null) {
             return null;
+        }
+
+        if (type == null) {
+            return (T) value;
         }
 
         return type.cast(value);
@@ -43,18 +42,19 @@ public abstract class AbstractDataContainer implements DataContainer {
     public <T> T getField(final String name, 
                           final T defaultValue) {
         if (name == null) {
-            throw new NullPointerException("name");
-        }
-        if (defaultValue == null) {
-            throw new NullPointerException("defaultValue");
+            return defaultValue;
         }
 
         T result = defaultValue;
         Object value = getField(name);
         if (value != null) {
             try {
-                result = (T) defaultValue.getClass()
-                                         .cast(value);
+                if (defaultValue == null) {
+                    result = (T) value;
+                } else {
+                    result = (T) defaultValue.getClass()
+                                             .cast(value);
+                }
             } catch (ClassCastException cce) {}
         }
 

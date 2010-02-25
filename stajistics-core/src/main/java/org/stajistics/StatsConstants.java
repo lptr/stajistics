@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,19 @@ package org.stajistics;
 
 
 /**
- * 
- * 
+ * Various constants used by Stajistics.
  *
  * @author The Stajistics Project
  */
 public interface StatsConstants {
 
+    /**
+     * The character that delimits hierarchy levels in {@link StatsKey} names.
+     */
     char KEY_HIERARCHY_DELIMITER = '.'; 
 
+    /**
+     * The default unit used in {@link StatsConfig} instances.
+     */
     String DEFAULT_UNIT = "ms";
 }

@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public abstract class AbstractStatsKey implements StatsKey {
      * to calculate the hash code value in the default manner.
      */
     protected void setHashCode() {
-        int h = 31 + name.hashCode();
+        int h = name.hashCode();
         h = h * 31 + getAttributeCount();
         h = h * 31 + getAttributes().hashCode();
 

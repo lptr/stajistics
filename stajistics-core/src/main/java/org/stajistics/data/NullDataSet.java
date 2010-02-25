@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 
- * 
+ * A {@link DataSet} implementation conforming to the null object pattern.
  *
  * @author The Stajistics Project
  */
@@ -27,7 +26,7 @@ public final class NullDataSet implements DataSet {
 
     private static final NullDataSet instance = new NullDataSet();
 
-    private static final MetaDataSet NULL_META_DATA_SET = new MetaDataSet() {
+    private static final FieldMetaDataSet NULL_META_DATA_SET = new FieldMetaDataSet() {
         @Override
         public MetaData getMetaData(final String fieldName) {
             return NullMetaData.getInstance();
@@ -49,48 +48,77 @@ public final class NullDataSet implements DataSet {
     }
 
     @Override
-    public MetaDataSet getFieldMetaDataSet() {
+    public FieldMetaDataSet getFieldMetaDataSet() {
         return NULL_META_DATA_SET;
     }
 
+    /**
+     * @return <tt>null</tt>.
+     */
     @Override
     public Object getField(String name) {
         return null;
     }
 
+    /**
+     * @return <tt>null</tt>.
+     */
     @Override
     public <T> T getField(String name, Class<T> type) {
         return null;
     }
 
+    /**
+     * @return <tt>defaultValue</tt>.
+     */
     @Override
     public <T> T getField(String name, T defaultValue) {
         return defaultValue;
     }
 
+    /**
+     * @return An empty Set.
+     */
     @Override
     public Set<String> getFieldNames() {
         return Collections.emptySet();
     }
 
+    /**
+     * @return <tt>true</tt>.
+     */
     @Override
     public boolean isEmpty() {
         return true;
     }
 
+    /**
+     * @return <tt>0</tt>.
+     */
     @Override
     public int size() {
         return 0;
     }
 
+    /**
+     * Does nothing.
+     */
     @Override
     public void clear() {}
 
+    /**
+     * Does nothing.
+     *
+     * @return <tt>null</tt>.
+     */
     @Override
     public Object removeField(String name) {
         return null;
     }
 
+    /**
+     * Does nothing.
+     */
     @Override
     public void setField(String name, Object value) {}
 

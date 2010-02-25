@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -377,7 +377,7 @@ public final class Stats {
     }
 
     /**
-     * Report a failure that is represented by an Exception.
+     * Report a failure that is represented by a Throwable.
      *
      * @param failure The Throwable that represents the failure.
      * @param keyName The key name for which to report an incident.
@@ -394,7 +394,7 @@ public final class Stats {
     }
 
     /**
-     * Report a failure that is represented by an Exception.
+     * Report a failure that is represented by a Throwable.
      *
      * @param failure The Throwable that represents the failure.
      * @param key The {@link StatsKey} for which to report a failure.
@@ -410,7 +410,7 @@ public final class Stats {
     }
 
     /**
-     * Report a failure that is represented by an Exception.
+     * Report a failure that is represented by a Throwable.
      *
      * @param keys The {@link StatsKey}s for which to report a failure.
      * @param failure The Throwable that represents the failure.
@@ -522,10 +522,4 @@ public final class Stats {
                            .createConfigBuilder();
     }
 
-    /**
-     * @see StatsManager#shutdown() 
-     */
-    public static void shutdown() {
-        getManager().shutdown();
-    }
 }
