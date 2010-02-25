@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,149 +14,33 @@
  */
 package org.stajistics.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * 
  * @author The Stajistics Project
- *
  */
-public class DefaultDataSetTest {
+public class DefaultDataSetTest extends AbstractDataContainerTestCase{
 
-    protected static final double DELTA = 0.0000000000001;
-
-    private DataSet dataSet;
-
-    @Before
-    public void setUp() {
-        dataSet = new DefaultDataSet();
+    @Override
+    protected DataSet createDataContainer() {
+        return new DefaultDataSet();
     }
 
-    @Test
-    public void testInitializedState() {
-        assertTrue(dataSet.isEmpty());
-        assertEquals(0, dataSet.size());
-        assertNotNull(dataSet.getFieldNames());
-        assertTrue(dataSet.getFieldNames().isEmpty());
-        assertNull(dataSet.getField("test1"));
-        assertNull(dataSet.getField("test2", Double.class));
-        assertNull(dataSet.removeField("test3"));
-    }
-
-    @Test
-    public void testSize() {
-        dataSet.setField("test1", "value1");
-        assertEquals(1, dataSet.size());
-        dataSet.setField("test2", "value2");
-        assertEquals(2, dataSet.size());
-        dataSet.removeField("test2");
-        assertEquals(1, dataSet.size());
-        dataSet.removeField("test1");
-        assertEquals(0, dataSet.size());
-    }
-
-    @Test
-    public void testIsEmpty() {
-        dataSet.setField("test1", "value1");
-        assertFalse(dataSet.isEmpty());
-        dataSet.setField("test2", "value2");
-        assertFalse(dataSet.isEmpty());
-        dataSet.removeField("test2");
-        assertFalse(dataSet.isEmpty());
-        dataSet.removeField("test1");
-        assertTrue(dataSet.isEmpty());
-    }
-    
-    @Test
-    public void testSetGetField() {
-        dataSet.setField("test1", "value1");
-        assertEquals("value1", dataSet.getField("test1"));
-        dataSet.setField("test2", "value2");
-        assertEquals("value2", dataSet.getField("test2"));
-    }
-
-    @Test
-    public void testSetFieldWithNullName() {
-        try {
-            dataSet.setField(null, "something");
-        } catch (NullPointerException npe) {
-            assertEquals("name", npe.getMessage());
-        }
-        try {
-            dataSet.setField(null, null);
-        } catch (NullPointerException npe) {
-            assertEquals("name", npe.getMessage());
-        }
-    }
-
-    @Test
-    public void testSetFieldWithNullValue() {
-        try {
-            dataSet.setField("test", null);
-        } catch (NullPointerException npe) {
-            assertEquals("value", npe.getMessage());
-        }
-    }
-
-    @Test
-    public void testSetFieldWithEmptyName() {
-        try {
-            dataSet.setField("", "something");
-        } catch (IllegalArgumentException iae) {
-            assertEquals("empty name", iae.getMessage());
-        }
-    }
-
-    @Test
-    public void testRemoveField() {
-        dataSet.setField("test", "value");
-        assertEquals("value", dataSet.removeField("test"));
-        assertNull(dataSet.removeField("test"));
-        assertTrue(dataSet.isEmpty());
-    }
-
-    @Test
-    public void testGetFieldWithType() {
-        dataSet.setField("test1", 3.0);
-        assertEquals(3.0, dataSet.getField("test1", Double.class), DELTA);
-        dataSet.setField("test2", "value2");
-        assertEquals("value2", dataSet.getField("test2", String.class));
-        try {
-            dataSet.getField("test1", String.class);
-            fail("Allowed cast from double to String");
-        } catch (ClassCastException cce) {
-            // expected
-        }
-    }
-
-    @Test
-    public void testClear() {
-        dataSet.setField("test", 1);
-        assertFalse(dataSet.isEmpty());
-        assertEquals(1, dataSet.size());
-
-        dataSet.clear();
-
-        assertNull(dataSet.getField("test"));
-        assertTrue(dataSet.isEmpty());
-        assertEquals(0, dataSet.size());
+    @Override
+    protected DataSet dc() {
+        return (DataSet)super.dc();
     }
 
     @Test
     public void testGetMetaData() {
-        assertNotNull(dataSet.getMetaData());
+        assertNotNull(dc().getMetaData());
     }
 
     @Test
     public void testGetFieldMetaDataSet() {
-        assertNotNull(dataSet.getFieldMetaDataSet());
+        assertNotNull(dc().getFieldMetaDataSet());
     }
 }

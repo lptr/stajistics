@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import java.util.Map;
  * 
  * @author The Stajistics Project
  */
-class DefaultMetaDataSet implements MetaDataSet {
+class DefaultFieldMetaDataSet implements FieldMetaDataSet {
 
-    private static final String PREFIX = "__" + DefaultMetaDataSet.class.getSimpleName() + "__";
+    private static final String PREFIX = "__" + DefaultFieldMetaDataSet.class.getSimpleName() + "__";
 
     private final Map<String,Object> metaDataMap;
 
-    DefaultMetaDataSet(final Map<String,Object> metaDataMap) {
+    DefaultFieldMetaDataSet(final Map<String,Object> metaDataMap) {
         if (metaDataMap == null) {
             throw new NullPointerException("metaDataMap");
         }

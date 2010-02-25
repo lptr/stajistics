@@ -46,6 +46,10 @@ class DefaultMetaData extends AbstractDataContainer implements MetaData {
 
     @Override
     public Object getField(final String name) {
+        if (name == null) {
+            return null;
+        }
+
         return dataMap.get(keyFor(name));
     }
 
@@ -90,6 +94,10 @@ class DefaultMetaData extends AbstractDataContainer implements MetaData {
 
     @Override
     public void setField(final String name, final Object value) {
+        if (name == null) {
+            throw new NullPointerException("name");
+        }
+
         if (dataMap.put(keyFor(name), value) == null) {
             size++;
         }

@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,24 +114,7 @@ public class DefaultStatsManager implements StatsManager {
      */
     public static DefaultStatsManager createWithDefaults() {
 
-        StatsKeyFactory keyFactory = new DefaultStatsKeyFactory();
-
-        StatsEventManager eventManager = new SynchronousStatsEventManager();
-        StatsConfigManager configManager = new DefaultStatsConfigManager(eventManager, keyFactory);
-        StatsSessionManager sessionManager = new DefaultStatsSessionManager(configManager, eventManager);
-        StatsSnapshotManager snapshotManager = DefaultStatsSnapshotManager.createWithDefaults();
-        StatsTrackerLocator trackerLocator = new DefaultStatsTrackerLocator(configManager, sessionManager);
-        StatsConfigFactory configFactory = new DefaultStatsConfigFactory(configManager);
-        TaskService taskService = new ThreadPoolTaskService();
-
-        DefaultStatsManager manager = new DefaultStatsManager(configManager,
-                                                              sessionManager,
-                                                              eventManager,
-                                                              snapshotManager,
-                                                              trackerLocator,
-                                                              keyFactory,
-                                                              configFactory,
-                                                              taskService);
+        DefaultStatsManager manager = new Builder().createManager();
 
         if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
             StatsManagement management = new DefaultStatsManagement();
@@ -140,7 +123,8 @@ public class DefaultStatsManager implements StatsManager {
             management.registerSnapshotMBean(manager);
 
             StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(manager, management);
-            eventManager.addGlobalEventHandler(eventHandler);
+            manager.getEventManager()
+                   .addGlobalEventHandler(eventHandler);
         }
 
         return manager;
@@ -206,7 +190,141 @@ public class DefaultStatsManager implements StatsManager {
 
     public static class Builder {
 
+        protected StatsConfigManager configManager = null;
+        protected StatsSessionManager sessionManager = null;
+        protected StatsEventManager eventManager = null;
+        protected StatsSnapshotManager snapshotManager = null;
+        protected StatsTrackerLocator trackerLocator = null;
+        protected StatsKeyFactory keyFactory = null;
+        protected StatsConfigFactory configFactory = null;
+        protected TaskService taskService = null;
 
+        public Builder withConfigManager(final StatsConfigManager configManager) {
+            if (configManager == null) {
+                throw new NullPointerException("configManager");
+            }
 
+            this.configManager = configManager;
+            return this;
+        }
+
+        public Builder withSessionManager(final StatsSessionManager sessionManager) {
+            if (sessionManager == null) {
+                throw new NullPointerException("sessionManager");
+            }
+
+            this.sessionManager = sessionManager;
+            return this;
+        }
+
+        public Builder withEventManager(final StatsEventManager eventManager) {
+            if (eventManager == null) {
+                throw new NullPointerException("eventManager");
+            }
+
+            this.eventManager = eventManager;
+            return this;
+        }
+
+        public Builder withSnapshotManager(final StatsSnapshotManager snapshotManager) {
+            if (snapshotManager == null) {
+                throw new NullPointerException("snapshotManager");
+            }
+
+            this.snapshotManager = snapshotManager;
+            return this;
+        }
+
+        public Builder withTrackerLocator(final StatsTrackerLocator trackerLocator) {
+            if (trackerLocator == null) {
+                throw new NullPointerException("trackerLocator");
+            }
+
+            this.trackerLocator = trackerLocator;
+            return this;
+        }
+
+        public Builder withKeyFactory(final StatsKeyFactory keyFactory) {
+            if (keyFactory == null) {
+                throw new NullPointerException("keyFactory");
+            }
+
+            this.keyFactory = keyFactory;
+            return this;
+        }
+
+        public Builder withConfigFactory(final StatsConfigFactory configFactory) {
+            if (configFactory == null) {
+                throw new NullPointerException("configFactory");
+            }
+
+            this.configFactory = configFactory;
+            return this;
+        }
+
+        public Builder withTaskService(final TaskService taskService) {
+            if (taskService == null) {
+                throw new NullPointerException("taskService");
+            }
+
+            this.taskService = taskService;
+            return this;
+        }
+
+        public DefaultStatsManager createManager() {
+
+            StatsKeyFactory keyFactory = this.keyFactory;
+
+            StatsEventManager eventManager = this.eventManager;
+            StatsConfigManager configManager = this.configManager;
+            StatsSessionManager sessionManager = this.sessionManager;
+            StatsSnapshotManager snapshotManager = this.snapshotManager;
+            StatsTrackerLocator trackerLocator = this.trackerLocator;
+            StatsConfigFactory configFactory = this.configFactory;
+            TaskService taskService = this.taskService;
+
+            if (keyFactory == null) {
+                keyFactory = new DefaultStatsKeyFactory();
+            }
+
+            if (eventManager == null) {
+                eventManager = new SynchronousStatsEventManager();
+            }
+
+            if (configManager == null) {
+                configManager = new DefaultStatsConfigManager(eventManager, keyFactory);
+            }
+
+            if (sessionManager == null) {
+                sessionManager = new DefaultStatsSessionManager(configManager, eventManager);
+            }
+
+            if (snapshotManager == null) {
+                snapshotManager = DefaultStatsSnapshotManager.createWithDefaults();
+            }
+
+            if (trackerLocator == null) {
+                trackerLocator = new DefaultStatsTrackerLocator(configManager, sessionManager);
+            }
+
+            if (configFactory == null) {
+                configFactory = new DefaultStatsConfigFactory(configManager);
+            }
+
+            if (taskService == null) {
+                taskService = new ThreadPoolTaskService();
+            }
+
+            DefaultStatsManager manager = new DefaultStatsManager(configManager,
+                                                                  sessionManager,
+                                                                  eventManager,
+                                                                  snapshotManager,
+                                                                  trackerLocator,
+                                                                  keyFactory,
+                                                                  configFactory,
+                                                                  taskService);
+
+            return manager;
+        }
     }
 }

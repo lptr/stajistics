@@ -1,4 +1,4 @@
-/* Copyright 2009 The Stajistics Project
+/* Copyright 2009 - 2010 The Stajistics Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public final class Stajistics {
     private static final String name = replaceNull(Stajistics.class
                                                              .getPackage()
                                                              .getImplementationTitle(),
-                                                   "Stajistics");
+                                                   Stajistics.class.getName());
     private static final String version = replaceNull(Stajistics.class
                                                                 .getPackage()
                                                                 .getImplementationTitle(),
