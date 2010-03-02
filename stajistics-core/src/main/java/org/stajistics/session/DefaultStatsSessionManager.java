@@ -16,7 +16,6 @@ package org.stajistics.session;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -155,7 +154,7 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
      * @return A {@link StatsSession} instance, never <tt>null</tt>.
      */
     protected StatsSession createSession(final StatsKey key) {
-        StatsConfig config = configManager.getConfig(key);
+        StatsConfig config = configManager.getOrCreateConfig(key);
 
         DataRecorder[] dataRecorders = config.getDataRecorderFactory()
                                              .createDataRecorders();
