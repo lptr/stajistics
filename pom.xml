@@ -71,13 +71,13 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
-  
+
   <scm>
     <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/</connection>
     <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/</developerConnection>
     <url>http://code.google.com/p/stajistics/source/browse/trunk/</url>
   </scm>
-  
+
   <properties>
     <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
@@ -329,10 +329,12 @@
   <modules>
     <module>stajistics-core</module>
     <module>stajistics-examples</module>
+    <!--
     <module>stajistics-groovy</module>
+    -->
     <module>stajistics-jdbc</module>
     <module>stajistics-servlet</module>
-    <!-- 
+    <!--
     <module>stajistics-snapshot-xml</module>
     -->
   </modules>
