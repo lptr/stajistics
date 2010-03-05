@@ -15,10 +15,7 @@
 package org.stajistics.session;
 
 import java.util.Queue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -288,8 +285,8 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
                         commits = restoredCommits;
                         first = restoredFirst;
                         last = restoredLast;
-                        min = dataSet.getField(DataSet.Field.MIN, DataSet.Field.Default.MIN);
-                        max = dataSet.getField(DataSet.Field.MAX, DataSet.Field.Default.MAX);
+                        min = dataSet.getField(DataSet.Field.MIN, Double.POSITIVE_INFINITY);
+                        max = dataSet.getField(DataSet.Field.MAX, Double.NEGATIVE_INFINITY);
                         sum = dataSet.getField(DataSet.Field.SUM, DataSet.Field.Default.SUM);
 
                         // Restore DataRecorders
@@ -333,8 +330,8 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             commits = DataSet.Field.Default.COMMITS;
             first = null; // The proper default is taken care of in getFirst()
             last = DataSet.Field.Default.LAST;
-            min = DataSet.Field.Default.MIN;
-            max = DataSet.Field.Default.MAX;
+            min = Double.POSITIVE_INFINITY;
+            max = Double.NEGATIVE_INFINITY;
             sum = DataSet.Field.Default.SUM;
 
             for (DataRecorder dataRecorder : dataRecorders) {

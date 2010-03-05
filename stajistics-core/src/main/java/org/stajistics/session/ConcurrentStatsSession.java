@@ -240,8 +240,8 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
                     commits.set(restoredCommits);
                     first.set(restoredFirst);
                     last = restoredLast;
-                    min.set(dataSet.getField(DataSet.Field.MIN, DataSet.Field.Default.MIN));
-                    max.set(dataSet.getField(DataSet.Field.MAX, DataSet.Field.Default.MAX));
+                    min.set(dataSet.getField(DataSet.Field.MIN, Double.POSITIVE_INFINITY));
+                    max.set(dataSet.getField(DataSet.Field.MAX, Double.NEGATIVE_INFINITY));
                     sum.set(dataSet.getField(DataSet.Field.SUM, DataSet.Field.Default.SUM));
 
                     // Restore DataRecorders
@@ -274,8 +274,8 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         commits.set(DataSet.Field.Default.COMMITS);
         first.set(null); // The proper default is taken care of in getFirst()
         last = DataSet.Field.Default.LAST;
-        min.set(DataSet.Field.Default.MIN);
-        max.set(DataSet.Field.Default.MAX);
+        min.set(Double.POSITIVE_INFINITY);
+        max.set(Double.NEGATIVE_INFINITY);
         sum.set(DataSet.Field.Default.SUM);
 
         for (DataRecorder dataRecorder : dataRecorders) {
