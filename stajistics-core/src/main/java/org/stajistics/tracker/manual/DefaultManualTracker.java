@@ -14,11 +14,14 @@
  */
 package org.stajistics.tracker.manual;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.AbstractStatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.util.Misc;
 
 /**
  * 
@@ -27,6 +30,8 @@ import org.stajistics.tracker.StatsTrackerFactory;
  * @author The Stajistics Project
  */
 public class DefaultManualTracker extends AbstractStatsTracker implements ManualTracker {
+
+    private static final Logger logger = LoggerFactory.getLogger(DefaultManualTracker.class);
 
     public static final Factory FACTORY = new Factory();
 
@@ -48,9 +53,15 @@ public class DefaultManualTracker extends AbstractStatsTracker implements Manual
 
     @Override
     public void commit() {
-        final long now = System.currentTimeMillis();
-        session.track(this, now);
-        session.update(this, now);
+        try {
+            final long now = System.currentTimeMillis();
+            session.track(this, now);
+            session.update(this, now);
+        } catch (Exception e) {
+            Misc.logSwallowedException(logger, 
+                                       e, 
+                                       "Caught Exception in commit()");
+        }
     }
 
     public static class Factory implements StatsTrackerFactory<ManualTracker> {

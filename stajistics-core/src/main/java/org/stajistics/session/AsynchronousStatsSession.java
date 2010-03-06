@@ -28,9 +28,10 @@ import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.util.Misc;
 
 /**
- * An implementation of {@link StatsSession} that can potentially pad the
+ * <p>An implementation of {@link StatsSession} that can potentially pad the
  * tracker, and thus the client of the tracker, from blocking on calls to
  * {@link #track(StatsTracker, long)}, and {@link #update(StatsTracker, long)}.
  * When either of these calls are made, they are queued for execution by the
@@ -46,8 +47,11 @@ import org.stajistics.tracker.StatsTracker;
  * recorded update. Furthermore, it allows this data integrity without having to
  * block the client of the {@link StatsTracker}, which could sacrifice
  * performance. If better performance is preferred at the cost of potentially
- * inconsistent data, see {@link org.stajistics.session.ConcurrentStatsSession}.
- * 
+ * inconsistent data, see {@link org.stajistics.session.ConcurrentStatsSession}.</p>
+ *
+ * <p>The {@link DataRecorder}s manipulated by this session implementation are updated
+ * within locks, so the {@link DataRecorder}s themselves do not need to be thread safe.</p>
+ *
  * @see org.stajistics.session.ConcurrentStatsSession
  * 
  * @author The Stajistics Project
@@ -107,7 +111,10 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
             ProcessUpdateQueueTask processQueueTask = new ProcessUpdateQueueTask();
             taskService.execute(getClass(), processQueueTask);
         } catch (Exception e) {
-            logger.error("Failed to queue task: " + entry, e);
+            Misc.logSwallowedException(logger, 
+                                       e, 
+                                       "Failed to queue task {}", 
+                                       entry);
         }
     }
 
@@ -142,8 +149,18 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setHits(final long hits) {
+        this.hits = hits;
+    }
+
+    @Override
     public long getFirstHitStamp() {
         return firstHitStamp;
+    }
+
+    @Override
+    protected void setFirstHitStamp(final long firstHitStamp) {
+        this.firstHitStamp = firstHitStamp;
     }
 
     @Override
@@ -152,8 +169,18 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setLastHitStamp(final long lastHitStamp) {
+        this.lastHitStamp = lastHitStamp;
+    }
+
+    @Override
     public long getCommits() {
         return commits;
+    }
+
+    @Override
+    protected void setCommits(final long commits) {
+        this.commits = commits;
     }
 
     @Override
@@ -193,7 +220,10 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
                 try {
                     dataRecorder.update(this, tracker, now);
                 } catch (Exception e) {
-                    logger.error("Failed to update " + dataRecorder, e);
+                    Misc.logSwallowedException(logger, 
+                                               e, 
+                                               "Failed to update {}", 
+                                               dataRecorder);
                 }
             }
         } finally {
@@ -217,8 +247,18 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setFirst(final Double first) {
+        this.first = first;
+    }
+
+    @Override
     public double getLast() {
         return last;
+    }
+
+    @Override
+    protected void setLast(final double last) {
+        this.last = last;
     }
 
     @Override
@@ -231,6 +271,11 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setMin(final double min) {
+        this.min = min;
+    }
+
+    @Override
     public double getMax() {
         Double result = max;
         if (result.equals(Double.NEGATIVE_INFINITY)) {
@@ -240,8 +285,18 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setMax(final double max) {
+        this.max = max;
+    }
+
+    @Override
     public double getSum() {
         return sum;
+    }
+
+    @Override
+    protected void setSum(final double sum) {
+        this.sum = sum;
     }
 
     @Override
@@ -253,53 +308,8 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         stateLock.lock();
         try {
             clear();
+            restoreState(dataSet);
 
-            if (!dataSet.isEmpty()) {
-                
-                Long restoredHits = dataSet.getField(DataSet.Field.HITS,
-                                                     DataSet.Field.Default.HITS);
-                Long restoredFirstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, 
-                                                              DataSet.Field.Default.FIRST_HIT_STAMP);
-                Long restoredLastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, 
-                                                             DataSet.Field.Default.LAST_HIT_STAMP);
-
-                // Only restore if hits, firstHitStamp, and lastHitStamp are defined
-                if (restoredHits > DataSet.Field.Default.HITS &&
-                        restoredFirstHitStamp > DataSet.Field.Default.FIRST_HIT_STAMP &&
-                        restoredLastHitStamp > DataSet.Field.Default.LAST_HIT_STAMP) {
-
-                    hits = restoredHits;
-                    firstHitStamp = restoredFirstHitStamp;
-                    lastHitStamp = restoredLastHitStamp;
-
-                    Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS,
-                                                            DataSet.Field.Default.COMMITS);
-                    Double restoredFirst = dataSet.getField(DataSet.Field.FIRST, Double.class);
-                    Double restoredLast = dataSet.getField(DataSet.Field.LAST, Double.class);
-
-                    // Only restore "update()" data if commits, first, and last are defined
-                    if (restoredCommits > DataSet.Field.Default.COMMITS &&
-                            restoredFirst != null && 
-                            restoredLast != null) {
-
-                        commits = restoredCommits;
-                        first = restoredFirst;
-                        last = restoredLast;
-                        min = dataSet.getField(DataSet.Field.MIN, Double.POSITIVE_INFINITY);
-                        max = dataSet.getField(DataSet.Field.MAX, Double.NEGATIVE_INFINITY);
-                        sum = dataSet.getField(DataSet.Field.SUM, DataSet.Field.Default.SUM);
-
-                        // Restore DataRecorders
-                        for (DataRecorder dataRecorder : dataRecorders) {
-                            try {
-                                dataRecorder.restore(dataSet);
-                            } catch (Exception e) {
-                                logger.error("Failed to restore " + dataRecorder, e);
-                            }
-                        }
-                    }
-                }
-            }
         } finally {
             stateLock.unlock();
         }
@@ -321,26 +331,10 @@ public class AsynchronousStatsSession extends AbstractStatsSession {
         fireCleared();
     }
 
-    private void clearState() {
+    protected void clearState() {
         stateLock.lock();
         try {
-            hits = DataSet.Field.Default.HITS;
-            firstHitStamp = DataSet.Field.Default.FIRST_HIT_STAMP;
-            lastHitStamp = DataSet.Field.Default.LAST_HIT_STAMP;
-            commits = DataSet.Field.Default.COMMITS;
-            first = null; // The proper default is taken care of in getFirst()
-            last = DataSet.Field.Default.LAST;
-            min = Double.POSITIVE_INFINITY;
-            max = Double.NEGATIVE_INFINITY;
-            sum = DataSet.Field.Default.SUM;
-
-            for (DataRecorder dataRecorder : dataRecorders) {
-                try {
-                    dataRecorder.clear();
-                } catch (Exception e) {
-                    logger.error("Failed to clear " + dataRecorder, e);
-                }
-            }
+            super.clearState();
         } finally {
             stateLock.unlock();
         }

@@ -14,8 +14,11 @@
  */
 package org.stajistics.tracker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
+import org.stajistics.util.Misc;
 
 /**
  * A convenience base implementation of {@link StatsTracker}.
@@ -24,7 +27,9 @@ import org.stajistics.session.StatsSession;
  */
 public abstract class AbstractStatsTracker implements StatsTracker {
 
-    protected StatsSession session;
+    private static final Logger logger = LoggerFactory.getLogger(AbstractStatsTracker.class);
+
+    protected final StatsSession session;
 
     protected double value = 0;
 
@@ -65,7 +70,15 @@ public abstract class AbstractStatsTracker implements StatsTracker {
         buf.append("[value=");
         buf.append(value);
         buf.append(",session=");
-        buf.append(session);
+        try {
+            buf.append(session);
+        } catch (Exception e) {
+            buf.append(e.toString());
+
+            Misc.logSwallowedException(logger, 
+                                       e, 
+                                       "Caught Exception in toString()");
+        }
         buf.append(']');
 
         return buf.toString();

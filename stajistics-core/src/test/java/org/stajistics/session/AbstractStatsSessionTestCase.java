@@ -64,12 +64,12 @@ public abstract class AbstractStatsSessionTestCase {
 
         initMocks();
 
-        session = createStatsSession(null);
+        session = createStatsSession();
     }
 
     protected void initMocks() {}
 
-    protected abstract StatsSession createStatsSession(DataRecorder[] dataRecorders);
+    protected abstract StatsSession createStatsSession(DataRecorder... dataRecorders);
 
     @Test
     public void testConstructWithNullKey() {
@@ -346,7 +346,7 @@ public abstract class AbstractStatsSessionTestCase {
             session.update(mockTracker, System.currentTimeMillis());
         }
 
-        StatsSession emptySession = createStatsSession(null);
+        StatsSession emptySession = createStatsSession((DataRecorder[])null);
 
         session.restore(dataSet);
 
@@ -458,7 +458,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testClearEatsDataManagerException() {
         // Recreate the session with a nasty DataRecorder
-        session = createStatsSession(new DataRecorder[] { new NastyDataRecorder() });
+        session = createStatsSession(new NastyDataRecorder());
 
         mockery.checking(new Expectations() {{
             ignoring(mockEventManager);
@@ -470,7 +470,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testCollectDataEatsDataManagerException() {
         // Recreate the session with a nasty DataRecorder
-        session = createStatsSession(new DataRecorder[] { new NastyDataRecorder() });
+        session = createStatsSession(new NastyDataRecorder());
 
         mockery.checking(new Expectations() {{
             ignoring(mockEventManager);
@@ -482,7 +482,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testDrainDataEatsDataManagerException() {
         // Recreate the session with a nasty DataRecorder
-        session = createStatsSession(new DataRecorder[] { new NastyDataRecorder() });
+        session = createStatsSession(new NastyDataRecorder());
 
         mockery.checking(new Expectations() {{
             ignoring(mockEventManager);
@@ -494,14 +494,14 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testGetFieldEatsDataManagerException() {
         // Recreate the session with a nasty DataRecorder
-        session = createStatsSession(new DataRecorder[] { new NastyDataRecorder() });
+        session = createStatsSession(new NastyDataRecorder());
         session.getField(DataSet.Field.HITS);
     }
 
     @Test
     public void testRestoreEatsDataManagerException() {
         // Recreate the session with a nasty DataRecorder
-        session = createStatsSession(new DataRecorder[] { new NastyDataRecorder() });
+        session = createStatsSession(new NastyDataRecorder());
 
         mockery.checking(new Expectations() {{
             ignoring(mockEventManager);
@@ -513,7 +513,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testTrackEatsDataManagerException() {
         // Recreate the session with a nasty DataRecorder
-        session = createStatsSession(new DataRecorder[] { new NastyDataRecorder() });
+        session = createStatsSession(new NastyDataRecorder());
 
         mockery.checking(new Expectations() {{
             ignoring(mockEventManager);
@@ -525,7 +525,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testUpdateEatsDataManagerException() {
         // Recreate the session with a nasty DataRecorder
-        session = createStatsSession(new DataRecorder[] { new NastyDataRecorder() });
+        session = createStatsSession(new NastyDataRecorder());
 
         mockery.checking(new Expectations() {{
             ignoring(mockEventManager);

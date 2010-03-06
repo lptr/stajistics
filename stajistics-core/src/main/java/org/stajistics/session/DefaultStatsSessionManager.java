@@ -117,8 +117,6 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
         if (session == null) {
             session = createSession(key);
 
-            logger.debug("Created StatsSession for key: {}", key);
-
             StatsSession existingSession = sessionMap.putIfAbsent(key, session);
             if (existingSession != null) {
                 session = existingSession;
@@ -160,9 +158,14 @@ public class DefaultStatsSessionManager implements StatsSessionManager {
                                              .createDataRecorders();
 
         //TODO: How to get StatsManager properly
-        return config.getSessionFactory().createSession(key,
-                                                        Stats.getManager(),
-                                                        dataRecorders);
+        StatsSession session = config.getSessionFactory()
+                                     .createSession(key,
+                                                    Stats.getManager(),
+                                                    dataRecorders);
+
+        logger.debug("Created StatsSession for key: {}", key);
+
+        return session;
     }
 
     @Override

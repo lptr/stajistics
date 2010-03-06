@@ -283,5 +283,17 @@ public final class DataRecorders {
                 lock.unlock();
             }
         }
+
+        @Override
+        public String toString() {
+            StringBuilder buf = new StringBuilder(128);
+
+            buf.append(getClass().getSimpleName());
+            buf.append('[');
+            buf.append(delegate.toString());
+            buf.append(']');
+
+            return buf.toString();
+        }
     }
 }

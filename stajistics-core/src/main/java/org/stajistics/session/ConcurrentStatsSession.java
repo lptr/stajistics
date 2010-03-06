@@ -27,16 +27,24 @@ import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.session.recorder.DataRecorders;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.util.AtomicDouble;
+import org.stajistics.util.Misc;
 
 /**
- * An implementation of {@link StatsSession} that reads and writes data fields atomically
+ * <p>An implementation of {@link StatsSession} that reads and writes data fields atomically
  * without locking. This allows scalable updates that minimize the runtime overhead of statistics
  * collection. However, the cost of using this implementation is that the {@link DataSet} returned from
  * {@link #collectData()} may contain values that are not related to one another.
  * For example, the DataSet may contain all the data from update #1, but only half of the data
  * from update #2 (because update #2 is executing simultaneously to the {@link #collectData()} call).
  * For a {@link StatsSession} implementation that guarantees data integrity,
- * see {@link org.stajistics.session.AsynchronousStatsSession}.
+ * see {@link org.stajistics.session.AsynchronousStatsSession}.</p>
+ *
+ * <p>Due to the concurrent nature of this session implementation, the associated {@link DataRecorder}s
+ * must be thread safe. {@link DataRecorder}s that are passed into the constructor are passed through
+ * the {@link DataRecorders#lockingIfNeeded(DataRecorder[])} method in order to ensure thread safe
+ * usage. Note that if any {@link DataRecorder}s are wrapped in a locking decorator, it could 
+ * negatively impact performance of the client application. For optimal performance, use
+ * {@link DataRecorder} implementations that are thread safe through the use of atomic primitives.</p>
  *
  * @see org.stajistics.session.AsynchronousStatsSession
  *
@@ -92,8 +100,18 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setHits(final long hits) {
+        this.hits.set(hits);
+    }
+
+    @Override
     public long getFirstHitStamp() {
         return firstHitStamp.get();
+    }
+
+    @Override
+    protected void setFirstHitStamp(long firstHitStamp) {
+        this.firstHitStamp.set(firstHitStamp);
     }
 
     @Override
@@ -102,8 +120,18 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setLastHitStamp(final long lastHitStamp) {
+        this.lastHitStamp = lastHitStamp;
+    }
+
+    @Override
     public long getCommits() {
         return commits.get();
+    }
+
+    @Override
+    protected void setCommits(final long commits) {
+        this.commits.set(commits);
     }
 
     @Override
@@ -153,7 +181,10 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
             try {
                 dataRecorder.update(this, tracker, now);
             } catch (Exception e) {
-                logger.error("Failed to update " + dataRecorder, e);
+                Misc.logSwallowedException(logger, 
+                                           e,
+                                           "Failed to update {}", 
+                                           dataRecorder);
             }
         }
 
@@ -174,8 +205,18 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setFirst(final Double first) {
+        this.first.set(first);
+    }
+
+    @Override
     public double getLast() {
         return last;
+    }
+
+    @Override
+    protected void setLast(final double last) {
+        this.last = last;
     }
 
     @Override
@@ -188,6 +229,11 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setMin(final double min) {
+        this.min.set(min);
+    }
+
+    @Override
     public double getMax() {
         Double result = max.get();
         if (result.equals(Double.NEGATIVE_INFINITY)) {
@@ -197,8 +243,18 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     }
 
     @Override
+    protected void setMax(double max) {
+        this.max.set(max);
+    }
+
+    @Override
     public double getSum() {
         return sum.get();
+    }
+
+    @Override
+    protected void setSum(final double sum) {
+        this.sum.set(sum);
     }
 
     @Override
@@ -208,53 +264,7 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
         }
 
         clearState();
-
-        if (!dataSet.isEmpty()) {
-
-            Long restoredHits = dataSet.getField(DataSet.Field.HITS,
-                                                 DataSet.Field.Default.HITS);
-            Long restoredFirstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, 
-                                                          DataSet.Field.Default.FIRST_HIT_STAMP);
-            Long restoredLastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, 
-                                                         DataSet.Field.Default.LAST_HIT_STAMP);
-
-            // Only restore if hits, firstHitStamp, and lastHitStamp are defined
-            if (restoredHits > DataSet.Field.Default.HITS &&
-                    restoredFirstHitStamp > DataSet.Field.Default.FIRST_HIT_STAMP &&
-                    restoredLastHitStamp > DataSet.Field.Default.LAST_HIT_STAMP) {
-
-                hits.set(restoredHits);
-                firstHitStamp.set(restoredFirstHitStamp);
-                lastHitStamp = restoredLastHitStamp;
-
-                Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS,
-                                                        DataSet.Field.Default.COMMITS);
-                Double restoredFirst = dataSet.getField(DataSet.Field.FIRST, Double.class);
-                Double restoredLast = dataSet.getField(DataSet.Field.LAST, Double.class);
-
-                // Only restore "update()" data if commits, first, and last are defined
-                if (restoredCommits > DataSet.Field.Default.COMMITS &&
-                        restoredFirst != null && 
-                        restoredLast != null) {
-
-                    commits.set(restoredCommits);
-                    first.set(restoredFirst);
-                    last = restoredLast;
-                    min.set(dataSet.getField(DataSet.Field.MIN, Double.POSITIVE_INFINITY));
-                    max.set(dataSet.getField(DataSet.Field.MAX, Double.NEGATIVE_INFINITY));
-                    sum.set(dataSet.getField(DataSet.Field.SUM, DataSet.Field.Default.SUM));
-
-                    // Restore DataRecorders
-                    for (DataRecorder dataRecorder : dataRecorders) {
-                        try {
-                            dataRecorder.restore(dataSet);
-                        } catch (Exception e) {
-                            logger.error("Failed to restore " + dataRecorder, e);
-                        }
-                    }
-                }
-            }
-        }
+        restoreState(dataSet);
 
         logger.trace("Restore: {}", this);
 
@@ -264,30 +274,7 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     @Override
     public void clear() {
         clearState();
-        fireCleared();
-    }
 
-    private void clearState() {
-        hits.set(DataSet.Field.Default.HITS);
-        firstHitStamp.set(DataSet.Field.Default.FIRST_HIT_STAMP);
-        lastHitStamp = DataSet.Field.Default.LAST_HIT_STAMP;
-        commits.set(DataSet.Field.Default.COMMITS);
-        first.set(null); // The proper default is taken care of in getFirst()
-        last = DataSet.Field.Default.LAST;
-        min.set(Double.POSITIVE_INFINITY);
-        max.set(Double.NEGATIVE_INFINITY);
-        sum.set(DataSet.Field.Default.SUM);
-
-        for (DataRecorder dataRecorder : dataRecorders) {
-            try {
-                dataRecorder.clear();
-            } catch (Exception e) {
-                logger.error("Failed to clear " + dataRecorder, e);
-            }
-        }
-    }
-
-    private void fireCleared() {
         logger.trace("Clear: {}", this);
 
         eventManager.fireEvent(StatsEventType.SESSION_CLEARED, key, this);

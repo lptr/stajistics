@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker.span;
 
+import org.stajistics.session.StatsSession;
+
 
 /**
  * 
@@ -24,8 +26,8 @@ package org.stajistics.tracker.span;
 public class GarbageCollectionTimeTrackerTest extends AbstractSpanStatsTrackerTestCase {
 
     @Override
-    protected SpanTracker createStatsTracker() {
-        return new GarbageCollectionTimeTracker(mockSession);
+    protected SpanTracker createStatsTracker(final StatsSession session) {
+        return new GarbageCollectionTimeTracker(session);
     }
 
 }

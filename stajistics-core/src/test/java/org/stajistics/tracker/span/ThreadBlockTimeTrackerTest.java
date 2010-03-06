@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker.span;
 
+import org.stajistics.session.StatsSession;
+
 
 /**
  * 
@@ -24,8 +26,8 @@ package org.stajistics.tracker.span;
 public class ThreadBlockTimeTrackerTest extends AbstractSpanStatsTrackerTestCase {
 
     @Override
-    protected SpanTracker createStatsTracker() {
-        return new ThreadBlockTimeTracker(mockSession);
+    protected SpanTracker createStatsTracker(final StatsSession session) {
+        return new ThreadBlockTimeTracker(session);
     }
 
 }
