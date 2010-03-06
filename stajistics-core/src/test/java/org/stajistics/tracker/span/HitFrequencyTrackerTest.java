@@ -16,6 +16,7 @@ package org.stajistics.tracker.span;
 
 import org.jmock.Expectations;
 import org.junit.Test;
+import org.stajistics.session.StatsSession;
 
 
 /**
@@ -27,8 +28,8 @@ import org.junit.Test;
 public class HitFrequencyTrackerTest extends AbstractSpanStatsTrackerTestCase {
 
     @Override
-    protected SpanTracker createStatsTracker() {
-        return new HitFrequencyTracker(mockSession);
+    protected SpanTracker createStatsTracker(final StatsSession session) {
+        return new HitFrequencyTracker(session);
     }
 
     @Test

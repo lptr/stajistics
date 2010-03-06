@@ -217,4 +217,18 @@ public abstract class AbstractSpanStatsTrackerTestCase
         assertTrue(tracker.isTracking());
         assertEquals(start, tracker.getStartTime());
     }
+
+    @Test
+    public void testTrackEatsSessionException() {
+        final SpanTracker tracker = createStatsTracker(new NastySession());
+
+        tracker.track();
+    }
+
+    @Test
+    public void testCommitEatsSessionException() {
+        final SpanTracker tracker = createStatsTracker(new NastySession());
+
+        tracker.commit();
+    }
 }

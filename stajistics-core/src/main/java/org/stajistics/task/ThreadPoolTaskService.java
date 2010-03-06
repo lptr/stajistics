@@ -71,6 +71,14 @@ public class ThreadPoolTaskService implements TaskService {
         executor.prestartAllCoreThreads();
     }
 
+    public ThreadPoolTaskService(final ThreadPoolExecutor executor) {
+        if (executor == null) {
+            throw new NullPointerException("executor");
+        }
+
+        this.executor = executor;
+    }
+
     protected BlockingQueue<Runnable> createWorkQueue() {
         BlockingQueue<Runnable> queue;
 

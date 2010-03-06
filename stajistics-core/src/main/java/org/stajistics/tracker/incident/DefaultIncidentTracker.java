@@ -14,11 +14,14 @@
  */
 package org.stajistics.tracker.incident;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.AbstractStatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.util.Misc;
 
 /**
  * 
@@ -28,6 +31,8 @@ import org.stajistics.tracker.StatsTrackerFactory;
  */
 public class DefaultIncidentTracker extends AbstractStatsTracker implements IncidentTracker {
 
+    private static final Logger logger = LoggerFactory.getLogger(DefaultIncidentTracker.class);
+
     public static final Factory FACTORY = new Factory();
 
     public DefaultIncidentTracker(final StatsSession session) {
@@ -36,12 +41,18 @@ public class DefaultIncidentTracker extends AbstractStatsTracker implements Inci
 
     @Override
     public IncidentTracker incident() {
-        value = 1;
+        try {
+            value = 1;
 
-        final long now = System.currentTimeMillis();
-
-        session.track(this, now);
-        session.update(this, now);
+            final long now = System.currentTimeMillis();
+            
+            session.track(this, now);
+            session.update(this, now);
+        } catch (Exception e) {
+            Misc.logSwallowedException(logger, 
+                                       e, 
+                                       "Caught Exception in incident()");
+        }
 
         return this;
     }
@@ -50,7 +61,7 @@ public class DefaultIncidentTracker extends AbstractStatsTracker implements Inci
 
         @Override
         public IncidentTracker createTracker(final StatsKey key,
-                                                  final StatsSessionManager sessionManager) {
+                                             final StatsSessionManager sessionManager) {
             return new DefaultIncidentTracker(sessionManager.getOrCreateSession(key));
         }
         

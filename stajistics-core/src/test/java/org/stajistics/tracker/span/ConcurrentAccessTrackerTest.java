@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker.span;
 
+import org.stajistics.session.StatsSession;
+
 
 
 /**
@@ -25,8 +27,8 @@ package org.stajistics.tracker.span;
 public class ConcurrentAccessTrackerTest extends AbstractSpanStatsTrackerTestCase {
 
     @Override
-    protected SpanTracker createStatsTracker() {
-        return new ConcurrentAccessTracker(mockSession);
+    protected SpanTracker createStatsTracker(final StatsSession session) {
+        return new ConcurrentAccessTracker(session);
     }
 
 }

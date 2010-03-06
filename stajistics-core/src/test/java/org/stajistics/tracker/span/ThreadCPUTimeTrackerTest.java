@@ -1,5 +1,7 @@
 package org.stajistics.tracker.span;
 
+import org.stajistics.session.StatsSession;
+
 
 /**
  * 
@@ -10,8 +12,8 @@ package org.stajistics.tracker.span;
 public class ThreadCPUTimeTrackerTest extends AbstractSpanStatsTrackerTestCase {
 
     @Override
-    protected SpanTracker createStatsTracker() {
-        return new ThreadCPUTimeTracker(mockSession);
+    protected SpanTracker createStatsTracker(final StatsSession session) {
+        return new ThreadCPUTimeTracker(session);
     }
 
 }

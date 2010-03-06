@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -28,8 +29,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
+import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.session.recorder.DataRecorder;
 
 /**
  * 
@@ -40,16 +43,25 @@ import org.stajistics.session.StatsSessionManager;
 @RunWith(JMock.class)
 public abstract class AbstractStatsTrackerTestCase<T extends StatsTracker> {
 
+    protected StatsKey mockKey;
     protected StatsSession mockSession;
 
     protected Mockery mockery;
 
-    protected abstract T createStatsTracker();
+    protected final T createStatsTracker() {
+        return createStatsTracker(mockSession);
+    }
+
+    protected abstract T createStatsTracker(final StatsSession session);
 
     @Before
     public void setUp() throws Exception {
         mockery = new Mockery();
         mockSession = mockery.mock(StatsSession.class);
+
+        mockery.checking(new Expectations() {{
+            allowing(mockSession).getKey(); will(returnValue(mockKey));
+        }});
     }
 
     @Test
@@ -58,6 +70,27 @@ public abstract class AbstractStatsTrackerTestCase<T extends StatsTracker> {
 
         assertEquals(mockSession, tracker.getSession());
         assertEquals(0, tracker.getValue(), 0);
+    }
+
+    @Test
+    public void testGetKey() {
+        final StatsTracker tracker = createStatsTracker();
+
+        assertEquals(mockSession.getKey(), tracker.getKey());
+    }
+
+    @Test
+    public void testInitialReset() {
+        final StatsTracker tracker = createStatsTracker();
+
+        assertEquals(0, tracker.getValue(), 0);
+        tracker.reset();
+        assertEquals(0, tracker.getValue(), 0);
+    }
+
+    @Test
+    public void testToStringIsOverridden() {
+        assertTrue(createStatsTracker().toString().indexOf("Tracker@") < 0);
     }
 
     @Test
@@ -88,4 +121,110 @@ public abstract class AbstractStatsTrackerTestCase<T extends StatsTracker> {
         assertEquals(trackerClass, tracker2.getClass());
     }
 
+    @Test
+    public void testToStringEatsSessionException() {
+        final StatsTracker tracker = createStatsTracker(new NastySession());
+
+        tracker.toString();
+    }
+
+    /* NESTED CLASSES */
+
+    public static final class NastySession implements StatsSession {
+
+        @Override
+        public void clear() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public DataSet collectData() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public DataSet drainData() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public long getCommits() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public List<DataRecorder> getDataRecorders() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public Object getField(String name) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public double getFirst() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public long getFirstHitStamp() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public long getHits() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public StatsKey getKey() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public double getLast() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public long getLastHitStamp() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public double getMax() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public double getMin() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public double getSum() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public void restore(DataSet dataSet) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public void track(StatsTracker tracker, long now) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public void update(StatsTracker tracker, long now) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public String toString() {
+            throw new RuntimeException();
+        }
+    }
 }

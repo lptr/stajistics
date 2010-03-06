@@ -24,11 +24,11 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsProperties;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.recorder.DataRecorder;
+import org.stajistics.util.Misc;
 
 /**
  * 
@@ -73,6 +73,24 @@ public abstract class AbstractStatsSession implements StatsSession {
         }
     }
 
+    protected abstract void setHits(long hits);
+
+    protected abstract void setFirstHitStamp(long firstHitStamp);
+
+    protected abstract void setLastHitStamp(long lastHitStamp);
+
+    protected abstract void setCommits(long commits);
+
+    protected abstract void setFirst(Double first);
+
+    protected abstract void setLast(double last);
+
+    protected abstract void setMin(double min);
+
+    protected abstract void setMax(double max);
+
+    protected abstract void setSum(double sum);
+    
     @Override
     public StatsKey getKey() {
         return key;
@@ -130,7 +148,11 @@ public abstract class AbstractStatsSession implements StatsSession {
                     }
                 }
             } catch (Exception e) {
-                logger.error("Failed to getField '" + name + "' from " + dataRecorders[i], e);
+                Misc.logSwallowedException(logger, 
+                                           e, 
+                                           "Failed to getField({}) from {}", 
+                                           name,
+                                           dataRecorders[i]);
             }
         }
 
@@ -157,11 +179,93 @@ public abstract class AbstractStatsSession implements StatsSession {
             try {
                 dataRecorder.collectData(this, dataSet);
             } catch (Exception e) {
-                logger.error("Failed to collectData from " + dataRecorder, e);
+                Misc.logSwallowedException(logger, 
+                                           e, 
+                                           "Failed to collectData() from {}", 
+                                           dataRecorder);
             }
         }
 
         return dataSet;
+    }
+
+    protected void restoreState(final DataSet dataSet) {
+        if (dataSet == null) {
+            throw new NullPointerException("dataSet");
+        }
+
+        if (!dataSet.isEmpty()) {
+
+            Long restoredHits = dataSet.getField(DataSet.Field.HITS,
+                                                 DataSet.Field.Default.HITS);
+            Long restoredFirstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, 
+                                                          DataSet.Field.Default.FIRST_HIT_STAMP);
+            Long restoredLastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, 
+                                                         DataSet.Field.Default.LAST_HIT_STAMP);
+
+            // Only restore if hits, firstHitStamp, and lastHitStamp are defined
+            if (restoredHits > DataSet.Field.Default.HITS &&
+                    restoredFirstHitStamp > DataSet.Field.Default.FIRST_HIT_STAMP &&
+                    restoredLastHitStamp > DataSet.Field.Default.LAST_HIT_STAMP) {
+
+                setHits(restoredHits);
+                setFirstHitStamp(restoredFirstHitStamp);
+                setLastHitStamp(restoredLastHitStamp);
+
+                Long restoredCommits = dataSet.getField(DataSet.Field.COMMITS,
+                                                        DataSet.Field.Default.COMMITS);
+                Double restoredFirst = dataSet.getField(DataSet.Field.FIRST, Double.class);
+                Double restoredLast = dataSet.getField(DataSet.Field.LAST, Double.class);
+
+                // Only restore "update()" data if commits, first, and last are defined
+                if (restoredCommits > DataSet.Field.Default.COMMITS &&
+                        restoredFirst != null && 
+                        restoredLast != null) {
+
+                    setCommits(restoredCommits);
+                    setFirst(restoredFirst);
+                    setLast(restoredLast);
+                    setMin(dataSet.getField(DataSet.Field.MIN, Double.POSITIVE_INFINITY));
+                    setMax(dataSet.getField(DataSet.Field.MAX, Double.NEGATIVE_INFINITY));
+                    setSum(dataSet.getField(DataSet.Field.SUM, DataSet.Field.Default.SUM));
+
+                    // Restore DataRecorders
+                    for (DataRecorder dataRecorder : dataRecorders) {
+                        try {
+                            dataRecorder.restore(dataSet);
+                        } catch (Exception e) {
+                            Misc.logSwallowedException(logger, 
+                                                       e,
+                                                       "Failed to restore {}", 
+                                                       dataRecorder);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected void clearState() {
+        setHits(DataSet.Field.Default.HITS);
+        setFirstHitStamp(DataSet.Field.Default.FIRST_HIT_STAMP);
+        setLastHitStamp(DataSet.Field.Default.LAST_HIT_STAMP);
+        setCommits(DataSet.Field.Default.COMMITS);
+        setFirst(null); // The proper default is taken care of in getFirst()
+        setLast(DataSet.Field.Default.LAST);
+        setMin(Double.POSITIVE_INFINITY);
+        setMax(Double.NEGATIVE_INFINITY);
+        setSum(DataSet.Field.Default.SUM);
+
+        for (DataRecorder dataRecorder : dataRecorders) {
+            try {
+                dataRecorder.clear();
+            } catch (Exception e) {
+                Misc.logSwallowedException(logger, 
+                                           e, 
+                                           "Failed to clear {}", 
+                                           dataRecorder);
+            }
+        }
     }
 
     @Override

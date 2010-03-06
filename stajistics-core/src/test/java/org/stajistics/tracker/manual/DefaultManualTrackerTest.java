@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.TestUtil;
+import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractStatsTrackerTestCase;
 
 /**
@@ -30,13 +31,13 @@ import org.stajistics.tracker.AbstractStatsTrackerTestCase;
 public class DefaultManualTrackerTest extends AbstractStatsTrackerTestCase<ManualTracker> {
 
     @Override
-    protected ManualTracker createStatsTracker() {
-        return new DefaultManualTracker(mockSession);
+    protected DefaultManualTracker createStatsTracker(final StatsSession session) {
+        return new DefaultManualTracker(session);
     }
 
     @Test
     public void testAddValue() {
-        DefaultManualTracker mTracker = new DefaultManualTracker(mockSession);
+        DefaultManualTracker mTracker = createStatsTracker(mockSession);
 
         int total = 0;
 
@@ -50,7 +51,7 @@ public class DefaultManualTrackerTest extends AbstractStatsTrackerTestCase<Manua
 
     @Test
     public void testSetValue() {
-        DefaultManualTracker mTracker = new DefaultManualTracker(mockSession);
+        DefaultManualTracker mTracker = createStatsTracker(mockSession);
 
         for (int i = 0; i < 100; i++) {
             mTracker.setValue(i);
@@ -61,7 +62,7 @@ public class DefaultManualTrackerTest extends AbstractStatsTrackerTestCase<Manua
 
     @Test
     public void testReset() {
-        final ManualTracker tracker = new DefaultManualTracker(mockSession);
+        final ManualTracker tracker = createStatsTracker(mockSession);
 
         tracker.setValue(3);
 
@@ -74,12 +75,39 @@ public class DefaultManualTrackerTest extends AbstractStatsTrackerTestCase<Manua
 
     @Test
     public void testCommit() {
-        final ManualTracker tracker = new DefaultManualTracker(mockSession);
+        final ManualTracker tracker = createStatsTracker(mockSession);
 
         mockery.checking(new Expectations() {{
             one(mockSession).track(with(tracker), with(any(long.class)));
             one(mockSession).update(with(tracker), with(any(long.class)));
         }});
+
+        tracker.commit();
+    }
+
+    /**
+     * {@link ManualTracker#addValue(double)} doesn't touch the session, but still a good test.
+     */
+    @Test
+    public void testAddValueEatsSessionException() {
+        final ManualTracker tracker = createStatsTracker(new NastySession());
+
+        tracker.addValue(1);
+    }
+
+    /**
+     * {@link ManualTracker#setValue(double)} doesn't touch the session, but still a good test.
+     */
+    @Test
+    public void testSetValueEatsSessionException() {
+        final ManualTracker tracker = createStatsTracker(new NastySession());
+
+        tracker.setValue(1);
+    }
+
+    @Test
+    public void testCommitEatsSessionException() {
+        final ManualTracker tracker = createStatsTracker(new NastySession());
 
         tracker.commit();
     }

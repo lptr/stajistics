@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.TestUtil;
+import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractStatsTrackerTestCase;
 
 /**
@@ -30,8 +31,8 @@ import org.stajistics.tracker.AbstractStatsTrackerTestCase;
 public class DefaultIncidentTrackerTest extends AbstractStatsTrackerTestCase<IncidentTracker> {
 
     @Override
-    protected IncidentTracker createStatsTracker() {
-        return new DefaultIncidentTracker(mockSession);
+    protected IncidentTracker createStatsTracker(final StatsSession session) {
+        return new DefaultIncidentTracker(session);
     }
 
     @Test
@@ -68,5 +69,12 @@ public class DefaultIncidentTrackerTest extends AbstractStatsTrackerTestCase<Inc
         tracker.reset();
 
         assertEquals(0.0, tracker.getValue(), TestUtil.DELTA);
+    }
+
+    @Test
+    public void testIncidentEatsSessionException() {
+        final IncidentTracker tracker = createStatsTracker(new NastySession());
+
+        tracker.incident();
     }
 }

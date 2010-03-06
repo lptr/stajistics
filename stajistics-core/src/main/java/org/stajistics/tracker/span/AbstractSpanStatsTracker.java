@@ -8,6 +8,7 @@ import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractStatsTracker;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.util.Misc;
 
 /**
  * 
@@ -29,18 +30,24 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
 
     @Override
     public final SpanTracker track() {
+        try {
+            if (tracking) {
+                logger.warn("track() called when already tracking: {}", this);
 
-        if (tracking) {
-            logger.warn("track() called when already tracking: {}", this);
+                return this;
+            }
 
-            return this;
+            tracking = true;
+
+            startTime = System.currentTimeMillis();
+
+            startImpl(startTime);
+
+        } catch (Exception e) {
+            Misc.logSwallowedException(logger, 
+                                       e, 
+                                       "Caught Exception in track()");
         }
-
-        tracking = true;
-
-        startTime = System.currentTimeMillis();
-
-        startImpl(startTime);
 
         return this;
     }
@@ -51,16 +58,21 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
 
     @Override
     public final void commit() {
+        try {
+            if (!tracking) {
+                logger.warn("commit() called when not tracking: {}", this);
 
-        if (!tracking) {
-            logger.warn("commit() called when not tracking: {}", this);
+                return;
+            }
 
-            return;
+            tracking = false;
+
+            stopImpl(-1);
+        } catch (Exception e) {
+            Misc.logSwallowedException(logger, 
+                                       e, 
+                                       "Caught Exception in commit()");
         }
-
-        tracking = false;
-
-        stopImpl(-1);
     }
 
     protected void stopImpl(final long now) {
@@ -97,7 +109,14 @@ public abstract class AbstractSpanStatsTracker extends AbstractStatsTracker
         buf.append(",value=");
         buf.append(value);
         buf.append(",session=");
-        buf.append(session);
+        try {
+            buf.append(session);
+        } catch (Exception e) {
+            buf.append(e.toString());
+
+            logger.error("Caught Exception in toString(): {}", e.toString());
+            logger.debug("Caught Exception in toString()", e);
+        }
         buf.append(']');
 
         return buf.toString();

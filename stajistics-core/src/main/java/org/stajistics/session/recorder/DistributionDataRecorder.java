@@ -136,7 +136,7 @@ public class DistributionDataRecorder implements DataRecorder {
 
     protected double getArithmeticMean(final StatsSession session) {
         final long n = session.getCommits();
-        if (n == 0) {
+        if (n <= 0) {
             return 0.0;
         }
 
@@ -145,7 +145,7 @@ public class DistributionDataRecorder implements DataRecorder {
 
     protected double getGeometricMean(final StatsSession session) {
         final long n = session.getCommits();
-        if (n == 0) {
+        if (n <= 0) {
             return 0.0;
         }
 
@@ -154,16 +154,17 @@ public class DistributionDataRecorder implements DataRecorder {
 
     protected double getHarmonicMean(final StatsSession session) {
         final long n = session.getCommits();
-        if (n == 0) {
+        final double soi = sumOfInverses.get();
+        if (n <= 0 || soi <= 0) {
             return 0.0;
         }
 
-        return n / sumOfInverses.get();
+        return n / soi;
     }
 
     protected double getQuadraticMean(final StatsSession session) {
         final long n = session.getCommits();
-        if (n == 0) {
+        if (n <= 0) {
             return 0.0;
         }
 
@@ -172,7 +173,7 @@ public class DistributionDataRecorder implements DataRecorder {
 
     protected double getStandardDeviation(final StatsSession session) {
         final long n = session.getCommits();
-        if (n == 0) {
+        if (n <= 0) {
             return 0.0;
         }
 
