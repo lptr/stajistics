@@ -25,12 +25,14 @@ import org.stajistics.StatsKey;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
 public class StatsDecorator {
+
+    private StatsDecorator() {}
 
     private static void rethrow(final Throwable t) {
         if (t instanceof RuntimeException) {
@@ -79,8 +81,14 @@ public class StatsDecorator {
 
                 } catch (Throwable t) {
                     Stats.failure(t, key);
-                    rethrow(t);
-                    return null; // Can't get here, silly compiler
+
+                    if (t instanceof Exception) {
+                        throw (Exception)t;
+                    }
+                    if (t instanceof Error) {
+                        throw (Error)t;
+                    }
+                    throw new RuntimeException(t);
                 }
             }
         };
@@ -90,7 +98,7 @@ public class StatsDecorator {
                                 final StatsKey key) {
         return new Observer() {
             @Override
-            public void update(final Observable o, 
+            public void update(final Observable o,
                                final Object arg) {
                 try {
                     SpanTracker tracker = Stats.track(key);
@@ -133,7 +141,7 @@ public class StatsDecorator {
             }
 
             this.threadFactory = threadFactory;
-            this.key = key; 
+            this.key = key;
         }
 
         @Override

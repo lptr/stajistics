@@ -36,7 +36,7 @@ public final class NullTracker
 
     private static final NullTracker INSTANCE = new NullTracker();
 
-    private static final StatsSession session = 
+    private static final StatsSession session =
         new ImmutableStatsSession(NullStatsKey.getInstance());
 
     private NullTracker() {}
@@ -108,11 +108,11 @@ public final class NullTracker
     public static final class Factory implements StatsTrackerFactory<StatsTracker> {
 
         @Override
-        public StatsTracker createTracker(final StatsKey key, 
+        public StatsTracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {
             return NullTracker.getInstance();
         }
-        
+
         @Override
         public Class<StatsTracker> getTrackerType() {
             return StatsTracker.class;
