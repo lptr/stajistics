@@ -20,8 +20,8 @@ import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -34,10 +34,10 @@ public class DefaultStatsMBeanFactory implements StatsMBeanFactory {
 
     @Override
     public StatsConfigMBean createConfigMBean(final StatsManager statsManager,
-                                              final StatsKey key, 
+                                              final StatsKey key,
                                               final StatsConfig config) {
         return new DefaultStatsConfigMBean(statsManager,
-                                           key, 
+                                           key,
                                            config);
     }
 
@@ -50,10 +50,5 @@ public class DefaultStatsMBeanFactory implements StatsMBeanFactory {
     @Override
     public StatsSessionManagerMBean createSessionManagerMBean(final StatsManager statsManager) {
         return new DefaultStatsSessionManagerMBean(statsManager.getSessionManager());
-    }
-
-    @Override
-    public StatsSnapshotMBean createSnapshotMBean(final StatsManager statsManager) {
-        return new DefaultStatsSnapshotMBean(statsManager.getSnapshotManager());
     }
 }

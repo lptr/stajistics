@@ -21,8 +21,6 @@ import org.stajistics.management.StatsManagement;
 import org.stajistics.management.StatsManagementEventHandler;
 import org.stajistics.session.DefaultStatsSessionManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.snapshot.DefaultStatsSnapshotManager;
-import org.stajistics.snapshot.StatsSnapshotManager;
 import org.stajistics.task.ThreadPoolTaskService;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.DefaultStatsTrackerLocator;
@@ -43,7 +41,6 @@ public class DefaultStatsManager implements StatsManager {
     protected final StatsConfigManager configManager;
     protected final StatsSessionManager sessionManager;
     protected final StatsEventManager eventManager;
-    protected final StatsSnapshotManager snapshotManager;
     protected final StatsTrackerLocator trackerLocator;
     protected final StatsKeyFactory keyFactory;
     protected final StatsConfigFactory configFactory;
@@ -55,7 +52,6 @@ public class DefaultStatsManager implements StatsManager {
      * @param configManager The {@link StatsConfigManager} to use. Must not be <tt>null</tt>.
      * @param sessionManager The {@link StatsSessionManager} to use. Must not be <tt>null</tt>.
      * @param eventManager The {@link StatsEventManager} to use. Must not be <tt>null</tt>.
-     * @param snapshotManager The {@link StatsSnapshotManager} to use. Must not be <tt>null</tt>.
      * @param trackerLocator The {@link StatsTrackerLocator} to use. Must not be <tt>null</tt>.
      * @param keyFactory The {@link StatsKeyFactory} to use. Must not be <tt>null</tt>.
      * @param configFactory The {@link StatsConfigFactory} to use. Must not be <tt>null</tt>.
@@ -65,7 +61,6 @@ public class DefaultStatsManager implements StatsManager {
     public DefaultStatsManager(final StatsConfigManager configManager,
                                final StatsSessionManager sessionManager,
                                final StatsEventManager eventManager,
-                               final StatsSnapshotManager snapshotManager,
                                final StatsTrackerLocator trackerLocator,
                                final StatsKeyFactory keyFactory,
                                final StatsConfigFactory configFactory,
@@ -79,9 +74,6 @@ public class DefaultStatsManager implements StatsManager {
         }
         if (eventManager == null) {
             throw new NullPointerException("eventManager");
-        }
-        if (snapshotManager == null) {
-            throw new NullPointerException("snapshotManager");
         }
         if (trackerLocator == null) {
             throw new NullPointerException("trackerLocator");
@@ -99,7 +91,6 @@ public class DefaultStatsManager implements StatsManager {
         this.keyFactory = keyFactory;
         this.configManager = configManager;
         this.sessionManager = sessionManager;
-        this.snapshotManager = snapshotManager;
         this.trackerLocator = trackerLocator;
         this.eventManager = eventManager;
         this.configFactory = configFactory;
@@ -120,7 +111,6 @@ public class DefaultStatsManager implements StatsManager {
             StatsManagement management = new DefaultStatsManagement();
             management.registerConfigManagerMBean(manager);
             management.registerSessionManagerMBean(manager);
-            management.registerSnapshotMBean(manager);
 
             StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(manager, management);
             manager.getEventManager()
@@ -143,11 +133,6 @@ public class DefaultStatsManager implements StatsManager {
     @Override
     public StatsEventManager getEventManager() {
         return eventManager;
-    }
-
-    @Override
-    public StatsSnapshotManager getSnapshotManager() {
-        return snapshotManager;
     }
 
     @Override
@@ -193,7 +178,6 @@ public class DefaultStatsManager implements StatsManager {
         protected StatsConfigManager configManager = null;
         protected StatsSessionManager sessionManager = null;
         protected StatsEventManager eventManager = null;
-        protected StatsSnapshotManager snapshotManager = null;
         protected StatsTrackerLocator trackerLocator = null;
         protected StatsKeyFactory keyFactory = null;
         protected StatsConfigFactory configFactory = null;
@@ -223,15 +207,6 @@ public class DefaultStatsManager implements StatsManager {
             }
 
             this.eventManager = eventManager;
-            return this;
-        }
-
-        public Builder withSnapshotManager(final StatsSnapshotManager snapshotManager) {
-            if (snapshotManager == null) {
-                throw new NullPointerException("snapshotManager");
-            }
-
-            this.snapshotManager = snapshotManager;
             return this;
         }
 
@@ -278,7 +253,6 @@ public class DefaultStatsManager implements StatsManager {
             StatsEventManager eventManager = this.eventManager;
             StatsConfigManager configManager = this.configManager;
             StatsSessionManager sessionManager = this.sessionManager;
-            StatsSnapshotManager snapshotManager = this.snapshotManager;
             StatsTrackerLocator trackerLocator = this.trackerLocator;
             StatsConfigFactory configFactory = this.configFactory;
             TaskService taskService = this.taskService;
@@ -299,10 +273,6 @@ public class DefaultStatsManager implements StatsManager {
                 sessionManager = new DefaultStatsSessionManager(configManager, eventManager);
             }
 
-            if (snapshotManager == null) {
-                snapshotManager = DefaultStatsSnapshotManager.createWithDefaults();
-            }
-
             if (trackerLocator == null) {
                 trackerLocator = new DefaultStatsTrackerLocator(configManager, sessionManager);
             }
@@ -318,7 +288,6 @@ public class DefaultStatsManager implements StatsManager {
             DefaultStatsManager manager = new DefaultStatsManager(configManager,
                                                                   sessionManager,
                                                                   eventManager,
-                                                                  snapshotManager,
                                                                   trackerLocator,
                                                                   keyFactory,
                                                                   configFactory,

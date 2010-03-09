@@ -20,14 +20,13 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.snapshot.StatsSnapshotManager;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerLocator;
 import org.stajistics.tracker.manual.ManualTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -78,7 +77,6 @@ public abstract class TestUtil {
         final StatsConfigManager mockConfigManager = mockery.mock(StatsConfigManager.class);
         final StatsEventManager mockEventManager = mockery.mock(StatsEventManager.class);
         final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);
-        final StatsSnapshotManager mockSnapshotManager = mockery.mock(StatsSnapshotManager.class);
         final StatsTrackerLocator mockTrackerLocator = mockery.mock(StatsTrackerLocator.class);
         final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
         final StatsConfigFactory mockConfigFactory = mockery.mock(StatsConfigFactory.class);
@@ -92,7 +90,6 @@ public abstract class TestUtil {
             allowing(mockManager).getEventManager(); will(returnValue(mockEventManager));
             allowing(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
             allowing(mockManager).getSessionManager(); will(returnValue(mockSessionManager));
-            allowing(mockManager).getSnapshotManager(); will(returnValue(mockSnapshotManager));
             allowing(mockManager).getTrackerLocator(); will(returnValue(mockTrackerLocator));
 
             allowing(mockTrackerLocator).getTracker(with(mockKey)); will(returnValue(mockTracker));

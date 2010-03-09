@@ -18,7 +18,6 @@ import java.io.Serializable;
 
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.snapshot.StatsSnapshotManager;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.StatsTrackerLocator;
 
@@ -50,13 +49,6 @@ public interface StatsManager extends Serializable {
      * @return The {@link StatsEventManager}, never <tt>null</tt>.
      */
     StatsEventManager getEventManager();
-
-    /**
-     * Get the {@link StatsSnapshotManager}.
-     *
-     * @return The {@link StatsSnapshotManager}, never <tt>null</tt>.
-     */
-    StatsSnapshotManager getSnapshotManager();
 
     /**
      * Get the {@link StatsTrackerLocator}.
@@ -103,7 +95,7 @@ public interface StatsManager extends Serializable {
     /**
      * Firstly, set the manager state to disabled, then proceed to clean up any resources
      * associated with statistics collection. A future call to {@link #setEnabled(boolean)} passing
-     * <tt>true</tt>, followed by any request to collect statistics will reinitialize any 
+     * <tt>true</tt>, followed by any request to collect statistics will reinitialize any
      * necessary resources.
      */
     void shutdown();

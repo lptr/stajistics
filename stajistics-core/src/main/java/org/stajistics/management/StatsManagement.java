@@ -22,8 +22,8 @@ import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -35,25 +35,20 @@ public interface StatsManagement {
 
     void unregisterConfigManagerMBean(StatsManager statsManager);
 
-    void registerConfigMBean(StatsManager statsManager, 
-                             StatsKey key, 
+    void registerConfigMBean(StatsManager statsManager,
+                             StatsKey key,
                              StatsConfig config);
 
-    void unregisterConfigMBean(StatsManager statsManager, 
+    void unregisterConfigMBean(StatsManager statsManager,
                                StatsKey key);
 
     void registerSessionManagerMBean(StatsManager statsManager);
 
     void unregisterSessionManagerMBean(StatsManager statsManager);
 
-    void registerSessionMBean(StatsManager statsManager, 
+    void registerSessionMBean(StatsManager statsManager,
                               StatsSession session);
 
     void unregisterSessionMBean(StatsManager statsManager,
                                 StatsKey key);
-
-    void registerSnapshotMBean(StatsManager statsManager);
-
-    void unregisterSnapshotMBean(StatsManager statsManager);
-
 }
