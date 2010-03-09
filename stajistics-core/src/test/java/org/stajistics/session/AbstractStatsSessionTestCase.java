@@ -15,6 +15,10 @@
 package org.stajistics.session;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Set;
 
@@ -32,6 +36,7 @@ import org.stajistics.data.DataSet.Field;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
+import org.stajistics.session.recorder.DataRecorderDecorator;
 import org.stajistics.tracker.StatsTracker;
 
 /**
@@ -71,28 +76,7 @@ public abstract class AbstractStatsSessionTestCase {
 
     protected abstract StatsSession createStatsSession(DataRecorder... dataRecorders);
 
-    @Test
-    public void testConstructWithNullKey() {
-        try {
-            new ConcurrentStatsSession(null, mockEventManager, (DataRecorder[])null);
-
-        } catch (NullPointerException npe) {
-            assertEquals("key", npe.getMessage());
-        }
-    }
-
-    @Test
-    public void testConstructWithNullEventManager() {
-        try {
-            new ConcurrentStatsSession(mockKey, null, (DataRecorder[])null);
-
-        } catch (NullPointerException npe) {
-            assertEquals("eventManager", npe.getMessage());
-        }
-    }
-
-    @Test
-    public void testInitialData() {
+    protected void assertInitialState(final StatsSession session) {
         assertEquals(DataSet.Field.Default.HITS.longValue(), session.getHits());
         assertEquals(DataSet.Field.Default.FIRST_HIT_STAMP.longValue(), session.getFirstHitStamp());
         assertEquals(DataSet.Field.Default.LAST_HIT_STAMP.longValue(), session.getLastHitStamp());
@@ -102,6 +86,31 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(DataSet.Field.Default.MAX, session.getMax(), DELTA);
         assertEquals(DataSet.Field.Default.LAST, session.getLast(), DELTA);
         assertEquals(DataSet.Field.Default.SUM, session.getSum(), DELTA);
+    }
+
+    @Test
+    public void testConstructWithNullKey() {
+        try {
+            new ConcurrentStatsSession(null, mockEventManager, (DataRecorder[])null);
+            fail();
+        } catch (NullPointerException npe) {
+            assertEquals("key", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithNullEventManager() {
+        try {
+            new ConcurrentStatsSession(mockKey, null, (DataRecorder[])null);
+            fail();
+        } catch (NullPointerException npe) {
+            assertEquals("eventManager", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testInitialData() {
+        assertInitialState(session);
     }
 
     @Test
@@ -153,6 +162,119 @@ public abstract class AbstractStatsSessionTestCase {
     }
 
     @Test
+    public void testGetDataRecorders() {
+        final DataRecorder mockDataRecorder = mockery.mock(DataRecorder.class);
+
+        session = createStatsSession(mockDataRecorder);
+
+        assertNotNull(session.getDataRecorders());
+        assertFalse(session.getDataRecorders().isEmpty());
+        assertEquals(1, session.getDataRecorders().size());
+
+        DataRecorder dr = session.getDataRecorders().get(0);
+        while (dr instanceof DataRecorderDecorator) {
+            dr = ((DataRecorderDecorator)dr).delegate();
+        }
+
+        assertEquals(mockDataRecorder, dr);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetDataRecordersReturnsImmutableList() {
+        session.getDataRecorders()
+               .add(mockery.mock(DataRecorder.class));
+    }
+
+    @Test
+    public void testGetFieldEqualsSessionGetters() {
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+            allowing(mockTracker).getValue(); will(returnValue(1.0));
+        }});
+
+        for (int i = 0; i < 10; i++) {
+            session.track(mockTracker, System.currentTimeMillis());
+            session.update(mockTracker, System.currentTimeMillis());
+        }
+
+        assertEquals(session.getHits(), session.getField(DataSet.Field.HITS));
+        assertEquals(session.getFirstHitStamp(), session.getField(DataSet.Field.FIRST_HIT_STAMP));
+        assertEquals(session.getLastHitStamp(), session.getField(DataSet.Field.LAST_HIT_STAMP));
+        assertEquals(session.getCommits(), session.getField(DataSet.Field.COMMITS));
+        assertEquals(session.getFirst(), session.getField(DataSet.Field.FIRST));
+        assertEquals(session.getLast(), session.getField(DataSet.Field.LAST));
+        assertEquals(session.getMin(), session.getField(DataSet.Field.MIN));
+        assertEquals(session.getMax(), session.getField(DataSet.Field.MAX));
+        assertEquals(session.getSum(), session.getField(DataSet.Field.SUM));
+    }
+
+    @Test
+    public void testClear() {
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+            allowing(mockTracker).getValue(); will(returnValue(1.0));
+        }});
+
+        for (int i = 0; i < 10; i++) {
+            session.track(mockTracker, System.currentTimeMillis());
+            session.update(mockTracker, System.currentTimeMillis());
+        }
+
+        session.clear();
+
+        assertInitialState(session);
+    }
+
+    @Test
+    public void testCollectDataHasMetaCollectionStamp() {
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+        }});
+
+        final long now = System.currentTimeMillis();
+
+        DataSet dataSet = session.collectData();
+
+        final Long collectionStamp = dataSet.getMetaData()
+                                            .getField(DataSet.MetaField.COLLECTION_STAMP, 
+                                                      Long.class);
+        assertNotNull(collectionStamp);
+        assertTrue(collectionStamp >= now);
+    }
+
+    @Test
+    public void testDrainDataHasMetaCollectionStamp() {
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+        }});
+
+        final long now = System.currentTimeMillis();
+
+        DataSet dataSet = session.drainData();
+
+        final Long collectionStamp = dataSet.getMetaData()
+                                            .getField(DataSet.MetaField.COLLECTION_STAMP, 
+                                                      Long.class);
+        assertNotNull(collectionStamp);
+        assertTrue(collectionStamp >= now);
+    }
+
+    @Test
+    public void testDrainDataHasMetaDrainedSession() {
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+        }});
+
+        DataSet dataSet = session.drainData();
+
+        final Boolean drained = dataSet.getMetaData()
+                                       .getField(DataSet.MetaField.DRAINED_SESSION, 
+                                                 Boolean.class);
+        assertNotNull(drained);
+        assertTrue(drained);
+    }
+
+    @Test
     public void testClearFiresSessionClearedEvent() {
 
         mockery.checking(new Expectations() {{
@@ -162,6 +284,18 @@ public abstract class AbstractStatsSessionTestCase {
         }});
 
         session.clear();
+    }
+
+    @Test
+    public void testDrainDataFiresSessionClearedEvent() {
+
+        mockery.checking(new Expectations() {{
+            one(mockEventManager).fireEvent(with(StatsEventType.SESSION_CLEARED),
+                                            with(mockKey),
+                                            with(session));
+        }});
+
+        session.drainData();
     }
 
     @Test
@@ -302,6 +436,85 @@ public abstract class AbstractStatsSessionTestCase {
     }
 
     @Test
+    public void testCollectData() {
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+            allowing(mockTracker).getValue(); will(returnValue(1.0));
+        }});
+
+        for (int i = 0; i < 10; i++) {
+            final long now = i + 1;
+            session.track(mockTracker, now);
+            session.update(mockTracker, now);
+        }
+
+        DataSet dataSet = session.collectData();
+
+        assertEquals(10L, dataSet.getField(DataSet.Field.HITS));
+        assertEquals(1L, dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
+        assertEquals(10L, dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
+        assertEquals(10L, dataSet.getField(DataSet.Field.COMMITS));
+        assertEquals(1.0, dataSet.getField(DataSet.Field.FIRST, Double.class), DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.MIN, Double.class), DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.MAX, Double.class), DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.LAST, Double.class), DELTA);
+        assertEquals(10.0, dataSet.getField(DataSet.Field.SUM, Double.class), DELTA);
+    }
+
+    @Test
+    public void testCollectDataEqualsSessionGetters() {
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+            allowing(mockTracker).getValue(); will(returnValue(1.0));
+        }});
+
+        for (int i = 0; i < 10; i++) {
+            session.track(mockTracker, System.currentTimeMillis());
+            session.update(mockTracker, System.currentTimeMillis());
+        }
+
+        DataSet dataSet = session.collectData();
+
+        assertEquals(session.getHits(), dataSet.getField(DataSet.Field.HITS));
+        assertEquals(session.getFirstHitStamp(), dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
+        assertEquals(session.getLastHitStamp(), dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
+        assertEquals(session.getCommits(), dataSet.getField(DataSet.Field.COMMITS));
+        assertEquals(session.getFirst(), dataSet.getField(DataSet.Field.FIRST, Double.class), DELTA);
+        assertEquals(session.getMin(), dataSet.getField(DataSet.Field.MIN, Double.class), DELTA);
+        assertEquals(session.getMax(), dataSet.getField(DataSet.Field.MAX, Double.class), DELTA);
+        assertEquals(session.getLast(), dataSet.getField(DataSet.Field.LAST, Double.class), DELTA);
+        assertEquals(session.getSum(), dataSet.getField(DataSet.Field.SUM, Double.class), DELTA);
+    }
+
+    @Test
+    public void testDrainData() {
+        mockery.checking(new Expectations() {{
+            ignoring(mockEventManager);
+            allowing(mockTracker).getValue(); will(returnValue(1.0));
+        }});
+
+        for (int i = 0; i < 10; i++) {
+            final long now = i + 1;
+            session.track(mockTracker, now);
+            session.update(mockTracker, now);
+        }
+
+        DataSet dataSet = session.drainData();
+
+        assertEquals(10L, dataSet.getField(DataSet.Field.HITS));
+        assertEquals(1L, dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
+        assertEquals(10L, dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
+        assertEquals(10L, dataSet.getField(DataSet.Field.COMMITS));
+        assertEquals(1.0, dataSet.getField(DataSet.Field.FIRST, Double.class), DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.MIN, Double.class), DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.MAX, Double.class), DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.LAST, Double.class), DELTA);
+        assertEquals(10.0, dataSet.getField(DataSet.Field.SUM, Double.class), DELTA);
+
+        assertInitialState(session);
+    }
+
+    @Test
     public void testRestore() {
 
         mockery.checking(new Expectations() {{
@@ -316,7 +529,7 @@ public abstract class AbstractStatsSessionTestCase {
 
         DataSet dataSet = session.collectData();
 
-        StatsSession anotherSession = createStatsSession(null);
+        StatsSession anotherSession = createStatsSession();
 
         anotherSession.restore(dataSet);
 
@@ -346,7 +559,7 @@ public abstract class AbstractStatsSessionTestCase {
             session.update(mockTracker, System.currentTimeMillis());
         }
 
-        StatsSession emptySession = createStatsSession((DataRecorder[])null);
+        StatsSession emptySession = createStatsSession();
 
         session.restore(dataSet);
 
@@ -386,6 +599,7 @@ public abstract class AbstractStatsSessionTestCase {
     public void testRestoreWithNullDataSet() {
         try {
             session.restore(null);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("dataSet", npe.getMessage());
         }
@@ -533,6 +747,16 @@ public abstract class AbstractStatsSessionTestCase {
         }});
 
         session.update(mockTracker, -1L);
+    }
+
+    @Test
+    public void testToString() {
+        String strVal = session.toString();
+
+        assertTrue(strVal.startsWith(StatsSession.class.getSimpleName() + "["));
+        assertTrue(strVal.indexOf("key=" + session.getKey()) > -1);
+        assertTrue(strVal.indexOf("hits=" + session.getHits()) > -1);
+        assertTrue(strVal.indexOf("commits=" + session.getCommits()) > -1);
     }
 
     /* NESTED CLASSES */

@@ -15,6 +15,10 @@
 package org.stajistics.session;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
@@ -43,7 +47,7 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
     public void testConstructWithNullKey() {
         try {
             new AsynchronousStatsSession(null, mockEventManager, mockTaskService, (DataRecorder[])null);
-
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("key", npe.getMessage());
         }
@@ -54,7 +58,7 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
     public void testConstructWithNullEventManager() {
         try {
             new AsynchronousStatsSession(mockKey, null, mockTaskService, (DataRecorder[])null);
-
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());
         }
@@ -64,9 +68,57 @@ public class AsynchronousStatsSessionTest extends AbstractStatsSessionTestCase {
     public void testConstructWithNullTaskService() {
         try {
             new AsynchronousStatsSession(mockKey, mockEventManager, null, (DataRecorder[])null);
-
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("taskService", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithNullUpdateQueue() {
+        try {
+            new AsynchronousStatsSession(mockKey, mockEventManager, mockTaskService, null, (DataRecorder[])null);
+            fail();
+        } catch (NullPointerException npe) {
+            assertEquals("updateQueue", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testTrackWithNastyTaskService() {
+        StatsSession service = new AsynchronousStatsSession(mockKey, 
+                                                            mockEventManager, 
+                                                            new NastyTaskService());
+
+        service.track(mockTracker, 1L);
+    }
+
+    @Test
+    public void testUpdateWithNastyTaskService() {
+        StatsSession service = new AsynchronousStatsSession(mockKey, 
+                                                            mockEventManager, 
+                                                            new NastyTaskService());
+
+        service.update(mockTracker, 1L);
+    }
+
+    /* NESTED CLASSES */
+
+    private static final class NastyTaskService implements TaskService {
+
+        @Override
+        public void execute(Class<?> source, Runnable task) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public void shutdown() {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public <T> Future<T> submit(Class<?> source, Callable<T> task) {
+            throw new RuntimeException();
         }
     }
 

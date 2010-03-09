@@ -60,6 +60,11 @@ public interface DataSet extends DataContainer,Serializable {
         }
     }
 
+    interface MetaField {
+        public static final String COLLECTION_STAMP = "collectionStamp";
+        public static final String DRAINED_SESSION = "drainedSession";
+    }
+
     /**
      * Obtain a {@link MetaData} instance which contains meta data related to this DataSet.
      *
