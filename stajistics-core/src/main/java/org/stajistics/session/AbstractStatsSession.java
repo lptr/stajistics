@@ -165,6 +165,10 @@ public abstract class AbstractStatsSession implements StatsSession {
 
         final DataSet dataSet = new DefaultDataSet();
 
+        dataSet.getMetaData()
+               .setField(DataSet.MetaField.COLLECTION_STAMP, 
+                         System.currentTimeMillis());
+
         dataSet.setField(DataSet.Field.HITS, getHits());
         dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, getFirstHitStamp());
         dataSet.setField(DataSet.Field.LAST_HIT_STAMP, getLastHitStamp());

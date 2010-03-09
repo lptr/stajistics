@@ -200,7 +200,7 @@ public final class DataRecorders {
 
     /* NESTED CLASSES */
 
-    private static final class LockingDataRecorderDecorator implements DataRecorder {
+    private static final class LockingDataRecorderDecorator implements DataRecorderDecorator {
 
         private final DataRecorder delegate;
         private final Lock lock;
@@ -218,6 +218,11 @@ public final class DataRecorders {
             } else {
                 this.lock = lock;
             }
+        }
+
+        @Override
+        public DataRecorder delegate() {
+            return delegate;
         }
 
         @Override

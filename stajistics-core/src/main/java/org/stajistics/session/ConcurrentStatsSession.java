@@ -283,6 +283,10 @@ public class ConcurrentStatsSession extends AbstractStatsSession {
     @Override
     public DataSet drainData() {
         DataSet data = collectData();
+
+        data.getMetaData()
+            .setField(DataSet.MetaField.DRAINED_SESSION, true);
+
         clear();
         return data;
     }
