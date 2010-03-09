@@ -14,21 +14,130 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */
 //@RunWith(JMock.class)
 public class StatsPropertiesTest {
 
+    private Map<String,String> propsMap;
+
+    @Before
+    public void setUp() {
+
+        propsMap = new HashMap<String,String>();
+        propsMap.put("string", "string");
+        propsMap.put("boolean", Boolean.TRUE.toString());
+        propsMap.put("int", String.valueOf(Integer.MAX_VALUE));
+        propsMap.put("float", String.valueOf(Float.MAX_VALUE));
+        propsMap.put("double", String.valueOf(Double.MAX_VALUE));
+        propsMap.put("long", String.valueOf(Long.MAX_VALUE));
+
+        StatsProperties.load(new StatsProperties.MapStatsProperties(propsMap));
+    }
+
+    @Test
+    public void testLoadAndGetInstance() {
+        final StatsProperties props = new StatsProperties.MapStatsProperties(Collections.emptyMap());
+        StatsProperties.load(props);
+
+        assertEquals(props, StatsProperties.getInstance());
+    }
+
     @Test
     public void testGetInstanceNotNull() {
+        StatsProperties.load(null);
         assertNotNull(StatsProperties.getInstance());
     }
 
+    @Test
+    public void testGetProperty() {
+        assertEquals("string", StatsProperties.getProperty("string"));
+        assertNull(StatsProperties.getProperty("string1"));
+    }
+
+    @Test
+    public void testGetPropertyWithDefault() {
+        assertEquals("string", StatsProperties.getProperty("string", null));
+        assertNull(StatsProperties.getProperty("string1", null));
+        assertEquals("default", StatsProperties.getProperty("string1", "default"));
+    }
+
+    @Test
+    public void testGetBooleanProperty() {
+        assertEquals(true, StatsProperties.getBooleanProperty("boolean"));
+        assertNull(StatsProperties.getBooleanProperty("boolean1"));
+    }
+
+    @Test
+    public void testGetBooleanPropertyWithDefault() {
+        assertEquals(true, StatsProperties.getBooleanProperty("boolean", null));
+        assertNull(StatsProperties.getBooleanProperty("boolean1", null));
+        assertEquals(false, StatsProperties.getBooleanProperty("boolean1", false));
+    }
+
+    @Test
+    public void testGetIntegerProperty() {
+        assertEquals(Integer.MAX_VALUE, (int)StatsProperties.getIntegerProperty("int"));
+        assertNull(StatsProperties.getIntegerProperty("int1"));
+    }
+
+    @Test
+    public void testGetIntegerPropertyWithDefault() {
+        assertEquals(Integer.MAX_VALUE, (int)StatsProperties.getIntegerProperty("int", 1));
+        assertNull(StatsProperties.getIntegerProperty("int1", null));
+        assertEquals(2, (int)StatsProperties.getIntegerProperty("int1", 2));
+    }
+
+    @Test
+    public void testGetFloatProperty() {
+        assertEquals("" + Float.MAX_VALUE, "" + StatsProperties.getFloatProperty("float"));
+        assertNull(StatsProperties.getFloatProperty("float1"));
+    }
+
+    @Test
+    public void testGetFloatPropertyWithDefault() {
+        assertEquals("" + Float.MAX_VALUE, "" + StatsProperties.getFloatProperty("float", 1f));
+        assertNull(StatsProperties.getFloatProperty("float1", null));
+        assertEquals(2, StatsProperties.getFloatProperty("float1", 2f), TestUtil.DELTA);
+    }
+
+    @Test
+    public void testGetLongProperty() {
+        assertEquals(Long.MAX_VALUE, (long)StatsProperties.getLongProperty("long"));
+        assertNull(StatsProperties.getLongProperty("long1"));
+    }
+
+    @Test
+    public void testGetLongPropertyWithDefault() {
+        assertEquals(Long.MAX_VALUE, (long)StatsProperties.getLongProperty("long", 1L));
+        assertNull(StatsProperties.getLongProperty("long1", null));
+        assertEquals(2L, (long)StatsProperties.getLongProperty("long1", 2L));
+    }
+
+    @Test
+    public void testGetDoubleProperty() {
+        assertEquals(Double.MAX_VALUE, StatsProperties.getDoubleProperty("double"), TestUtil.DELTA);
+        assertNull(StatsProperties.getDoubleProperty("double1"));
+    }
+
+    @Test
+    public void testGetDoublePropertyWithDefault() {
+        assertEquals(Double.MAX_VALUE, StatsProperties.getDoubleProperty("double", 1D), TestUtil.DELTA);
+        assertNull(StatsProperties.getDoubleProperty("double1", null));
+        assertEquals(2D, StatsProperties.getDoubleProperty("double1", 2D), TestUtil.DELTA);
+    }
 }

@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.snapshot.StatsSnapshotManager;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerLocator;
@@ -369,11 +368,6 @@ public class StatsTest {
 
         @Override
         public StatsSessionManager getSessionManager() {
-            return null;
-        }
-
-        @Override
-        public StatsSnapshotManager getSnapshotManager() {
             return null;
         }
 

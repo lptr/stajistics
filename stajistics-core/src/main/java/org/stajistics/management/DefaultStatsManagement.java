@@ -32,8 +32,8 @@ import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -120,7 +120,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
         String name = buildManagerName(statsManager, MANAGER_NAME_SESSION);
 
         try {
-            StatsSessionManagerMBean statsSessionManagerMBean = 
+            StatsSessionManagerMBean statsSessionManagerMBean =
                 mBeanFactory.createSessionManagerMBean(statsManager);
 
             ObjectName objectName = new ObjectName(name);
@@ -159,7 +159,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
     public void registerConfigManagerMBean(final StatsManager statsManager) {
         String name = buildManagerName(statsManager, MANAGER_NAME_CONFIG);
         try {
-            StatsConfigManagerMBean statsConfigManagerMBean = 
+            StatsConfigManagerMBean statsConfigManagerMBean =
                 mBeanFactory.createConfigManagerMBean(statsManager);
 
             ObjectName objectName = new ObjectName(name);
@@ -201,7 +201,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
 
         try {
             StatsConfigMBean configMBean = mBeanFactory.createConfigMBean(statsManager,
-                                                                          key, 
+                                                                          key,
                                                                           config);
             ObjectName objectName = new ObjectName(name);
 
@@ -276,40 +276,6 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
         }
     }
 
-    @Override
-    public void registerSnapshotMBean(final StatsManager statsManager) {
-
-        String name = buildManagerName(statsManager, MANAGER_NAME_SNAPSHOT);
-
-        try {
-            StatsSnapshotMBean snapshotMBean = mBeanFactory.createSnapshotMBean(statsManager);
-
-            ObjectName objectName = new ObjectName(name);
-            mBeanServer.registerMBean(snapshotMBean, objectName);
-
-            logRegistrationSuccess(true, StatsSnapshotMBean.class, null, objectName);
-
-        } catch (Exception e) {
-            logRegistrationFailure(true, StatsSnapshotMBean.class, null, name, e);
-        }
-    }
-
-    @Override
-    public void unregisterSnapshotMBean(final StatsManager statsManager) {
-
-        String name = buildManagerName(statsManager, MANAGER_NAME_SNAPSHOT);
-
-        try {
-            ObjectName objectName = new ObjectName(name);
-            mBeanServer.unregisterMBean(objectName);
-
-            logRegistrationSuccess(false, StatsSnapshotMBean.class, null, objectName);
-
-        } catch (Exception e) {
-            logRegistrationFailure(false, StatsSnapshotMBean.class, null, name, e);
-        }
-    }
-
     private void registerMBean(final Object mBean,
                                final ObjectName name) throws Exception {
         if (mBeanServer.isRegistered(name)) {
@@ -321,7 +287,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
         mBeanServer.registerMBean(mBean, name);
     }
 
-    protected String buildName(final StatsManager statsManager, 
+    protected String buildName(final StatsManager statsManager,
                                final StatsKey key,
                                final String type,
                                final String subtype,
@@ -462,7 +428,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
     }
 
     /* Restore transient fields */
-    private void readObject(final ObjectInputStream in) 
+    private void readObject(final ObjectInputStream in)
             throws IOException,ClassNotFoundException {
         in.defaultReadObject();
 
