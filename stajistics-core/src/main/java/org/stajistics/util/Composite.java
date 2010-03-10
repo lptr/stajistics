@@ -12,11 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.tracker;
+package org.stajistics.util;
 
-import org.stajistics.StatsConfigManager;
-import org.stajistics.StatsKey;
-import org.stajistics.session.StatsSessionManager;
+import java.util.Collection;
 
 /**
  * 
@@ -24,10 +22,8 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public interface StatsTrackerStore {
+public interface Composite<T> {
 
-    StatsTracker getTracker(StatsKey key,
-                            StatsConfigManager configManger,
-                            StatsSessionManager sessionManager);
+    Collection<T> composites();
 
 }

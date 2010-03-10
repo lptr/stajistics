@@ -12,16 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.session.recorder;
+package org.stajistics.util;
 
 /**
  * 
- * 
+ * @param <T>
  *
  * @author The Stajistics Project
  */
-public interface DataRecorderDecorator extends DataRecorder {
+public interface Decorator<T> {
 
-    DataRecorder delegate();
+    T delegate();
 
 }

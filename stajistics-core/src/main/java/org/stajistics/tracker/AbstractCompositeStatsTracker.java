@@ -15,6 +15,7 @@
 package org.stajistics.tracker;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,8 +46,9 @@ public abstract class AbstractCompositeStatsTracker<T extends StatsTracker>
         this(trackers.toArray((T[])new StatsTracker[trackers.size()]));
     }
 
-    public List<T> getTrackers() {
-        return Collections.unmodifiableList(Arrays.asList(trackers));
+    @Override
+    public Collection<T> composites() {
+        return Collections.unmodifiableCollection(Arrays.asList(trackers));
     }
 
     @Override
