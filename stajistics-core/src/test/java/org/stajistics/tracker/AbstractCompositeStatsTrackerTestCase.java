@@ -17,6 +17,7 @@ package org.stajistics.tracker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public abstract class AbstractCompositeStatsTrackerTestCase<T extends StatsTrack
     public void testGetTrackersWhenConstructedWithArray() {
         CompositeStatsTracker<T> cTracker = createCompositeStatsTracker(mockTrackers);
 
-        List<T> trackers = cTracker.getTrackers();
+        Collection<T> trackers = cTracker.composites();
 
         int i = 0;
         for (StatsTracker tracker : trackers) {

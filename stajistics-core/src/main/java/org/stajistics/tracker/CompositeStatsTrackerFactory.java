@@ -14,41 +14,43 @@
  */
 package org.stajistics.tracker;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.tracker.incident.IncidentCompositeStatsTracker;
+import org.stajistics.tracker.incident.IncidentTracker;
+import org.stajistics.tracker.manual.ManualCompositeStatsTracker;
+import org.stajistics.tracker.manual.ManualTracker;
+import org.stajistics.tracker.span.SpanCompositeStatsTracker;
+import org.stajistics.tracker.span.SpanTracker;
+import org.stajistics.util.Composite;
 
 /**
  *
  *
  * @author The Stajistics Project
  */
-public class CompositeStatsTrackerFactory<T extends StatsTracker> implements StatsTrackerFactory<T> {
+public class CompositeStatsTrackerFactory<T extends StatsTracker> 
+        implements StatsTrackerFactory<T>,Composite<StatsTrackerFactory<T>> {
 
-    private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap;
+    private final Map<String,StatsTrackerFactory<T>> factoryMap;
     private final String[] nameSuffixes;
-    private final StatsTrackerFactory<StatsTracker>[] factories;
-    private final Class<T> trackerType;
-
+    private final StatsTrackerFactory<T>[] factories;
 
     @SuppressWarnings("unchecked")
-    public CompositeStatsTrackerFactory(final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap,
-                                        final Class<T> trackerType) {
+    public CompositeStatsTrackerFactory(final Map<String,StatsTrackerFactory<T>> factoryMap) {
         if (factoryMap == null) {
             throw new NullPointerException("factoryMap");
         }
         if (factoryMap.isEmpty()) {
             throw new IllegalArgumentException("factoryMap is empty");
         }
-        if (trackerType == null) {
-            throw new NullPointerException("type");
-        }
 
         this.factoryMap = factoryMap;
-        this.trackerType = trackerType;
 
         int size = factoryMap.size();
 
@@ -57,7 +59,7 @@ public class CompositeStatsTrackerFactory<T extends StatsTracker> implements Sta
 
         int i = 0;
 
-        for (Map.Entry<String,StatsTrackerFactory<? extends StatsTracker>> entry : factoryMap.entrySet()) {
+        for (Map.Entry<String,StatsTrackerFactory<T>> entry : factoryMap.entrySet()) {
             nameSuffixes[i] = entry.getKey();
             factories[i] = (StatsTrackerFactory)entry.getValue();
 
@@ -69,17 +71,23 @@ public class CompositeStatsTrackerFactory<T extends StatsTracker> implements Sta
         }
     }
 
-    public Map<String,StatsTrackerFactory<? extends StatsTracker>> getFactoryMap() {
+    public Map<String,StatsTrackerFactory<T>> getFactoryMap() {
         return Collections.unmodifiableMap(factoryMap);
     }
 
-    public static <T extends StatsTracker> Builder<T> build(Class<T> trackerType) {
-        return new Builder<T>(trackerType);
+    @Override
+    public Collection<StatsTrackerFactory<T>> composites() {
+        return Collections.unmodifiableCollection(factoryMap.values());
     }
 
+    public static <T extends StatsTracker> Builder<T> build() {
+        return new Builder<T>();
+    }
+
+    @SuppressWarnings("unchecked")
     @Override
     public T createTracker(final StatsKey key,
-                                      final StatsSessionManager sessionManager) {
+                           final StatsSessionManager sessionManager) {
 
         StatsTracker[] trackers = new StatsTracker[factories.length];
 
@@ -91,31 +99,32 @@ public class CompositeStatsTrackerFactory<T extends StatsTracker> implements Sta
             trackers[i] = factories[i].createTracker(childKey, sessionManager);
         }
 
-        throw new UnsupportedOperationException("not yet implemented");
+        Class<T> trackerType = factories[0].getTrackerType();
+        if (trackerType == SpanTracker.class) {
+            return (T) new SpanCompositeStatsTracker((SpanTracker[])trackers);
+        }
+        if (trackerType == IncidentTracker.class) {
+            return (T) new IncidentCompositeStatsTracker((IncidentTracker[])trackers);
+        }
+        if (trackerType == ManualTracker.class) {
+            return (T) new ManualCompositeStatsTracker((ManualTracker[])trackers);
+        }
 
-        //return new CompositeStatsTracker(trackers);
+        throw new UnsupportedOperationException("Unsupported tracker type: " + trackerType);
     }
-    
+
     @Override
     public Class<T> getTrackerType() {
-        return trackerType;
+        return factories[0].getTrackerType();
     }
 
     public static class Builder<T extends StatsTracker> {
 
-        private final Map<String,StatsTrackerFactory<? extends StatsTracker>> factoryMap =
-            new HashMap<String,StatsTrackerFactory<? extends StatsTracker>>();
-        private final Class<T> trackerType;
-
-        protected Builder(Class<T> trackerType) {
-            if (trackerType == null) {
-                throw new NullPointerException("trackerType");
-            }
-            this.trackerType = trackerType;
-        }
+        private final Map<String,StatsTrackerFactory<T>> factoryMap =
+            new HashMap<String,StatsTrackerFactory<T>>();
 
         public Builder<T> withFactory(final String nameSuffix,
-                                   final StatsTrackerFactory<? extends T> factory) {
+                                      final StatsTrackerFactory<T> factory) {
             if (nameSuffix == null) {
                 throw new NullPointerException("nameSuffix");
             }
@@ -125,17 +134,14 @@ public class CompositeStatsTrackerFactory<T extends StatsTracker> implements Sta
             if (factory == null) {
                 throw new NullPointerException("factory");
             }
-            if (!trackerType.isAssignableFrom(factory.getTrackerType())) {
-                throw new IllegalArgumentException("factory is not compatible: " + trackerType + " != " + factory.getTrackerType());
-            }
 
             factoryMap.put(nameSuffix, factory);
 
             return this;
         }
 
-        public StatsTrackerFactory<T> build() {
-            return new CompositeStatsTrackerFactory<T>(factoryMap, trackerType);
+        public CompositeStatsTrackerFactory<T> createCompositeTrackerFactory() {
+            return new CompositeStatsTrackerFactory<T>(factoryMap);
         }
     }
 

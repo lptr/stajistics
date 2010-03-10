@@ -21,6 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.util.Decorator;
 import org.stajistics.util.ThreadSafe;
 
 /**
@@ -200,7 +201,9 @@ public final class DataRecorders {
 
     /* NESTED CLASSES */
 
-    private static final class LockingDataRecorderDecorator implements DataRecorderDecorator {
+    @ThreadSafe
+    private static final class LockingDataRecorderDecorator 
+            implements DataRecorder,Decorator<DataRecorder> {
 
         private final DataRecorder delegate;
         private final Lock lock;

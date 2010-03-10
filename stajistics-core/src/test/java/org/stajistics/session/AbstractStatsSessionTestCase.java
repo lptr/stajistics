@@ -36,8 +36,8 @@ import org.stajistics.data.DataSet.Field;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.event.StatsEventType;
 import org.stajistics.session.recorder.DataRecorder;
-import org.stajistics.session.recorder.DataRecorderDecorator;
 import org.stajistics.tracker.StatsTracker;
+import org.stajistics.util.Decorator;
 
 /**
  *
@@ -172,8 +172,8 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(1, session.getDataRecorders().size());
 
         DataRecorder dr = session.getDataRecorders().get(0);
-        while (dr instanceof DataRecorderDecorator) {
-            dr = ((DataRecorderDecorator)dr).delegate();
+        while (dr instanceof Decorator<?>) {
+            dr = ((Decorator<DataRecorder>)dr).delegate();
         }
 
         assertEquals(mockDataRecorder, dr);

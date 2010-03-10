@@ -104,10 +104,10 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
                                      "span",
                                      key,
                                      tracker.getClass(),
-                                     DefaultIncidentTracker.class);
+                                     SpanTracker.class);
         }
 
-        return TimeDurationTracker.FACTORY.createTracker(key, sessionManager);
+        return SpanTracker.FACTORY.createTracker(key, sessionManager);
     }
 
     @Override
@@ -149,10 +149,10 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
                                      "incident",
                                      key,
                                      tracker.getClass(),
-                                     DefaultIncidentTracker.class);
+                                     IncidentTracker.class);
         }
 
-        return DefaultIncidentTracker.FACTORY.createTracker(key, sessionManager);
+        return IncidentTracker.FACTORY.createTracker(key, sessionManager);
     }
 
     @Override
@@ -195,10 +195,10 @@ public class DefaultStatsTrackerLocator implements StatsTrackerLocator {
                                      "manual",
                                      key,
                                      tracker.getClass(),
-                                     DefaultManualTracker.class);
+                                     ManualTracker.class);
         }
 
-        return DefaultManualTracker.FACTORY.createTracker(key, sessionManager);
+        return ManualTracker.FACTORY.createTracker(key, sessionManager);
     }
 
     @Override
