@@ -119,7 +119,7 @@ public abstract class AbstractDataContainerTestCase {
         dataContainer.setField("test", 1.0);
 
         try {
-            String value = dataContainer.getField("test", String.class);
+            dataContainer.getField("test", String.class);
             fail("Failed to throw ClassCastException");
         } catch (ClassCastException cce) {
             // Expected

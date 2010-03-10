@@ -14,6 +14,14 @@
  */
 package org.stajistics.aop;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.Observable;
+import java.util.Observer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadFactory;
+
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -23,14 +31,6 @@ import org.junit.runner.RunWith;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyBuilder;
 import org.stajistics.TestUtil;
-
-import java.util.Observable;
-import java.util.Observer;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadFactory;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  *
@@ -63,6 +63,7 @@ public class StatsDecoratorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testWrapCallable() throws Exception {
         final Callable<Long> mockCallable = mockery.mock(Callable.class);
         final Callable<Long> wrappedCallable = StatsDecorator.wrap(mockCallable, mockKey);
@@ -75,6 +76,7 @@ public class StatsDecoratorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testWrapCallableThrowsException() throws Exception {
         final Callable<Long> mockCallable = mockery.mock(Callable.class);
         final Callable<Long> wrappedCallable = StatsDecorator.wrap(mockCallable, mockKey);

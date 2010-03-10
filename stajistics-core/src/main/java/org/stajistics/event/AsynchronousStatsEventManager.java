@@ -16,8 +16,6 @@ package org.stajistics.event;
 
 import java.util.concurrent.Callable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.task.TaskService;
 
@@ -26,8 +24,6 @@ import org.stajistics.task.TaskService;
  * @author The Stajistics Project
  */
 public class AsynchronousStatsEventManager extends SynchronousStatsEventManager {
-
-    private static final Logger logger = LoggerFactory.getLogger(AsynchronousStatsEventManager.class);
 
     private final TaskService taskService;
 

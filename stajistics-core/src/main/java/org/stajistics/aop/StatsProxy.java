@@ -93,7 +93,6 @@ public class StatsProxy implements InvocationHandler {
         return wrap(statsManager, key, target, ifaces);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T,U extends T> T wrap(final StatsManager statsManager,
                                          final StatsKey key,
                                          final U target,

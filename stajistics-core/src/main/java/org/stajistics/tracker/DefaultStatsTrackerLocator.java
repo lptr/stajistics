@@ -20,15 +20,12 @@ import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.incident.DefaultIncidentTracker;
 import org.stajistics.tracker.incident.IncidentCompositeStatsTracker;
 import org.stajistics.tracker.incident.IncidentTracker;
-import org.stajistics.tracker.manual.DefaultManualTracker;
 import org.stajistics.tracker.manual.ManualCompositeStatsTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanCompositeStatsTracker;
 import org.stajistics.tracker.span.SpanTracker;
-import org.stajistics.tracker.span.TimeDurationTracker;
 
 /**
  * 

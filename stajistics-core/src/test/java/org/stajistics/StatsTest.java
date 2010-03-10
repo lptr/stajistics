@@ -28,7 +28,6 @@ import org.junit.runner.RunWith;
 import org.stajistics.event.StatsEventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
-import org.stajistics.tracker.StatsTracker;
 import org.stajistics.tracker.StatsTrackerLocator;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;

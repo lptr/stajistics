@@ -230,6 +230,7 @@ public class DefaultStatsTrackerLocatorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetSpanTrackerWithSizeTwoKeyArray() {
         SpanTracker mockSpanTracker = mockery.mock(SpanTracker.class);
         buildExpectations(true, mockSpanTracker);
@@ -334,6 +335,7 @@ public class DefaultStatsTrackerLocatorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetIncidentTrackerWithSizeTwoKeyArray() {
         IncidentTracker mockIncidentTracker = mockery.mock(IncidentTracker.class);
         buildExpectations(true, mockIncidentTracker);
@@ -438,6 +440,7 @@ public class DefaultStatsTrackerLocatorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetManualTrackerWithSizeTwoKeyArray() {
         ManualTracker mockManualTracker = mockery.mock(ManualTracker.class);
         buildExpectations(true, mockManualTracker);
