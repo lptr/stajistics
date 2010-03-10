@@ -15,7 +15,6 @@
 package org.stajistics.tracker;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.util.Collections;
@@ -36,7 +35,7 @@ import org.junit.runner.RunWith;
 @RunWith(JMock.class)
 public class CompositeStatsTrackerFactoryTest {
 
-    private Mockery mockery;
+    protected Mockery mockery;
 
     @Before
     public void setUp() {

@@ -65,7 +65,6 @@ public class StatsSelectiveProxy extends StatsProxy {
         return wrap(statsManager, key, target, criteria, ifaces);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T,U extends T> T wrap(final StatsManager statsManager,
                                          final StatsKey key,
                                          final U target,

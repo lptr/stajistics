@@ -162,6 +162,7 @@ public abstract class AbstractStatsSessionTestCase {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetDataRecorders() {
         final DataRecorder mockDataRecorder = mockery.mock(DataRecorder.class);
 
@@ -622,7 +623,7 @@ public abstract class AbstractStatsSessionTestCase {
         // Remove hits
         dataSet.removeField(DataSet.Field.HITS);
 
-        StatsSession anotherSession = createStatsSession(null);
+        StatsSession anotherSession = createStatsSession((DataRecorder[]) null);
 
         anotherSession.restore(dataSet);
 
@@ -654,7 +655,7 @@ public abstract class AbstractStatsSessionTestCase {
         // Remove commits
         dataSet.removeField(DataSet.Field.COMMITS);
 
-        StatsSession anotherSession = createStatsSession(null);
+        StatsSession anotherSession = createStatsSession((DataRecorder[]) null);
 
         anotherSession.restore(dataSet);
 
