@@ -33,8 +33,8 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyUtils;
 import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.Tracker;
+import org.stajistics.tracker.TrackerFactory;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
@@ -130,17 +130,17 @@ public class StatsProxyTest {
 
         mockStatsManager.getConfigFactory()
                         .createConfigBuilder()
-                        .withTrackerFactory(new StatsTrackerFactory<StatsTracker>() {
+                        .withTrackerFactory(new TrackerFactory<Tracker>() {
             @Override
-            public StatsTracker createTracker(final StatsKey key,
+            public Tracker createTracker(final StatsKey key,
                                               final StatsSessionManager sessionManager) {
 
                 return mockTracker;
             }
             
             @Override
-            public Class<StatsTracker> getTrackerType() {
-                return StatsTracker.class;
+            public Class<Tracker> getTrackerType() {
+                return Tracker.class;
             }
          })
          .setConfigFor(methodKey);
@@ -175,9 +175,9 @@ public class StatsProxyTest {
 
         mockStatsManager.getConfigFactory()
                         .createConfigBuilder()
-                        .withTrackerFactory(new StatsTrackerFactory<StatsTracker>() {
+                        .withTrackerFactory(new TrackerFactory<Tracker>() {
              @Override
-             public StatsTracker createTracker(final StatsKey key,
+             public Tracker createTracker(final StatsKey key,
                                                final StatsSessionManager sessionManager) {
                  if (key.equals(methodKey)) {
                      return methodTracker;
@@ -191,8 +191,8 @@ public class StatsProxyTest {
              }
              
              @Override
-             public Class<StatsTracker> getTrackerType() {
-                 return StatsTracker.class;
+             public Class<Tracker> getTrackerType() {
+                 return Tracker.class;
              }
          })
          .setConfigFor(methodKey);

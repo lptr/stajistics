@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Range;
 import org.stajistics.util.RangeList;
 import org.stajistics.util.ThreadSafe;
@@ -75,7 +75,7 @@ public class RangeDataRecorder implements DataRecorder {
 
     @Override
     public void update(final StatsSession session,
-                       final StatsTracker tracker, 
+                       final Tracker tracker, 
                        final long now) {
         final double value = tracker.getValue();
         final boolean hasOverlap = rangeList.hasOverlap();

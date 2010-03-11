@@ -23,7 +23,7 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class GarbageCollectionTimeTrackerTest extends AbstractSpanStatsTrackerTestCase {
+public class GarbageCollectionTimeTrackerTest extends AbstractSpanTrackerTestCase {
 
     @Override
     protected SpanTracker createStatsTracker(final StatsSession session) {

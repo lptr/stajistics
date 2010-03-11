@@ -30,8 +30,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.stajistics.event.StatsEventManager;
-import org.stajistics.event.StatsEventType;
+import org.stajistics.event.EventManager;
+import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
@@ -57,18 +57,18 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
     private final Lock updateLock = new ReentrantLock();
 
-    private final StatsEventManager eventManager;
+    private final EventManager eventManager;
     private final StatsKeyFactory keyFactory;
 
     /**
      * Create a new DefaultStatsConfigManager instance containing no initial configurations.
      *
-     * @param eventManager The {@link StatsEventManager} with which to fire configuration events.
+     * @param eventManager The {@link EventManager} with which to fire configuration events.
      * @param keyFactory The {@link StatsKeyFactory} with which to create keys.
      *
      * @throws NullPointerException If <tt>eventManager</tt> or <tt>keyFactory</tt> is <tt>null</tt>.
      */
-    public DefaultStatsConfigManager(final StatsEventManager eventManager,
+    public DefaultStatsConfigManager(final EventManager eventManager,
                                      final StatsKeyFactory keyFactory) {
         this(eventManager, keyFactory, createDefaultConfig(), null);
     }
@@ -78,7 +78,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
      * If the passed <tt>configMap</tt> is neither a {@link SortedMap} nor a {@link LinkedHashMap},
      * it is transferred into a {@link TreeMap} in order to ensure a predictable entry extraction order.
      *
-     * @param eventManager The {@link StatsEventManager} with which to fire configuration events.
+     * @param eventManager The {@link EventManager} with which to fire configuration events.
      * @param keyFactory The {@link StatsKeyFactory} with which to create keys.
      * @param rootConfig The root {@link StatsConfig} from which to inherit in the absence of configuration.
      * @param configMap A Map of key names to configurations. May be <tt>null</tt>.
@@ -86,7 +86,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
      * @throws NullPointerException If <tt>eventManager</tt>, <tt>keyFactory</tt>,
      *                              or <tt>rootConfig</tt> is <tt>null</tt>.
      */
-    public DefaultStatsConfigManager(final StatsEventManager eventManager,
+    public DefaultStatsConfigManager(final EventManager eventManager,
                                      final StatsKeyFactory keyFactory,
                                      final StatsConfig rootConfig,
                                      Map<String,StatsConfig> configMap) {
@@ -326,7 +326,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
         if (!newEntries.isEmpty()) {
             for (KeyEntry e : newEntries) {
-                eventManager.fireEvent(StatsEventType.CONFIG_CREATED,
+                eventManager.fireEvent(EventType.CONFIG_CREATED,
                                        e.getKey(),
                                        e.getConfig());
             }
@@ -357,7 +357,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
             while (entryItr.hasNext()) {
                 entry = entryItr.next();
 
-                eventManager.fireEvent(StatsEventType.CONFIG_CHANGED,
+                eventManager.fireEvent(EventType.CONFIG_CHANGED,
                                        entry.getKey(),
                                        entry.getConfig());
             }
@@ -380,7 +380,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         while (entryItr.hasNext()) {
             entry = entryItr.next();
 
-            eventManager.fireEvent(StatsEventType.CONFIG_DESTROYED,
+            eventManager.fireEvent(EventType.CONFIG_DESTROYED,
                                    entry.getKey(),
                                    entry.getConfig());
         }

@@ -16,7 +16,7 @@ package org.stajistics.tracker;
 
 import org.stajistics.NullStatsKey;
 import org.stajistics.StatsKey;
-import org.stajistics.session.ImmutableStatsSession;
+import org.stajistics.session.ImmutableSession;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.incident.IncidentTracker;
@@ -25,19 +25,19 @@ import org.stajistics.tracker.span.SpanTracker;
 
 
 /**
- * A singleton {@link StatsTracker} implementation conforming to the null object pattern.
+ * A singleton {@link Tracker} implementation conforming to the null object pattern.
  *
  * @author The Stajistics Project
  */
 public final class NullTracker
-    implements StatsTracker,SpanTracker,IncidentTracker,ManualTracker {
+    implements Tracker,SpanTracker,IncidentTracker,ManualTracker {
 
-    public static final StatsTrackerFactory<StatsTracker> FACTORY = new Factory();
+    public static final TrackerFactory<Tracker> FACTORY = new Factory();
 
     private static final NullTracker INSTANCE = new NullTracker();
 
     private static final StatsSession session =
-        new ImmutableStatsSession(NullStatsKey.getInstance());
+        new ImmutableSession(NullStatsKey.getInstance());
 
     private NullTracker() {}
 
@@ -71,7 +71,7 @@ public final class NullTracker
     }
 
     @Override
-    public StatsTracker reset() {
+    public Tracker reset() {
         return this;
     }
 
@@ -105,17 +105,17 @@ public final class NullTracker
 
     /* NESTED CLASSES */
 
-    public static final class Factory implements StatsTrackerFactory<StatsTracker> {
+    public static final class Factory implements TrackerFactory<Tracker> {
 
         @Override
-        public StatsTracker createTracker(final StatsKey key,
+        public Tracker createTracker(final StatsKey key,
                                           final StatsSessionManager sessionManager) {
             return NullTracker.getInstance();
         }
 
         @Override
-        public Class<StatsTracker> getTrackerType() {
-            return StatsTracker.class;
+        public Class<Tracker> getTrackerType() {
+            return Tracker.class;
         }
     }
 }

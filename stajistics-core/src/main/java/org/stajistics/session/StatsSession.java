@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
-import org.stajistics.event.StatsEventType;
+import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 
 /**
  * Stores statistics data collected for a single {@link StatsKey}.
@@ -46,8 +46,8 @@ public interface StatsSession extends Serializable {
     List<DataRecorder> getDataRecorders();
 
     /**
-     * Get the number of hits, or the number of times a {@link StatsTracker} associated with
-     * this session's {@link StatsKey} has called {@link #track(StatsTracker, long)}.
+     * Get the number of hits, or the number of times a {@link Tracker} associated with
+     * this session's {@link StatsKey} has called {@link #track(Tracker, long)}.
      *
      * @return The positive number of hits to this session.
      */
@@ -68,8 +68,8 @@ public interface StatsSession extends Serializable {
     long getLastHitStamp();
 
     /**
-     * Get the number of commits, or the number of time a {@link StatsTracker} associated with
-     * this session's {@link StatsKey} has called {@link #update(StatsTracker, long)}.
+     * Get the number of commits, or the number of time a {@link Tracker} associated with
+     * this session's {@link StatsKey} has called {@link #update(Tracker, long)}.
      *
      * @return The positive number of commits to ths session.
      */
@@ -80,7 +80,7 @@ public interface StatsSession extends Serializable {
      *
      * @return The first value.
      *
-     * @see StatsTracker#getValue()
+     * @see Tracker#getValue()
      */
     double getFirst();
 
@@ -89,7 +89,7 @@ public interface StatsSession extends Serializable {
      *
      * @return The most recent value.
      *
-     * @see StatsTracker#getValue()
+     * @see Tracker#getValue()
      */
     double getLast();
 
@@ -98,7 +98,7 @@ public interface StatsSession extends Serializable {
      *
      * @return The minimum value seen for this session.
      *
-     * @see StatsTracker#getValue()
+     * @see Tracker#getValue()
      */
     double getMin();
 
@@ -107,7 +107,7 @@ public interface StatsSession extends Serializable {
      *
      * @return The maximum value seen for this session.
      *
-     * @see StatsTracker#getValue()
+     * @see Tracker#getValue()
      */
     double getMax();
 
@@ -116,7 +116,7 @@ public interface StatsSession extends Serializable {
      *
      * @return The sum of all values seen for this session.
      *
-     * @see StatsTracker#getValue()
+     * @see Tracker#getValue()
      */
     double getSum();
 
@@ -144,7 +144,7 @@ public interface StatsSession extends Serializable {
      * well as data stored by the {@link DataRecorder}s associated with this
      * session.</p>
      *
-     * <p>Fires a {@link StatsEventType#SESSION_CLEARED} event.</p>
+     * <p>Fires a {@link EventType#SESSION_CLEARED} event.</p>
      *
      * @return A {@link DataSet} full of data, never <tt>null</tt>.
      */
@@ -154,46 +154,46 @@ public interface StatsSession extends Serializable {
      * <p>Re-populate internal data fields and {@link DataRecorder}s using the given
      * <tt>dataSet</tt>. This will clear any previously recorded data.</p>
      *
-     * <p>Fires a {@link StatsEventType#SESSION_RESTORED} event.</p>
+     * <p>Fires a {@link EventType#SESSION_RESTORED} event.</p>
      *
      * @param dataSet The data set with which to populate this session.
      */
     void restore(DataSet dataSet);
 
     /**
-     * <p>Do not call directly. Normally called by a {@link StatsTracker} implementation.
+     * <p>Do not call directly. Normally called by a {@link Tracker} implementation.
      * Increments the hits for this session by one.</p>
      *
-     * <p>Fires a {@link StatsEventType#TRACKER_TRACKING} event for the passed <tt>tracker</tt>.</p>
+     * <p>Fires a {@link EventType#TRACKER_TRACKING} event for the passed <tt>tracker</tt>.</p>
      *
-     * @param tracker The {@link StatsTracker} that, after this call, will be tracking
+     * @param tracker The {@link Tracker} that, after this call, will be tracking
      *        data for this session.
      * @param now The time stamp of the current time if known, otherwise <tt>-1</tt>.
      */
-    void track(StatsTracker tracker, long now);
+    void track(Tracker tracker, long now);
 
     /**
-     * <p>Do not call directly. Normally called by a {@link StatsTracker} implementation.
+     * <p>Do not call directly. Normally called by a {@link Tracker} implementation.
      * Increments the commits for this session by one. The value reported by the given
-     * <tt>tracker</tt>'s {@link StatsTracker#getValue()} method is processed and
+     * <tt>tracker</tt>'s {@link Tracker#getValue()} method is processed and
      * offered to the {@link DataRecorder}s associated with this session.</p>
      *
-     * <p>Fires a {@link StatsEventType#TRACKER_COMMITTED} event for the passed <tt>tracker</tt>.</p>
+     * <p>Fires a {@link EventType#TRACKER_COMMITTED} event for the passed <tt>tracker</tt>.</p>
      *
-     * @param tracker The {@link StatsTracker} that collected the data for this update.
+     * @param tracker The {@link Tracker} that collected the data for this update.
      * @param now The time stamp of the current time if known, otherwise <tt>-1</tt>.
      *
-     * @see StatsTracker#getValue()
+     * @see Tracker#getValue()
      * @see DataRecorder
      * @see #getDataRecorders()
      */
-    void update(StatsTracker tracker, long now);
+    void update(Tracker tracker, long now);
 
     /**
      * <p>Clear all data recorded for this session. Resets all fields to initial values and
      * calls {@link DataRecorder#clear()} on all {@link DataRecorder} associated with this session.</p>
      *
-     * <p>Fires a {@link StatsEventType#SESSION_CLEARED} event.</p>
+     * <p>Fires a {@link EventType#SESSION_CLEARED} event.</p>
      */
     void clear();
 

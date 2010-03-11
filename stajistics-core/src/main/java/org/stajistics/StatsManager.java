@@ -16,10 +16,10 @@ package org.stajistics;
 
 import java.io.Serializable;
 
-import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
-import org.stajistics.tracker.StatsTrackerLocator;
+import org.stajistics.tracker.TrackerLocator;
 
 /**
  * Acts as an aggregator of other managers and factories. Maintains a master enabled switch for
@@ -44,18 +44,18 @@ public interface StatsManager extends Serializable {
     StatsSessionManager getSessionManager();
 
     /**
-     * Get the {@link StatsEventManager}.
+     * Get the {@link EventManager}.
      *
-     * @return The {@link StatsEventManager}, never <tt>null</tt>.
+     * @return The {@link EventManager}, never <tt>null</tt>.
      */
-    StatsEventManager getEventManager();
+    EventManager getEventManager();
 
     /**
-     * Get the {@link StatsTrackerLocator}.
+     * Get the {@link TrackerLocator}.
      *
-     * @return The {@link StatsTrackerLocator}, never <tt>null</tt>.
+     * @return The {@link TrackerLocator}, never <tt>null</tt>.
      */
-    StatsTrackerLocator getTrackerLocator();
+    TrackerLocator getTrackerLocator();
 
     /**
      * Get the {@link StatsKeyFactory}.

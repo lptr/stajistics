@@ -23,7 +23,7 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class ThreadBlockTimeTrackerTest extends AbstractSpanStatsTrackerTestCase {
+public class ThreadBlockTimeTrackerTest extends AbstractSpanTrackerTestCase {
 
     @Override
     protected SpanTracker createStatsTracker(final StatsSession session) {

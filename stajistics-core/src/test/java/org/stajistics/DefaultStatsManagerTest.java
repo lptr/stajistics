@@ -32,10 +32,10 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
-import org.stajistics.tracker.StatsTrackerLocator;
+import org.stajistics.tracker.TrackerLocator;
 
 /**
  *
@@ -60,6 +60,8 @@ public class DefaultStatsManagerTest {
     @Test
     public void testCreateWithDefaults() {
         StatsManager mgr = DefaultStatsManager.createWithDefaults();
+        Stats.loadManager(mgr);
+
         assertNotNull(mgr.getConfigManager());
         assertNotNull(mgr.getSessionManager());
         assertNotNull(mgr.getEventManager());
@@ -73,8 +75,8 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(null,
                                     mockery.mock(StatsSessionManager.class),
-                                    mockery.mock(StatsEventManager.class),
-                                    mockery.mock(StatsTrackerLocator.class),
+                                    mockery.mock(EventManager.class),
+                                    mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     mockery.mock(StatsConfigFactory.class),
                                     mockery.mock(TaskService.class));
@@ -89,8 +91,8 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     null,
-                                    mockery.mock(StatsEventManager.class),
-                                    mockery.mock(StatsTrackerLocator.class),
+                                    mockery.mock(EventManager.class),
+                                    mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     mockery.mock(StatsConfigFactory.class),
                                     mockery.mock(TaskService.class));
@@ -106,11 +108,11 @@ public class DefaultStatsManagerTest {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
                                     null,
-                                    mockery.mock(StatsTrackerLocator.class),
+                                    mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     mockery.mock(StatsConfigFactory.class),
                                     mockery.mock(TaskService.class));
-            fail("Allowed null StatsEventManager");
+            fail("Allowed null EventManager");
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());
         }
@@ -121,12 +123,12 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
-                                    mockery.mock(StatsEventManager.class),
+                                    mockery.mock(EventManager.class),
                                     null,
                                     mockery.mock(StatsKeyFactory.class),
                                     mockery.mock(StatsConfigFactory.class),
                                     mockery.mock(TaskService.class));
-            fail("Allowed null StatsTrackerLocator");
+            fail("Allowed null TrackerLocator");
         } catch (NullPointerException npe) {
             assertEquals("trackerLocator", npe.getMessage());
         }
@@ -137,8 +139,8 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
-                                    mockery.mock(StatsEventManager.class),
-                                    mockery.mock(StatsTrackerLocator.class),
+                                    mockery.mock(EventManager.class),
+                                    mockery.mock(TrackerLocator.class),
                                     null,
                                     mockery.mock(StatsConfigFactory.class),
                                     mockery.mock(TaskService.class));
@@ -153,8 +155,8 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
-                                    mockery.mock(StatsEventManager.class),
-                                    mockery.mock(StatsTrackerLocator.class),
+                                    mockery.mock(EventManager.class),
+                                    mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     null,
                                     mockery.mock(TaskService.class));
@@ -169,8 +171,8 @@ public class DefaultStatsManagerTest {
         try {
             new DefaultStatsManager(mockery.mock(StatsConfigManager.class),
                                     mockery.mock(StatsSessionManager.class),
-                                    mockery.mock(StatsEventManager.class),
-                                    mockery.mock(StatsTrackerLocator.class),
+                                    mockery.mock(EventManager.class),
+                                    mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
                                     mockery.mock(StatsConfigFactory.class),
                                     null);
@@ -184,8 +186,8 @@ public class DefaultStatsManagerTest {
     public void testGetConfigManager() {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
-        StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
-        StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
+        EventManager eventManager = mockery.mock(EventManager.class);
+        TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
@@ -205,8 +207,8 @@ public class DefaultStatsManagerTest {
     public void testGetSessionManager() {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
-        StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
-        StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
+        EventManager eventManager = mockery.mock(EventManager.class);
+        TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
@@ -226,8 +228,8 @@ public class DefaultStatsManagerTest {
     public void testGetEventManager() {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
-        StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
-        StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
+        EventManager eventManager = mockery.mock(EventManager.class);
+        TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
@@ -247,9 +249,9 @@ public class DefaultStatsManagerTest {
     public void testGetTrackerLocator() {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
-        StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
+        EventManager eventManager = mockery.mock(EventManager.class);
 
-        StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
+        TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
@@ -269,8 +271,8 @@ public class DefaultStatsManagerTest {
     public void testGetKeyFactory() {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
-        StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
-        StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
+        EventManager eventManager = mockery.mock(EventManager.class);
+        TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
@@ -290,8 +292,8 @@ public class DefaultStatsManagerTest {
     public void testGetConfigFactory() {
         StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
         StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
-        StatsEventManager eventManager = mockery.mock(StatsEventManager.class);
-        StatsTrackerLocator trackerLocator = mockery.mock(StatsTrackerLocator.class);
+        EventManager eventManager = mockery.mock(EventManager.class);
+        TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
         StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);

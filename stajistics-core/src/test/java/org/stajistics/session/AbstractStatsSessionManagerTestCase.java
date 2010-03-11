@@ -32,7 +32,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
 import org.stajistics.StatsManager;
 import org.stajistics.TestUtil;
-import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.EventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.session.recorder.DataRecorderFactory;
 
@@ -49,7 +49,7 @@ public abstract class AbstractStatsSessionManagerTestCase {
 
     protected StatsKey mockKey;
     protected StatsConfigManager mockConfigManager;
-    protected StatsEventManager mockEventManager;
+    protected EventManager mockEventManager;
 
     protected StatsSessionManager sessionManager;
 
@@ -59,7 +59,7 @@ public abstract class AbstractStatsSessionManagerTestCase {
 
         mockKey = mockery.mock(StatsKey.class);
         mockConfigManager = mockery.mock(StatsConfigManager.class);
-        mockEventManager = mockery.mock(StatsEventManager.class);
+        mockEventManager = mockery.mock(EventManager.class);
 
         sessionManager = createSessionManager();
     }

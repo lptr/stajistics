@@ -15,8 +15,8 @@
 package org.stajistics.tracker.manual;
 
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.Tracker;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  * A tracker type that allows direct manipulation of the numeric <i>value</i> to be published
@@ -25,12 +25,12 @@ import org.stajistics.tracker.StatsTrackerFactory;
  *
  * @author The Stajistics Project
  */
-public interface ManualTracker extends StatsTracker {
+public interface ManualTracker extends Tracker {
 
     /**
      * The factory that will produce the default type of {@link ManualTracker} instances.
      */
-    public static final StatsTrackerFactory<ManualTracker> FACTORY = DefaultManualTracker.FACTORY;
+    public static final TrackerFactory<ManualTracker> FACTORY = DefaultManualTracker.FACTORY;
 
     /**
      * Add the given <tt>value</tt> to the currently stored value.

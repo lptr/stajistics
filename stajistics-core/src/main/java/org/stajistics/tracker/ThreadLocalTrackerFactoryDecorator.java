@@ -27,15 +27,15 @@ import org.stajistics.util.Decorator;
  *
  * @author The Stajistics Project
  */
-public class ThreadLocalTrackerFactoryDecorator<T extends StatsTracker> 
-        implements StatsTrackerFactory<T>,Decorator<StatsTrackerFactory<T>> {
+public class ThreadLocalTrackerFactoryDecorator<T extends Tracker> 
+        implements TrackerFactory<T>,Decorator<TrackerFactory<T>> {
 
-    private final StatsTrackerFactory<T> delegate;
+    private final TrackerFactory<T> delegate;
 
     private final ConcurrentMap<StatsKey,ThreadLocal<T>> threadTrackerMap =
         new ConcurrentHashMap<StatsKey,ThreadLocal<T>>();
 
-    public ThreadLocalTrackerFactoryDecorator(final StatsTrackerFactory<T> delegate) {
+    public ThreadLocalTrackerFactoryDecorator(final TrackerFactory<T> delegate) {
         this.delegate = delegate;
     }
 
@@ -67,7 +67,7 @@ public class ThreadLocalTrackerFactoryDecorator<T extends StatsTracker>
     }
 
     @Override
-    public StatsTrackerFactory<T> delegate() {
+    public TrackerFactory<T> delegate() {
         return delegate;
     }
 }

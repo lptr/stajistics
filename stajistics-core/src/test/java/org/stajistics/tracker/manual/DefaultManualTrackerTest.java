@@ -20,7 +20,7 @@ import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.TestUtil;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.AbstractStatsTrackerTestCase;
+import org.stajistics.tracker.AbstractTrackerTestCase;
 
 /**
  * 
@@ -28,7 +28,7 @@ import org.stajistics.tracker.AbstractStatsTrackerTestCase;
  *
  * @author The Stajistics Project
  */
-public class DefaultManualTrackerTest extends AbstractStatsTrackerTestCase<ManualTracker> {
+public class DefaultManualTrackerTest extends AbstractTrackerTestCase<ManualTracker> {
 
     @Override
     protected DefaultManualTracker createStatsTracker(final StatsSession session) {

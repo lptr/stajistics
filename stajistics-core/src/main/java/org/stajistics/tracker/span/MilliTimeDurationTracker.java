@@ -31,7 +31,7 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public class MilliTimeDurationTracker extends AbstractSpanStatsTracker {
+public class MilliTimeDurationTracker extends AbstractSpanTracker {
 
     public static final Factory FACTORY = new Factory();
 

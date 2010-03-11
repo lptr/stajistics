@@ -19,8 +19,8 @@ import java.io.Serializable;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.Tracker;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  * Represents the configuration that can be applied to a single target for which statistics 
@@ -38,11 +38,11 @@ public interface StatsConfig extends Serializable {
     boolean isEnabled();
 
     /**
-     * Obtain the factory that creates {@link StatsTracker}s for the associated target.
+     * Obtain the factory that creates {@link Tracker}s for the associated target.
      *
-     * @return A {@link StatsTrackerFactory} instance, never <tt>null</tt>.
+     * @return A {@link TrackerFactory} instance, never <tt>null</tt>.
      */
-    StatsTrackerFactory<?> getTrackerFactory();
+    TrackerFactory<?> getTrackerFactory();
 
     /**
      * Obtain the factory that creates {@link StatsSession}s for the associated target.

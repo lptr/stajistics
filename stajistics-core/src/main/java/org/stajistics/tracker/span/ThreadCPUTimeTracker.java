@@ -17,7 +17,7 @@ package org.stajistics.tracker.span;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 
 /**
  * 
@@ -25,7 +25,7 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
+public class ThreadCPUTimeTracker extends AbstractThreadInfoSpanTracker {
 
     public static final Factory FACTORY = new Factory();
 
@@ -58,7 +58,7 @@ public class ThreadCPUTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     @Override
-    public StatsTracker reset() {
+    public Tracker reset() {
         super.reset();
 
         startCPUTime = -1;

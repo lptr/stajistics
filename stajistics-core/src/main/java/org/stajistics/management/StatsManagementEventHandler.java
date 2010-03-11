@@ -17,8 +17,8 @@ package org.stajistics.management;
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
-import org.stajistics.event.StatsEventHandler;
-import org.stajistics.event.StatsEventType;
+import org.stajistics.event.EventHandler;
+import org.stajistics.event.EventType;
 import org.stajistics.session.StatsSession;
 
 /**
@@ -27,7 +27,7 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class StatsManagementEventHandler implements StatsEventHandler {
+public class StatsManagementEventHandler implements EventHandler {
 
     private final StatsManager statsManager;
     private final StatsManagement statsManagement;
@@ -46,22 +46,22 @@ public class StatsManagementEventHandler implements StatsEventHandler {
     }
 
     @Override
-    public void handleStatsEvent(final StatsEventType eventType, 
+    public void handleStatsEvent(final EventType eventType, 
                                  final StatsKey key, 
                                  final Object target) {
-        if (eventType == StatsEventType.SESSION_CREATED) {
+        if (eventType == EventType.SESSION_CREATED) {
             statsManagement.registerSessionMBean(statsManager, (StatsSession)target);
 
-        } else if (eventType == StatsEventType.SESSION_DESTROYED) {
+        } else if (eventType == EventType.SESSION_DESTROYED) {
             statsManagement.unregisterSessionMBean(statsManager, key);
 
-        } else if (eventType == StatsEventType.CONFIG_CREATED) {
+        } else if (eventType == EventType.CONFIG_CREATED) {
             statsManagement.registerConfigMBean(statsManager, key, (StatsConfig)target);
 
-        } else if (eventType == StatsEventType.CONFIG_DESTROYED) {
+        } else if (eventType == EventType.CONFIG_DESTROYED) {
             statsManagement.unregisterConfigMBean(statsManager, key);
 
-        } else if (eventType == StatsEventType.CONFIG_CHANGED) {
+        } else if (eventType == EventType.CONFIG_CHANGED) {
             statsManagement.unregisterConfigMBean(statsManager, key);
             statsManagement.registerConfigMBean(statsManager, key, (StatsConfig)target);
         }

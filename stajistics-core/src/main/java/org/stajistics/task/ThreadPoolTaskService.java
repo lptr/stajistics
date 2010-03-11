@@ -48,7 +48,7 @@ public class ThreadPoolTaskService implements TaskService {
 
         int noCPUs = Runtime.getRuntime().availableProcessors();
         int corePoolSize = StatsProperties.getIntegerProperty(PROP_CORE_POOL_SIZE,
-                                                              noCPUs);
+                                                              noCPUs + 1);
         int maxPoolSize = StatsProperties.getIntegerProperty(PROP_MAX_POOL_SIZE,
                                                              DEFAULT_MAX_POOL_SIZE);
 
@@ -68,7 +68,7 @@ public class ThreadPoolTaskService implements TaskService {
                                           createWorkQueue(),
                                           createThreadFactory());
 
-        executor.prestartAllCoreThreads();
+        executor.prestartCoreThread();
     }
 
     public ThreadPoolTaskService(final ThreadPoolExecutor executor) {

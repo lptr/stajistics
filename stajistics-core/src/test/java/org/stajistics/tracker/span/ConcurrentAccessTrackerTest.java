@@ -24,7 +24,7 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class ConcurrentAccessTrackerTest extends AbstractSpanStatsTrackerTestCase {
+public class ConcurrentAccessTrackerTest extends AbstractSpanTrackerTestCase {
 
     @Override
     protected SpanTracker createStatsTracker(final StatsSession session) {

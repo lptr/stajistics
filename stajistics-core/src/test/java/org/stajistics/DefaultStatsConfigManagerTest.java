@@ -28,8 +28,8 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.event.StatsEventManager;
-import org.stajistics.event.StatsEventType;
+import org.stajistics.event.EventManager;
+import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
@@ -42,7 +42,7 @@ import org.stajistics.tracker.span.TimeDurationTracker;
 public class DefaultStatsConfigManagerTest {
 
     private Mockery mockery;
-    private StatsEventManager mockEventManager;
+    private EventManager mockEventManager;
     private StatsKeyFactory mockKeyFactory;
 
     private DefaultStatsConfigManager configManager;
@@ -50,7 +50,7 @@ public class DefaultStatsConfigManagerTest {
     @Before
     public void setUp() {
         mockery = new Mockery();
-        mockEventManager = mockery.mock(StatsEventManager.class);
+        mockEventManager = mockery.mock(EventManager.class);
         mockKeyFactory = new DefaultStatsKeyFactory(); // TODO: actually mock this
 
         configManager = new DefaultStatsConfigManager(mockEventManager, mockKeyFactory);
@@ -93,16 +93,16 @@ public class DefaultStatsConfigManagerTest {
         configMap.put(keys[3].getName(), config3);
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[0]),
                                             with(config0));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[1]),
                                             with(config1));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[2]),
                                             with(config2));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[3]),
                                             with(config3));
         }});
@@ -130,7 +130,7 @@ public class DefaultStatsConfigManagerTest {
         final StatsConfig config = createConfig();
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CHANGED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CHANGED),
                                             with(any(StatsKey.class)),
                                             with(config));
         }});
@@ -192,16 +192,16 @@ public class DefaultStatsConfigManagerTest {
         final StatsConfig config3 = createConfig();
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[0]),
                                             with(config0));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[1]),
                                             with(config1));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[2]),
                                             with(config2));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[3]),
                                             with(config3));
         }});
@@ -249,25 +249,25 @@ public class DefaultStatsConfigManagerTest {
         final StatsConfig config3 = createConfig();
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[0]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[1]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[2]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[3]),
                                             with(config3));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CHANGED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CHANGED),
                                             with(keys[2]),
                                             with(config2));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CHANGED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CHANGED),
                                             with(keys[1]),
                                             with(config1));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CHANGED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CHANGED),
                                             with(keys[0]),
                                             with(config0));
         }});
@@ -313,16 +313,16 @@ public class DefaultStatsConfigManagerTest {
         final StatsConfig rootConfig = configManager.getRootConfig();
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[0]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[1]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[2]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[3]),
                                             with(rootConfig));
         }});
@@ -341,16 +341,16 @@ public class DefaultStatsConfigManagerTest {
         final StatsConfig rootConfig = configManager.getRootConfig();
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[0]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[1]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[2]),
                                             with(rootConfig));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                             with(keys[3]),
                                             with(rootConfig));
         }});
@@ -504,7 +504,7 @@ public class DefaultStatsConfigManagerTest {
     @Test
     public void testGetConfig() {
         mockery.checking(new Expectations() {{
-            exactly(4).of(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            exactly(4).of(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                                       with(any(StatsKey.class)),
                                                       with(any(StatsConfig.class)));
         }});
@@ -535,19 +535,19 @@ public class DefaultStatsConfigManagerTest {
         final StatsConfig config3 = createConfig();
 
         mockery.checking(new Expectations() {{
-            ignoring(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            ignoring(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                                  with(any(StatsKey.class)),
                                                  with(aNonNull(StatsConfig.class)));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[0]),
                                             with(config0));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[1]),
                                             with(config1));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[2]),
                                             with(config2));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[3]),
                                             with(config3));
         }});
@@ -579,19 +579,19 @@ public class DefaultStatsConfigManagerTest {
         final StatsConfig config3 = createConfig();
 
         mockery.checking(new Expectations() {{
-            ignoring(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            ignoring(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                                  with(any(StatsKey.class)),
                                                  with(aNonNull(StatsConfig.class)));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[3]),
                                             with(config3));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[2]),
                                             with(config2));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[1]),
                                             with(config1));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[0]),
                                             with(config0));
         }});
@@ -641,19 +641,19 @@ public class DefaultStatsConfigManagerTest {
         final StatsConfig config3 = createConfig();
 
         mockery.checking(new Expectations() {{
-            ignoring(mockEventManager).fireEvent(with(StatsEventType.CONFIG_CREATED),
+            ignoring(mockEventManager).fireEvent(with(EventType.CONFIG_CREATED),
                                                  with(any(StatsKey.class)),
                                                  with(aNonNull(StatsConfig.class)));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[0]),
                                             with(config0));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[1]),
                                             with(config1));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[2]),
                                             with(config2));
-            one(mockEventManager).fireEvent(with(StatsEventType.CONFIG_DESTROYED),
+            one(mockEventManager).fireEvent(with(EventType.CONFIG_DESTROYED),
                                             with(keys[3]),
                                             with(config3));
         }});

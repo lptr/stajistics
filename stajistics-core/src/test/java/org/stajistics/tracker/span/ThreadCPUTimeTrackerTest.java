@@ -9,7 +9,7 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class ThreadCPUTimeTrackerTest extends AbstractSpanStatsTrackerTestCase {
+public class ThreadCPUTimeTrackerTest extends AbstractSpanTrackerTestCase {
 
     @Override
     protected SpanTracker createStatsTracker(final StatsSession session) {

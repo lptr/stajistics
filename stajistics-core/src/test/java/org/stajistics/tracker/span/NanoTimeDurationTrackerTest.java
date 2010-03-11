@@ -23,7 +23,7 @@ import org.stajistics.session.StatsSession;
  *
  * @author The Stajistics Project
  */
-public class NanoTimeDurationTrackerTest extends AbstractSpanStatsTrackerTestCase {
+public class NanoTimeDurationTrackerTest extends AbstractSpanTrackerTestCase {
 
     @Override
     protected SpanTracker createStatsTracker(final StatsSession session) {

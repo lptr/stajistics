@@ -27,14 +27,14 @@ import org.stajistics.util.Decorator;
  *
  * @author The Stajistics Project
  */
-public class SingletonTrackerFactoryDecorator<T extends StatsTracker>
-        implements StatsTrackerFactory<T>,Decorator<StatsTrackerFactory<T>> {
+public class SingletonTrackerFactoryDecorator<T extends Tracker>
+        implements TrackerFactory<T>,Decorator<TrackerFactory<T>> {
 
-    private final StatsTrackerFactory<T> delegate;
+    private final TrackerFactory<T> delegate;
 
     private final ConcurrentMap<StatsKey,T> singletonTrackerMap = new ConcurrentHashMap<StatsKey,T>();
 
-    public SingletonTrackerFactoryDecorator(final StatsTrackerFactory<T> delegate) {
+    public SingletonTrackerFactoryDecorator(final TrackerFactory<T> delegate) {
         if (delegate == null) {
             throw new NullPointerException("null delegate");
         }
@@ -62,7 +62,7 @@ public class SingletonTrackerFactoryDecorator<T extends StatsTracker>
     }
 
     @Override
-    public StatsTrackerFactory<T> delegate() {
+    public TrackerFactory<T> delegate() {
         return delegate;
     }
 }

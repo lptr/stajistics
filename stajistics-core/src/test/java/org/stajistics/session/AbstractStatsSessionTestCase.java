@@ -33,10 +33,10 @@ import org.stajistics.TestUtil;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
 import org.stajistics.data.DataSet.Field;
-import org.stajistics.event.StatsEventManager;
-import org.stajistics.event.StatsEventType;
+import org.stajistics.event.EventManager;
+import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Decorator;
 
 /**
@@ -52,8 +52,8 @@ public abstract class AbstractStatsSessionTestCase {
 
     protected Mockery mockery;
     protected StatsKey mockKey;
-    protected StatsTracker mockTracker;
-    protected StatsEventManager mockEventManager;
+    protected Tracker mockTracker;
+    protected EventManager mockEventManager;
 
     protected StatsSession session;
 
@@ -64,8 +64,8 @@ public abstract class AbstractStatsSessionTestCase {
         mockKey = mockery.mock(StatsKey.class);
         TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
 
-        mockTracker = mockery.mock(StatsTracker.class);
-        mockEventManager = mockery.mock(StatsEventManager.class);
+        mockTracker = mockery.mock(Tracker.class);
+        mockEventManager = mockery.mock(EventManager.class);
 
         initMocks();
 
@@ -91,7 +91,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullKey() {
         try {
-            new ConcurrentStatsSession(null, mockEventManager, (DataRecorder[])null);
+            new ConcurrentSession(null, mockEventManager, (DataRecorder[])null);
             fail();
         } catch (NullPointerException npe) {
             assertEquals("key", npe.getMessage());
@@ -101,7 +101,7 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullEventManager() {
         try {
-            new ConcurrentStatsSession(mockKey, null, (DataRecorder[])null);
+            new ConcurrentSession(mockKey, null, (DataRecorder[])null);
             fail();
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());
@@ -279,7 +279,7 @@ public abstract class AbstractStatsSessionTestCase {
     public void testClearFiresSessionClearedEvent() {
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.SESSION_CLEARED),
+            one(mockEventManager).fireEvent(with(EventType.SESSION_CLEARED),
                                             with(mockKey),
                                             with(session));
         }});
@@ -291,7 +291,7 @@ public abstract class AbstractStatsSessionTestCase {
     public void testDrainDataFiresSessionClearedEvent() {
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.SESSION_CLEARED),
+            one(mockEventManager).fireEvent(with(EventType.SESSION_CLEARED),
                                             with(mockKey),
                                             with(session));
         }});
@@ -339,7 +339,7 @@ public abstract class AbstractStatsSessionTestCase {
     public void testTrackFiresTrackerTrackingEvent() {
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.TRACKER_TRACKING),
+            one(mockEventManager).fireEvent(with(EventType.TRACKER_TRACKING),
                                             with(mockKey),
                                             with(mockTracker));
         }});
@@ -385,7 +385,7 @@ public abstract class AbstractStatsSessionTestCase {
     public void testUpdateFiresTrackerCommittedEvent() {
 
         mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(StatsEventType.TRACKER_COMMITTED),
+            one(mockEventManager).fireEvent(with(EventType.TRACKER_COMMITTED),
                                             with(mockKey),
                                             with(mockTracker));
             ignoring(mockTracker).getValue(); will(returnValue(1.0));
@@ -790,7 +790,7 @@ public abstract class AbstractStatsSessionTestCase {
         }
 
         @Override
-        public void update(StatsSession session, StatsTracker tracker, long now) {
+        public void update(StatsSession session, Tracker tracker, long now) {
             throw new RuntimeException();
         }
 

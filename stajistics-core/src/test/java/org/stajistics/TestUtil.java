@@ -18,10 +18,10 @@ import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerLocator;
+import org.stajistics.tracker.Tracker;
+import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.tracker.manual.ManualTracker;
 
 /**
@@ -75,13 +75,13 @@ public abstract class TestUtil {
         final StatsManager mockManager = mockery.mock(StatsManager.class);
 
         final StatsConfigManager mockConfigManager = mockery.mock(StatsConfigManager.class);
-        final StatsEventManager mockEventManager = mockery.mock(StatsEventManager.class);
+        final EventManager mockEventManager = mockery.mock(EventManager.class);
         final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);
-        final StatsTrackerLocator mockTrackerLocator = mockery.mock(StatsTrackerLocator.class);
+        final TrackerLocator mockTrackerLocator = mockery.mock(TrackerLocator.class);
         final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
         final StatsConfigFactory mockConfigFactory = mockery.mock(StatsConfigFactory.class);
 
-        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+        final Tracker mockTracker = mockery.mock(Tracker.class);
         final ManualTracker mockManualTracker = mockery.mock(ManualTracker.class);
 
         mockery.checking(new Expectations() {{

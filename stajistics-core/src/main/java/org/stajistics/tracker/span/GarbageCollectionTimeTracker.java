@@ -21,7 +21,7 @@ import java.util.List;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 
 /**
  * TODO: This tracker currently depends on the ordering of ManagementFactory.getGarbageCollectorMXBeans(). Is that safe?
@@ -29,11 +29,11 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
+public class GarbageCollectionTimeTracker extends AbstractSpanTracker {
 
     public static final Factory FACTORY = new Factory();
 
-    private String[] startCGNames = null;
+    private String[] startGCNames = null;
     private long[] startGCTimes = null;
 
     public GarbageCollectionTimeTracker(final StatsSession session) {
@@ -43,12 +43,12 @@ public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
     @Override
     protected void startImpl(final long now) {
         List<GarbageCollectorMXBean> gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        startCGNames = new String[gcMXBeans.size()];
+        startGCNames = new String[gcMXBeans.size()];
         startGCTimes = new long[gcMXBeans.size()];
 
         int i = 0;
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
-            startCGNames[i] = gcMXBean.getName(); 
+            startGCNames[i] = gcMXBean.getName(); 
             startGCTimes[i] = gcMXBean.getCollectionTime();
             i++;
         }
@@ -59,7 +59,7 @@ public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
     @Override
     protected void stopImpl(final long now) {
         List<GarbageCollectorMXBean> gcMXBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        if (gcMXBeans.size() == startCGNames.length) {
+        if (gcMXBeans.size() == startGCNames.length) {
 
             boolean commit = true;
             long totalGCTime = 0;
@@ -67,7 +67,7 @@ public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
             int i = 0;
 
             for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
-                if (!startCGNames[i].equals(gcMXBean.getName())) {
+                if (!startGCNames[i].equals(gcMXBean.getName())) {
                     commit = false;
                     break;
                 }
@@ -100,10 +100,10 @@ public class GarbageCollectionTimeTracker extends AbstractSpanStatsTracker {
     }
 
     @Override
-    public StatsTracker reset() {
+    public Tracker reset() {
         super.reset();
 
-        startCGNames = null;
+        startGCNames = null;
         startGCTimes = null;
 
         return this;
