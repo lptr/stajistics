@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 
 /**
  *
@@ -53,7 +53,7 @@ public interface DataRecorder extends Serializable {
      * @param tracker The tracker that is triggering the update.
      * @param now The current time.
      */
-    void update(StatsSession session, StatsTracker tracker, long now);
+    void update(StatsSession session, Tracker tracker, long now);
 
     /**
      * Populate internal data structures with the data provided in the given <tt>dataSet</tt>.

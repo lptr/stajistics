@@ -19,7 +19,7 @@ import java.lang.management.ThreadInfo;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 
 /**
  * 
@@ -27,7 +27,7 @@ import org.stajistics.tracker.StatsTracker;
  *
  * @author The Stajistics Project
  */
-public class ThreadBlockTimeTracker extends AbstractThreadInfoStatsTracker {
+public class ThreadBlockTimeTracker extends AbstractThreadInfoSpanTracker {
 
     public static final Factory FACTORY = new Factory();
 
@@ -66,7 +66,7 @@ public class ThreadBlockTimeTracker extends AbstractThreadInfoStatsTracker {
     }
 
     @Override
-    public StatsTracker reset() {
+    public Tracker reset() {
         super.reset();
 
         startBlockTime = -1;

@@ -24,7 +24,7 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public class ConcurrentAccessTracker extends AbstractSpanStatsTracker {
+public class ConcurrentAccessTracker extends AbstractSpanTracker {
 
     public static final Factory FACTORY = new Factory();
 

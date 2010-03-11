@@ -18,7 +18,7 @@ import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.TrackerFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
 
 /**
@@ -33,7 +33,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     protected final StatsConfigManager configManager;
 
     protected boolean enabled = true;
-    protected StatsTrackerFactory<?> trackerFactory;
+    protected TrackerFactory<?> trackerFactory;
     protected StatsSessionFactory sessionFactory;
     protected DataRecorderFactory dataRecorderFactory;
     protected String unit;
@@ -94,7 +94,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     }
 
     @Override
-    public StatsConfigBuilder withTrackerFactory(final StatsTrackerFactory<?> trackerFactory) {
+    public StatsConfigBuilder withTrackerFactory(final TrackerFactory<?> trackerFactory) {
         if (trackerFactory == null) {
             throw new NullPointerException("trackerFactory");
         }
@@ -130,11 +130,11 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     }
 
     /**
-     * A factory method for getting the default {@link StatsTrackerFactory}.
+     * A factory method for getting the default {@link TrackerFactory}.
      *
-     * @return The default {@link StatsTrackerFactory}, never <tt>null</tt>.
+     * @return The default {@link TrackerFactory}, never <tt>null</tt>.
      */
-    protected StatsTrackerFactory<?> createDefaultTrackerFactory() {
+    protected TrackerFactory<?> createDefaultTrackerFactory() {
         return TimeDurationTracker.FACTORY;
     }
 
@@ -168,7 +168,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     @Override
     public StatsConfig newConfig() {
 
-        StatsTrackerFactory<?> trackerFactory = this.trackerFactory;
+        TrackerFactory<?> trackerFactory = this.trackerFactory;
         StatsSessionFactory sessionFactory = this.sessionFactory;
         DataRecorderFactory dataRecorderFactory = this.dataRecorderFactory;
         String unit = this.unit;

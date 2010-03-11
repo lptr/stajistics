@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.AbstractStatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.AbstractTracker;
+import org.stajistics.tracker.TrackerFactory;
 import org.stajistics.util.Misc;
 
 /**
@@ -29,7 +29,7 @@ import org.stajistics.util.Misc;
  *
  * @author The Stajistics Project
  */
-public class DefaultIncidentTracker extends AbstractStatsTracker implements IncidentTracker {
+public class DefaultIncidentTracker extends AbstractTracker implements IncidentTracker {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultIncidentTracker.class);
 
@@ -57,7 +57,7 @@ public class DefaultIncidentTracker extends AbstractStatsTracker implements Inci
         return this;
     }
 
-    public static class Factory implements StatsTrackerFactory<IncidentTracker> {
+    public static class Factory implements TrackerFactory<IncidentTracker> {
 
         @Override
         public IncidentTracker createTracker(final StatsKey key,

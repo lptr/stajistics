@@ -45,7 +45,7 @@ public class DefaultStatsConfigTest {
                                    DefaultDataRecorderFactory.getInstance(),
                                    "unit",
                                    "description");
-            fail("Allowed construction with null StatsTrackerFactory");
+            fail("Allowed construction with null TrackerFactory");
         } catch (NullPointerException npe) {
             assertEquals("trackerFactory", npe.getMessage());
         }

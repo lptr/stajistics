@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.AbstractStatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.AbstractTracker;
+import org.stajistics.tracker.TrackerFactory;
 import org.stajistics.util.Misc;
 
 /**
@@ -29,7 +29,7 @@ import org.stajistics.util.Misc;
  *
  * @author The Stajistics Project
  */
-public class DefaultManualTracker extends AbstractStatsTracker implements ManualTracker {
+public class DefaultManualTracker extends AbstractTracker implements ManualTracker {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultManualTracker.class);
 
@@ -64,7 +64,7 @@ public class DefaultManualTracker extends AbstractStatsTracker implements Manual
         }
     }
 
-    public static class Factory implements StatsTrackerFactory<ManualTracker> {
+    public static class Factory implements TrackerFactory<ManualTracker> {
 
         @Override
         public ManualTracker createTracker(final StatsKey key,

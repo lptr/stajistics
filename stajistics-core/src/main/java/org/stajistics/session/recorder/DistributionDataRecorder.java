@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 import org.stajistics.util.AtomicDouble;
 import org.stajistics.util.Misc;
 import org.stajistics.util.ThreadSafe;
@@ -47,7 +47,7 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void update(final StatsSession session, 
-                       final StatsTracker tracker, 
+                       final Tracker tracker, 
                        final long now) {
 
         final double currentValue = tracker.getValue();

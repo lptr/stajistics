@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  * 
@@ -62,7 +62,7 @@ public class DefaultStatsConfigBuilderTest {
 
     @Test
     public void testConstructWithConfig() {
-        final StatsTrackerFactory<?> trackerFactory = mockery.mock(StatsTrackerFactory.class);
+        final TrackerFactory<?> trackerFactory = mockery.mock(TrackerFactory.class);
         final StatsSessionFactory sessionFactory = mockery.mock(StatsSessionFactory.class);
         final DataRecorderFactory dataRecorderFactory = mockery.mock(DataRecorderFactory.class);
         final StatsConfig template = mockery.mock(StatsConfig.class);
@@ -86,7 +86,7 @@ public class DefaultStatsConfigBuilderTest {
 
     @Test
     public void testWithTrackerFactory() {
-        StatsTrackerFactory<?> trackerFactory = mockery.mock(StatsTrackerFactory.class);
+        TrackerFactory<?> trackerFactory = mockery.mock(TrackerFactory.class);
         builder.withTrackerFactory(trackerFactory);
         assertSame(trackerFactory, builder.newConfig().getTrackerFactory());
     }
@@ -95,7 +95,7 @@ public class DefaultStatsConfigBuilderTest {
     public void testWithNullTrackerFactory() {
         try {
             builder.withTrackerFactory(null);
-            fail("Allowed null StatsTrackerFactory");
+            fail("Allowed null TrackerFactory");
         } catch (NullPointerException npe) {
             assertEquals("trackerFactory", npe.getMessage());
         }

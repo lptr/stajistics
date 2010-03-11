@@ -15,7 +15,7 @@
 package org.stajistics.tracker.span;
 
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  * A common base class for time duration trackers. The class chooses a
@@ -26,12 +26,12 @@ import org.stajistics.tracker.StatsTrackerFactory;
  *
  * @author The Stajistics Project
  */
-public abstract class TimeDurationTracker extends AbstractSpanStatsTracker {
+public abstract class TimeDurationTracker extends AbstractSpanTracker {
 
-    public static final StatsTrackerFactory<SpanTracker> FACTORY;
+    public static final TrackerFactory<SpanTracker> FACTORY;
 
     static {
-        StatsTrackerFactory<SpanTracker> trackerFactory = NanoTimeDurationTracker.FACTORY;
+        TrackerFactory<SpanTracker> trackerFactory = NanoTimeDurationTracker.FACTORY;
 
         try {
             Class.forName("sun.misc.Perf");

@@ -21,7 +21,7 @@ import org.stajistics.session.StatsSession;
  * 
  * @author The Stajistics Project
  */
-public class MilliTimeDurationTrackerTest extends AbstractSpanStatsTrackerTestCase {
+public class MilliTimeDurationTrackerTest extends AbstractSpanTrackerTestCase {
 
     @Override
     protected SpanTracker createStatsTracker(final StatsSession session) {

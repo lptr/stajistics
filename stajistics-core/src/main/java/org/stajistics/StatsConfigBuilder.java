@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  * A builder for immutable {@link StatsConfig} instances.
@@ -36,12 +36,12 @@ public interface StatsConfigBuilder extends Serializable {
     StatsConfigBuilder withEnabledState(boolean enabled);
 
     /**
-     * Build the configuration with the given {@link StatsTrackerFactory}.
+     * Build the configuration with the given {@link TrackerFactory}.
      *
-     * @param trackerFactory The {@link StatsTrackerFactory} instance to use.
+     * @param trackerFactory The {@link TrackerFactory} instance to use.
      * @return <tt>this</tt>.
      */
-    StatsConfigBuilder withTrackerFactory(StatsTrackerFactory<?> trackerFactory);
+    StatsConfigBuilder withTrackerFactory(TrackerFactory<?> trackerFactory);
 
     /**
      * Build the configuration with the given {@link StatsSessionFactory}.

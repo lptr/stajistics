@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
-import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.EventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.util.Misc;
 
@@ -49,12 +49,12 @@ public abstract class AbstractStatsSession implements StatsSession {
     }
 
     protected final StatsKey key;
-    protected final StatsEventManager eventManager;
+    protected final EventManager eventManager;
 
     protected final DataRecorder[] dataRecorders;
 
     public AbstractStatsSession(final StatsKey key,
-                                final StatsEventManager eventManager,
+                                final EventManager eventManager,
                                 final DataRecorder... dataRecorders) {
         if (key == null) {
             throw new NullPointerException("key");

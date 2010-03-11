@@ -21,14 +21,14 @@ import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.TestUtil;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.AbstractStatsTrackerTestCase;
+import org.stajistics.tracker.AbstractTrackerTestCase;
 
 /**
  * 
  * @author The Stajistics Project
  *
  */
-public class DefaultIncidentTrackerTest extends AbstractStatsTrackerTestCase<IncidentTracker> {
+public class DefaultIncidentTrackerTest extends AbstractTrackerTestCase<IncidentTracker> {
 
     @Override
     protected IncidentTracker createStatsTracker(final StatsSession session) {

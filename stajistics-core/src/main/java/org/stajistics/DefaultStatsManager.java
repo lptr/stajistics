@@ -14,17 +14,18 @@
  */
 package org.stajistics;
 
-import org.stajistics.event.StatsEventManager;
-import org.stajistics.event.SynchronousStatsEventManager;
+import org.stajistics.event.EventManager;
+import org.stajistics.event.SynchronousEventManager;
 import org.stajistics.management.DefaultStatsManagement;
 import org.stajistics.management.StatsManagement;
 import org.stajistics.management.StatsManagementEventHandler;
-import org.stajistics.session.DefaultStatsSessionManager;
+import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.ThreadPoolTaskService;
 import org.stajistics.task.TaskService;
-import org.stajistics.tracker.DefaultStatsTrackerLocator;
-import org.stajistics.tracker.StatsTrackerLocator;
+import org.stajistics.tracker.DefaultTrackerLocator;
+import org.stajistics.tracker.NullTrackerLocator;
+import org.stajistics.tracker.TrackerLocator;
 
 /**
  * The default implementation of {@link StatsManager}. Clients typically do not
@@ -40,8 +41,8 @@ public class DefaultStatsManager implements StatsManager {
 
     protected final StatsConfigManager configManager;
     protected final StatsSessionManager sessionManager;
-    protected final StatsEventManager eventManager;
-    protected final StatsTrackerLocator trackerLocator;
+    protected final EventManager eventManager;
+    protected final TrackerLocator trackerLocator;
     protected final StatsKeyFactory keyFactory;
     protected final StatsConfigFactory configFactory;
     protected final TaskService taskService;
@@ -51,8 +52,8 @@ public class DefaultStatsManager implements StatsManager {
      *
      * @param configManager The {@link StatsConfigManager} to use. Must not be <tt>null</tt>.
      * @param sessionManager The {@link StatsSessionManager} to use. Must not be <tt>null</tt>.
-     * @param eventManager The {@link StatsEventManager} to use. Must not be <tt>null</tt>.
-     * @param trackerLocator The {@link StatsTrackerLocator} to use. Must not be <tt>null</tt>.
+     * @param eventManager The {@link EventManager} to use. Must not be <tt>null</tt>.
+     * @param trackerLocator The {@link TrackerLocator} to use. Must not be <tt>null</tt>.
      * @param keyFactory The {@link StatsKeyFactory} to use. Must not be <tt>null</tt>.
      * @param configFactory The {@link StatsConfigFactory} to use. Must not be <tt>null</tt>.
      * @param taskService The {@link TaskService} to use. Must not be <tt>null</tt>.
@@ -60,8 +61,8 @@ public class DefaultStatsManager implements StatsManager {
      */
     public DefaultStatsManager(final StatsConfigManager configManager,
                                final StatsSessionManager sessionManager,
-                               final StatsEventManager eventManager,
-                               final StatsTrackerLocator trackerLocator,
+                               final EventManager eventManager,
+                               final TrackerLocator trackerLocator,
                                final StatsKeyFactory keyFactory,
                                final StatsConfigFactory configFactory,
                                final TaskService taskService) {
@@ -131,12 +132,16 @@ public class DefaultStatsManager implements StatsManager {
     }
 
     @Override
-    public StatsEventManager getEventManager() {
+    public EventManager getEventManager() {
         return eventManager;
     }
 
     @Override
-    public StatsTrackerLocator getTrackerLocator() {
+    public TrackerLocator getTrackerLocator() {
+        if (!enabled) {
+            return NullTrackerLocator.getInstance();
+        }
+
         return trackerLocator;
     }
 
@@ -163,7 +168,6 @@ public class DefaultStatsManager implements StatsManager {
     @Override
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
-        this.trackerLocator.setEnabled(enabled); // ??????
     }
 
     public void shutdown() {
@@ -177,8 +181,8 @@ public class DefaultStatsManager implements StatsManager {
 
         protected StatsConfigManager configManager = null;
         protected StatsSessionManager sessionManager = null;
-        protected StatsEventManager eventManager = null;
-        protected StatsTrackerLocator trackerLocator = null;
+        protected EventManager eventManager = null;
+        protected TrackerLocator trackerLocator = null;
         protected StatsKeyFactory keyFactory = null;
         protected StatsConfigFactory configFactory = null;
         protected TaskService taskService = null;
@@ -201,7 +205,7 @@ public class DefaultStatsManager implements StatsManager {
             return this;
         }
 
-        public Builder withEventManager(final StatsEventManager eventManager) {
+        public Builder withEventManager(final EventManager eventManager) {
             if (eventManager == null) {
                 throw new NullPointerException("eventManager");
             }
@@ -210,7 +214,7 @@ public class DefaultStatsManager implements StatsManager {
             return this;
         }
 
-        public Builder withTrackerLocator(final StatsTrackerLocator trackerLocator) {
+        public Builder withTrackerLocator(final TrackerLocator trackerLocator) {
             if (trackerLocator == null) {
                 throw new NullPointerException("trackerLocator");
             }
@@ -250,10 +254,10 @@ public class DefaultStatsManager implements StatsManager {
 
             StatsKeyFactory keyFactory = this.keyFactory;
 
-            StatsEventManager eventManager = this.eventManager;
+            EventManager eventManager = this.eventManager;
             StatsConfigManager configManager = this.configManager;
             StatsSessionManager sessionManager = this.sessionManager;
-            StatsTrackerLocator trackerLocator = this.trackerLocator;
+            TrackerLocator trackerLocator = this.trackerLocator;
             StatsConfigFactory configFactory = this.configFactory;
             TaskService taskService = this.taskService;
 
@@ -262,7 +266,7 @@ public class DefaultStatsManager implements StatsManager {
             }
 
             if (eventManager == null) {
-                eventManager = new SynchronousStatsEventManager();
+                eventManager = new SynchronousEventManager();
             }
 
             if (configManager == null) {
@@ -270,11 +274,11 @@ public class DefaultStatsManager implements StatsManager {
             }
 
             if (sessionManager == null) {
-                sessionManager = new DefaultStatsSessionManager(configManager, eventManager);
+                sessionManager = new DefaultSessionManager(configManager, eventManager);
             }
 
             if (trackerLocator == null) {
-                trackerLocator = new DefaultStatsTrackerLocator(configManager, sessionManager);
+                trackerLocator = new DefaultTrackerLocator(configManager, sessionManager);
             }
 
             if (configFactory == null) {

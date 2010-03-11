@@ -25,10 +25,10 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
-import org.stajistics.tracker.StatsTrackerLocator;
+import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
@@ -44,14 +44,14 @@ public class StatsTest {
 
     private Mockery mockery;
     private StatsManager mockManager;
-    private StatsTrackerLocator mockTrackerLocator;
+    private TrackerLocator mockTrackerLocator;
     private StatsKey mockKey;
 
     @Before
     public void setUp() {
         mockery = new Mockery();
         mockManager = mockery.mock(StatsManager.class);
-        mockTrackerLocator = mockery.mock(StatsTrackerLocator.class);
+        mockTrackerLocator = mockery.mock(TrackerLocator.class);
 
         mockery.checking(new Expectations() {{
             allowing(mockManager).getTrackerLocator(); will(returnValue(mockTrackerLocator));
@@ -172,7 +172,7 @@ public class StatsTest {
 /*
     @Test
     public void testSpanTrackWithStatsKeys() {
-        final StatsTracker mockTracker = mockery.mock(StatsTracker.class);
+        final Tracker mockTracker = mockery.mock(Tracker.class);
 
         final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
 
@@ -361,7 +361,7 @@ public class StatsTest {
         }
 
         @Override
-        public StatsEventManager getEventManager() {
+        public EventManager getEventManager() {
             return null;
         }
 
@@ -371,7 +371,7 @@ public class StatsTest {
         }
 
         @Override
-        public StatsTrackerLocator getTrackerLocator() {
+        public TrackerLocator getTrackerLocator() {
             return null;
         }
 

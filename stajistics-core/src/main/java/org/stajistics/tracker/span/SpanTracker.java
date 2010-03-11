@@ -14,8 +14,8 @@
  */
 package org.stajistics.tracker.span;
 
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.Tracker;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  * A tracker type dedicated to collecting statistics related to some span. The span being
@@ -24,12 +24,12 @@ import org.stajistics.tracker.StatsTrackerFactory;
  *
  * @author The Stajistics Project
  */
-public interface SpanTracker extends StatsTracker {
+public interface SpanTracker extends Tracker {
 
     /**
      * The factory that will produce the default type of {@link SpanTracker} instances.
      */
-    public static final StatsTrackerFactory<SpanTracker> FACTORY = TimeDurationTracker.FACTORY;
+    public static final TrackerFactory<SpanTracker> FACTORY = TimeDurationTracker.FACTORY;
 
     /**
      * <p>Begin tracking statistics related to some span. The measurement of the span should 

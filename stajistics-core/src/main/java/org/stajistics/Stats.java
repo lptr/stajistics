@@ -16,11 +16,11 @@ package org.stajistics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.event.StatsEventManager;
+import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.NullTracker;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerLocator;
+import org.stajistics.tracker.Tracker;
+import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
@@ -30,9 +30,9 @@ import org.stajistics.tracker.span.SpanTracker;
  * {@link StatsManager}. Provides static convenience methods for manipulating the
  * underlying API.</p>
  *
- * <p>The methods in this class that return {@link StatsTracker} instances do not throw
+ * <p>The methods in this class that return {@link Tracker} instances do not throw
  * Exceptions, checked nor unchecked. Rather, these methods catch and log Exceptions and return
- * a no-operation {@link StatsTracker} instance. The necessity in this design is to shield a
+ * a no-operation {@link Tracker} instance. The necessity in this design is to shield a
  * client application from any problems related to invoking statistics collection, possibly caused
  * by misconfiguration. To bypass this Exception-swallowing behaviour, the use of this facade
  * can be discarded and the underlying API can be accessed directly.</p>
@@ -121,7 +121,7 @@ public final class Stats {
         return manager;
     }
 
-    private static StatsTrackerLocator getTrackerLocator() {
+    private static TrackerLocator getTrackerLocator() {
         return getManager().getTrackerLocator();
     }
 
@@ -148,13 +148,13 @@ public final class Stats {
     }
 
     /**
-     * Get the {@link StatsEventManager}.
+     * Get the {@link EventManager}.
      *
-     * @return The {@link StatsEventManager}, never <tt>null</tt>.
+     * @return The {@link EventManager}, never <tt>null</tt>.
      *
      * @see StatsManager#getEventManager()
      */
-    public static StatsEventManager getEventManager() {
+    public static EventManager getEventManager() {
         return getManager().getEventManager();
     }
 
@@ -205,7 +205,7 @@ public final class Stats {
     }
 
     /**
-     * Obtain a {@link SpanTracker} for the given <tt>key</tt> that can be used
+     * Obtain a {@link SpanTracker} for the given <tt>keys</tt> that can be used
      * to collect statistics related to some span.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
@@ -223,13 +223,13 @@ public final class Stats {
 
     /**
      * A convenience method equivalent to calling:
-     * <tt>Stats.getSpanTracker(Stats.newKey(name)).track()</tt>.
+     * <tt>Stats.getSpanTracker(Stats.newKey(keyName)).track()</tt>.
      *
      * @param keyName The key name for which to return a tracker.
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsTrackerLocator#getSpanTracker(StatsKey)
+     * @see TrackerLocator#getSpanTracker(StatsKey)
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final String keyName) {
@@ -250,7 +250,7 @@ public final class Stats {
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsTrackerLocator#getSpanTracker(StatsKey)
+     * @see TrackerLocator#getSpanTracker(StatsKey)
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final StatsKey key) {
@@ -271,7 +271,7 @@ public final class Stats {
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsTrackerLocator#getSpanTracker(StatsKey...)
+     * @see TrackerLocator#getSpanTracker(StatsKey...)
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final StatsKey... keys) {
@@ -285,14 +285,14 @@ public final class Stats {
     }
 
     /**
-     * Obtain an {@link IncidentTracker} for the given key <tt>name</tt> that can be
+     * Obtain an {@link IncidentTracker} for the given <tt>keyName</tt> that can be
      * used to report incidents of events.
      *
      * @param keyName The key name for which to return an incident tracker.
      * @return An {@link IncidentTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsTrackerLocator#getIncidentTracker(StatsKey)
+     * @see TrackerLocator#getIncidentTracker(StatsKey)
      */
     public static IncidentTracker getIncidentTracker(final String keyName) {
         try {
@@ -311,7 +311,7 @@ public final class Stats {
      * @return An {@link IncidentTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsTrackerLocator#getIncidentTracker(StatsKey)
+     * @see TrackerLocator#getIncidentTracker(StatsKey)
      */
     public static IncidentTracker getIncidentTracker(final StatsKey key) {
         try {
@@ -324,11 +324,11 @@ public final class Stats {
 
     /**
      * Report an incident. Equivalent to calling:
-     * <tt>Stats.getIncidentTracker(Stats.newKey(name)).incident()</tt>.
+     * <tt>Stats.getIncidentTracker(Stats.newKey(keyName)).incident()</tt>.
      *
      * @param keyName The key name for which to report an incident.
      *
-     * @see StatsTrackerLocator#getIncidentTracker(StatsKey...)
+     * @see TrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
     public static void incident(final String keyName) {
@@ -346,7 +346,7 @@ public final class Stats {
      *
      * @param key The {@link StatsKey} for which to report an incident.
      *
-     * @see StatsTrackerLocator#getIncidentTracker(StatsKey...)
+     * @see TrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
     public static void incident(final StatsKey key) {
@@ -364,7 +364,7 @@ public final class Stats {
      *
      * @param keys The {@link StatsKey}s for which to report an incident.
      *
-     * @see StatsTrackerLocator#getIncidentTracker(StatsKey...)
+     * @see TrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
     public static void incident(final StatsKey... keys) {
@@ -422,7 +422,7 @@ public final class Stats {
                 throw new IllegalArgumentException("must supply at least one key");
             }
 
-            StatsTrackerLocator trackerLocator = getTrackerLocator();
+            TrackerLocator trackerLocator = getTrackerLocator();
 
             for (StatsKey key : keys) {
                 trackerLocator.getIncidentTracker(StatsKeyUtils.keyForFailure(key, failure))
@@ -434,14 +434,14 @@ public final class Stats {
     }
 
     /**
-     * Obtain a {@link ManualTracker} for the given key <tt>name</tt> that can be
+     * Obtain a {@link ManualTracker} for the given key <tt>keyName</tt> that can be
      * used to report manually collected statistics.
      *
      * @param keyName The key name for which to return a manual tracker.
-     * @return A {@link StatsTracker} instance,
+     * @return A {@link Tracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsTrackerLocator#getManualTracker(StatsKey)
+     * @see TrackerLocator#getManualTracker(StatsKey)
      */
     public static ManualTracker getManualTracker(final String keyName) {
         try {
@@ -457,10 +457,10 @@ public final class Stats {
      * used to report manually collected statistics.
      *
      * @param key The {@link StatsKey} for which to return a manual tracker.
-     * @return A {@link StatsTracker} instance,
+     * @return A {@link Tracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see StatsTrackerLocator#getManualTracker(StatsKey)
+     * @see TrackerLocator#getManualTracker(StatsKey)
      */
     public static ManualTracker getManualTracker(final StatsKey key) {
         try {
@@ -485,7 +485,7 @@ public final class Stats {
             return getManager().getKeyFactory()
                                .createKey(name);
         } catch (Exception e) {
-            logger.error("Failed to obtain a " + StatsKey.class.getSimpleName(), e);
+            logger.error("Failed to create a " + StatsKey.class.getSimpleName(), e);
             return NullStatsKey.getInstance();
         }
     }
@@ -505,7 +505,7 @@ public final class Stats {
             return getManager().getKeyFactory()
                                .createKeyBuilder(name);
         } catch (Exception e) {
-            logger.error("Failed to obtain a " + StatsKeyBuilder.class.getSimpleName(), e);
+            logger.error("Failed to create a " + StatsKeyBuilder.class.getSimpleName(), e);
             return NullStatsKeyBuilder.getInstance();
         }
     }

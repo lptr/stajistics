@@ -23,7 +23,7 @@ import org.jmock.integration.junit4.JMock;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 
 import static org.junit.Assert.*;
 
@@ -35,7 +35,7 @@ public abstract class AbstractDataRecorderTestCase {
 
     protected Mockery mockery;
     protected StatsSession mockSession;
-    protected StatsTracker mockTracker;
+    protected Tracker mockTracker;
 
     protected DataRecorder dataRecorder;
 
@@ -44,7 +44,7 @@ public abstract class AbstractDataRecorderTestCase {
         mockery = new Mockery();
 
         mockSession = mockery.mock(StatsSession.class);
-        mockTracker = mockery.mock(StatsTracker.class);
+        mockTracker = mockery.mock(Tracker.class);
 
         dataRecorder = createDataRecorder();
     }

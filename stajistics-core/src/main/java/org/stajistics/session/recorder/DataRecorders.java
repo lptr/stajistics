@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
+import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Decorator;
 import org.stajistics.util.ThreadSafe;
 
@@ -282,7 +282,7 @@ public final class DataRecorders {
 
         @Override
         public void update(final StatsSession session, 
-                           final StatsTracker tracker, 
+                           final Tracker tracker, 
                            final long now) {
             lock.lock();
             try {

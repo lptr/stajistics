@@ -16,7 +16,7 @@ package org.stajistics;
 
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  * The default implementation of {@link StatsConfig}.
@@ -27,7 +27,7 @@ public class DefaultStatsConfig implements StatsConfig {
 
     private final boolean enabled;
 
-    private final StatsTrackerFactory<?> trackerFactory;
+    private final TrackerFactory<?> trackerFactory;
     private final StatsSessionFactory sessionFactory;
     private final DataRecorderFactory dataRecorderFactory;
 
@@ -63,7 +63,7 @@ public class DefaultStatsConfig implements StatsConfig {
      * @throws IllegalArgumentException If <tt>unit</tt> is zero length.
      */
     public DefaultStatsConfig(final boolean enabled,
-                              final StatsTrackerFactory<?> trackerFactory,
+                              final TrackerFactory<?> trackerFactory,
                               final StatsSessionFactory sessionFactory,
                               final DataRecorderFactory dataRecorderFactory,
                               final String unit,
@@ -114,7 +114,7 @@ public class DefaultStatsConfig implements StatsConfig {
     }
 
     @Override
-    public StatsTrackerFactory<?> getTrackerFactory() {
+    public TrackerFactory<?> getTrackerFactory() {
         return trackerFactory;
     }
 

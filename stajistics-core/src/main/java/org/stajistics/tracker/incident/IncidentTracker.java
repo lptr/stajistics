@@ -16,8 +16,8 @@ package org.stajistics.tracker.incident;
 
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
-import org.stajistics.tracker.StatsTracker;
-import org.stajistics.tracker.StatsTrackerFactory;
+import org.stajistics.tracker.Tracker;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  * <p>A tracker type dedicated to collecting statistics related to occurrences of events.
@@ -36,12 +36,12 @@ import org.stajistics.tracker.StatsTrackerFactory;
  *
  * @author The Stajistics Project
  */
-public interface IncidentTracker extends StatsTracker {
+public interface IncidentTracker extends Tracker {
 
     /**
      * The factory that will produce the default type of {@link IncidentTracker} instances.
      */
-    public static final StatsTrackerFactory<IncidentTracker> FACTORY = DefaultIncidentTracker.FACTORY;
+    public static final TrackerFactory<IncidentTracker> FACTORY = DefaultIncidentTracker.FACTORY;
 
     /**
      * Report an occurrence of an event. Sets the <tt>value</tt> field to <tt>1</tt> and immediately

@@ -37,7 +37,7 @@ public class DefaultSessionFactory implements StatsSessionFactory {
     public StatsSession createSession(final StatsKey key,
                                       final StatsManager manager,
                                       final DataRecorder[] dataRecorders) {
-        return new ConcurrentStatsSession(key, 
+        return new ConcurrentSession(key, 
                                           manager.getEventManager(), 
                                           dataRecorders);
     }
