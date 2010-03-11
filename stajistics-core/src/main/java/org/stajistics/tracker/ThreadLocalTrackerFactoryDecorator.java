@@ -22,12 +22,14 @@ import org.stajistics.session.StatsSessionManager;
 import org.stajistics.util.Decorator;
 
 /**
+ * A decorator for another TrackerFactory instance that ensures only one Tracker
+ * instance per-key per-thread is ever created by the delegate factory.
  *
- * @param <T>
+ * @param <T> The type of Tracker returned by the factory.
  *
  * @author The Stajistics Project
  */
-public class ThreadLocalTrackerFactoryDecorator<T extends Tracker> 
+public class ThreadLocalTrackerFactoryDecorator<T extends Tracker>
         implements TrackerFactory<T>,Decorator<TrackerFactory<T>> {
 
     private final TrackerFactory<T> delegate;
@@ -40,7 +42,7 @@ public class ThreadLocalTrackerFactoryDecorator<T extends Tracker>
     }
 
     @Override
-    public T createTracker(final StatsKey key, 
+    public T createTracker(final StatsKey key,
                            final StatsSessionManager sessionManager) {
 
         ThreadLocal<T> trackerLocal = threadTrackerMap.get(key);

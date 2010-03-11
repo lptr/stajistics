@@ -27,8 +27,9 @@ import org.stajistics.tracker.span.CompositeSpanTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
- * 
+ * The default {@link TrackerLocator} implementation which locates appropriate
+ * {@link Tracker} instances using {@link StatsKey}'s associated {@link StatsConfig} and
+ * {@link TrackerFactory}.
  *
  * @author The Stajistics Project
  */
@@ -40,7 +41,7 @@ public class DefaultTrackerLocator implements TrackerLocator {
     private final StatsSessionManager sessionManager;
 
     public DefaultTrackerLocator(final StatsConfigManager configManager,
-                                      final StatsSessionManager sessionManager) {
+                                 final StatsSessionManager sessionManager) {
         if (configManager == null) {
             throw new NullPointerException("configManager");
         }
@@ -184,7 +185,7 @@ public class DefaultTrackerLocator implements TrackerLocator {
                         "Please check your configuration. " +
                         "Falling back on: {}. " +
                         "Key: {}. " +
-                        "Configured tracker: {}.", 
+                        "Configured tracker: {}.",
                     new Object[] {
                         trackerTypeName,
                         fallbackTrackerClass.getName(),

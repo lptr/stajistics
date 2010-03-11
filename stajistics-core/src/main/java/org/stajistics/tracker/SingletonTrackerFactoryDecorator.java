@@ -22,8 +22,10 @@ import org.stajistics.session.StatsSessionManager;
 import org.stajistics.util.Decorator;
 
 /**
- * 
- * @param <T>
+ * A decorator for another TrackerFactory instance that ensures only one Tracker
+ * instance per-key is ever created by the delegate factory.
+ *
+ * @param <T> The type of Tracker returned by the factory.
  *
  * @author The Stajistics Project
  */
@@ -42,7 +44,7 @@ public class SingletonTrackerFactoryDecorator<T extends Tracker>
     }
 
     @Override
-    public T createTracker(final StatsKey key, 
+    public T createTracker(final StatsKey key,
                            final StatsSessionManager sessionManager) {
         T singletonTracker = singletonTrackerMap.get(key);
         if (singletonTracker == null) {

@@ -19,6 +19,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
+ * A service for executing tasks.
+ *
  * @author The Stajistics Project
  */
 public interface TaskService extends Serializable {

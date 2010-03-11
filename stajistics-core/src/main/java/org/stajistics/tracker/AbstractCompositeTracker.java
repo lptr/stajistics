@@ -23,8 +23,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 /**
- * 
- * 
+ * A convenience base implementation of {@link CompositeTracker}.
  *
  * @author The Stajistic Project
  */

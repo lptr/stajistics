@@ -27,25 +27,23 @@ import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * <p>A tracker is the main interface that is manipulated directly by client code for the
- * purposes of performing statistical measurements in a client-specific manner. This interface 
- * defines the common methods to all tracker implementations, however, in order to be useful for 
+ * purposes of performing statistical measurements in a client-specific manner. This interface
+ * defines the common methods to all tracker implementations, however, in order to be useful for
  * collecting statistics, a more specific sub-interface must be manipulated, such as
- * {@link IncidentTracker}, {@link ManualTracker}, or {@link SpanTracker}.</p> 
+ * {@link IncidentTracker}, {@link ManualTracker}, or {@link SpanTracker}.</p>
  *
  * <p>The data that a tracker stores is only one element in a series of data elements. For example,
  * if the time taken to run a method is being collected by the Stajistics system, the tracker
  * that measures the elapsed time will only store the time for the single current method invocation;
- * it does not store the times of previous invocations, nor averages, nor any other data. The 
- * single data element that is collected by a tracker is published to the associated 
+ * it does not store the times of previous invocations, nor averages, nor any other data. The
+ * single data element that is collected by a tracker is published to the associated
  * {@link StatsSession} in which the full data set is represented.</p>
  *
  * <p>StatsTrackers are intentionally designed to be manipulated by only one thread at a time,
- * and as such, are thread-unsafe. A Tracker instance should not be stored unless it 
+ * and as such, are thread-unsafe. A Tracker instance should not be stored unless it
  * is known that it will be accessed in a thread-safe manner. Rather, it is recommended that
- * an instance be retrieved when needed using {@link StatsManager#getTracker(StatsKey)}, 
- * or one of the convenience methods defined in {@link Stats}.
+ * an instance be retrieved when needed using one of the convenience methods defined in {@link Stats}.
  *
- * @see Stats#getTracker(StatsKey)
  * @see StatsManager#getTrackerLocator()
  * @see TrackerLocator#getTracker(StatsKey)
  *
