@@ -112,7 +112,7 @@ public class StatsPropertiesTest {
     public void testGetFloatPropertyWithDefault() {
         assertEquals("" + Float.MAX_VALUE, "" + StatsProperties.getFloatProperty("float", 1f));
         assertNull(StatsProperties.getFloatProperty("float1", null));
-        assertEquals(2, StatsProperties.getFloatProperty("float1", 2f), TestUtil.DELTA);
+        assertEquals(2f, StatsProperties.getFloatProperty("float1", 2f), TestUtil.DELTA);
     }
 
     @Test

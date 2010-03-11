@@ -24,8 +24,8 @@ import org.stajistics.tracker.span.CompositeSpanTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
- * 
+ * Provides access to various types of Tracker instances that are associated with
+ * given {@link StatsKey}s.
  *
  * @author The Stajistics Project
  */
@@ -33,8 +33,7 @@ public interface TrackerLocator extends Serializable {
 
     /**
      * Obtain a {@link Tracker} for the given <tt>key</tt> that can be
-     * used to collect statistics. If statistics collection is disabled, 
-     * a safe no-op {@link NullTracker} instance is returned.
+     * used to collect statistics.
      *
      * @param key The {@link StatsKey} for which to return a tracker.
      * @return A {@link Tracker}. Never <tt>null</tt>.
@@ -44,8 +43,8 @@ public interface TrackerLocator extends Serializable {
 
     /**
      * Obtain a {@link SpanTracker} for the given <tt>key</tt> that can be
-     * used to collect statistics. If statistics collection is disabled, 
-     * a safe no-op {@link NullTracker} instance is returned.
+     * used to collect statistics. Regardless of the given <tt>key</tt>'s configured
+     * {@link TrackerFactory}, a SpanTracker instance is returned.
      *
      * @param key The {@link StatsKey} for which to return a tracker.
      * @return A {@link SpanTracker}. Never <tt>null</tt>.
@@ -66,7 +65,7 @@ public interface TrackerLocator extends Serializable {
     SpanTracker getSpanTracker(StatsKey... keys);
 
     /**
-     * Obtain an {@link IncidentTracker} for a given {@link StatsKey} that can be used to
+     * Obtain an {@link IncidentTracker} for the given <tt>key</tt> that can be used to
      * report an incident of an event. Regardless of the given <tt>key</tt>'s configured
      * {@link TrackerFactory}, a IncidentTracker instance is returned.
      *
@@ -77,7 +76,7 @@ public interface TrackerLocator extends Serializable {
 
     /**
      * Obtain an {@link IncidentTracker} for the given set of <tt>keys</tt> that can be used to
-     * report an incident of an event. An {@link IncidentTracker} is obtained for each key in 
+     * report an incident of an event. An {@link IncidentTracker} is obtained for each key in
      * <tt>keys</tt> and all are combined in an {@link CompositeIncidentTracker} instance.
      *
      * @param keys The {@link StatsKey}s for which to return a tracker.
@@ -88,7 +87,7 @@ public interface TrackerLocator extends Serializable {
     IncidentTracker getIncidentTracker(StatsKey... keys);
 
     /**
-     * Obtain a {@link ManualTracker} for a given {@link StatsKey} that can be used to
+     * Obtain a {@link ManualTracker} for the given <tt>key</tt> that can be used to
      * report manually collected data. Regardless of the given <tt>key</tt>'s configured
      * {@link TrackerFactory}, a ManualTracker instance is returned.
      *

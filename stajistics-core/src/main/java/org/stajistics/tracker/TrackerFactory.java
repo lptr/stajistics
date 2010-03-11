@@ -20,14 +20,27 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * 
- * 
+ * A factory for creating {@link Tracker} instances.
  *
  * @author The Stajistics Project
  */
 public interface TrackerFactory<T extends Tracker> extends Serializable {
 
+    /**
+     * Create a new {@link Tracker} instance associated with the given <tt>key</tt>.
+     *
+     * @param key The key for which to create a Tracker.
+     * @param sessionManager The session manager from which a StatsSession can be
+     *                       retrieved to pass into the new Tracker instance.
+     * @return A Tracker instance, never <tt>null</tt>.
+     */
     T createTracker(StatsKey key, StatsSessionManager sessionManager);
 
+    /**
+     * Obtain the base Tracker sub-type that this factory creates. This will be one of
+     * SpanTracker, IncidentTracker, or ManualTracker.
+     *
+     * @return The Tracker type class, never <tt>null</tt>.
+     */
     Class<T> getTrackerType();
 }

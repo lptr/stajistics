@@ -28,11 +28,12 @@ import org.stajistics.tracker.span.SpanTracker;
 import org.stajistics.util.Composite;
 
 /**
- *
+ * A {@link TrackerFactory} implementation that composes several other TrackerFactories, all
+ * of which return the same {@link Tracker} sub-type.
  *
  * @author The Stajistics Project
  */
-public class CompositeTrackerFactory<T extends Tracker> 
+public class CompositeTrackerFactory<T extends Tracker>
         implements TrackerFactory<T>,Composite<TrackerFactory<T>> {
 
     private final Map<String,TrackerFactory<T>> factoryMap;
