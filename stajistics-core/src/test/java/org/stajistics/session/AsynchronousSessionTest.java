@@ -22,7 +22,7 @@ import java.util.concurrent.Future;
 
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
-import org.stajistics.task.SimpleTaskService;
+import org.stajistics.task.DebugTaskService;
 import org.stajistics.task.TaskService;
 
 /**
@@ -34,7 +34,7 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
 
     @Override
     protected void initMocks() {
-        mockTaskService = new SimpleTaskService();
+        mockTaskService = new DebugTaskService();
     }
 
     @Override

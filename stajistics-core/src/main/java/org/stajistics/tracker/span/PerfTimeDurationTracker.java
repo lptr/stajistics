@@ -64,7 +64,7 @@ public class PerfTimeDurationTracker extends TimeDurationTracker {
         session.update(this, now);
     }
 
-    public static class Factory extends AbstractSpanStatsTrackerFactory {
+    public static class Factory extends AbstractSpanTrackerFactory {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,

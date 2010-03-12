@@ -21,8 +21,11 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.jmock.Expectations;
@@ -62,6 +65,14 @@ public abstract class AbstractStatsKeyTestCase {
         return createStatsKey(name, 
                               mockKeyFactory,
                               TEST_ATTRIBUTES);
+    }
+
+    protected StatsKey createStatsKey(final String name,
+                                      final String attrName,
+                                      final String attrValue) {
+        return createStatsKey(name,
+                              mockKeyFactory,
+                              Collections.<String,Object>singletonMap(attrName, attrValue));
     }
 
     @Test
@@ -173,6 +184,12 @@ public abstract class AbstractStatsKeyTestCase {
     }
 
     @Test
+    public void testEqualsWithDifferentType() {
+        StatsKey key = createStatsKey(TEST_NAME);
+        assertFalse(key.equals("hello"));
+    }
+
+    @Test
     public void testHashCodeWithSameName() {
         StatsKey key1 = createStatsKey(TEST_NAME);
         StatsKey key2 = createStatsKey(TEST_NAME);
@@ -204,5 +221,67 @@ public abstract class AbstractStatsKeyTestCase {
                                       mockKeyFactory, 
                                       Collections.<String,Object>singletonMap("name", "value"));
         assertTrue(key.toString().contains("name=value"));
+    }
+
+    @Test
+    public void testCompareToWithNames() {
+        List<StatsKey> keyList = 
+            Arrays.asList(createStatsKey("b.2"),
+                          createStatsKey("a.1"),
+                          createStatsKey("a.3"),
+                          createStatsKey("a.2"),
+                          createStatsKey("b.1"),
+                          createStatsKey("b.3"));
+
+        Collections.sort(keyList);
+
+        Iterator<StatsKey> itr = keyList.iterator();
+        assertEquals("a.1", itr.next().getName());
+        assertEquals("a.2", itr.next().getName());
+        assertEquals("a.3", itr.next().getName());
+        assertEquals("b.1", itr.next().getName());
+        assertEquals("b.2", itr.next().getName());
+        assertEquals("b.3", itr.next().getName());
+    }
+
+    @Test
+    public void testCompareToWithAttributes() {
+        List<StatsKey> keyList = 
+            Arrays.asList(createStatsKey("b.2"),
+                          createStatsKey("a.1"),
+                          createStatsKey("c", "b", "1"),
+                          createStatsKey("a.3"),
+                          createStatsKey("a.2"),
+                          createStatsKey("c", "a", "1"),
+                          createStatsKey("b.1"),
+                          createStatsKey("b.3"),
+                          createStatsKey("c", "a", "2"),
+                          createStatsKey("c", "b", "2"));
+
+        Collections.sort(keyList);
+
+        Iterator<StatsKey> itr = keyList.iterator();
+        assertEquals("a.1", itr.next().getName());
+        assertEquals("a.2", itr.next().getName());
+        assertEquals("a.3", itr.next().getName());
+        assertEquals("b.1", itr.next().getName());
+        assertEquals("b.2", itr.next().getName());
+        assertEquals("b.3", itr.next().getName());
+
+        StatsKey k = itr.next();
+        assertEquals("c", k.getName());
+        assertEquals("1", k.getAttribute("a"));
+
+        k = itr.next();
+        assertEquals("c", k.getName());
+        assertEquals("2", k.getAttribute("a"));
+        
+        k = itr.next();
+        assertEquals("c", k.getName());
+        assertEquals("1", k.getAttribute("b"));
+
+        k = itr.next();
+        assertEquals("c", k.getName());
+        assertEquals("2", k.getAttribute("b"));
     }
 }

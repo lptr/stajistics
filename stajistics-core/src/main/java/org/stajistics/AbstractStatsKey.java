@@ -92,7 +92,6 @@ public abstract class AbstractStatsKey implements StatsKey {
             return true;
         }
 
-        // Try to short-circuit the attribute equality checks
         if (this.hashCode != other.hashCode()) {
             return false;
         }
@@ -112,6 +111,9 @@ public abstract class AbstractStatsKey implements StatsKey {
         if (!this.name.equals(otherKey.getName())) {
             return false;
         }
+
+        // If we have the same hashCode, attribute count, and key name,
+        // assume that we have the same attribute names and values, and are thus equal.
 
         return true;
     }

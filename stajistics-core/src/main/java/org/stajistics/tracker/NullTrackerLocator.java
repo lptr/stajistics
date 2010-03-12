@@ -20,7 +20,7 @@ import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * A singleton {@link TrackerLocator} implementation that return a {@link NullTracker}
+ * A singleton {@link TrackerLocator} implementation that returns a {@link NullTracker}
  * instance from all methods.
  *
  * @author The Stajistics Project

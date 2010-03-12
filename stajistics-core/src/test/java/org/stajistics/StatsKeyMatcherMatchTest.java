@@ -34,6 +34,7 @@ import static org.stajistics.StatsKeyMatcher.descendentOf;
 import static org.stajistics.StatsKeyMatcher.exactMatch;
 import static org.stajistics.StatsKeyMatcher.length;
 import static org.stajistics.StatsKeyMatcher.matchesRegEx;
+import static org.stajistics.StatsKeyMatcher.nameEquals;
 import static org.stajistics.StatsKeyMatcher.none;
 import static org.stajistics.StatsKeyMatcher.prefix;
 import static org.stajistics.StatsKeyMatcher.suffix;
@@ -62,10 +63,10 @@ public class StatsKeyMatcherMatchTest extends TestCase {
         { none(), newKey("a.1"),   false },
         { none(), newKey("a.1.b"), false },
 
-        // Not
-        { all().not(), newKey("a"),     false },
-        { all().not(), newKey("a.1"),   false },
-        { all().not(), newKey("a.1.b"), false },
+        // Not (can't use all().not() because it has an optimization that bypasses the regular not() behaviour)
+        { nameEquals("a").not(), newKey("a"),     false },
+        { nameEquals("a.1").not(), newKey("a.1"),   false },
+        { nameEquals("a.1.b").not(), newKey("a.1.b"), false },
 
         // And
         { all().and(all()), newKey("and.a"),   true },
@@ -90,11 +91,11 @@ public class StatsKeyMatcherMatchTest extends TestCase {
         { exactMatch(newRealKey("a")), newRealKey("b"), false },
 
         // Equals
-        { StatsKeyMatcher.nameEquals("a"), newKey("a"),   true },
-        { StatsKeyMatcher.nameEquals("a"), newKey("b"),   false },
-        { StatsKeyMatcher.nameEquals("a"), newKey("ab"),  false },
-        { StatsKeyMatcher.nameEquals("a"), newKey("bc"),  false },
-        { StatsKeyMatcher.nameEquals("a"), newKey("abc"), false },
+        { nameEquals("a"), newKey("a"),   true },
+        { nameEquals("a"), newKey("b"),   false },
+        { nameEquals("a"), newKey("ab"),  false },
+        { nameEquals("a"), newKey("bc"),  false },
+        { nameEquals("a"), newKey("abc"), false },
 
         // Attribute name equals
         { attrNameEquals("a"), newKey("x", "a", "x"),   true },

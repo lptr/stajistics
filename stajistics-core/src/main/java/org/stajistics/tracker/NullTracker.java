@@ -109,7 +109,7 @@ public final class NullTracker
 
         @Override
         public Tracker createTracker(final StatsKey key,
-                                          final StatsSessionManager sessionManager) {
+                                     final StatsSessionManager sessionManager) {
             return NullTracker.getInstance();
         }
 
