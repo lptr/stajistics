@@ -58,4 +58,8 @@ public class SimpleStatsKeyTest extends AbstractStatsKeyTestCase {
     @Override
     @Ignore
     public void testToStringContainsAttributes() {}
+
+    @Override
+    @Ignore
+    public void testCompareToWithAttributes() {}
 }

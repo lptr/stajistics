@@ -69,7 +69,8 @@ public class SynchronousEventManager implements EventManager {
 
         for (Map.Entry<StatsKey,List<EventHandler>> entry : sessionEventHandlers.entrySet()) {
             if (keyMatcher.matches(entry.getKey())) {
-                matches.put(entry.getKey(), new ArrayList<EventHandler>(entry.getValue()));
+                matches.put(entry.getKey(), 
+                            Collections.unmodifiableCollection(new ArrayList<EventHandler>(entry.getValue())));
             }
         }
 
@@ -134,7 +135,7 @@ public class SynchronousEventManager implements EventManager {
     }
 
     private List<EventHandler> getEventHandlers(final StatsKey key,
-                                                     final boolean create) {
+                                                final boolean create) {
         List<EventHandler> eventHandlers = sessionEventHandlers.get(key);
         if (eventHandlers == null && create) {
             eventHandlers = createEventHandlerList();

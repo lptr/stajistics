@@ -50,7 +50,7 @@ public class MilliTimeDurationTracker extends AbstractSpanTracker {
         session.track(this, now);
     }
 
-    public static class Factory extends AbstractSpanStatsTrackerFactory {
+    public static class Factory extends AbstractSpanTrackerFactory {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,

@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author The Stajistics Project
  */
-public class SimpleTaskService implements TaskService {
+public class DebugTaskService implements TaskService {
 
     @Override
     public void execute(final Class<?> source,
@@ -37,8 +37,9 @@ public class SimpleTaskService implements TaskService {
         try {
             T result = task.call();
             return new FinishedFuture<T>(result, null);
-        } catch (Throwable t) {
-            return new FinishedFuture<T>(null, t);
+
+        } catch (Exception e) {
+            return new FinishedFuture<T>(null, e);
         }
     }
 

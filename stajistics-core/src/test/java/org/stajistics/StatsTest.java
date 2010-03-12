@@ -87,14 +87,33 @@ public class StatsTest {
     }
 
     @Test
-    public void testLoadStatsManagerFromSystemProperties() throws Exception {
+    public void testLoadStatsManagerFromProperties() throws Exception {
 
         try {
             System.getProperties()
                   .setProperty(StatsManager.class.getName(),
                                ClassLoadableMockStatsManager.class.getName());
 
-            StatsManager mgr = Stats.loadStatsManagerFromSystemProperties();
+            StatsManager mgr = Stats.loadStatsManagerFromProperties();
+
+            assertNotNull(mgr);
+            assertTrue(mgr instanceof ClassLoadableMockStatsManager);
+
+        } finally {
+            System.getProperties()
+                  .remove(StatsManager.class.getName());
+        }
+    }
+
+    @Test(expected = ClassNotFoundException.class)
+    public void testLoadInvalidStatsManagerFromProperties() throws Exception {
+
+        try {
+            System.getProperties()
+                  .setProperty(StatsManager.class.getName(),
+                               "org.stajistics.DoesntExistAtAllInAnyWayWhatSoEverSoThereHa");
+
+            StatsManager mgr = Stats.loadStatsManagerFromProperties();
 
             assertNotNull(mgr);
             assertTrue(mgr instanceof ClassLoadableMockStatsManager);

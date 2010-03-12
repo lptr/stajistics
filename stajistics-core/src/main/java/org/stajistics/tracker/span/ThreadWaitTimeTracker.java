@@ -74,7 +74,7 @@ public class ThreadWaitTimeTracker extends AbstractThreadInfoSpanTracker {
         return this;
     }
 
-    public static class Factory extends AbstractSpanStatsTrackerFactory {
+    public static class Factory extends AbstractSpanTrackerFactory {
 
         @Override
         public SpanTracker createTracker(final StatsKey key,

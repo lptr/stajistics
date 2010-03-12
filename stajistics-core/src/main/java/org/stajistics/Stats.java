@@ -92,7 +92,7 @@ public final class Stats {
         StatsManager manager = null;
 
         try {
-            manager = loadStatsManagerFromSystemProperties();
+            manager = loadStatsManagerFromProperties();
 
         } catch (Exception e) {
             logger.error("Failed to load " + StatsManager.class.getSimpleName() +
@@ -107,10 +107,10 @@ public final class Stats {
         return manager;
     }
 
-    protected static StatsManager loadStatsManagerFromSystemProperties() throws Exception {
+    protected static StatsManager loadStatsManagerFromProperties() throws Exception {
         StatsManager manager = null;
 
-        String managerClassName = System.getProperty(StatsManager.class.getName());
+        String managerClassName = StatsProperties.getProperty(StatsManager.class.getName());
         if (managerClassName != null) {
             @SuppressWarnings("unchecked")
             Class<StatsManager> managerClass = (Class<StatsManager>)Class.forName(managerClassName);

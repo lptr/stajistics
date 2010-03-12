@@ -122,7 +122,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker
         return buf.toString();
     }
 
-    public abstract static class AbstractSpanStatsTrackerFactory implements TrackerFactory<SpanTracker> {
+    public abstract static class AbstractSpanTrackerFactory implements TrackerFactory<SpanTracker> {
 
         @Override
         public Class<SpanTracker> getTrackerType() {

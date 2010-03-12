@@ -106,7 +106,7 @@ public class DefaultStatsManager implements StatsManager {
      */
     public static DefaultStatsManager createWithDefaults() {
 
-        DefaultStatsManager manager = new Builder().createManager();
+        DefaultStatsManager manager = new Builder().newManager();
 
         if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
             StatsManagement management = new DefaultStatsManagement();
@@ -250,7 +250,7 @@ public class DefaultStatsManager implements StatsManager {
             return this;
         }
 
-        public DefaultStatsManager createManager() {
+        public DefaultStatsManager newManager() {
 
             StatsKeyFactory keyFactory = this.keyFactory;
 
