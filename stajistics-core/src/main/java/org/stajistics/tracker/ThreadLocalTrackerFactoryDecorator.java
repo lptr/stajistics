@@ -17,28 +17,46 @@ package org.stajistics.tracker;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.stajistics.StatsConfig;
 import org.stajistics.StatsKey;
+import org.stajistics.event.EventHandler;
+import org.stajistics.event.EventManager;
+import org.stajistics.event.EventType;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.util.Decorator;
+import org.stajistics.util.ThreadSafe;
 
 /**
  * A decorator for another TrackerFactory instance that ensures only one Tracker
- * instance per-key per-thread is ever created by the delegate factory.
+ * instance per-key per-thread is ever created by the delegate factory. One instance of this
+ * decorator can be shared by multiple {@link StatsConfig}s provided, of course,
+ * they wish to share the same delegate {@link TrackerFactory} instance.
  *
  * @param <T> The type of Tracker returned by the factory.
  *
  * @author The Stajistics Project
  */
+@ThreadSafe
 public class ThreadLocalTrackerFactoryDecorator<T extends Tracker>
         implements TrackerFactory<T>,Decorator<TrackerFactory<T>> {
 
     private final TrackerFactory<T> delegate;
+    private final EventManager eventManager;
 
     private final ConcurrentMap<StatsKey,ThreadLocal<T>> threadTrackerMap =
         new ConcurrentHashMap<StatsKey,ThreadLocal<T>>();
 
-    public ThreadLocalTrackerFactoryDecorator(final TrackerFactory<T> delegate) {
+    public ThreadLocalTrackerFactoryDecorator(final TrackerFactory<T> delegate,
+                                              final EventManager eventManager) {
+        if (delegate == null) {
+            throw new NullPointerException("delegate");
+        }
+        if (eventManager == null) {
+            throw new NullPointerException("eventManager");
+        }
+
         this.delegate = delegate;
+        this.eventManager = eventManager;
     }
 
     @Override
@@ -57,6 +75,20 @@ public class ThreadLocalTrackerFactoryDecorator<T extends Tracker>
             ThreadLocal<T> existingTrackerLocal = threadTrackerMap.putIfAbsent(key, trackerLocal);
             if (existingTrackerLocal != null) {
                 trackerLocal = existingTrackerLocal;
+            } else {
+                eventManager.addEventHandler(key, new EventHandler() {
+                    @Override
+                    public void handleStatsEvent(final EventType eventType, 
+                                                 final StatsKey key, 
+                                                 final Object target) {
+                        switch (eventType) {
+                            case CONFIG_CHANGED:
+                            case CONFIG_DESTROYED:
+                            case SESSION_DESTROYED:
+                                threadTrackerMap.remove(key);
+                        }
+                    }
+                });
             }
         }
 

@@ -124,7 +124,7 @@ public class CompositeTrackerFactory<T extends Tracker>
             if (nameSuffix == null) {
                 throw new NullPointerException("nameSuffix");
             }
-            if (nameSuffix.length() == 0) {
+            if (nameSuffix.trim().length() == 0) {
                 throw new IllegalArgumentException("nameSuffix is empty");
             }
             if (factory == null) {
