@@ -4,7 +4,7 @@
   <artifactId>stajistics-parent</artifactId>
   <packaging>pom</packaging>
   <name>Stajistics Parent</name>
-  <version>0.3</version>
+  <version>0.4-SNAPSHOT</version>
   <description>A Java monitoring and performance statistics collection API</description>
   <url>http://www.stajistics.org</url>
 
@@ -73,9 +73,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/tags/stajistics-parent-0.3</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/tags/stajistics-parent-0.3</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/tags/stajistics-parent-0.3</url>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/trunk/</url>
   </scm>
 
   <properties>
