@@ -3,16 +3,16 @@
   <parent>
     <groupId>org.stajistics</groupId>
     <artifactId>stajistics-parent</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>stajistics-servlet</artifactId>
   <name>Stajistics Servlet</name>
 
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-servlet/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-servlet/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-servlet</url>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/tags/stajistics-parent-0.3/stajistics-servlet</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/tags/stajistics-parent-0.3/stajistics-servlet</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/tags/stajistics-parent-0.3/stajistics-servlet</url>
   </scm>
 
   <dependencies>
