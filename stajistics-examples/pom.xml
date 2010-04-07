@@ -2,7 +2,7 @@
   <parent>
     <artifactId>stajistics-parent</artifactId>
     <groupId>org.stajistics</groupId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>stajistics-examples</artifactId>
@@ -10,9 +10,9 @@
   <description>Example usages of the Stajistics API</description>
 
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-examples/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-examples/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-examples</url>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/tags/stajistics-parent-0.3/stajistics-examples</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/tags/stajistics-parent-0.3/stajistics-examples</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/tags/stajistics-parent-0.3/stajistics-examples</url>
   </scm>
 
   <dependencies>
