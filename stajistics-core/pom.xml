@@ -9,4 +9,10 @@
   <name>Stajistics Core</name>
   <description>Stajistics core API</description>
 
+  <scm>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-core/</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-core/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-core</url>
+  </scm>
+
 </project>

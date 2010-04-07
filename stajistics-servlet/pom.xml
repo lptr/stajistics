@@ -9,6 +9,12 @@
   <artifactId>stajistics-servlet</artifactId>
   <name>Stajistics Servlet</name>
 
+  <scm>
+    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/stajistics-servlet/</connection>
+    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/stajistics-servlet/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-servlet</url>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
