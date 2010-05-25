@@ -53,16 +53,16 @@ public class StatsManagementEventHandler implements EventHandler {
             statsManagement.registerSessionMBean(statsManager, (StatsSession)target);
 
         } else if (eventType == EventType.SESSION_DESTROYED) {
-            statsManagement.unregisterSessionMBean(statsManager, key);
+            statsManagement.unregisterSessionMBeanIfNecessary(statsManager, key);
 
         } else if (eventType == EventType.CONFIG_CREATED) {
             statsManagement.registerConfigMBean(statsManager, key, (StatsConfig)target);
 
         } else if (eventType == EventType.CONFIG_DESTROYED) {
-            statsManagement.unregisterConfigMBean(statsManager, key);
+            statsManagement.unregisterConfigMBeanIfNecessary(statsManager, key);
 
         } else if (eventType == EventType.CONFIG_CHANGED) {
-            statsManagement.unregisterConfigMBean(statsManager, key);
+            statsManagement.unregisterConfigMBeanIfNecessary(statsManager, key);
             statsManagement.registerConfigMBean(statsManager, key, (StatsConfig)target);
         }
     }

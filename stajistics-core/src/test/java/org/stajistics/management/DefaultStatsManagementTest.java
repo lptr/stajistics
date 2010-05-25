@@ -319,7 +319,7 @@ public class DefaultStatsManagementTest {
     }
 
     @Test
-    public void testUnregisterConfigMBean() throws Exception {
+    public void testUnregisterConfigMBeanIfNecessary() throws Exception {
 
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
@@ -334,7 +334,18 @@ public class DefaultStatsManagementTest {
 
         mBeanServer.registerMBean(mockConfigMbean, name);
 
-        statsManagement.unregisterConfigMBean(mockStatsManager, mockKey);
+        statsManagement.unregisterConfigMBeanIfNecessary(mockStatsManager, mockKey);
+        assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
+    }
+
+    @Test
+    public void testUnregisterConfigMBeanIfNotNecessary() throws Exception {
+
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
+
+        ObjectName name = new ObjectName(statsManagement.buildName(mockStatsManager, mockKey, DefaultStatsManagement.TYPE_KEYS, DefaultStatsManagement.SUBTYPE_SESSION, false));
+
+        statsManagement.unregisterConfigMBeanIfNecessary(mockStatsManager, mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
     }
 
@@ -362,7 +373,7 @@ public class DefaultStatsManagementTest {
     }
 
     @Test
-    public void testUnregisterSessionMBean() throws Exception {
+    public void testUnregisterSessionMBeanIfNecessary() throws Exception {
 
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
@@ -378,7 +389,18 @@ public class DefaultStatsManagementTest {
 
         mBeanServer.registerMBean(mockSessionMBean, name);
 
-        statsManagement.unregisterSessionMBean(mockStatsManager, mockKey);
+        statsManagement.unregisterSessionMBeanIfNecessary(mockStatsManager, mockKey);
+        assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
+    }
+
+    @Test
+    public void testUnregisterSessionMBeanIfNotNecessary() throws Exception {
+
+        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
+
+        ObjectName name = new ObjectName(statsManagement.buildName(mockStatsManager, mockKey, DefaultStatsManagement.TYPE_KEYS, DefaultStatsManagement.SUBTYPE_SESSION, false));
+
+        statsManagement.unregisterSessionMBeanIfNecessary(mockStatsManager, mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
     }
 

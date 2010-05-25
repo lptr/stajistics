@@ -39,7 +39,7 @@ public interface StatsManagement {
                              StatsKey key,
                              StatsConfig config);
 
-    void unregisterConfigMBean(StatsManager statsManager,
+    void unregisterConfigMBeanIfNecessary(StatsManager statsManager,
                                StatsKey key);
 
     void registerSessionManagerMBean(StatsManager statsManager);
@@ -49,6 +49,6 @@ public interface StatsManagement {
     void registerSessionMBean(StatsManager statsManager,
                               StatsSession session);
 
-    void unregisterSessionMBean(StatsManager statsManager,
+    void unregisterSessionMBeanIfNecessary(StatsManager statsManager,
                                 StatsKey key);
 }

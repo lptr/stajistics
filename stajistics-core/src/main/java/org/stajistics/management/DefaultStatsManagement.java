@@ -217,16 +217,18 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
     }
 
     @Override
-    public void unregisterConfigMBean(final StatsManager statsManager,
+    public void unregisterConfigMBeanIfNecessary(final StatsManager statsManager,
                                       final StatsKey key) {
 
         String name = buildName(statsManager, key, TYPE_KEYS, SUBTYPE_CONFIG, false);
 
         try {
             ObjectName objectName = new ObjectName(name);
-            mBeanServer.unregisterMBean(objectName);
+            if (mBeanServer.isRegistered(objectName)) {
+                mBeanServer.unregisterMBean(objectName);
 
-            logRegistrationSuccess(false, StatsConfigMBean.class, key, objectName);
+                logRegistrationSuccess(false, StatsConfigMBean.class, key, objectName);
+            }
 
         } catch (Exception e) {
             logRegistrationFailure(false, StatsConfigMBean.class, key, name, e);
@@ -258,16 +260,18 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
     }
 
     @Override
-    public void unregisterSessionMBean(final StatsManager statsManager,
+    public void unregisterSessionMBeanIfNecessary(final StatsManager statsManager,
                                        final StatsKey key) {
 
         String name = buildName(statsManager, key, TYPE_KEYS, SUBTYPE_SESSION, true);
 
         try {
             ObjectName objectName = new ObjectName(name);
-            mBeanServer.unregisterMBean(objectName);
+            if (mBeanServer.isRegistered(objectName)) {
+                mBeanServer.unregisterMBean(objectName);
 
-            logRegistrationSuccess(false, StatsSessionMBean.class, key, objectName);
+                logRegistrationSuccess(false, StatsSessionMBean.class, key, objectName);
+            }
 
         } catch (Exception e) {
             logRegistrationFailure(false, StatsSessionMBean.class, key, name, e);
