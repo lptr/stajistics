@@ -357,9 +357,11 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
             while (entryItr.hasNext()) {
                 entry = entryItr.next();
 
-                eventManager.fireEvent(EventType.CONFIG_CHANGED,
-                                       entry.getKey(),
-                                       entry.getConfig());
+                if (!entry.equals(rootKeyEntry)) {
+                    eventManager.fireEvent(EventType.CONFIG_CHANGED,
+                                           entry.getKey(),
+                                           entry.getConfig());
+                }
             }
         }
     }
