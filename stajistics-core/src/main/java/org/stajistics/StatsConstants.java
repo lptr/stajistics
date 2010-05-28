@@ -25,7 +25,9 @@ public interface StatsConstants {
     /**
      * The character that delimits hierarchy levels in {@link StatsKey} names.
      */
-    char KEY_HIERARCHY_DELIMITER = '.'; 
+    char KEY_HIERARCHY_DELIMITER = '.';
+
+    int KEY_HIERARCHY_ROOT_DEPTH = 1;
 
     /**
      * The default unit used in {@link StatsConfig} instances.

@@ -22,12 +22,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsKeyFactoryTest {
+public class DefaultStatsKeyFactoryTest extends AbstractStajisticsTestCase {
 
     // TODO: more
 
@@ -82,5 +82,5 @@ public class DefaultStatsKeyFactoryTest {
             assertEquals("template", npe.getMessage());
         }
     }
-    
+
 }

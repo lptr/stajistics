@@ -14,36 +14,28 @@
  */
 package org.stajistics.aop;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
-import java.lang.reflect.Method;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.DefaultStatsManager;
-import org.stajistics.Stats;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyUtils;
-import org.stajistics.StatsManager;
+import org.stajistics.*;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerFactory;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.*;
+
 /**
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class StatsProxyTest {
+public class StatsProxyTest extends AbstractStajisticsTestCase {
 
     private static Method SERVICE_QUERY_METHOD;
     static {
@@ -54,15 +46,12 @@ public class StatsProxyTest {
         }
     }
 
-    private Mockery mockery;
     private StatsManager mockStatsManager;
     private StatsKey mockKey;
     private Service mockService;
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
-
         // TODO: these should be _actually_ mocked
         mockStatsManager = DefaultStatsManager.createWithDefaults();
         Stats.loadManager(mockStatsManager);
@@ -137,7 +126,7 @@ public class StatsProxyTest {
 
                 return mockTracker;
             }
-            
+
             @Override
             public Class<Tracker> getTrackerType() {
                 return Tracker.class;
@@ -189,7 +178,7 @@ public class StatsProxyTest {
 
                  throw new Error("key is neither the methodKey nor the exceptionKey");
              }
-             
+
              @Override
              public Class<Tracker> getTrackerType() {
                  return Tracker.class;

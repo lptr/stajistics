@@ -38,10 +38,8 @@ import org.stajistics.tracker.span.TimeDurationTracker;
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class DefaultStatsConfigManagerTest {
+public class DefaultStatsConfigManagerTest extends AbstractStajisticsTestCase {
 
-    private Mockery mockery;
     private EventManager mockEventManager;
     private StatsKeyFactory mockKeyFactory;
 
@@ -49,7 +47,6 @@ public class DefaultStatsConfigManagerTest {
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         mockEventManager = mockery.mock(EventManager.class);
         mockKeyFactory = new DefaultStatsKeyFactory(); // TODO: actually mock this
 
@@ -128,12 +125,6 @@ public class DefaultStatsConfigManagerTest {
     public void testSetAndGetRootConfig() {
 
         final StatsConfig config = createConfig();
-
-        mockery.checking(new Expectations() {{
-            one(mockEventManager).fireEvent(with(EventType.CONFIG_CHANGED),
-                                            with(any(StatsKey.class)),
-                                            with(config));
-        }});
 
         configManager.setRootConfig(config);
         assertSame(config, configManager.getRootConfig());

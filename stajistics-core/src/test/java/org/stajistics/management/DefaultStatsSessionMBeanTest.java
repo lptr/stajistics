@@ -30,8 +30,8 @@ import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -43,9 +43,7 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
     protected DataSet mockDataSet;
 
     @Before
-    @Override
     public void setUp() {
-        super.setUp();
         mockKey = mockery.mock(StatsKey.class);
         mockSessionManager = mockery.mock(StatsSessionManager.class);
         mockSession = mockery.mock(StatsSession.class);
@@ -78,7 +76,7 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
 
         mBean = registerMBean(mBean, name, StatsSessionMBean.class);
 
-        assertEquals(mockSession.getClass().getName(), 
+        assertEquals(mockSession.getClass().getName(),
                      getMBeanServerConnection().getAttribute(name, "Implementation"));
     }
 
@@ -138,5 +136,5 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
         getMBeanServerConnection().invoke(name, "destroy", null, null);
     }
 
-    
+
 }

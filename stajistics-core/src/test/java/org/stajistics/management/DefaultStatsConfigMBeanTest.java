@@ -30,8 +30,8 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -48,9 +48,7 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
     }
 
     @Before
-    @Override
     public void setUp() {
-        super.setUp();
         mockKey = mockery.mock(StatsKey.class);
         mockManager = mockery.mock(StatsManager.class);
         mockConfigFactory = mockery.mock(StatsConfigFactory.class);

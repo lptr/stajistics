@@ -14,23 +14,17 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
-
 /**
- *
  * @author The Stajistics Project
  */
-public class StajisticsTest extends AbstractStajisticsTestCase {
+public class StajisticsAssertionError extends Error {
 
-    @Test
-    public void testGetName() {
-        assertNotNull(Stajistics.getName());
+    public StajisticsAssertionError(final String message) {
+	super(message);
     }
 
-    @Test
-    public void testGetVersion() {
-        assertNotNull(Stajistics.getVersion());
+    public StajisticsAssertionError(final String message, final Throwable cause) {
+	super(message, cause);
     }
+
 }

@@ -26,13 +26,14 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */
-public class DefaultFieldMetaDataSetTest {
+public class DefaultFieldMetaDataSetTest extends AbstractStajisticsTestCase {
 
     private Map<String,Object> map;
     private FieldMetaDataSet fieldMetaDataSet;
@@ -75,5 +76,5 @@ public class DefaultFieldMetaDataSetTest {
         metaData = fieldMetaDataSet.getMetaData("test");
         assertNull(metaData.getField("test"));
     }
-    
+
 }

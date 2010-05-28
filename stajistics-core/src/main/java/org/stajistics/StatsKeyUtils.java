@@ -15,20 +15,31 @@
 package org.stajistics;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class StatsKeyUtils {
+public final class StatsKeyUtils {
 
     private StatsKeyUtils() {}
+
+    public static String parentKeyName(final String keyName) {
+        String parentKeyName = null;
+
+        int i = keyName.lastIndexOf(StatsConstants.KEY_HIERARCHY_DELIMITER);
+        if (i > -1) {
+            parentKeyName = keyName.substring(0, i);
+        }
+
+        return parentKeyName;
+    }
 
     public static StatsKey keyForFailure(final StatsKey key,
                                          final Throwable failure) {
         StatsKey failureKey = key.buildCopy()
                                  .withNameSuffix("exception")
-                                 .withAttribute("threw",  
+                                 .withAttribute("threw",
                                                 failure.getClass()
                                                        .getName())
                                  .newKey();

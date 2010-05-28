@@ -28,6 +28,7 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.DefaultStatsManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
@@ -43,10 +44,8 @@ import org.stajistics.aop.StatsSelectiveProxy.SelectionCriteria;
  * @author The Stajistics Project
  *
  */
-@RunWith(JMock.class)
-public class StatsSelectiveProxyTest {
+public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
 
-    private Mockery mockery;
     private StatsManager mockStatsManager;
     private StatsKey mockKey;
     private Service mockService;
@@ -78,8 +77,6 @@ public class StatsSelectiveProxyTest {
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
-
         // TODO: these should be _actually_ mocked
         mockStatsManager = DefaultStatsManager.createWithDefaults();
         mockKey = mockStatsManager.getKeyFactory().createKey("test");
@@ -93,16 +90,16 @@ public class StatsSelectiveProxyTest {
         final SelectionCriteria mockCriteria = mockery.mock(SelectionCriteria.class);
 
         mockery.checking(new Expectations() {{
-            one(mockCriteria).select(with(aNonNull(Method.class)), 
+            one(mockCriteria).select(with(aNonNull(Method.class)),
                                      with(any(Object[].class)));
             will(returnValue(true));
 
             one(mockService).query();
         }});
 
-        Service serviceProxy = StatsSelectiveProxy.wrap(mockStatsManager, 
-                                                        mockKey, 
-                                                        mockService, 
+        Service serviceProxy = StatsSelectiveProxy.wrap(mockStatsManager,
+                                                        mockKey,
+                                                        mockService,
                                                         mockCriteria);
 
         serviceProxy.query();
@@ -114,16 +111,16 @@ public class StatsSelectiveProxyTest {
         final SelectionCriteria mockCriteria = mockery.mock(SelectionCriteria.class);
 
         mockery.checking(new Expectations() {{
-            one(mockCriteria).select(with(aNonNull(Method.class)), 
+            one(mockCriteria).select(with(aNonNull(Method.class)),
                                  with(any(Object[].class)));
             will(returnValue(false));
 
             one(mockService).query();
         }});
 
-        Service serviceProxy = StatsSelectiveProxy.wrap(mockStatsManager, 
-                                                        mockKey, 
-                                                        mockService, 
+        Service serviceProxy = StatsSelectiveProxy.wrap(mockStatsManager,
+                                                        mockKey,
+                                                        mockService,
                                                         mockCriteria);
 
         serviceProxy.query();

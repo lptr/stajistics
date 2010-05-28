@@ -14,23 +14,35 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
 
 /**
  *
+ *
+ *
  * @author The Stajistics Project
  */
-public class StajisticsTest extends AbstractStajisticsTestCase {
+@RunWith(JMock.class)
+public abstract class AbstractStajisticsTestCase {
 
-    @Test
-    public void testGetName() {
-        assertNotNull(Stajistics.getName());
+    protected Mockery mockery;
+
+    @Before
+    public void createMockery() {
+        resetMockery();
     }
 
-    @Test
-    public void testGetVersion() {
-        assertNotNull(Stajistics.getVersion());
+    protected void resetMockery() {
+        mockery = new Mockery();
+    }
+
+    @After
+    public void resetStatsManager() {
+        // Ensure we're working with a clean slate for each test
+        Stats.loadManager(DefaultStatsManager.createWithDefaults());
     }
 }

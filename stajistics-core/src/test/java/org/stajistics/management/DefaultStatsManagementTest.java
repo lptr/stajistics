@@ -32,28 +32,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigFactory;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
+import org.stajistics.*;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class DefaultStatsManagementTest {
+public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
 
     private static final String TYPE_TEST = "test";
     private static final String SUBTYPE_TEST = "test";
 
     private static final String NORMAL = "normal";
 
-    private Mockery mockery;
     private StatsKey mockKey;
     private StatsMBeanFactory mockMBeanFactory;
     private StatsManager mockStatsManager;
@@ -64,7 +59,6 @@ public class DefaultStatsManagementTest {
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         mockKey = mockery.mock(StatsKey.class);
         mockStatsManager = mockery.mock(StatsManager.class);
         mockMBeanFactory = mockery.mock(StatsMBeanFactory.class);
@@ -178,7 +172,7 @@ public class DefaultStatsManagementTest {
     /*
      * Hmm. This invalid(?) name is permitted by new ObjectName(name);
      * TODO: need to manually invalidate property names of this type?
-     * 
+     *
     @Test
     public void testBuildNamePropNameWithQuote() {
         buildExpectations(NORMAL, "with\"quote", NORMAL);
@@ -249,7 +243,7 @@ public class DefaultStatsManagementTest {
             one(mockMBeanFactory).createSessionManagerMBean(with(mockStatsManager)); will(returnValue(mockSessionManagerMBean));
         }});
 
-        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager, 
+        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
                                                                                 DefaultStatsManagement.MANAGER_NAME_SESSION));
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
         statsManagement.registerSessionManagerMBean(mockStatsManager);
@@ -258,7 +252,7 @@ public class DefaultStatsManagementTest {
 
     @Test
     public void testUnregisterSessionManagerMBean() throws Exception {
-        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager, 
+        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
                                                                                 DefaultStatsManagement.MANAGER_NAME_SESSION));
         final StatsSessionManagerMBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMBean.class);
 

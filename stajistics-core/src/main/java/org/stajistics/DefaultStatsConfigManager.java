@@ -249,18 +249,6 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return keyMap.get(key.getName());
     }
 
-    private String parentKeyName(final String keyName) {
-
-        String parentKeyName = null;
-
-        int i = keyName.lastIndexOf(StatsConstants.KEY_HIERARCHY_DELIMITER);
-        if (i > -1) {
-            parentKeyName = keyName.substring(0, i);
-        }
-
-        return parentKeyName;
-    }
-
     /*
      * This is kind of a scary method. Needs some refactoring.
      */
@@ -286,7 +274,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                 if (goingUp) {
                     entry = keyMap.get(keyName);
                     if (entry == null) {
-                        String parentKeyName = parentKeyName(keyName);
+                        String parentKeyName = StatsKeyUtils.parentKeyName(keyName);
                         stack.addLast(keyName);
                         keyName = parentKeyName;
                         if (keyName == null) {

@@ -70,6 +70,30 @@ public final class NullStatsKey implements StatsKey {
     }
 
     /**
+     * @return {@link StatsConstants#KEY_HIERARCHY_ROOT_DEPTH}
+     */
+    @Override
+    public int getHierarchyDepth() {
+	    return StatsConstants.KEY_HIERARCHY_ROOT_DEPTH;
+    }
+
+    /**
+     * @return <tt>false</tt>.
+     */
+    @Override
+    public boolean hasParent() {
+	    return false;
+    }
+
+    /**
+     * @return <tt>null</tt>.
+     */
+    @Override
+    public StatsKey getParent() {
+	    return null;
+    }
+
+    /**
      * @return {@link NullStatsKeyBuilder#getInstance()}
      */
     @Override

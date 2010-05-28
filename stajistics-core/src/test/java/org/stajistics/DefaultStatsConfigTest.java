@@ -34,7 +34,7 @@ import org.stajistics.tracker.span.NanoTimeDurationTracker;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsConfigTest {
+public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConstructWithNullTrackerFactory() {
@@ -242,7 +242,7 @@ public class DefaultStatsConfigTest {
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
-                                                     new Mockery().mock(StatsSessionFactory.class),
+                                                     mockery.mock(StatsSessionFactory.class),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -344,7 +344,7 @@ public class DefaultStatsConfigTest {
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
-                                                     new Mockery().mock(StatsSessionFactory.class),
+                                                     mockery.mock(StatsSessionFactory.class),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");

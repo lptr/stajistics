@@ -22,14 +22,15 @@ import static org.junit.Assert.assertTrue;
 import java.util.Set;
 
 import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class NullDataSetTest {
+public class NullDataSetTest extends AbstractStajisticsTestCase {
 
     protected DataContainer dc() {
         return NullDataSet.getInstance();

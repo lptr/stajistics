@@ -24,21 +24,20 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 import org.stajistics.event.EventHandler;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class SingletonTrackerFactoryDecoratorTest {
+public class SingletonTrackerFactoryDecoratorTest extends AbstractStajisticsTestCase {
 
-    private Mockery mockery;
     private TrackerFactory<Tracker> mockDelegate;
     private StatsSessionManager mockSessionManager;
     private EventManager mockEventManager;
@@ -54,8 +53,6 @@ public class SingletonTrackerFactoryDecoratorTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        mockery = new Mockery();
-
         mockDelegate = mockery.mock(TrackerFactory.class);
         mockKey1 = mockery.mock(StatsKey.class, "StatsKey1");
         mockKey2 = mockery.mock(StatsKey.class, "StatsKey2");
@@ -131,7 +128,7 @@ public class SingletonTrackerFactoryDecoratorTest {
 
             one(mockEventManager).addEventHandler(with(mockKey1),
                                                   with(aNonNull(EventHandler.class)));
-            
+
             one(mockDelegate).createTracker(with(mockKey2),
                                             with(mockSessionManager));
             will(returnValue(mockTracker2));

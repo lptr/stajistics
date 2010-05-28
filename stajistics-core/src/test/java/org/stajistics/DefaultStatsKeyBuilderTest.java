@@ -29,21 +29,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
- * 
- * 
+ *
+ *
+ *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class DefaultStatsKeyBuilderTest {
+public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
 
-    private Mockery mockery;
     private StatsKey mockKey;
     private StatsKeyFactory mockKeyFactory;
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         mockKey = mockery.mock(StatsKey.class);
         mockKeyFactory = new DefaultStatsKeyFactory(); // TODO: actually mock this
     }
@@ -355,6 +352,7 @@ public class DefaultStatsKeyBuilderTest {
                                   "a*a", "a?a", "a,a", "a=a", "a:a" };
 
         for (String invalidName : invalidNames) {
+            resetMockery();
             setUp();
 
             buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");

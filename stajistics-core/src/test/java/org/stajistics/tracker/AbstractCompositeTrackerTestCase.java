@@ -27,17 +27,16 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public abstract class AbstractCompositeTrackerTestCase<T extends Tracker> {
+public abstract class AbstractCompositeTrackerTestCase<T extends Tracker> extends AbstractStajisticsTestCase {
 
-    protected Mockery mockery;
     protected T[] mockTrackers;
 
     protected abstract T[] createMockTrackers();
@@ -48,7 +47,6 @@ public abstract class AbstractCompositeTrackerTestCase<T extends Tracker> {
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         mockTrackers = createMockTrackers();
     }
 

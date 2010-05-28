@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -33,9 +33,7 @@ public class DefaultStatsSessionManagerMBeanTest extends AbstractMBeanTestCase {
      protected StatsSessionManager mockSessionManager;
 
      @Before
-     @Override
      public void setUp() {
-         super.setUp();
          mockSessionManager = mockery.mock(StatsSessionManager.class);
      }
 

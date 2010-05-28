@@ -37,21 +37,17 @@ import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.TrackerLocator;
 
+import java.io.IOException;
+
+import static org.junit.Assert.*;
+
 /**
  *
  *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class DefaultStatsManagerTest {
-
-    private Mockery mockery;
-
-    @Before
-    public void setUp() {
-        mockery = new Mockery();
-    }
+public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
 
     private DefaultStatsManager newDefaultStatsManager() {
         return DefaultStatsManager.createWithDefaults(); // TODO: mock the managers

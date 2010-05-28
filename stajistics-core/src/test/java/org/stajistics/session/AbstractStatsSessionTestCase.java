@@ -28,6 +28,7 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
 import org.stajistics.data.DataSet;
@@ -45,12 +46,8 @@ import org.stajistics.util.Decorator;
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public abstract class AbstractStatsSessionTestCase {
+public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTestCase {
 
-    protected static final double DELTA = 0.0000000000001;
-
-    protected Mockery mockery;
     protected StatsKey mockKey;
     protected Tracker mockTracker;
     protected EventManager mockEventManager;
@@ -59,8 +56,6 @@ public abstract class AbstractStatsSessionTestCase {
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
-
         mockKey = mockery.mock(StatsKey.class);
         TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
 
@@ -81,11 +76,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(DataSet.Field.Default.FIRST_HIT_STAMP.longValue(), session.getFirstHitStamp());
         assertEquals(DataSet.Field.Default.LAST_HIT_STAMP.longValue(), session.getLastHitStamp());
         assertEquals(DataSet.Field.Default.COMMITS.longValue(), session.getCommits());
-        assertEquals(DataSet.Field.Default.FIRST, session.getFirst(), DELTA);
-        assertEquals(DataSet.Field.Default.MIN, session.getMin(), DELTA);
-        assertEquals(DataSet.Field.Default.MAX, session.getMax(), DELTA);
-        assertEquals(DataSet.Field.Default.LAST, session.getLast(), DELTA);
-        assertEquals(DataSet.Field.Default.SUM, session.getSum(), DELTA);
+        assertEquals(DataSet.Field.Default.FIRST, session.getFirst(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MIN, session.getMin(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MAX, session.getMax(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.LAST, session.getLast(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.SUM, session.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -116,19 +111,19 @@ public abstract class AbstractStatsSessionTestCase {
     @Test
     public void testInitialCollectData() {
         DataSet data = session.collectData();
-        assertEquals(DataSet.Field.Default.HITS.longValue(), 
+        assertEquals(DataSet.Field.Default.HITS.longValue(),
                      (long) data.getField(Field.HITS, Long.class));
-        assertEquals(DataSet.Field.Default.FIRST_HIT_STAMP.longValue(), 
+        assertEquals(DataSet.Field.Default.FIRST_HIT_STAMP.longValue(),
                      (long) data.getField(Field.FIRST_HIT_STAMP, Long.class));
-        assertEquals(DataSet.Field.Default.LAST_HIT_STAMP.longValue(), 
+        assertEquals(DataSet.Field.Default.LAST_HIT_STAMP.longValue(),
                      (long) data.getField(Field.LAST_HIT_STAMP, Long.class));
-        assertEquals(DataSet.Field.Default.COMMITS.longValue(), 
+        assertEquals(DataSet.Field.Default.COMMITS.longValue(),
                      (long) data.getField(Field.COMMITS, Long.class));
-        assertEquals(DataSet.Field.Default.FIRST, data.getField(Field.FIRST, Double.class), DELTA);
-        assertEquals(DataSet.Field.Default.MIN, data.getField(Field.MIN, Double.class), DELTA);
-        assertEquals(DataSet.Field.Default.MAX, data.getField(Field.MAX, Double.class), DELTA);
-        assertEquals(DataSet.Field.Default.LAST, data.getField(Field.LAST, Double.class), DELTA);
-        assertEquals(DataSet.Field.Default.SUM, data.getField(Field.SUM, Double.class), DELTA);
+        assertEquals(DataSet.Field.Default.FIRST, data.getField(Field.FIRST, Double.class), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MIN, data.getField(Field.MIN, Double.class), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MAX, data.getField(Field.MAX, Double.class), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.LAST, data.getField(Field.LAST, Double.class), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.SUM, data.getField(Field.SUM, Double.class), TestUtil.DELTA);
     }
 
     @Test
@@ -154,11 +149,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(firstHitStamp, session.getFirstHitStamp());
         assertEquals(lastHitStamp, session.getLastHitStamp());
         assertEquals(commits, session.getCommits());
-        assertEquals(first, session.getFirst(), DELTA);
-        assertEquals(min, session.getMin(), DELTA);
-        assertEquals(max, session.getMax(), DELTA);
-        assertEquals(last, session.getLast(), DELTA);
-        assertEquals(sum, session.getSum(), DELTA);
+        assertEquals(first, session.getFirst(), TestUtil.DELTA);
+        assertEquals(min, session.getMin(), TestUtil.DELTA);
+        assertEquals(max, session.getMax(), TestUtil.DELTA);
+        assertEquals(last, session.getLast(), TestUtil.DELTA);
+        assertEquals(sum, session.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -237,7 +232,7 @@ public abstract class AbstractStatsSessionTestCase {
         DataSet dataSet = session.collectData();
 
         final Long collectionStamp = dataSet.getMetaData()
-                                            .getField(DataSet.MetaField.COLLECTION_STAMP, 
+                                            .getField(DataSet.MetaField.COLLECTION_STAMP,
                                                       Long.class);
         assertNotNull(collectionStamp);
         assertTrue(collectionStamp >= now);
@@ -254,7 +249,7 @@ public abstract class AbstractStatsSessionTestCase {
         DataSet dataSet = session.drainData();
 
         final Long collectionStamp = dataSet.getMetaData()
-                                            .getField(DataSet.MetaField.COLLECTION_STAMP, 
+                                            .getField(DataSet.MetaField.COLLECTION_STAMP,
                                                       Long.class);
         assertNotNull(collectionStamp);
         assertTrue(collectionStamp >= now);
@@ -269,7 +264,7 @@ public abstract class AbstractStatsSessionTestCase {
         DataSet dataSet = session.drainData();
 
         final Boolean drained = dataSet.getMetaData()
-                                       .getField(DataSet.MetaField.DRAINED_SESSION, 
+                                       .getField(DataSet.MetaField.DRAINED_SESSION,
                                                  Boolean.class);
         assertNotNull(drained);
         assertTrue(drained);
@@ -314,11 +309,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(firstNow, session.getFirstHitStamp());
         assertEquals(firstNow, session.getLastHitStamp());
         assertEquals(DataSet.Field.Default.COMMITS.longValue(), session.getCommits());
-        assertEquals(DataSet.Field.Default.FIRST, session.getFirst(), DELTA);
-        assertEquals(DataSet.Field.Default.MIN, session.getMin(), DELTA);
-        assertEquals(DataSet.Field.Default.MAX, session.getMax(), DELTA);
-        assertEquals(DataSet.Field.Default.LAST, session.getLast(), DELTA);
-        assertEquals(DataSet.Field.Default.SUM, session.getSum(), DELTA);
+        assertEquals(DataSet.Field.Default.FIRST, session.getFirst(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MIN, session.getMin(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MAX, session.getMax(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.LAST, session.getLast(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.SUM, session.getSum(), TestUtil.DELTA);
 
         final long secondNow = System.currentTimeMillis();
 
@@ -328,11 +323,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(firstNow, session.getFirstHitStamp());
         assertEquals(secondNow, session.getLastHitStamp());
         assertEquals(DataSet.Field.Default.COMMITS.longValue(), session.getCommits());
-        assertEquals(DataSet.Field.Default.FIRST, session.getFirst(), DELTA);
-        assertEquals(DataSet.Field.Default.MIN, session.getMin(), DELTA);
-        assertEquals(DataSet.Field.Default.MAX, session.getMax(), DELTA);
-        assertEquals(DataSet.Field.Default.LAST, session.getLast(), DELTA);
-        assertEquals(DataSet.Field.Default.SUM, session.getSum(), DELTA);
+        assertEquals(DataSet.Field.Default.FIRST, session.getFirst(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MIN, session.getMin(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MAX, session.getMax(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.LAST, session.getLast(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.SUM, session.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -359,11 +354,11 @@ public abstract class AbstractStatsSessionTestCase {
         session.update(mockTracker, now);
 
         assertEquals(1, session.getCommits());
-        assertEquals(1, session.getFirst(), DELTA);
-        assertEquals(1, session.getMin(), DELTA);
-        assertEquals(1, session.getMax(), DELTA);
-        assertEquals(1, session.getLast(), DELTA);
-        assertEquals(1, session.getSum(), DELTA);
+        assertEquals(1, session.getFirst(), TestUtil.DELTA);
+        assertEquals(1, session.getMin(), TestUtil.DELTA);
+        assertEquals(1, session.getMax(), TestUtil.DELTA);
+        assertEquals(1, session.getLast(), TestUtil.DELTA);
+        assertEquals(1, session.getSum(), TestUtil.DELTA);
 
         mockery.checking(new Expectations() {{
             one(mockTracker).getValue(); will(returnValue(2.0));
@@ -374,11 +369,11 @@ public abstract class AbstractStatsSessionTestCase {
         session.update(mockTracker, now);
 
         assertEquals(2, session.getCommits());
-        assertEquals(1, session.getFirst(), DELTA);
-        assertEquals(1, session.getMin(), DELTA);
-        assertEquals(2, session.getMax(), DELTA);
-        assertEquals(2, session.getLast(), DELTA);
-        assertEquals(3, session.getSum(), DELTA);
+        assertEquals(1, session.getFirst(), TestUtil.DELTA);
+        assertEquals(1, session.getMin(), TestUtil.DELTA);
+        assertEquals(2, session.getMax(), TestUtil.DELTA);
+        assertEquals(2, session.getLast(), TestUtil.DELTA);
+        assertEquals(3, session.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -410,11 +405,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(firstNow, session.getFirstHitStamp());
         assertEquals(firstNow, session.getLastHitStamp());
         assertEquals(1, session.getCommits());
-        assertEquals(2, session.getFirst(), DELTA);
-        assertEquals(2, session.getMin(), DELTA);
-        assertEquals(2, session.getMax(), DELTA);
-        assertEquals(2, session.getLast(), DELTA);
-        assertEquals(2, session.getSum(), DELTA);
+        assertEquals(2, session.getFirst(), TestUtil.DELTA);
+        assertEquals(2, session.getMin(), TestUtil.DELTA);
+        assertEquals(2, session.getMax(), TestUtil.DELTA);
+        assertEquals(2, session.getLast(), TestUtil.DELTA);
+        assertEquals(2, session.getSum(), TestUtil.DELTA);
 
         mockery.checking(new Expectations() {{
             one(mockTracker).getValue(); will(returnValue(4.0));
@@ -429,11 +424,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(firstNow, session.getFirstHitStamp());
         assertEquals(secondNow, session.getLastHitStamp());
         assertEquals(2, session.getCommits());
-        assertEquals(2, session.getFirst(), DELTA);
-        assertEquals(2, session.getMin(), DELTA);
-        assertEquals(4, session.getMax(), DELTA);
-        assertEquals(4, session.getLast(), DELTA);
-        assertEquals(6, session.getSum(), DELTA);
+        assertEquals(2, session.getFirst(), TestUtil.DELTA);
+        assertEquals(2, session.getMin(), TestUtil.DELTA);
+        assertEquals(4, session.getMax(), TestUtil.DELTA);
+        assertEquals(4, session.getLast(), TestUtil.DELTA);
+        assertEquals(6, session.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -455,11 +450,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(1L, dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
         assertEquals(10L, dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
         assertEquals(10L, dataSet.getField(DataSet.Field.COMMITS));
-        assertEquals(1.0, dataSet.getField(DataSet.Field.FIRST, Double.class), DELTA);
-        assertEquals(1.0, dataSet.getField(DataSet.Field.MIN, Double.class), DELTA);
-        assertEquals(1.0, dataSet.getField(DataSet.Field.MAX, Double.class), DELTA);
-        assertEquals(1.0, dataSet.getField(DataSet.Field.LAST, Double.class), DELTA);
-        assertEquals(10.0, dataSet.getField(DataSet.Field.SUM, Double.class), DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.FIRST, Double.class), TestUtil.DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.MIN, Double.class), TestUtil.DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.MAX, Double.class), TestUtil.DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.LAST, Double.class), TestUtil.DELTA);
+        assertEquals(10.0, dataSet.getField(DataSet.Field.SUM, Double.class), TestUtil.DELTA);
     }
 
     @Test
@@ -480,11 +475,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(session.getFirstHitStamp(), dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
         assertEquals(session.getLastHitStamp(), dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
         assertEquals(session.getCommits(), dataSet.getField(DataSet.Field.COMMITS));
-        assertEquals(session.getFirst(), dataSet.getField(DataSet.Field.FIRST, Double.class), DELTA);
-        assertEquals(session.getMin(), dataSet.getField(DataSet.Field.MIN, Double.class), DELTA);
-        assertEquals(session.getMax(), dataSet.getField(DataSet.Field.MAX, Double.class), DELTA);
-        assertEquals(session.getLast(), dataSet.getField(DataSet.Field.LAST, Double.class), DELTA);
-        assertEquals(session.getSum(), dataSet.getField(DataSet.Field.SUM, Double.class), DELTA);
+        assertEquals(session.getFirst(), dataSet.getField(DataSet.Field.FIRST, Double.class), TestUtil.DELTA);
+        assertEquals(session.getMin(), dataSet.getField(DataSet.Field.MIN, Double.class), TestUtil.DELTA);
+        assertEquals(session.getMax(), dataSet.getField(DataSet.Field.MAX, Double.class), TestUtil.DELTA);
+        assertEquals(session.getLast(), dataSet.getField(DataSet.Field.LAST, Double.class), TestUtil.DELTA);
+        assertEquals(session.getSum(), dataSet.getField(DataSet.Field.SUM, Double.class), TestUtil.DELTA);
     }
 
     @Test
@@ -506,11 +501,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(1L, dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
         assertEquals(10L, dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
         assertEquals(10L, dataSet.getField(DataSet.Field.COMMITS));
-        assertEquals(1.0, dataSet.getField(DataSet.Field.FIRST, Double.class), DELTA);
-        assertEquals(1.0, dataSet.getField(DataSet.Field.MIN, Double.class), DELTA);
-        assertEquals(1.0, dataSet.getField(DataSet.Field.MAX, Double.class), DELTA);
-        assertEquals(1.0, dataSet.getField(DataSet.Field.LAST, Double.class), DELTA);
-        assertEquals(10.0, dataSet.getField(DataSet.Field.SUM, Double.class), DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.FIRST, Double.class), TestUtil.DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.MIN, Double.class), TestUtil.DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.MAX, Double.class), TestUtil.DELTA);
+        assertEquals(1.0, dataSet.getField(DataSet.Field.LAST, Double.class), TestUtil.DELTA);
+        assertEquals(10.0, dataSet.getField(DataSet.Field.SUM, Double.class), TestUtil.DELTA);
 
         assertInitialState(session);
     }
@@ -538,11 +533,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(session.getFirstHitStamp(), anotherSession.getFirstHitStamp());
         assertEquals(session.getLastHitStamp(), anotherSession.getLastHitStamp());
         assertEquals(session.getCommits(), anotherSession.getCommits());
-        assertEquals(session.getFirst(), anotherSession.getFirst(), DELTA);
-        assertEquals(session.getMin(), anotherSession.getMin(), DELTA);
-        assertEquals(session.getMax(), anotherSession.getMax(), DELTA);
-        assertEquals(session.getLast(), anotherSession.getLast(), DELTA);
-        assertEquals(session.getSum(), anotherSession.getSum(), DELTA);
+        assertEquals(session.getFirst(), anotherSession.getFirst(), TestUtil.DELTA);
+        assertEquals(session.getMin(), anotherSession.getMin(), TestUtil.DELTA);
+        assertEquals(session.getMax(), anotherSession.getMax(), TestUtil.DELTA);
+        assertEquals(session.getLast(), anotherSession.getLast(), TestUtil.DELTA);
+        assertEquals(session.getSum(), anotherSession.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -568,11 +563,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(session.getFirstHitStamp(), emptySession.getFirstHitStamp());
         assertEquals(session.getLastHitStamp(), emptySession.getLastHitStamp());
         assertEquals(session.getCommits(), emptySession.getCommits());
-        assertEquals(session.getFirst(), emptySession.getFirst(), DELTA);
-        assertEquals(session.getMin(), emptySession.getMin(), DELTA);
-        assertEquals(session.getMax(), emptySession.getMax(), DELTA);
-        assertEquals(session.getLast(), emptySession.getLast(), DELTA);
-        assertEquals(session.getSum(), emptySession.getSum(), DELTA);
+        assertEquals(session.getFirst(), emptySession.getFirst(), TestUtil.DELTA);
+        assertEquals(session.getMin(), emptySession.getMin(), TestUtil.DELTA);
+        assertEquals(session.getMax(), emptySession.getMax(), TestUtil.DELTA);
+        assertEquals(session.getLast(), emptySession.getLast(), TestUtil.DELTA);
+        assertEquals(session.getSum(), emptySession.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -589,11 +584,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(DataSet.Field.Default.FIRST_HIT_STAMP.longValue(), session.getFirstHitStamp());
         assertEquals(DataSet.Field.Default.LAST_HIT_STAMP.longValue(), session.getLastHitStamp());
         assertEquals(DataSet.Field.Default.COMMITS.longValue(), session.getCommits());
-        assertEquals(DataSet.Field.Default.FIRST, session.getFirst(), DELTA);
-        assertEquals(DataSet.Field.Default.MIN, session.getMin(), DELTA);
-        assertEquals(DataSet.Field.Default.MAX, session.getMax(), DELTA);
-        assertEquals(DataSet.Field.Default.LAST, session.getLast(), DELTA);
-        assertEquals(DataSet.Field.Default.SUM, session.getSum(), DELTA);
+        assertEquals(DataSet.Field.Default.FIRST, session.getFirst(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MIN, session.getMin(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MAX, session.getMax(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.LAST, session.getLast(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.SUM, session.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -631,11 +626,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(DataSet.Field.Default.FIRST_HIT_STAMP.longValue(), anotherSession.getFirstHitStamp());
         assertEquals(DataSet.Field.Default.LAST_HIT_STAMP.longValue(), anotherSession.getLastHitStamp());
         assertEquals(DataSet.Field.Default.COMMITS.longValue(), anotherSession.getCommits());
-        assertEquals(DataSet.Field.Default.FIRST, anotherSession.getFirst(), DELTA);
-        assertEquals(DataSet.Field.Default.MIN, anotherSession.getMin(), DELTA);
-        assertEquals(DataSet.Field.Default.MAX, anotherSession.getMax(), DELTA);
-        assertEquals(DataSet.Field.Default.LAST, anotherSession.getLast(), DELTA);
-        assertEquals(DataSet.Field.Default.SUM, anotherSession.getSum(), DELTA);
+        assertEquals(DataSet.Field.Default.FIRST, anotherSession.getFirst(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MIN, anotherSession.getMin(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MAX, anotherSession.getMax(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.LAST, anotherSession.getLast(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.SUM, anotherSession.getSum(), TestUtil.DELTA);
     }
 
     @Test
@@ -663,11 +658,11 @@ public abstract class AbstractStatsSessionTestCase {
         assertEquals(session.getFirstHitStamp(), anotherSession.getFirstHitStamp());
         assertEquals(session.getLastHitStamp(), anotherSession.getLastHitStamp());
         assertEquals(DataSet.Field.Default.COMMITS.longValue(), anotherSession.getCommits());
-        assertEquals(DataSet.Field.Default.FIRST, anotherSession.getFirst(), DELTA);
-        assertEquals(DataSet.Field.Default.MIN, anotherSession.getMin(), DELTA);
-        assertEquals(DataSet.Field.Default.MAX, anotherSession.getMax(), DELTA);
-        assertEquals(DataSet.Field.Default.LAST, anotherSession.getLast(), DELTA);
-        assertEquals(DataSet.Field.Default.SUM, anotherSession.getSum(), DELTA);
+        assertEquals(DataSet.Field.Default.FIRST, anotherSession.getFirst(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MIN, anotherSession.getMin(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.MAX, anotherSession.getMax(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.LAST, anotherSession.getLast(), TestUtil.DELTA);
+        assertEquals(DataSet.Field.Default.SUM, anotherSession.getSum(), TestUtil.DELTA);
     }
 
     @Test

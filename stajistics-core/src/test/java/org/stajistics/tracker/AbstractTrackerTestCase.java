@@ -27,6 +27,7 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
 import org.stajistics.data.DataSet;
@@ -35,18 +36,15 @@ import org.stajistics.session.StatsSessionManager;
 import org.stajistics.session.recorder.DataRecorder;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public abstract class AbstractTrackerTestCase<T extends Tracker> {
+public abstract class AbstractTrackerTestCase<T extends Tracker> extends AbstractStajisticsTestCase {
 
     protected StatsKey mockKey;
     protected StatsSession mockSession;
-
-    protected Mockery mockery;
 
     protected final T createStatsTracker() {
         return createStatsTracker(mockSession);
@@ -56,7 +54,6 @@ public abstract class AbstractTrackerTestCase<T extends Tracker> {
 
     @Before
     public void setUp() throws Exception {
-        mockery = new Mockery();
         mockSession = mockery.mock(StatsSession.class);
 
         mockery.checking(new Expectations() {{
