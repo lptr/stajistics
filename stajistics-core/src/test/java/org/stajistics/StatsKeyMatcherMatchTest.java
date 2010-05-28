@@ -47,7 +47,7 @@ import junit.framework.TestSuite;
 import org.jmock.Mockery;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  */
 public class StatsKeyMatcherMatchTest extends TestCase {
@@ -277,7 +277,7 @@ public class StatsKeyMatcherMatchTest extends TestCase {
             StatsKey key = (StatsKey)TEST_DATA[i][1];
             boolean expectedResult = (Boolean)TEST_DATA[i][2];
 
-            suite.addTest(new StatsKeyMatcherMatchTest(matcher, key, expectedResult));    
+            suite.addTest(new StatsKeyMatcherMatchTest(matcher, key, expectedResult));
         }
         return suite;
     }
@@ -300,8 +300,8 @@ public class StatsKeyMatcherMatchTest extends TestCase {
         return newKey(name, null, null);
     }
 
-    private static StatsKey newKey(final String name, 
-                                   final String attrName, 
+    private static StatsKey newKey(final String name,
+                                   final String attrName,
                                    final String attrVaule) {
         Mockery mockery = new Mockery();
         StatsKey mockKey = mockery.mock(StatsKey.class, name);

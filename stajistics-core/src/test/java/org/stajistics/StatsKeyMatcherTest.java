@@ -31,18 +31,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class StatsKeyMatcherTest {
-
-    private Mockery mockery;
-
-    @Before
-    public void setUp() {
-        mockery = new Mockery();
-    }
+public class StatsKeyMatcherTest extends AbstractStajisticsTestCase {
 
     private StatsKey newKey(final String name) {
         StatsKey mockKey = mockery.mock(StatsKey.class, name);

@@ -14,12 +14,12 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,32 +28,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
 @RunWith(JMock.class)
-public abstract class AbstractStatsKeyTestCase {
+public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCase {
 
     protected static final String TEST_NAME = "testName";
     protected static final String TEST_UNIT = "testUnit";
     protected static final Map<String,Object> TEST_ATTRIBUTES = new HashMap<String,Object>();
 
-    protected Mockery mockery;
     protected StatsKeyFactory mockKeyFactory;
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         mockKeyFactory = mockery.mock(StatsKeyFactory.class);
     }
 
@@ -62,7 +55,7 @@ public abstract class AbstractStatsKeyTestCase {
                                                Map<String,Object> attributes);
 
     protected StatsKey createStatsKey(final String name) {
-        return createStatsKey(name, 
+        return createStatsKey(name,
                               mockKeyFactory,
                               TEST_ATTRIBUTES);
     }
@@ -135,6 +128,15 @@ public abstract class AbstractStatsKeyTestCase {
     }
 
     @Test
+    public void testGetHierarchyDepth() {
+	assertEquals(1, createStatsKey("a").getHierarchyDepth());
+	assertEquals(2, createStatsKey("a.b").getHierarchyDepth());
+	assertEquals(3, createStatsKey("a.b.c").getHierarchyDepth());
+	assertEquals(4, createStatsKey("a.b.c.d").getHierarchyDepth());
+	assertEquals(5, createStatsKey("a.b.c.d.e").getHierarchyDepth());
+    }
+
+    @Test
     public void testEqualsSameInstance() {
         StatsKey key = createStatsKey(TEST_NAME);
         assertEquals(key, key);
@@ -168,10 +170,10 @@ public abstract class AbstractStatsKeyTestCase {
 
     @Test
     public void testEqualsKeyWithDifferentAttributes() {
-        StatsKey key1 = createStatsKey(TEST_NAME, 
+        StatsKey key1 = createStatsKey(TEST_NAME,
                                        mockKeyFactory,
                                        TEST_ATTRIBUTES);
-        StatsKey key2 = createStatsKey(TEST_NAME, 
+        StatsKey key2 = createStatsKey(TEST_NAME,
                                        mockKeyFactory,
                                        Collections.<String,Object>singletonMap("test", "test"));
         assertFalse(key1.equals(key2));
@@ -217,15 +219,15 @@ public abstract class AbstractStatsKeyTestCase {
 
     @Test
     public void testToStringContainsAttributes() {
-        StatsKey key = createStatsKey(TEST_NAME, 
-                                      mockKeyFactory, 
+        StatsKey key = createStatsKey(TEST_NAME,
+                                      mockKeyFactory,
                                       Collections.<String,Object>singletonMap("name", "value"));
         assertTrue(key.toString().contains("name=value"));
     }
 
     @Test
     public void testCompareToWithNames() {
-        List<StatsKey> keyList = 
+        List<StatsKey> keyList =
             Arrays.asList(createStatsKey("b.2"),
                           createStatsKey("a.1"),
                           createStatsKey("a.3"),
@@ -246,7 +248,7 @@ public abstract class AbstractStatsKeyTestCase {
 
     @Test
     public void testCompareToWithAttributes() {
-        List<StatsKey> keyList = 
+        List<StatsKey> keyList =
             Arrays.asList(createStatsKey("b.2"),
                           createStatsKey("a.1"),
                           createStatsKey("c", "b", "1"),
@@ -275,7 +277,7 @@ public abstract class AbstractStatsKeyTestCase {
         k = itr.next();
         assertEquals("c", k.getName());
         assertEquals("2", k.getAttribute("a"));
-        
+
         k = itr.next();
         assertEquals("c", k.getName());
         assertEquals("1", k.getAttribute("b"));

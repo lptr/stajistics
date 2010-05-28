@@ -26,14 +26,15 @@ import static org.stajistics.event.EventType.TRACKER_COMMITTED;
 import static org.stajistics.event.EventType.TRACKER_TRACKING;
 
 import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class EventTypeTest {
+public class EventTypeTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConfigCreated() {

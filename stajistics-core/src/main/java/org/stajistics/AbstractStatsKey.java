@@ -65,6 +65,35 @@ public abstract class AbstractStatsKey implements StatsKey {
         return name;
     }
 
+    @Override
+    public int getHierarchyDepth() {
+        int depth = StatsConstants.KEY_HIERARCHY_ROOT_DEPTH;
+        final char[] nameChars = name.toCharArray();
+        final int nameLength = nameChars.length;
+
+        for (int i = 0; i < nameLength; i++) {
+            if (nameChars[i] == StatsConstants.KEY_HIERARCHY_DELIMITER) {
+            depth++;
+            }
+        }
+
+        return depth;
+    }
+
+    @Override
+    public boolean hasParent() {
+        return getHierarchyDepth() > StatsConstants.KEY_HIERARCHY_ROOT_DEPTH;
+    }
+
+    @Override
+    public StatsKey getParent() {
+        String parentName = StatsKeyUtils.parentKeyName(name);
+        if (parentName == null) {
+            return null;
+        }
+        return keyFactory.createKey(parentName);
+    }
+
     /**
      * A convenience method to be called by subclass constructors
      * to calculate the hash code value in the default manner.

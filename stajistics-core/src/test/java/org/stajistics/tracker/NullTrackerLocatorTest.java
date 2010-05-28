@@ -21,25 +21,23 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class NullTrackerLocatorTest {
+public class NullTrackerLocatorTest extends AbstractStajisticsTestCase {
 
     private final TrackerLocator ntl = NullTrackerLocator.getInstance();
-    
-    private Mockery mockery;
+
     private StatsKey mockKey;
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         mockKey = mockery.mock(StatsKey.class);
     }
 

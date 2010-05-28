@@ -24,8 +24,8 @@ import org.junit.Test;
 import org.stajistics.StatsConfigManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -34,9 +34,7 @@ public class DefaultStatsConfigManagerMBeanTest extends AbstractMBeanTestCase {
     protected StatsConfigManager mockConfigManager;
 
     @Before
-    @Override
     public void setUp() {
-        super.setUp();
         mockConfigManager = mockery.mock(StatsConfigManager.class);
     }
 

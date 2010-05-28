@@ -19,18 +19,18 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class NullStatsKeyBuilderTest {
+public class NullStatsKeyBuilderTest extends AbstractStajisticsTestCase {
 
     private final StatsKeyBuilder nkb = NullStatsKeyBuilder.getInstance();
 
     @Test
     public void testInitialNewKey() {
-        assertEquals(NullStatsKey.getInstance(), 
+        assertEquals(NullStatsKey.getInstance(),
                      nkb.newKey());
     }
 
@@ -40,24 +40,24 @@ public class NullStatsKeyBuilderTest {
         assertEquals(nkb, nkb.withAttribute("name", true));
         assertEquals(nkb, nkb.withAttribute("name", 1));
         assertEquals(nkb, nkb.withAttribute("name", 1L));
-        assertEquals(NullStatsKey.getInstance(), 
+        assertEquals(NullStatsKey.getInstance(),
                      nkb.newKey());
     }
 
     @Test
     public void testWithoutAttribute() {
         assertEquals(nkb, nkb.withAttribute("name", "value"));
-        assertEquals(NullStatsKey.getInstance(), 
+        assertEquals(NullStatsKey.getInstance(),
                      nkb.newKey());
         assertEquals(nkb, nkb.withoutAttribute("name"));
-        assertEquals(NullStatsKey.getInstance(), 
+        assertEquals(NullStatsKey.getInstance(),
                      nkb.newKey());
     }
 
     @Test
     public void testWithNameSuffix() {
         assertEquals(nkb, nkb.withNameSuffix("suffix"));
-        assertEquals(NullStatsKey.getInstance(), 
+        assertEquals(NullStatsKey.getInstance(),
                      nkb.newKey());
     }
 }

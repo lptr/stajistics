@@ -17,14 +17,15 @@ package org.stajistics.management;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class StatsManagementExceptionTest {
+public class StatsManagementExceptionTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testNew() {

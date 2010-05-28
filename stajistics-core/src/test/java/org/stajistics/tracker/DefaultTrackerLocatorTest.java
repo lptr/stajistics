@@ -29,10 +29,7 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigManager;
-import org.stajistics.StatsKey;
-import org.stajistics.TestUtil;
+import org.stajistics.*;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.incident.IncidentTracker;
@@ -45,10 +42,8 @@ import org.stajistics.tracker.span.SpanTracker;
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class DefaultTrackerLocatorTest {
+public class DefaultTrackerLocatorTest extends AbstractStajisticsTestCase {
 
-    private Mockery mockery;
     private StatsConfigManager mockConfigManager;
     private StatsSessionManager mockSessionManager;
 
@@ -62,9 +57,6 @@ public class DefaultTrackerLocatorTest {
 
     @Before
     public void setUp() {
-
-        mockery = new Mockery();
-
         mockConfigManager = mockery.mock(StatsConfigManager.class);
         mockSessionManager = mockery.mock(StatsSessionManager.class);
 
@@ -90,7 +82,7 @@ public class DefaultTrackerLocatorTest {
             allowing(mockTrackerFactory).createTracker(with(mockKey),
                                                        with(mockSessionManager));
             will(returnValue(returnMockTracker));
-        }});   
+        }});
     }
 
     @Test
@@ -213,7 +205,7 @@ public class DefaultTrackerLocatorTest {
 
         final StatsSession mockSession2 = mockery.mock(StatsSession.class, "StatsSession2");
         final StatsConfig mockConfig2 = mockery.mock(StatsConfig.class, "StatsConfig2");
-        final TrackerFactory<SpanTracker> mockTrackerFactory2 = 
+        final TrackerFactory<SpanTracker> mockTrackerFactory2 =
             mockery.mock(TrackerFactory.class, "StatsTrackerFactory2");
 
         final SpanTracker mockSpanTracker2 = mockery.mock(SpanTracker.class, "SpanTracker2");
@@ -271,7 +263,7 @@ public class DefaultTrackerLocatorTest {
 
         assertEquals(NullTracker.getInstance(), trackerLocator.getIncidentTracker(mockKey));
     }
-    
+
     @Test
     public void testGetIncidentTrackerWithInvalidConfig() {
         buildExpectations(true, mockTracker);
@@ -311,7 +303,7 @@ public class DefaultTrackerLocatorTest {
 
         final StatsSession mockSession2 = mockery.mock(StatsSession.class, "StatsSession2");
         final StatsConfig mockConfig2 = mockery.mock(StatsConfig.class, "StatsConfig2");
-        final TrackerFactory<IncidentTracker> mockTrackerFactory2 = 
+        final TrackerFactory<IncidentTracker> mockTrackerFactory2 =
             mockery.mock(TrackerFactory.class, "StatsTrackerFactory2");
 
         final IncidentTracker mockIncidentTracker2 = mockery.mock(IncidentTracker.class, "IncidentTracker2");

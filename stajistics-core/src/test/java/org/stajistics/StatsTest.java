@@ -14,11 +14,6 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -33,23 +28,22 @@ import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
+import static org.junit.Assert.*;
+
 /**
  *
  *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class StatsTest {
+public class StatsTest extends AbstractStajisticsTestCase {
 
-    private Mockery mockery;
     private StatsManager mockManager;
     private TrackerLocator mockTrackerLocator;
     private StatsKey mockKey;
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         mockManager = mockery.mock(StatsManager.class);
         mockTrackerLocator = mockery.mock(TrackerLocator.class);
 

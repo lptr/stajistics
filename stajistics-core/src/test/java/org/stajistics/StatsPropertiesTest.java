@@ -31,7 +31,7 @@ import java.util.Map;
  *
  */
 //@RunWith(JMock.class)
-public class StatsPropertiesTest {
+public class StatsPropertiesTest extends AbstractStajisticsTestCase {
 
     private Map<String,String> propsMap;
 

@@ -32,6 +32,7 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
  * Thanks to Eamonn McManus for the MBean testing strategy:
@@ -39,19 +40,13 @@ import org.junit.runner.RunWith;
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public abstract class AbstractMBeanTestCase {
+public abstract class AbstractMBeanTestCase extends AbstractStajisticsTestCase {
 
-    protected Mockery mockery = null;
     private MBeanServer mBeanServer = null;
     private JMXConnector connector = null;
     private JMXConnectorServer connectorServer = null;
     private MBeanServerConnection mBeanServerConnection = null;
 
-    protected void setUp() {
-        this.mockery = new Mockery();
-    }
-    
     protected MBeanServer getMBeanServer() {
         if (mBeanServer == null) {
             throw new RuntimeException("MBeanServer not initialized");
@@ -68,7 +63,7 @@ public abstract class AbstractMBeanTestCase {
         return mBeanServerConnection;
     }
 
-    protected <T> T registerMBean(final T mBean, 
+    protected <T> T registerMBean(final T mBean,
                                   final ObjectName name,
                                   final Class<T> mBeanInterfaceClass) throws Exception {
 
@@ -76,8 +71,8 @@ public abstract class AbstractMBeanTestCase {
         mBeanServer.registerMBean(mBean, name);
 
         // Create a proxy to the remote MBean
-        T remoteMBean = JMX.newMBeanProxy(mBeanServerConnection, 
-                                          name, 
+        T remoteMBean = JMX.newMBeanProxy(mBeanServerConnection,
+                                          name,
                                           mBeanInterfaceClass);
 
         return remoteMBean;

@@ -22,20 +22,20 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 import org.stajistics.event.EventHandler;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class ThreadLocalTrackerFactoryDecoratorTest {
+public class ThreadLocalTrackerFactoryDecoratorTest extends AbstractStajisticsTestCase {
 
-    private Mockery mockery;
     private TrackerFactory<Tracker> mockDelegate;
     private StatsSessionManager mockSessionManager;
     private EventManager mockEventManager;
@@ -51,8 +51,6 @@ public class ThreadLocalTrackerFactoryDecoratorTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        mockery = new Mockery();
-
         mockDelegate = mockery.mock(TrackerFactory.class);
         mockKey1 = mockery.mock(StatsKey.class, "StatsKey1");
         mockKey2 = mockery.mock(StatsKey.class, "StatsKey2");
@@ -128,7 +126,7 @@ public class ThreadLocalTrackerFactoryDecoratorTest {
 
             one(mockEventManager).addEventHandler(with(mockKey1),
                                                   with(aNonNull(EventHandler.class)));
-            
+
             one(mockDelegate).createTracker(with(mockKey2),
                                             with(mockSessionManager));
             will(returnValue(mockTracker2));
@@ -153,15 +151,15 @@ public class ThreadLocalTrackerFactoryDecoratorTest {
     @Test
     public void testCreateTrackerWithManyKeysAndThreads() throws InterruptedException {
         mockery.checking(new Expectations() {{
-            exactly(3).of(mockDelegate).createTracker(with(mockKey1),
-                                                      with(mockSessionManager));
+            exactly(3).of(mockDelegate).createTracker(mockKey1,
+                                                      mockSessionManager);
             will(returnValue(mockTracker1));
 
             exactly(3).of(mockEventManager).addEventHandler(with(mockKey1),
                                                             with(aNonNull(EventHandler.class)));
 
-            exactly(3).of(mockDelegate).createTracker(with(mockKey2),
-                                                      with(mockSessionManager));
+            exactly(3).of(mockDelegate).createTracker(mockKey2,
+                                                      mockSessionManager);
             will(returnValue(mockTracker2));
 
             exactly(3).of(mockEventManager).addEventHandler(with(mockKey2),
@@ -185,16 +183,16 @@ public class ThreadLocalTrackerFactoryDecoratorTest {
             }
         };
 
-        Thread t = new Thread(r);
-        t.start();
-        t.join();
+        Thread t1 = new Thread(r);
+        t1.start();
+        t1.join();
 
-        t = new Thread(r);
-        t.start();
-        t.join();
+        Thread t2 = new Thread(r);
+        t2.start();
+        t2.join();
 
-        t = new Thread(r);
-        t.start();
-        t.join();
+        Thread t3 = new Thread(r);
+        t3.start();
+        t3.join();
     }
 }

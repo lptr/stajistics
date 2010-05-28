@@ -31,17 +31,15 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class CompositeTrackerFactoryTest {
-
-    protected Mockery mockery;
+public class CompositeTrackerFactoryTest extends AbstractStajisticsTestCase {
 
     private TrackerFactory<Tracker> trackerFactory1;
     private TrackerFactory<Tracker> trackerFactory2;
@@ -54,8 +52,6 @@ public class CompositeTrackerFactoryTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        mockery = new Mockery();
-
         trackerFactory1 = mockery.mock(TrackerFactory.class, "trackerFactory1");
         trackerFactory2 = mockery.mock(TrackerFactory.class, "trackerFactory2");
         trackerFactory3 = mockery.mock(TrackerFactory.class, "trackerFactory3");
@@ -109,7 +105,7 @@ public class CompositeTrackerFactoryTest {
 
     @Test
     public void testComposites() {
-        assertEquals(new ArrayList<TrackerFactory<Tracker>>(factoryMap.values()), 
+        assertEquals(new ArrayList<TrackerFactory<Tracker>>(factoryMap.values()),
                      new ArrayList<TrackerFactory<Tracker>>(cTrackerFactory.composites()));
     }
 

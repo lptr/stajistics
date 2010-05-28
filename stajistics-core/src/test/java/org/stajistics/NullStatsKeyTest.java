@@ -24,12 +24,12 @@ import org.jmock.Mockery;
 import org.junit.Test;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class NullStatsKeyTest {
+public class NullStatsKeyTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testGetName() {
@@ -68,6 +68,6 @@ public class NullStatsKeyTest {
         assertEquals(NullStatsKey.getInstance(),
                      NullStatsKey.getInstance());
         assertFalse(NullStatsKey.getInstance()
-                                .equals(new Mockery().mock(StatsKey.class)));
+                                .equals(mockery.mock(StatsKey.class)));
     }
 }

@@ -16,13 +16,7 @@ package org.stajistics;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
-/**
- *
- * @author The Stajistics Project
- */
-public class Issue32Test extends AbstractStajisticsTestCase {
+public class Issue31Test extends AbstractStajisticsTestCase {
 
     @Test
     public void test() {
@@ -31,28 +25,11 @@ public class Issue32Test extends AbstractStajisticsTestCase {
                                                     .getRootConfig();
         StatsConfig newRootConfig = statsManager.getConfigFactory()
                                                 .createConfigBuilder(defaultRootConfig)
-                                                .withDescription("[description inherited from root]")
+                                                .withDescription("dummy")
                                                 .newConfig();
         statsManager.getConfigManager()
                     .setRootConfig(newRootConfig);
 
-        StatsKey key = Stats.newKey("test");
-
-        StatsConfig originalConfig = Stats.getConfigManager()
-                                          .getConfig(key);
-        Stats.getManager()
-             .getConfigFactory()
-             .createConfigBuilder(originalConfig)
-             .withUnit("[unit defined in child]")
-             .setConfigFor(key);
-
-        assertEquals("[description inherited from root]",
-                     Stats.getConfigManager()
-                          .getConfig(key)
-                          .getDescription());
-        assertEquals("[unit defined in child]",
-                     Stats.getConfigManager()
-                          .getConfig(key)
-                          .getUnit());
+        //TODO: how to assert that exception wasn't thrown
     }
 }

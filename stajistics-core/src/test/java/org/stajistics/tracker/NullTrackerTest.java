@@ -19,17 +19,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.NullStatsKey;
+import org.stajistics.TestUtil;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class NullTrackerTest {
-
-    protected static final double DELTA = 0.0000000000001;
+public class NullTrackerTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testIsTracking() {
@@ -45,7 +45,7 @@ public class NullTrackerTest {
 
     @Test
     public void testGetValue() {
-        assertEquals(0, NullTracker.getInstance().getValue(), DELTA);
+        assertEquals(0, NullTracker.getInstance().getValue(), TestUtil.DELTA);
     }
 
     @Test
@@ -71,14 +71,14 @@ public class NullTrackerTest {
     public void testSetValue() {
         double val = NullTracker.getInstance().getValue();
         NullTracker.getInstance().setValue(val + 100);
-        assertEquals(val, NullTracker.getInstance().getValue(), DELTA);
+        assertEquals(val, NullTracker.getInstance().getValue(), TestUtil.DELTA);
     }
 
     @Test
     public void testUpdate() {
         double val = NullTracker.getInstance().getValue();
         NullTracker.getInstance().addValue(100);
-        assertEquals(val, NullTracker.getInstance().getValue(), DELTA);
+        assertEquals(val, NullTracker.getInstance().getValue(), TestUtil.DELTA);
     }
 
     @Test

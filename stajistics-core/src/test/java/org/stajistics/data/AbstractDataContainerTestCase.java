@@ -23,15 +23,16 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.TestUtil;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public abstract class AbstractDataContainerTestCase {
+public abstract class AbstractDataContainerTestCase extends AbstractStajisticsTestCase {
 
     private DataContainer dataContainer;
 
@@ -45,7 +46,7 @@ public abstract class AbstractDataContainerTestCase {
     public void setUp() {
         dataContainer = createDataContainer();
     }
-    
+
     @Test
     public void testInitializedState() {
         assertTrue(dataContainer.isEmpty());

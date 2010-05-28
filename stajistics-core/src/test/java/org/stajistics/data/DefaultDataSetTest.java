@@ -19,10 +19,10 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  */
-public class DefaultDataSetTest extends AbstractDataContainerTestCase{
+public class DefaultDataSetTest extends AbstractDataContainerTestCase {
 
     @Override
     protected DataSet createDataContainer() {

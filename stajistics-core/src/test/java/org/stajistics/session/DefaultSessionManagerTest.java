@@ -25,7 +25,6 @@ import org.junit.runner.RunWith;
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
 public class DefaultSessionManagerTest extends AbstractStatsSessionManagerTestCase {
 
     @Override

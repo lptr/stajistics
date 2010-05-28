@@ -14,39 +14,40 @@
  */
 package org.stajistics.aop;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.util.Observable;
-import java.util.Observer;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadFactory;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyBuilder;
 import org.stajistics.TestUtil;
+import org.stajistics.tracker.TrackerLocator;
+import org.stajistics.tracker.span.SpanTracker;
+
+import java.util.Observable;
+import java.util.Observer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class StatsDecoratorsTest {
-
-    private Mockery mockery;
+public class StatsDecoratorsTest extends AbstractStajisticsTestCase {
 
     private StatsKey mockKey;
+    private TrackerLocator mockTrackerLocator;
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         mockKey = mockery.mock(StatsKey.class);
+	mockTrackerLocator = mockery.mock(TrackerLocator.class);
         TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
     }
 

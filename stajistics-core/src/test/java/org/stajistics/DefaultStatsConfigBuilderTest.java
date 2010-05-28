@@ -14,41 +14,31 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.TrackerFactory;
 
+import static org.junit.Assert.*;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-@RunWith(JMock.class)
-public class DefaultStatsConfigBuilderTest {
+public class DefaultStatsConfigBuilderTest extends AbstractStajisticsTestCase {
 
-    private Mockery mockery;
     private StatsConfigManager configManager;
     private StatsConfigBuilder builder;
 
     @Before
     public void setUp() {
-        mockery = new Mockery();
         configManager = mockery.mock(StatsConfigManager.class);
-        builder = new DefaultStatsConfigBuilder(configManager);   
+        builder = new DefaultStatsConfigBuilder(configManager);
     }
 
     @Test
