@@ -151,48 +151,31 @@ public class ThreadLocalTrackerFactoryDecoratorTest extends AbstractStajisticsTe
     @Test
     public void testCreateTrackerWithManyKeysAndThreads() throws InterruptedException {
         mockery.checking(new Expectations() {{
-            exactly(3).of(mockDelegate).createTracker(mockKey1,
-                                                      mockSessionManager);
+            one(mockDelegate).createTracker(mockKey1,
+                                            mockSessionManager);
             will(returnValue(mockTracker1));
 
-            exactly(3).of(mockEventManager).addEventHandler(with(mockKey1),
-                                                            with(aNonNull(EventHandler.class)));
+            one(mockEventManager).addEventHandler(with(mockKey1),
+                                                  with(aNonNull(EventHandler.class)));
 
-            exactly(3).of(mockDelegate).createTracker(mockKey2,
-                                                      mockSessionManager);
+            one(mockDelegate).createTracker(mockKey2,
+                                            mockSessionManager);
             will(returnValue(mockTracker2));
 
-            exactly(3).of(mockEventManager).addEventHandler(with(mockKey2),
-                                                            with(aNonNull(EventHandler.class)));
+            one(mockEventManager).addEventHandler(with(mockKey2),
+                                                  with(aNonNull(EventHandler.class)));
         }});
 
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                Tracker t1a = decorator.createTracker(mockKey1, mockSessionManager);
-                assertSame(mockTracker1, t1a);
+        Tracker t1a = decorator.createTracker(mockKey1, mockSessionManager);
+        assertSame(mockTracker1, t1a);
 
-                Tracker t1b = decorator.createTracker(mockKey1, mockSessionManager);
-                assertSame(mockTracker1, t1b);
+        Tracker t1b = decorator.createTracker(mockKey1, mockSessionManager);
+        assertSame(mockTracker1, t1b);
 
-                Tracker t2a = decorator.createTracker(mockKey2, mockSessionManager);
-                assertSame(mockTracker2, t2a);
+        Tracker t2a = decorator.createTracker(mockKey2, mockSessionManager);
+        assertSame(mockTracker2, t2a);
 
-                Tracker t2b = decorator.createTracker(mockKey2, mockSessionManager);
-                assertSame(mockTracker2, t2b);
-            }
-        };
-
-        Thread t1 = new Thread(r);
-        t1.start();
-        t1.join();
-
-        Thread t2 = new Thread(r);
-        t2.start();
-        t2.join();
-
-        Thread t3 = new Thread(r);
-        t3.start();
-        t3.join();
+        Tracker t2b = decorator.createTracker(mockKey2, mockSessionManager);
+        assertSame(mockTracker2, t2b);
     }
 }

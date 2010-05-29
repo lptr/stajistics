@@ -14,30 +14,11 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.TrackerLocator;
-
-import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -316,7 +297,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
     }
 
     @Test
-    public void testSerializeDeserialize() throws IOException,ClassNotFoundException {
+    public void testSerializeDeserialize() {
 
         StatsManager manager = newDefaultStatsManager();
 
@@ -328,18 +309,6 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
         StatsKey key3 = manager.getKeyFactory().createKey("test3");
         manager.getTrackerLocator().getSpanTracker(key3).track().commit();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(4 * 1024);
-        ObjectOutputStream out = new ObjectOutputStream(baos);
-        out.writeObject(manager);
-        out.close();
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(bais);
-        StatsManager serializedManager = (StatsManager)in.readObject();
-        in.close();
-
-        assertNotNull(serializedManager);
-
-        //TODO: more assertions
+        assertSerializable(manager);
     }
 }

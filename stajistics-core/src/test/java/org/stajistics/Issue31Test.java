@@ -15,21 +15,28 @@
 package org.stajistics;
 
 import org.junit.Test;
+import org.stajistics.event.EventManager;
 
+/**
+ *
+ * @author The Stajistics Project
+ */
 public class Issue31Test extends AbstractStajisticsTestCase {
 
     @Test
-    public void test() {
-        StatsManager statsManager = Stats.getManager();
-        StatsConfig defaultRootConfig = statsManager.getConfigManager()
-                                                    .getRootConfig();
-        StatsConfig newRootConfig = statsManager.getConfigFactory()
-                                                .createConfigBuilder(defaultRootConfig)
-                                                .withDescription("dummy")
-                                                .newConfig();
-        statsManager.getConfigManager()
-                    .setRootConfig(newRootConfig);
+    public void testConfigChangedEventIsNotFiredWhenUpdatingRootConfig() {
+        EventManager mockEventManager = mockery.mock(EventManager.class);
 
-        //TODO: how to assert that exception wasn't thrown
+        StatsConfigManager configManager = new DefaultStatsConfigManager(mockEventManager,
+                                                                         Stats.getManager()
+                                                                              .getKeyFactory());
+
+        StatsConfig defaultRootConfig = configManager.getRootConfig();
+        StatsConfig newRootConfig = Stats.getManager()
+                                         .getConfigFactory()
+                                         .createConfigBuilder(defaultRootConfig)
+                                         .withDescription("dummy")
+                                         .newConfig();
+        configManager.setRootConfig(newRootConfig);
     }
 }

@@ -91,7 +91,7 @@ public class StatsTest extends AbstractStajisticsTestCase {
             StatsManager mgr = Stats.loadStatsManagerFromProperties();
 
             assertNotNull(mgr);
-            assertTrue(mgr instanceof ClassLoadableMockStatsManager);
+            assertInstanceOf(mgr, ClassLoadableMockStatsManager.class);
 
         } finally {
             System.getProperties()
@@ -110,7 +110,7 @@ public class StatsTest extends AbstractStajisticsTestCase {
             StatsManager mgr = Stats.loadStatsManagerFromProperties();
 
             assertNotNull(mgr);
-            assertTrue(mgr instanceof ClassLoadableMockStatsManager);
+            assertInstanceOf(mgr, ClassLoadableMockStatsManager.class);
 
         } finally {
             System.getProperties()
