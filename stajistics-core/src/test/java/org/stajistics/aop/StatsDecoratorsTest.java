@@ -15,11 +15,8 @@
 package org.stajistics.aop;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyBuilder;
@@ -47,7 +44,7 @@ public class StatsDecoratorsTest extends AbstractStajisticsTestCase {
     @Before
     public void setUp() {
         mockKey = mockery.mock(StatsKey.class);
-	mockTrackerLocator = mockery.mock(TrackerLocator.class);
+        mockTrackerLocator = mockery.mock(TrackerLocator.class);
         TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
     }
 

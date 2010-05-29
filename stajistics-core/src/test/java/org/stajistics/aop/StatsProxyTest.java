@@ -15,12 +15,14 @@
 package org.stajistics.aop;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.stajistics.*;
+import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.DefaultStatsManager;
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyUtils;
+import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerFactory;
@@ -74,21 +76,14 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
     public void testWrapWithKeyTarget() {
         Service serviceImpl = new ServiceImpl();
         serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
-        @SuppressWarnings("unused")
-        Service2 service2 = (Service2)serviceImpl;
+        assertInstanceOf(serviceImpl, Service2.class);
     }
 
     @Test
     public void testWrapWithKeyTargetInterface() {
         Service serviceImpl = new ServiceImpl();
         serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl, Service.class);
-        try {
-            @SuppressWarnings("unused")
-            Service2 service2 = (Service2)serviceImpl;
-            fail("Allowed cast to un-proxied interface");
-        } catch (ClassCastException cce) {
-            // expected
-        }
+        assertNotInstanceOf(serviceImpl, Service2.class);
     }
 
     @Test
@@ -98,8 +93,7 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
                                       mockKey,
                                       serviceImpl,
                                       new Class<?>[] { Service.class, Service2.class });
-        @SuppressWarnings("unused")
-        Service2 service2 = (Service2)serviceImpl;
+        assertInstanceOf(serviceImpl, Service2.class);
     }
 
     @SuppressWarnings("serial")
@@ -122,7 +116,7 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
                         .withTrackerFactory(new TrackerFactory<Tracker>() {
             @Override
             public Tracker createTracker(final StatsKey key,
-                                              final StatsSessionManager sessionManager) {
+                                         final StatsSessionManager sessionManager) {
 
                 return mockTracker;
             }
@@ -148,8 +142,8 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
     public void testTrackExceptionIncident() {
 
         final StatsKey methodKey = mockKey.buildCopy()
-                                      .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
-                                      .newKey();
+                                          .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
+                                          .newKey();
         final StatsKey exceptionKey = StatsKeyUtils.keyForFailure(methodKey,
                                                                   new IllegalStateException());
 
@@ -165,26 +159,26 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
         mockStatsManager.getConfigFactory()
                         .createConfigBuilder()
                         .withTrackerFactory(new TrackerFactory<Tracker>() {
-             @Override
-             public Tracker createTracker(final StatsKey key,
-                                               final StatsSessionManager sessionManager) {
-                 if (key.equals(methodKey)) {
-                     return methodTracker;
-                 }
+            @Override
+            public Tracker createTracker(final StatsKey key,
+                                         final StatsSessionManager sessionManager) {
+                if (key.equals(methodKey)) {
+                    return methodTracker;
+                }
 
-                 if (key.equals(exceptionKey)) {
-                     return exceptionTracker;
-                 }
+                if (key.equals(exceptionKey)) {
+                    return exceptionTracker;
+                }
 
-                 throw new Error("key is neither the methodKey nor the exceptionKey");
-             }
+                throw new Error("key is neither the methodKey nor the exceptionKey");
+            }
 
-             @Override
-             public Class<Tracker> getTrackerType() {
-                 return Tracker.class;
-             }
-         })
-         .setConfigFor(methodKey);
+            @Override
+            public Class<Tracker> getTrackerType() {
+                return Tracker.class;
+            }
+        })
+        .setConfigFor(methodKey);
 
         final IllegalStateException exception = new IllegalStateException();
 

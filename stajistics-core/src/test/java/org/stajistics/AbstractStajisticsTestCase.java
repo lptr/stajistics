@@ -27,7 +27,7 @@ import org.junit.runner.RunWith;
  * @author The Stajistics Project
  */
 @RunWith(JMock.class)
-public abstract class AbstractStajisticsTestCase {
+public abstract class AbstractStajisticsTestCase extends StajisticsAssert {
 
     protected Mockery mockery;
 
