@@ -31,16 +31,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
-import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigBuilder;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigBuilder;
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.incident.DefaultIncidentTracker;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -122,9 +122,9 @@ public class StatsFilter implements Filter {
                         .isAssignableFrom(originalConfig.getTrackerFactory().getTrackerType())) {
             return;
         }
-        
+
         // If not, configure one based on the (possibly) existing config
-        StatsConfigBuilder newConfigBuilder = Stats.getManager().getConfigFactory().createConfigBuilder(
+        StatsConfigBuilder newConfigBuilder = Stats.getManager().getConfigBuilderFactory().createConfigBuilder(
                 originalConfig);
         newConfigBuilder.withTrackerFactory(DefaultIncidentTracker.FACTORY);
         newConfigBuilder.setConfigFor(key);
@@ -201,13 +201,13 @@ public class StatsFilter implements Filter {
     private void addHeaderBoundStatsKeys(final ServletRequest request,
                                          final List<StatsKey> keyList) {
         if (!(request instanceof HttpServletRequest)) {
-            logger.warn("Header bindings specified in filter init-params but not processing HTTP request: {}", 
+            logger.warn("Header bindings specified in filter init-params but not processing HTTP request: {}",
                            Arrays.toString(bindHeaders));
 
             return;
         }
 
-        HttpServletRequest httpRequest = (HttpServletRequest)request; 
+        HttpServletRequest httpRequest = (HttpServletRequest)request;
 
         String headerValue;
 
@@ -224,7 +224,7 @@ public class StatsFilter implements Filter {
     }
 
     @Override
-    public void doFilter(final ServletRequest request, 
+    public void doFilter(final ServletRequest request,
                          ServletResponse response,
                          final FilterChain chain)
             throws IOException, ServletException {

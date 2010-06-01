@@ -28,10 +28,7 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.DefaultStatsManager;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
+import org.stajistics.*;
 import org.stajistics.aop.StatsSelectiveProxy.EnabledCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.MethodCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.MethodModifierCriteria;
@@ -78,7 +75,7 @@ public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
     @Before
     public void setUp() {
         // TODO: these should be _actually_ mocked
-        mockStatsManager = DefaultStatsManager.createWithDefaults();
+        mockStatsManager = Stats.getManager();
         mockKey = mockStatsManager.getKeyFactory().createKey("test");
 
         mockService = mockery.mock(Service.class);

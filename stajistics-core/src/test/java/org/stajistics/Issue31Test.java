@@ -15,6 +15,9 @@
 package org.stajistics;
 
 import org.junit.Test;
+import org.stajistics.configuration.DefaultStatsConfigManager;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 
 /**
@@ -33,7 +36,7 @@ public class Issue31Test extends AbstractStajisticsTestCase {
 
         StatsConfig defaultRootConfig = configManager.getRootConfig();
         StatsConfig newRootConfig = Stats.getManager()
-                                         .getConfigFactory()
+                                         .getConfigBuilderFactory()
                                          .createConfigBuilder(defaultRootConfig)
                                          .withDescription("dummy")
                                          .newConfig();

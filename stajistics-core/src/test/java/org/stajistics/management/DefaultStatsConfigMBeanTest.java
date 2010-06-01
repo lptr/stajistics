@@ -22,10 +22,10 @@ import javax.management.ObjectName;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigBuilder;
-import org.stajistics.StatsConfigFactory;
-import org.stajistics.StatsConfigManager;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigBuilder;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 
@@ -39,7 +39,7 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
 
     protected StatsKey mockKey = null;
     protected StatsManager mockManager = null;
-    protected StatsConfigFactory mockConfigFactory = null;
+    protected StatsConfigBuilderFactory mockConfigBuilderFactory = null;
     protected StatsConfigManager mockConfigManager = null;
     protected StatsConfig mockConfig = null;
 
@@ -51,12 +51,12 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
     public void setUp() {
         mockKey = mockery.mock(StatsKey.class);
         mockManager = mockery.mock(StatsManager.class);
-        mockConfigFactory = mockery.mock(StatsConfigFactory.class);
+        mockConfigBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         mockConfigManager = mockery.mock(StatsConfigManager.class);
         mockConfig = mockery.mock(StatsConfig.class);
 
         mockery.checking(new Expectations() {{
-            allowing(mockManager).getConfigFactory(); will(returnValue(mockConfigFactory));
+            allowing(mockManager).getConfigBuilderFactory(); will(returnValue(mockConfigBuilderFactory));
             allowing(mockManager).getConfigManager(); will(returnValue(mockConfigManager));
         }});
     }
@@ -82,7 +82,7 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
 
         mockery.checking(new Expectations() {{
             one(mockConfig).isEnabled(); will(returnValue(true));
-            one(mockConfigFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
+            one(mockConfigBuilderFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
             one(configBuilder).withEnabledState(with(false)); will(returnValue(configBuilder));
             one(configBuilder).setConfigFor(mockKey);
         }});
@@ -130,7 +130,7 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
 
         mockery.checking(new Expectations() {{
             one(mockConfig).getUnit(); will(returnValue("unit1"));
-            one(mockConfigFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
+            one(mockConfigBuilderFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
             one(configBuilder).withUnit(with("unit2")); will(returnValue(configBuilder));
             one(configBuilder).setConfigFor(mockKey);
         }});
@@ -178,7 +178,7 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
 
         mockery.checking(new Expectations() {{
             one(mockConfig).getDescription(); will(returnValue("d1"));
-            one(mockConfigFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
+            one(mockConfigBuilderFactory).createConfigBuilder(mockConfig); will(returnValue(configBuilder));
             one(configBuilder).withDescription(with("d2")); will(returnValue(configBuilder));
             one(configBuilder).setConfigFor(mockKey);
         }});

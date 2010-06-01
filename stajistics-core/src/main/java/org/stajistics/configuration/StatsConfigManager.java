@@ -12,19 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.configuration;
+
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * <p>Manages associations of {@link StatsKey}s to {@link StatsConfig}s. {@link StatsConfig}s are
- * organized into a hierarchy according to their associated {@link StatsKey}.</p>
+ * <p>Manages associations of {@link org.stajistics.StatsKey}s to {@link StatsConfig}s. {@link StatsConfig}s are
+ * organized into a hierarchy according to their associated {@link org.stajistics.StatsKey}.</p>
  *
  * <p>Configurations can only be associated with super-keys (keys without attributes),
  * or effectively key names. Any interaction with this class using sub-keys (keys with attributes),
- * gracefully resorts to using the equivalent super-key. In other words, when using a {@link StatsKey}
+ * gracefully resorts to using the equivalent super-key. In other words, when using a {@link org.stajistics.StatsKey}
  * with any method of this manager, the key attributes are ignored.</p>
  *
  * <p>A StatsConfigManager has a root {@link StatsConfig} which takes effect when a {@link StatsConfig}
@@ -32,7 +35,7 @@ import java.util.Set;
  *
  * TODO: elaborate on the semantics of the configuration heirarchy.. adding, removing, updating, etc.
  *
- * @see StatsKey
+ * @see org.stajistics.StatsKey
  * @see StatsConfig
  *
  * @author The Stajistics Project
@@ -49,7 +52,7 @@ public interface StatsConfigManager extends Serializable {
     /**
      * Set the root configuration.
      *
-     * @param config The new root configuration, or <tt>null</tt> to set 
+     * @param config The new root configuration, or <tt>null</tt> to set
      *        the default root configuration.
      */
     void setRootConfig(StatsConfig config);

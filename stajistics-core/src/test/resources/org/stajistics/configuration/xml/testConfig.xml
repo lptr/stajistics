@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stajistics>
+
+    <property name="name">value</property>
+
+    <rootConfig>
+        <sessionFactory>concurrent</sessionFactory>
+        <trackerFactory>default</trackerFactory>
+        <dataRecorderFactory>default</dataRecorderFactory>
+    </rootConfig>
+
+    <config key="org.stajistics" unit="ms" type="span">
+        <description>org.stajistics Description</description>
+        <sessionFactory>asynchronous</sessionFactory>
+        <trackerFactory>thread-local</trackerFactory>
+        <dataRecorderFactory>default</dataRecorderFactory>
+    </config>
+
+</stajistics>

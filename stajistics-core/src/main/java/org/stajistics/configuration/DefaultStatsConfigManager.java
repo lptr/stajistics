@@ -1,44 +1,23 @@
-/* Copyright 2009 - 2010 The Stajistics Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.stajistics;
+package org.stajistics.configuration;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
+import org.stajistics.*;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
 
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
- * The default implementation of {@link StatsConfigManager}. Clients typically do not instantiate
- * this class directly. Instead use {@link Stats#getConfigManager()}.
+ * The default implementation of {@link org.stajistics.configuration.StatsConfigManager}. Clients typically do not instantiate
+ * this class directly. Instead use {@link org.stajistics.Stats#getConfigManager()}.
  *
  * @author The Stajistics Project
  */
@@ -63,8 +42,8 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     /**
      * Create a new DefaultStatsConfigManager instance containing no initial configurations.
      *
-     * @param eventManager The {@link EventManager} with which to fire configuration events.
-     * @param keyFactory The {@link StatsKeyFactory} with which to create keys.
+     * @param eventManager The {@link org.stajistics.event.EventManager} with which to fire configuration events.
+     * @param keyFactory The {@link org.stajistics.StatsKeyFactory} with which to create keys.
      *
      * @throws NullPointerException If <tt>eventManager</tt> or <tt>keyFactory</tt> is <tt>null</tt>.
      */
@@ -75,12 +54,12 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
     /**
      * Create a new DefaultStatsConfigManager instance supplying initial configuration.
-     * If the passed <tt>configMap</tt> is neither a {@link SortedMap} nor a {@link LinkedHashMap},
-     * it is transferred into a {@link TreeMap} in order to ensure a predictable entry extraction order.
+     * If the passed <tt>configMap</tt> is neither a {@link java.util.SortedMap} nor a {@link java.util.LinkedHashMap},
+     * it is transferred into a {@link java.util.TreeMap} in order to ensure a predictable entry extraction order.
      *
-     * @param eventManager The {@link EventManager} with which to fire configuration events.
-     * @param keyFactory The {@link StatsKeyFactory} with which to create keys.
-     * @param rootConfig The root {@link StatsConfig} from which to inherit in the absence of configuration.
+     * @param eventManager The {@link org.stajistics.event.EventManager} with which to fire configuration events.
+     * @param keyFactory The {@link org.stajistics.StatsKeyFactory} with which to create keys.
+     * @param rootConfig The root {@link org.stajistics.configuration.StatsConfig} from which to inherit in the absence of configuration.
      * @param configMap A Map of key names to configurations. May be <tt>null</tt>.
      *
      * @throws NullPointerException If <tt>eventManager</tt>, <tt>keyFactory</tt>,
@@ -131,10 +110,10 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     }
 
     /**
-     * A factory method hook for subclasses to override the {@link ConcurrentMap} implementation
+     * A factory method hook for subclasses to override the {@link java.util.concurrent.ConcurrentMap} implementation
      * to be used for storing entries.
      *
-     * @return A {@link ConcurrentMap}, never <tt>null</tt>.
+     * @return A {@link java.util.concurrent.ConcurrentMap}, never <tt>null</tt>.
      */
     protected ConcurrentMap<String,KeyEntry> createKeyEntryMap() {
         int initialCapacity = StatsProperties.getIntegerProperty(PROP_INITIAL_CAPACITY, 256);
@@ -376,155 +355,165 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         }
     }
 
-}
+    /**
+     * Created by IntelliJ IDEA.
+     * User: troy
+     * Date: 29-May-2010
+     * Time: 11:09:40 AM
+     * To change this template use File | Settings | File Templates.
+     */
+    static final class KeyEntry implements StatsKeyAssociation<StatsConfig>, Serializable {
 
+        private final StatsKey key;
 
-final class KeyEntry implements StatsKeyAssociation<StatsConfig>,Serializable {
+        KeyEntry parentEntry;
 
-    private final StatsKey key;
+        final List<KeyEntry> childEntries = new LinkedList<KeyEntry>();
 
-    KeyEntry parentEntry;
+        private boolean configInherited;
+        private final AtomicReference<StatsConfig> config = new AtomicReference<StatsConfig>(null);
 
-    final List<KeyEntry> childEntries = new LinkedList<KeyEntry>();
+        KeyEntry(final StatsKey key,
+                 final KeyEntry parentEntry,
+                 final StatsConfig config) {
 
-    private boolean configInherited;
-    private final AtomicReference<StatsConfig> config = new AtomicReference<StatsConfig>(null);
+            if (key == null) {
+                throw new NullPointerException("key");
+            }
 
-    KeyEntry(final StatsKey key,
-             final KeyEntry parentEntry,
-             final StatsConfig config) {
+            this.key = key;
+            this.parentEntry = parentEntry;
 
-        if (key == null) {
-            throw new NullPointerException("key");
+            setConfig(config);
         }
 
-        this.key = key;
-        this.parentEntry = parentEntry;
+        @Override
+        public StatsKey getKey() {
+            return key;
+        }
 
-        setConfig(config);
-    }
+        @Override
+        public StatsConfig getValue() {
+            return getConfig();
+        }
 
-    @Override
-    public StatsKey getKey() {
-        return key;
-    }
-
-    @Override
-    public StatsConfig getValue() {
-        return getConfig();
-    }
-
-    void visit(final KeyEntry.Visitor visitor) {
-        if (visitor.visit(this)) {
-            for (KeyEntry childEntry : new ArrayList<KeyEntry>(childEntries)) {
-                childEntry.visit(visitor);
+        void visit(final Visitor visitor) {
+            if (visitor.visit(this)) {
+                for (KeyEntry childEntry : new ArrayList<KeyEntry>(childEntries)) {
+                    childEntry.visit(visitor);
+                }
             }
         }
-    }
 
-    boolean isRoot() {
-        return parentEntry == null;
-    }
+        boolean isRoot() {
+            return parentEntry == null;
+        }
 
-    boolean isConfigInherited() {
-        return configInherited;
+        boolean isConfigInherited() {
+            return configInherited;
+        }
+
+        /**
+         *
+         * @param config
+         * @return <tt>true</tt> if the config changed;
+         */
+        boolean setConfig(final StatsConfig config) {
+            StatsConfig existingConfig = this.config.get();
+
+            if (config == null) {
+                this.config.set(findInheritedConfig());
+                configInherited = true;
+            } else {
+                this.config.set(config);
+                configInherited = false;
+            }
+
+            boolean changed = false;
+            if (existingConfig != null && !existingConfig.equals(this.config.get())) {
+                changed = true;
+            }
+
+            return changed;
+        }
+
+        StatsConfig getConfig() {
+            return this.config.get();
+        }
+
+        private StatsConfig findInheritedConfig() {
+            StatsConfig result = null;
+
+            KeyEntry entry = this.parentEntry;
+            while (entry != null) {
+                result = entry.config.get();
+                if (result != null) {
+                    break;
+                }
+
+                entry = entry.parentEntry;
+            }
+
+            if (result == null) {
+                throw new Error();
+            }
+
+            return result;
+        }
+
+        static interface Visitor {
+            boolean visit(KeyEntry entry);
+        }
+
     }
 
     /**
-     *
-     * @param config
-     * @return <tt>true</tt> if the config changed;
+     * Created by IntelliJ IDEA.
+     * User: troy
+     * Date: 29-May-2010
+     * Time: 11:09:40 AM
+     * To change this template use File | Settings | File Templates.
      */
-    boolean setConfig(final StatsConfig config) {
-        StatsConfig existingConfig = this.config.get();
+    static final class KeyEntryDestroyer implements KeyEntry.Visitor {
 
-        if (config == null) {
-            this.config.set(findInheritedConfig());
-            configInherited = true;
-        } else {
-            this.config.set(config);
-            configInherited = false;
-        }
+        private final Map<String, KeyEntry> keyMap;
 
-        boolean changed = false;
-        if (existingConfig != null && !existingConfig.equals(this.config.get())) {
-            changed = true;
-        }
+        private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
 
-        return changed;
-    }
-
-    StatsConfig getConfig() {
-        return this.config.get();
-    }
-
-    private StatsConfig findInheritedConfig() {
-        StatsConfig result = null;
-
-        KeyEntry entry = this.parentEntry;
-        while (entry != null) {
-            result = entry.config.get();
-            if (result != null) {
-                break;
+        KeyEntryDestroyer(final Map<String, KeyEntry> keyMap) {
+            if (keyMap == null) {
+                throw new NullPointerException("keyMap");
             }
 
-            entry = entry.parentEntry;
+            this.keyMap = keyMap;
         }
 
-        if (result == null) {
-            throw new Error();
-        }
+        @Override
+        public boolean visit(final KeyEntry entry) {
+            if (entry.isRoot()) {
+                // Don't destroy the root entry
+                return true;
+            }
 
-        return result;
-    }
+            keyMap.remove(entry.getKey().getName());
 
-    static interface Visitor {
-        boolean visit(KeyEntry entry);
-    }
+            entryList.add(entry);
 
-}
+            entry.parentEntry.childEntries.remove(entry);
+            entry.parentEntry = null;
 
-
-final class KeyEntryDestroyer implements KeyEntry.Visitor {
-
-    private final Map<String,KeyEntry> keyMap;
-
-    private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
-
-    KeyEntryDestroyer(final Map<String,KeyEntry> keyMap) {
-        if (keyMap == null) {
-            throw new NullPointerException("keyMap");
-        }
-
-        this.keyMap = keyMap;
-    }
-
-    @Override
-    public boolean visit(final KeyEntry entry) {
-        if (entry.isRoot()) {
-            // Don't destroy the root entry
             return true;
         }
 
-        keyMap.remove(entry.getKey().getName());
-
-        entryList.add(entry);
-
-        entry.parentEntry.childEntries.remove(entry);
-        entry.parentEntry = null;
-
-        return true;
-    }
-
-    public Iterator<KeyEntry> iterator() {
-        return entryList.iterator();
+        public Iterator<KeyEntry> iterator() {
+            return entryList.iterator();
+        }
     }
 }
 
+final class KeyEntryConfigUpdater implements DefaultStatsConfigManager.KeyEntry.Visitor {
 
-final class KeyEntryConfigUpdater implements KeyEntry.Visitor {
-
-    private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
+    private final List<DefaultStatsConfigManager.KeyEntry> entryList = new LinkedList<DefaultStatsConfigManager.KeyEntry>();
     private final StatsConfig config;
     private boolean first = true;
 
@@ -533,7 +522,7 @@ final class KeyEntryConfigUpdater implements KeyEntry.Visitor {
     }
 
     @Override
-    public boolean visit(final KeyEntry entry) {
+    public boolean visit(final DefaultStatsConfigManager.KeyEntry entry) {
 
         // Only set the new config on the most shallow entry
         if (first) {
@@ -558,8 +547,7 @@ final class KeyEntryConfigUpdater implements KeyEntry.Visitor {
         return true;
     }
 
-    public Iterator<KeyEntry> iterator() {
+    public Iterator<DefaultStatsConfigManager.KeyEntry> iterator() {
         return entryList.iterator();
     }
 }
-

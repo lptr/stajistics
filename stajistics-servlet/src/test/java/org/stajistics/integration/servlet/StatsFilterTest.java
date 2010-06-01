@@ -28,7 +28,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  */
 public class StatsFilterTest {
@@ -42,8 +42,6 @@ public class StatsFilterTest {
 
     @Before
     public void setUp() {
-        Stats.loadManager(DefaultStatsManager.createWithDefaults());
-
         res = new MockHttpServletResponse();
         chain = new MockFilterChain();
         config = new MockFilterConfig();

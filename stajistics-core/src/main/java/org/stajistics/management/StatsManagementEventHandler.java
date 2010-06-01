@@ -14,7 +14,7 @@
  */
 package org.stajistics.management;
 
-import org.stajistics.StatsConfig;
+import org.stajistics.configuration.StatsConfig;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.event.EventHandler;
@@ -22,8 +22,8 @@ import org.stajistics.event.EventType;
 import org.stajistics.session.StatsSession;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -46,8 +46,8 @@ public class StatsManagementEventHandler implements EventHandler {
     }
 
     @Override
-    public void handleStatsEvent(final EventType eventType, 
-                                 final StatsKey key, 
+    public void handleStatsEvent(final EventType eventType,
+                                 final StatsKey key,
                                  final Object target) {
         if (eventType == EventType.SESSION_CREATED) {
             statsManagement.registerSessionMBean(statsManager, (StatsSession)target);

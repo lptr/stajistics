@@ -15,6 +15,9 @@
 package org.stajistics;
 
 import org.junit.Test;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
@@ -31,19 +34,19 @@ import static org.junit.Assert.*;
 public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
 
     private DefaultStatsManager newDefaultStatsManager() {
-        return DefaultStatsManager.createWithDefaults(); // TODO: mock the managers
+        return new DefaultStatsManagerFactory().createManager(); // TODO: mock the managers
     }
 
     @Test
     public void testCreateWithDefaults() {
-        StatsManager mgr = DefaultStatsManager.createWithDefaults();
+        StatsManager mgr = newDefaultStatsManager();
         Stats.loadManager(mgr);
 
         assertNotNull(mgr.getConfigManager());
         assertNotNull(mgr.getSessionManager());
         assertNotNull(mgr.getEventManager());
         assertNotNull(mgr.getTrackerLocator());
-        assertNotNull(mgr.getConfigFactory());
+        assertNotNull(mgr.getConfigBuilderFactory());
         assertNotNull(mgr.getTaskService());
     }
 
@@ -55,7 +58,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                     mockery.mock(EventManager.class),
                                     mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(StatsConfigBuilderFactory.class),
                                     mockery.mock(TaskService.class));
             fail("Allowed null StatsConfigManager");
         } catch (NullPointerException npe) {
@@ -71,7 +74,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                     mockery.mock(EventManager.class),
                                     mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(StatsConfigBuilderFactory.class),
                                     mockery.mock(TaskService.class));
             fail("Allowed null StatsSessionManager");
         } catch (NullPointerException npe) {
@@ -87,7 +90,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                     null,
                                     mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(StatsConfigBuilderFactory.class),
                                     mockery.mock(TaskService.class));
             fail("Allowed null EventManager");
         } catch (NullPointerException npe) {
@@ -103,7 +106,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                     mockery.mock(EventManager.class),
                                     null,
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(StatsConfigBuilderFactory.class),
                                     mockery.mock(TaskService.class));
             fail("Allowed null TrackerLocator");
         } catch (NullPointerException npe) {
@@ -119,7 +122,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                     mockery.mock(EventManager.class),
                                     mockery.mock(TrackerLocator.class),
                                     null,
-                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(StatsConfigBuilderFactory.class),
                                     mockery.mock(TaskService.class));
             fail("Allowed null StatsKeyFactory");
         } catch (NullPointerException npe) {
@@ -137,9 +140,9 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                     mockery.mock(StatsKeyFactory.class),
                                     null,
                                     mockery.mock(TaskService.class));
-            fail("Allowed null StatsConfigFactory");
+            fail("Allowed null StatsConfigBuilderFactory");
         } catch (NullPointerException npe) {
-            assertEquals("configFactory", npe.getMessage());
+            assertEquals("configBuilderFactory", npe.getMessage());
         }
     }
 
@@ -151,7 +154,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                     mockery.mock(EventManager.class),
                                     mockery.mock(TrackerLocator.class),
                                     mockery.mock(StatsKeyFactory.class),
-                                    mockery.mock(StatsConfigFactory.class),
+                                    mockery.mock(StatsConfigBuilderFactory.class),
                                     null);
             fail("Allowed null TaskService");
         } catch (NullPointerException npe) {
@@ -166,7 +169,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
         EventManager eventManager = mockery.mock(EventManager.class);
         TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
-        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        StatsConfigBuilderFactory configBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager,
@@ -174,7 +177,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                    eventManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory,
+                                                   configBuilderFactory,
                                                    taskService);
 
         assertSame(configManager, mgr.getConfigManager());
@@ -187,7 +190,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
         EventManager eventManager = mockery.mock(EventManager.class);
         TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
-        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        StatsConfigBuilderFactory configBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager,
@@ -195,7 +198,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                    eventManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory,
+                                                   configBuilderFactory,
                                                    taskService);
 
         assertSame(sessionManager, mgr.getSessionManager());
@@ -208,7 +211,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
         EventManager eventManager = mockery.mock(EventManager.class);
         TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
-        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        StatsConfigBuilderFactory configBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager,
@@ -216,7 +219,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                    eventManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory,
+                                                   configBuilderFactory,
                                                    taskService);
 
         assertSame(eventManager, mgr.getEventManager());
@@ -230,7 +233,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
 
         TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
-        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        StatsConfigBuilderFactory configBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager,
@@ -238,7 +241,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                    eventManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory,
+                                                   configBuilderFactory,
                                                    taskService);
 
         assertSame(trackerLocator, mgr.getTrackerLocator());
@@ -251,7 +254,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
         EventManager eventManager = mockery.mock(EventManager.class);
         TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
-        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        StatsConfigBuilderFactory configBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager,
@@ -259,7 +262,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                    eventManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory,
+                                                   configBuilderFactory,
                                                    taskService);
 
         assertSame(keyFactory, mgr.getKeyFactory());
@@ -272,7 +275,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
         EventManager eventManager = mockery.mock(EventManager.class);
         TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
         StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
-        StatsConfigFactory configFactory = mockery.mock(StatsConfigFactory.class);
+        StatsConfigBuilderFactory configBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         TaskService taskService = mockery.mock(TaskService.class);
 
         StatsManager mgr = new DefaultStatsManager(configManager,
@@ -280,10 +283,10 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                    eventManager,
                                                    trackerLocator,
                                                    keyFactory,
-                                                   configFactory,
+                                                   configBuilderFactory,
                                                    taskService);
 
-        assertSame(configFactory, mgr.getConfigFactory());
+        assertSame(configBuilderFactory, mgr.getConfigBuilderFactory());
     }
 
     @Test

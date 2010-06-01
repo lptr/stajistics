@@ -14,11 +14,11 @@
  */
 package org.stajistics;
 
+import org.stajistics.configuration.*;
+import org.stajistics.configuration.DefaultStatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.SynchronousEventManager;
-import org.stajistics.management.DefaultStatsManagement;
-import org.stajistics.management.StatsManagement;
-import org.stajistics.management.StatsManagementEventHandler;
 import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.ThreadPoolTaskService;
@@ -35,8 +35,6 @@ import org.stajistics.tracker.TrackerLocator;
  */
 public class DefaultStatsManager implements StatsManager {
 
-    private static final String PROP_MANAGEMENT_ENABLED = StatsManagement.class.getName() + ".enabled";
-
     private volatile boolean enabled = true;
 
     protected final StatsConfigManager configManager;
@@ -44,7 +42,7 @@ public class DefaultStatsManager implements StatsManager {
     protected final EventManager eventManager;
     protected final TrackerLocator trackerLocator;
     protected final StatsKeyFactory keyFactory;
-    protected final StatsConfigFactory configFactory;
+    protected final StatsConfigBuilderFactory configBuilderFactory;
     protected final TaskService taskService;
 
     /**
@@ -55,7 +53,7 @@ public class DefaultStatsManager implements StatsManager {
      * @param eventManager The {@link EventManager} to use. Must not be <tt>null</tt>.
      * @param trackerLocator The {@link TrackerLocator} to use. Must not be <tt>null</tt>.
      * @param keyFactory The {@link StatsKeyFactory} to use. Must not be <tt>null</tt>.
-     * @param configFactory The {@link StatsConfigFactory} to use. Must not be <tt>null</tt>.
+     * @param configBuilderFactory The {@link org.stajistics.configuration.StatsConfigBuilderFactory} to use. Must not be <tt>null</tt>.
      * @param taskService The {@link TaskService} to use. Must not be <tt>null</tt>.
      * @throws NullPointerException If any parameter is <tt>null</tt>.
      */
@@ -64,7 +62,7 @@ public class DefaultStatsManager implements StatsManager {
                                final EventManager eventManager,
                                final TrackerLocator trackerLocator,
                                final StatsKeyFactory keyFactory,
-                               final StatsConfigFactory configFactory,
+                               final StatsConfigBuilderFactory configBuilderFactory,
                                final TaskService taskService) {
 
         if (configManager == null) {
@@ -82,8 +80,8 @@ public class DefaultStatsManager implements StatsManager {
         if (keyFactory == null) {
             throw new NullPointerException("keyFactory");
         }
-        if (configFactory == null) {
-            throw new NullPointerException("configFactory");
+        if (configBuilderFactory == null) {
+            throw new NullPointerException("configBuilderFactory");
         }
         if (taskService == null) {
             throw new NullPointerException("taskService");
@@ -94,31 +92,8 @@ public class DefaultStatsManager implements StatsManager {
         this.sessionManager = sessionManager;
         this.trackerLocator = trackerLocator;
         this.eventManager = eventManager;
-        this.configFactory = configFactory;
+        this.configBuilderFactory = configBuilderFactory;
         this.taskService = taskService;
-    }
-
-    /**
-     * Create an instance of DefaultStatsManager supplying the default manager implementations.
-     * Initializes a {@link DefaultStatsManagement} and configures it in the default manner.
-     *
-     * @return A DefaultStatsManager instance, never <tt>null</tt>.
-     */
-    public static DefaultStatsManager createWithDefaults() {
-
-        DefaultStatsManager manager = new Builder().newManager();
-
-        if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
-            StatsManagement management = new DefaultStatsManagement();
-            management.registerConfigManagerMBean(manager);
-            management.registerSessionManagerMBean(manager);
-
-            StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(manager, management);
-            manager.getEventManager()
-                   .addGlobalEventHandler(eventHandler);
-        }
-
-        return manager;
     }
 
     @Override
@@ -151,8 +126,8 @@ public class DefaultStatsManager implements StatsManager {
     }
 
     @Override
-    public StatsConfigFactory getConfigFactory() {
-        return configFactory;
+    public StatsConfigBuilderFactory getConfigBuilderFactory() {
+        return configBuilderFactory;
     }
 
     @Override
@@ -184,7 +159,7 @@ public class DefaultStatsManager implements StatsManager {
         protected EventManager eventManager = null;
         protected TrackerLocator trackerLocator = null;
         protected StatsKeyFactory keyFactory = null;
-        protected StatsConfigFactory configFactory = null;
+        protected StatsConfigBuilderFactory configBuilderFactory = null;
         protected TaskService taskService = null;
 
         public Builder withConfigManager(final StatsConfigManager configManager) {
@@ -232,12 +207,12 @@ public class DefaultStatsManager implements StatsManager {
             return this;
         }
 
-        public Builder withConfigFactory(final StatsConfigFactory configFactory) {
-            if (configFactory == null) {
-                throw new NullPointerException("configFactory");
+        public Builder withConfigFactory(final StatsConfigBuilderFactory configBuilderFactory) {
+            if (configBuilderFactory == null) {
+                throw new NullPointerException("configBuilderFactory");
             }
 
-            this.configFactory = configFactory;
+            this.configBuilderFactory = configBuilderFactory;
             return this;
         }
 
@@ -258,7 +233,7 @@ public class DefaultStatsManager implements StatsManager {
             StatsConfigManager configManager = this.configManager;
             StatsSessionManager sessionManager = this.sessionManager;
             TrackerLocator trackerLocator = this.trackerLocator;
-            StatsConfigFactory configFactory = this.configFactory;
+            StatsConfigBuilderFactory configBuilderFactory = this.configBuilderFactory;
             TaskService taskService = this.taskService;
 
             if (keyFactory == null) {
@@ -281,8 +256,8 @@ public class DefaultStatsManager implements StatsManager {
                 trackerLocator = new DefaultTrackerLocator(configManager, sessionManager);
             }
 
-            if (configFactory == null) {
-                configFactory = new DefaultStatsConfigFactory(configManager);
+            if (configBuilderFactory == null) {
+                configBuilderFactory = new DefaultStatsConfigBuilderFactory(configManager);
             }
 
             if (taskService == null) {
@@ -294,7 +269,7 @@ public class DefaultStatsManager implements StatsManager {
                                                                   eventManager,
                                                                   trackerLocator,
                                                                   keyFactory,
-                                                                  configFactory,
+                                                                  configBuilderFactory,
                                                                   taskService);
 
             return manager;

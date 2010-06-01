@@ -15,11 +15,12 @@
 package org.stajistics;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.stajistics.bootstrap.StatsManagerFactory;
+import org.stajistics.configuration.StatsConfigBuilder;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
@@ -81,8 +82,25 @@ public class StatsTest extends AbstractStajisticsTestCase {
     }
 
     @Test
-    public void testLoadStatsManagerFromProperties() throws Exception {
+    public void testLoadStatsManagerFactoryFromProperties() throws Exception {
+        try {
+            System.getProperties()
+                  .setProperty(StatsManagerFactory.class.getName(),
+                               ClassLoadableMockStatsManagerFactory.class.getName());
 
+            StatsManagerFactory factory = Stats.loadStatsManagerFactoryFromProperties();
+
+            assertNotNull(factory);
+            assertInstanceOf(factory, ClassLoadableMockStatsManagerFactory.class);
+
+        } finally {
+            System.getProperties()
+                  .remove(StatsManagerFactory.class.getName());
+        }
+    }
+
+    @Test
+    public void testLoadStatsManagerFromProperties() throws Exception {
         try {
             System.getProperties()
                   .setProperty(StatsManager.class.getName(),
@@ -352,12 +370,12 @@ public class StatsTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testBuildConfig() {
-        final StatsConfigFactory mockConfigFactory = mockery.mock(StatsConfigFactory.class);
+        final StatsConfigBuilderFactory mockConfigBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         final StatsConfigBuilder mockConfigBuilder = mockery.mock(StatsConfigBuilder.class);
 
         mockery.checking(new Expectations() {{
-            one(mockManager).getConfigFactory(); will(returnValue(mockConfigFactory));
-            one(mockConfigFactory).createConfigBuilder(); will(returnValue(mockConfigBuilder));
+            one(mockManager).getConfigBuilderFactory(); will(returnValue(mockConfigBuilderFactory));
+            one(mockConfigBuilderFactory).createConfigBuilder(); will(returnValue(mockConfigBuilder));
         }});
 
         assertSame(mockConfigBuilder, Stats.buildConfig());
@@ -394,7 +412,7 @@ public class StatsTest extends AbstractStajisticsTestCase {
         }
 
         @Override
-        public StatsConfigFactory getConfigFactory() {
+        public StatsConfigBuilderFactory getConfigBuilderFactory() {
             return null;
         }
 
@@ -413,5 +431,12 @@ public class StatsTest extends AbstractStajisticsTestCase {
 
         @Override
         public void shutdown() {}
+    }
+
+    public static final class ClassLoadableMockStatsManagerFactory implements StatsManagerFactory {
+        @Override
+        public StatsManager createManager() {
+            return null;
+        }
     }
 }

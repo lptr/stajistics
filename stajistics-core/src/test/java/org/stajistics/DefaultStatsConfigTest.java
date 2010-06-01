@@ -20,8 +20,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.jmock.Mockery;
 import org.junit.Test;
+import org.stajistics.configuration.DefaultStatsConfig;
+import org.stajistics.configuration.StatsConfig;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;

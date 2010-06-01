@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.stajistics.configuration.DefaultStatsConfig;
+import org.stajistics.configuration.DefaultStatsConfigManager;
+import org.stajistics.configuration.StatsConfig;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;

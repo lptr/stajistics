@@ -16,6 +16,8 @@ package org.stajistics;
 
 import java.io.Serializable;
 
+import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
@@ -30,9 +32,9 @@ import org.stajistics.tracker.TrackerLocator;
 public interface StatsManager extends Serializable {
 
     /**
-     * Get the {@link StatsConfigManager}.
+     * Get the {@link org.stajistics.configuration.StatsConfigManager}.
      *
-     * @return The {@link StatsConfigManager}, never <tt>null</tt>.
+     * @return The {@link org.stajistics.configuration.StatsConfigManager}, never <tt>null</tt>.
      */
     StatsConfigManager getConfigManager();
 
@@ -65,11 +67,11 @@ public interface StatsManager extends Serializable {
     StatsKeyFactory getKeyFactory();
 
     /**
-     * Get the {@link StatsConfigFactory}.
+     * Get the {@link org.stajistics.configuration.StatsConfigBuilderFactory}.
      *
-     * @return The {@link StatsConfigFactory}, never <tt>null</tt>.
+     * @return The {@link org.stajistics.configuration.StatsConfigBuilderFactory}, never <tt>null</tt>.
      */
-    StatsConfigFactory getConfigFactory();
+    StatsConfigBuilderFactory getConfigBuilderFactory();
 
     /**
      * Get the {@link TaskService}.

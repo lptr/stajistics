@@ -21,7 +21,7 @@ import javax.management.ObjectName;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.StatsConfigManager;
+import org.stajistics.configuration.StatsConfigManager;
 
 /**
  *

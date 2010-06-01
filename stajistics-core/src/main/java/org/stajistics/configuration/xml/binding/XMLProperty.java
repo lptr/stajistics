@@ -12,25 +12,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.configuration.xml.binding;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlValue;
 
 /**
- * Various constants used by Stajistics.
- *
  * @author The Stajistics Project
  */
-public interface StatsConstants {
+public class XMLProperty {
 
-    /**
-     * The character that delimits hierarchy levels in {@link StatsKey} names.
-     */
-    char KEY_HIERARCHY_DELIMITER = '.';
+    @XmlAttribute(name = "name", required = true)
+    private String name;
 
-    int KEY_HIERARCHY_ROOT_DEPTH = 1;
+    @XmlValue
+    private String value;
 
-    /**
-     * The default unit used in {@link org.stajistics.configuration.StatsConfig} instances.
-     */
-    String DEFAULT_UNIT = "ms";
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

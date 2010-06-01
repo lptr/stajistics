@@ -16,8 +16,8 @@ package org.stajistics.tracker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigManager;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.incident.CompositeIncidentTracker;
@@ -28,7 +28,7 @@ import org.stajistics.tracker.span.SpanTracker;
 
 /**
  * The default {@link TrackerLocator} implementation which locates appropriate
- * {@link Tracker} instances using {@link StatsKey}'s associated {@link StatsConfig} and
+ * {@link Tracker} instances using {@link StatsKey}'s associated {@link org.stajistics.configuration.StatsConfig} and
  * {@link TrackerFactory}.
  *
  * @author The Stajistics Project
