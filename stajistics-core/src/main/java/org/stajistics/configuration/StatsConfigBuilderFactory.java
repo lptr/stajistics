@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.configuration;
 
 import java.io.Serializable;
 
@@ -21,21 +21,21 @@ import java.io.Serializable;
  *
  * @author The Stajistics Project
  */
-public interface StatsConfigFactory extends Serializable {
+public interface StatsConfigBuilderFactory extends Serializable {
 
     /**
      * Create a new {@link StatsConfigBuilder} which can assemble various configurations.
      *
-     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
+     * @return A {@link org.stajistics.StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
      */
     StatsConfigBuilder createConfigBuilder();
 
     /**
-     * Create a new {@link StatsConfigBuilder} which can assemble various configurations. The 
+     * Create a new {@link StatsConfigBuilder} which can assemble various configurations. The
      * builder is initialized from the given configuration <tt>template</tt>.
      *
      * @param template The configuration with which to initialize the builder.
-     * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
+     * @return A {@link org.stajistics.StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
      */
     StatsConfigBuilder createConfigBuilder(StatsConfig template);
 

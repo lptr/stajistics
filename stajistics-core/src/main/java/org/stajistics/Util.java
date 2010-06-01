@@ -15,12 +15,12 @@
 package org.stajistics;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-final class Util {
+public final class Util {
 
     private Util() {}
 

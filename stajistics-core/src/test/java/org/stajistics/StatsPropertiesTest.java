@@ -14,16 +14,14 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -139,5 +137,30 @@ public class StatsPropertiesTest extends AbstractStajisticsTestCase {
         assertEquals(Double.MAX_VALUE, StatsProperties.getDoubleProperty("double", 1D), TestUtil.DELTA);
         assertNull(StatsProperties.getDoubleProperty("double1", null));
         assertEquals(2D, StatsProperties.getDoubleProperty("double1", 2D), TestUtil.DELTA);
+    }
+
+    @Test
+    public void testSystemProperties() {
+        try {
+            System.setProperty("test", "value");
+            StatsProperties.load(new StatsProperties.SystemStatsProperties());
+
+            assertEquals("value", StatsProperties.getProperty("test"));
+
+        } finally {
+            System.getProperties().remove("test");
+        }
+    }
+
+    @Test
+    public void testAsChildOf() {
+        Map<String,String> propsMapChild = new HashMap<String,String>();
+        propsMapChild.put("boolean", Boolean.FALSE.toString());
+
+        StatsProperties.load(new StatsProperties.MapStatsProperties(propsMapChild)
+                                                .asChildOf(StatsProperties.getInstance()));
+
+        assertFalse(StatsProperties.getBooleanProperty("boolean"));
+        assertEquals("string", StatsProperties.getProperty("string"));
     }
 }

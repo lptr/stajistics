@@ -16,6 +16,10 @@ package org.stajistics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
+import org.stajistics.bootstrap.StatsManagerFactory;
+import org.stajistics.configuration.StatsConfigBuilder;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.NullTracker;
@@ -92,7 +96,14 @@ public final class Stats {
         StatsManager manager = null;
 
         try {
-            manager = loadStatsManagerFromProperties();
+            StatsManagerFactory managerFactory = loadStatsManagerFactoryFromProperties();
+            if (managerFactory != null) {
+                manager = managerFactory.createManager();
+            }
+
+            if (manager == null) {
+                manager = loadStatsManagerFromProperties();
+            }
 
         } catch (Exception e) {
             logger.error("Failed to load " + StatsManager.class.getSimpleName() +
@@ -101,7 +112,7 @@ public final class Stats {
         }
 
         if (manager == null) {
-            manager = DefaultStatsManager.createWithDefaults();
+            manager = new DefaultStatsManagerFactory().createManager();
         }
 
         return manager;
@@ -110,10 +121,11 @@ public final class Stats {
     protected static StatsManager loadStatsManagerFromProperties() throws Exception {
         StatsManager manager = null;
 
-        String managerClassName = StatsProperties.getProperty(StatsManager.class.getName());
+        String managerClassName = System.getProperty(StatsManager.class.getName());
         if (managerClassName != null) {
             @SuppressWarnings("unchecked")
-            Class<StatsManager> managerClass = (Class<StatsManager>)Class.forName(managerClassName);
+            Class<StatsManager> managerClass =
+                    (Class<StatsManager>)Class.forName(managerClassName);
 
             manager = managerClass.newInstance();
         }
@@ -121,12 +133,26 @@ public final class Stats {
         return manager;
     }
 
+    protected static StatsManagerFactory loadStatsManagerFactoryFromProperties() throws Exception {
+        StatsManagerFactory managerFactory = null;
+
+        String managerFactoryClassName = System.getProperty(StatsManagerFactory.class.getName());
+        if (managerFactoryClassName != null) {
+            Class<StatsManagerFactory> managerFactoryClass =
+                    (Class<StatsManagerFactory>)Class.forName(managerFactoryClassName);
+
+            managerFactory = managerFactoryClass.newInstance();
+        }
+
+        return managerFactory;
+    }
+
     private static TrackerLocator getTrackerLocator() {
         return getManager().getTrackerLocator();
     }
 
     /**
-     * Get the {@link StatsConfigManager}.
+     * Get the {@link org.stajistics.configuration.StatsConfigManager}.
      *
      * @return The {@link StatsConfigManager}, never <tt>null</tt>.
      *
@@ -515,10 +541,10 @@ public final class Stats {
      *
      * @return A {@link StatsKeyBuilder} which can be used to specify configuration, never <tt>null</tt>.
      *
-     * @see StatsConfigFactory#createConfigBuilder()
+     * @see org.stajistics.configuration.StatsConfigBuilderFactory#createConfigBuilder()
      */
     public static StatsConfigBuilder buildConfig() {
-        return getManager().getConfigFactory()
+        return getManager().getConfigBuilderFactory()
                            .createConfigBuilder();
     }
 

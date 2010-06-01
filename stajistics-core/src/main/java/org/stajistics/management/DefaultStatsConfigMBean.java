@@ -16,15 +16,15 @@ package org.stajistics.management;
 
 import java.util.Map;
 
-import org.stajistics.StatsConfig;
-import org.stajistics.StatsConfigFactory;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
 import org.stajistics.StatsManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -32,11 +32,11 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
 
     protected final StatsManager statsManager;
     protected final StatsKey key;
-    protected final org.stajistics.StatsConfig config;
+    protected final StatsConfig config;
 
     public DefaultStatsConfigMBean(final StatsManager statsManager,
-                                   final StatsKey key, 
-                                   final org.stajistics.StatsConfig config) {
+                                   final StatsKey key,
+                                   final StatsConfig config) {
         if (statsManager == null) {
             throw new NullPointerException("statsManager");
         }
@@ -63,7 +63,7 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
             return;
         }
 
-        statsManager.getConfigFactory()
+        statsManager.getConfigBuilderFactory()
                     .createConfigBuilder(config)
                     .withEnabledState(enabled)
                     .setConfigFor(key);
@@ -80,7 +80,7 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
             return;
         }
 
-        statsManager.getConfigFactory()
+        statsManager.getConfigBuilderFactory()
                     .createConfigBuilder(config)
                     .withUnit(unit)
                     .setConfigFor(key);
@@ -97,7 +97,7 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
             return;
         }
 
-        statsManager.getConfigFactory()
+        statsManager.getConfigBuilderFactory()
                     .createConfigBuilder(config)
                     .withDescription(description)
                     .setConfigFor(key);
@@ -118,14 +118,14 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
 
         setEnabled(enabled);
 
-        StatsConfigFactory configFactory = statsManager.getConfigFactory();
+        StatsConfigBuilderFactory configBuilderFactory = statsManager.getConfigBuilderFactory();
 
-        Map<StatsKey,StatsConfig> childMap = 
+        Map<StatsKey,StatsConfig> childMap =
             statsManager.getConfigManager()
                         .getConfigs(StatsKeyMatcher.descendentOf(key.getName()));
 
         for (Map.Entry<StatsKey,StatsConfig> entry : childMap.entrySet()) {
-            configFactory.createConfigBuilder(entry.getValue())
+            configBuilderFactory.createConfigBuilder(entry.getValue())
                          .withEnabledState(enabled)
                          .setConfigFor(entry.getKey());
         }

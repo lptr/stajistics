@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.data.DataSet;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
@@ -42,7 +43,7 @@ import org.stajistics.util.Misc;
  * <p>Due to the concurrent nature of this session implementation, the associated {@link DataRecorder}s
  * must be thread safe. {@link DataRecorder}s that are passed into the constructor are passed through
  * the {@link DataRecorders#lockingIfNeeded(DataRecorder[])} method in order to ensure thread safe
- * usage. Note that if any {@link DataRecorder}s are wrapped in a locking decorator, it could 
+ * usage. Note that if any {@link DataRecorder}s are wrapped in a locking decorator, it could
  * negatively impact performance of the client application. For optimal performance, use
  * {@link DataRecorder} implementations that are thread safe through the use of atomic primitives.</p>
  *
@@ -51,6 +52,8 @@ import org.stajistics.util.Misc;
  * @author The Stajistics Project
  */
 public class ConcurrentSession extends AbstractStatsSession {
+
+    public static final Factory FACTORY = new Factory();
 
     private static final Logger logger = LoggerFactory.getLogger(ConcurrentSession.class);
 
@@ -181,9 +184,9 @@ public class ConcurrentSession extends AbstractStatsSession {
             try {
                 dataRecorder.update(this, tracker, now);
             } catch (Exception e) {
-                Misc.logSwallowedException(logger, 
+                Misc.logSwallowedException(logger,
                                            e,
-                                           "Failed to update {}", 
+                                           "Failed to update {}",
                                            dataRecorder);
             }
         }
@@ -290,4 +293,18 @@ public class ConcurrentSession extends AbstractStatsSession {
         clear();
         return data;
     }
+
+    /* NESTED CLASSES */
+
+    public static final class Factory implements StatsSessionFactory {
+        @Override
+        public StatsSession createSession(final StatsKey key,
+                                          final StatsManager manager,
+                                          final DataRecorder[] dataRecorders) {
+            return new ConcurrentSession(key,
+                                         manager.getEventManager(),
+                                         dataRecorders);
+        }
+    }
+
 }

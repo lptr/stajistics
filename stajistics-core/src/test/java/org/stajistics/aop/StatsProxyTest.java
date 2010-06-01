@@ -18,7 +18,6 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.DefaultStatsManager;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyUtils;
@@ -55,7 +54,7 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
     @Before
     public void setUp() {
         // TODO: these should be _actually_ mocked
-        mockStatsManager = DefaultStatsManager.createWithDefaults();
+        mockStatsManager = Stats.getManager();
         Stats.loadManager(mockStatsManager);
         mockKey = mockStatsManager.getKeyFactory().createKey("test");
 
@@ -111,7 +110,7 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
             one(mockTracker).commit();
         }});
 
-        mockStatsManager.getConfigFactory()
+        mockStatsManager.getConfigBuilderFactory()
                         .createConfigBuilder()
                         .withTrackerFactory(new TrackerFactory<Tracker>() {
             @Override
@@ -156,7 +155,7 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
             one(methodTracker).commit();
         }});
 
-        mockStatsManager.getConfigFactory()
+        mockStatsManager.getConfigBuilderFactory()
                         .createConfigBuilder()
                         .withTrackerFactory(new TrackerFactory<Tracker>() {
             @Override

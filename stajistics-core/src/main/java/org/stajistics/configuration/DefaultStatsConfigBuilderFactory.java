@@ -12,14 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.configuration;
 
 /**
  * A factory for creating {@link StatsConfigBuilder}s.
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsConfigFactory implements StatsConfigFactory {
+public class DefaultStatsConfigBuilderFactory implements StatsConfigBuilderFactory {
 
     protected final StatsConfigManager configManager;
 
@@ -30,7 +30,7 @@ public class DefaultStatsConfigFactory implements StatsConfigFactory {
      *                      instance created by this factory. Must not be <tt>null</tt>.
      * @throws NullPointerException If <tt>configManager</tt> is <tt>null</tt>.
      */
-    public DefaultStatsConfigFactory(final StatsConfigManager configManager) {
+    public DefaultStatsConfigBuilderFactory(final StatsConfigManager configManager) {
         if (configManager == null) {
             throw new NullPointerException("configManager");
         }

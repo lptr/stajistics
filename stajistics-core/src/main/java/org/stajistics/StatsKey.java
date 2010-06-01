@@ -26,7 +26,7 @@ import java.util.Map;
  * is equal to another if the names are equal and the number, names, and values of their
  * attributes are equal. A StatsKey of unique equality represents a single target to be tracked.
  * StatsKeys are also used to address various entities in statistics collection that are associated
- * with the keys target, such as, configuration ({@link StatsConfig}) and collected data
+ * with the keys target, such as, configuration ({@link org.stajistics.configuration.StatsConfig}) and collected data
  * ({@link StatsSession}). As StatsKeys are immutable, copies can be made using a
  * {@link StatsKeyBuilder} which is obtained with the {@link #buildCopy()} method.</p>
  *
@@ -59,7 +59,7 @@ import java.util.Map;
  * <a href="http://java.sun.com/docs/codeconv/html/CodeConventions.doc8.html">naming Java packages</a>.</p>
  *
  * <p>The secondary purpose of the key hierarchy is to allow more robust control over the
- * configuration of groups of related keys. See {@link StatsConfig} and {@link StatsConfigManager}
+ * configuration of groups of related keys. See {@link org.stajistics.configuration.StatsConfig} and {@link org.stajistics.configuration.StatsConfigManager}
  * for details.</p>
  * </dd>
  *

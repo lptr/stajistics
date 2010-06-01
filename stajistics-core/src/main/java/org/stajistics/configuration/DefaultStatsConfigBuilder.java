@@ -12,8 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.configuration;
 
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsKey;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
@@ -23,8 +25,8 @@ import org.stajistics.tracker.span.TimeDurationTracker;
 
 /**
  * The default implementation of a {@link StatsConfigBuilder}. Do not instantiate this class
- * directly. Instead use {@link org.stajistics.StatsManager#getConfigFactory()},
- * or {@link Stats#buildConfig()}.
+ * directly. Instead use {@link org.stajistics.StatsManager#getConfigBuilderFactory()},
+ * or {@link org.stajistics.Stats#buildConfig()}.
  *
  * @author The Stajistics Project
  */
@@ -43,7 +45,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
      * Create a new instance.
      *
      * @param configManager The {@link StatsConfigManager} to support
-     *                      {@link #setConfigFor(StatsKey)} calls. Must not be <tt>null</tt>.
+     *                      {@link #setConfigFor(org.stajistics.StatsKey)} calls. Must not be <tt>null</tt>.
      * @throws NullPointerException If <tt>configManager</tt> is <tt>null</tt>.
      */
     public DefaultStatsConfigBuilder(final StatsConfigManager configManager) {
@@ -54,7 +56,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
      * Create a new instance.
      *
      * @param configManager The {@link StatsConfigManager} to support
-     *                      {@link #setConfigFor(StatsKey)} calls. Must not be <tt>null</tt>.
+     *                      {@link #setConfigFor(org.stajistics.StatsKey)} calls. Must not be <tt>null</tt>.
      * @param config The {@link StatsConfig} from which to copy configuration as a starting point.
      *
      * @throws NullPointerException If <tt>configManager</tt> is <tt>null</tt>.

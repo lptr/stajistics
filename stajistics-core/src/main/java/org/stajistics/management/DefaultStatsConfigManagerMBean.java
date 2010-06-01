@@ -16,11 +16,11 @@ package org.stajistics.management;
 
 import java.io.IOException;
 
-import org.stajistics.StatsConfigManager;
+import org.stajistics.configuration.StatsConfigManager;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */

@@ -26,13 +26,12 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.stajistics.*;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 
@@ -296,11 +295,11 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
         final StatsConfig mockConfig = mockery.mock(StatsConfig.class);
-        final StatsConfigFactory mockConfigFactory = mockery.mock(StatsConfigFactory.class);
+        final StatsConfigBuilderFactory mockConfigBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
         final StatsConfigMBean mockConfigMBean = mockery.mock(StatsConfigMBean.class);
 
         mockery.checking(new Expectations() {{
-            allowing(mockStatsManager).getConfigFactory(); will(returnValue(mockConfigFactory));
+            allowing(mockStatsManager).getConfigBuilderFactory(); will(returnValue(mockConfigBuilderFactory));
             one(mockMBeanFactory).createConfigMBean(mockStatsManager, mockKey, mockConfig); will(returnValue(mockConfigMBean));
             ignoring(mockConfig);
         }});

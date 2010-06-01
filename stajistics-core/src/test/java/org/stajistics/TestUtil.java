@@ -18,6 +18,8 @@ import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.Tracker;
@@ -79,13 +81,13 @@ public abstract class TestUtil {
         final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);
         final TrackerLocator mockTrackerLocator = mockery.mock(TrackerLocator.class);
         final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
-        final StatsConfigFactory mockConfigFactory = mockery.mock(StatsConfigFactory.class);
+        final StatsConfigBuilderFactory mockConfigBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
 
         final Tracker mockTracker = mockery.mock(Tracker.class);
         final ManualTracker mockManualTracker = mockery.mock(ManualTracker.class);
 
         mockery.checking(new Expectations() {{
-            allowing(mockManager).getConfigFactory(); will(returnValue(mockConfigFactory));
+            allowing(mockManager).getConfigBuilderFactory(); will(returnValue(mockConfigBuilderFactory));
             allowing(mockManager).getConfigManager(); will(returnValue(mockConfigManager));
             allowing(mockManager).getEventManager(); will(returnValue(mockEventManager));
             allowing(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));

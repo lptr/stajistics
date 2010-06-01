@@ -12,25 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
-
+package org.stajistics.bootstrap;
 
 /**
- * Various constants used by Stajistics.
- *
  * @author The Stajistics Project
  */
-public interface StatsConstants {
+public class DefaultStatsManagerFactoryTest extends AbstractStatsManagerFactoryTestCase {
 
-    /**
-     * The character that delimits hierarchy levels in {@link StatsKey} names.
-     */
-    char KEY_HIERARCHY_DELIMITER = '.';
+    @Override
+    protected StatsManagerFactory createManagerFactory() {
+        return new DefaultStatsManagerFactory();
+    }
 
-    int KEY_HIERARCHY_ROOT_DEPTH = 1;
+    
 
-    /**
-     * The default unit used in {@link org.stajistics.configuration.StatsConfig} instances.
-     */
-    String DEFAULT_UNIT = "ms";
 }

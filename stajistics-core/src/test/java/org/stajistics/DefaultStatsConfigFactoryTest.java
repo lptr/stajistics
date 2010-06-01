@@ -17,6 +17,10 @@ package org.stajistics;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.configuration.DefaultStatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigManager;
 
 import static org.junit.Assert.*;
 
@@ -31,19 +35,19 @@ public class DefaultStatsConfigFactoryTest extends AbstractStajisticsTestCase {
     // TODO: more
 
     private StatsConfigManager mockConfigManager;
-    private StatsConfigFactory configFactory;
+    private StatsConfigBuilderFactory configBuilderFactory;
 
     @Before
     public void setUp() {
         mockConfigManager = mockery.mock(StatsConfigManager.class);
 
-        configFactory = new DefaultStatsConfigFactory(mockConfigManager);
+        configBuilderFactory = new DefaultStatsConfigBuilderFactory(mockConfigManager);
     }
 
     @Test
     public void testConstructWithNullConfigManager() {
         try {
-            new DefaultStatsConfigFactory(null);
+            new DefaultStatsConfigBuilderFactory(null);
             fail("Allowed construction with null configManager");
 
         } catch (NullPointerException npe) {
@@ -53,7 +57,7 @@ public class DefaultStatsConfigFactoryTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testCreateConfigBuilder() {
-        assertNotNull(configFactory.createConfigBuilder());
+        assertNotNull(configBuilderFactory.createConfigBuilder());
     }
 
     @Test
@@ -63,7 +67,7 @@ public class DefaultStatsConfigFactoryTest extends AbstractStajisticsTestCase {
             ignoring(config);
         }});
 
-        assertNotNull(configFactory.createConfigBuilder(config));
+        assertNotNull(configBuilderFactory.createConfigBuilder(config));
     }
 
 }

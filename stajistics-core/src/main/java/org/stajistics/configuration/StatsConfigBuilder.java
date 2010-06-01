@@ -12,10 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.configuration;
 
 import java.io.Serializable;
 
+import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.TrackerFactory;
@@ -88,7 +89,7 @@ public interface StatsConfigBuilder extends Serializable {
      * Set the result of {@link #newConfig()} with the given <tt>key</tt> on the
      * {@link StatsConfigManager} that is associated with this builder instance.
      *
-     * @param key The {@link StatsKey} to be associated with the new {@link StatsConfig}.
+     * @param key The {@link org.stajistics.StatsKey} to be associated with the new {@link StatsConfig}.
      */
     void setConfigFor(StatsKey key);
 

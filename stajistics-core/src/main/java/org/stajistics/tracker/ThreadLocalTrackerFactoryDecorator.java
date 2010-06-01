@@ -17,7 +17,6 @@ package org.stajistics.tracker;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.stajistics.StatsConfig;
 import org.stajistics.StatsKey;
 import org.stajistics.event.EventHandler;
 import org.stajistics.event.EventManager;
@@ -29,7 +28,7 @@ import org.stajistics.util.ThreadSafe;
 /**
  * A decorator for another TrackerFactory instance that ensures only one Tracker
  * instance per-key per-thread is ever created by the delegate factory. One instance of this
- * decorator can be shared by multiple {@link StatsConfig}s provided, of course,
+ * decorator can be shared by multiple {@link org.stajistics.configuration.StatsConfig}s provided, of course,
  * they wish to share the same delegate {@link TrackerFactory} instance.
  *
  * @param <T> The type of Tracker returned by the factory.
@@ -78,8 +77,8 @@ public class ThreadLocalTrackerFactoryDecorator<T extends Tracker>
             } else {
                 eventManager.addEventHandler(key, new EventHandler() {
                     @Override
-                    public void handleStatsEvent(final EventType eventType, 
-                                                 final StatsKey key, 
+                    public void handleStatsEvent(final EventType eventType,
+                                                 final StatsKey key,
                                                  final Object target) {
                         switch (eventType) {
                             case CONFIG_CHANGED:

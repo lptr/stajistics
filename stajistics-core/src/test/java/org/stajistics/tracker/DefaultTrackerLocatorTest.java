@@ -24,12 +24,11 @@ import static org.junit.Assert.fail;
 import java.util.Iterator;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.stajistics.*;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.incident.IncidentTracker;

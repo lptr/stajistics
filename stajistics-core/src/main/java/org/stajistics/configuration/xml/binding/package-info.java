@@ -12,25 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+@XmlSchema(namespace = "http://www.stajistics.org/configuration")
+package org.stajistics.configuration.xml.binding;
 
-
-/**
- * Various constants used by Stajistics.
- *
- * @author The Stajistics Project
- */
-public interface StatsConstants {
-
-    /**
-     * The character that delimits hierarchy levels in {@link StatsKey} names.
-     */
-    char KEY_HIERARCHY_DELIMITER = '.';
-
-    int KEY_HIERARCHY_ROOT_DEPTH = 1;
-
-    /**
-     * The default unit used in {@link org.stajistics.configuration.StatsConfig} instances.
-     */
-    String DEFAULT_UNIT = "ms";
-}
+import javax.xml.bind.annotation.XmlSchema;

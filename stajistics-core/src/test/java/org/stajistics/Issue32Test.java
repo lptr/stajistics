@@ -15,6 +15,7 @@
 package org.stajistics;
 
 import org.junit.Test;
+import org.stajistics.configuration.StatsConfig;
 
 import static org.junit.Assert.*;
 
@@ -29,7 +30,7 @@ public class Issue32Test extends AbstractStajisticsTestCase {
         StatsManager statsManager = Stats.getManager();
         StatsConfig defaultRootConfig = statsManager.getConfigManager()
                                                     .getRootConfig();
-        StatsConfig newRootConfig = statsManager.getConfigFactory()
+        StatsConfig newRootConfig = statsManager.getConfigBuilderFactory()
                                                 .createConfigBuilder(defaultRootConfig)
                                                 .withDescription("[description inherited from root]")
                                                 .newConfig();

@@ -14,6 +14,7 @@
  */
 package org.stajistics;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -53,8 +54,8 @@ public abstract class StatsProperties {
      * Set the given StatsConfig <tt>instance</tt> as the singleton instance. After this call,
      * calls to {@link #getInstance()} will return <tt>instance</tt>.
      *
-     * @param instance The {@link StatsProperties} instance to use, or <tt>null</tt> to have 
-     *                 the default implementation loaded upon the next call to 
+     * @param instance The {@link StatsProperties} instance to use, or <tt>null</tt> to have
+     *                 the default implementation loaded upon the next call to
      *                 {@link #getInstance()}.
      */
     public static void load(final StatsProperties instance) {
@@ -301,6 +302,10 @@ public abstract class StatsProperties {
         return value;
     }
 
+    public StatsProperties asChildOf(final StatsProperties parent) {
+        return new MultiStatsProperties(this, parent);
+    }
+
     /* NESTED CLASSES */
 
     /**
@@ -338,9 +343,40 @@ public abstract class StatsProperties {
         }
 
         @Override
-        protected Object getPropertyImpl(final String key, 
+        protected Object getPropertyImpl(final String key,
                                          final Object defaultValue) {
             Object value = propertyMap.get(key);
+            if (value == null) {
+                value = defaultValue;
+            }
+
+            return value;
+        }
+    }
+
+    public static class MultiStatsProperties extends StatsProperties {
+
+        private StatsProperties[] properties;
+
+        public MultiStatsProperties(final StatsProperties... properties) {
+            if (properties.length == 0) {
+                throw new IllegalArgumentException("Must supply at least one properties element");
+            }
+
+            this.properties = Arrays.copyOf(properties, properties.length);
+        }
+
+        @Override
+        protected Object getPropertyImpl(final String key, final Object defaultValue) {
+            Object value = null;
+
+            for (StatsProperties p : properties) {
+                value = p.getPropertyImpl(key, null);
+                if (value != null) {
+                    break;
+                }
+            }
+
             if (value == null) {
                 value = defaultValue;
             }

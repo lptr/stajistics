@@ -16,7 +16,7 @@ package org.stajistics.management;
 
 import java.io.Serializable;
 
-import org.stajistics.StatsConfig;
+import org.stajistics.configuration.StatsConfig;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;

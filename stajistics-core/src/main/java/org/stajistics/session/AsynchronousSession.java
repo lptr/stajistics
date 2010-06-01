@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.data.DataSet;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
@@ -53,10 +54,12 @@ import org.stajistics.util.Misc;
  * within locks, so the {@link DataRecorder}s themselves do not need to be thread safe.</p>
  *
  * @see org.stajistics.session.ConcurrentSession
- * 
+ *
  * @author The Stajistics Project
  */
 public class AsynchronousSession extends AbstractStatsSession {
+
+    public static final Factory FACTORY = new Factory();
 
     private static final Logger logger = LoggerFactory.getLogger(AsynchronousSession.class);
 
@@ -111,9 +114,9 @@ public class AsynchronousSession extends AbstractStatsSession {
             ProcessUpdateQueueTask processQueueTask = new ProcessUpdateQueueTask();
             taskService.execute(getClass(), processQueueTask);
         } catch (Exception e) {
-            Misc.logSwallowedException(logger, 
-                                       e, 
-                                       "Failed to queue task {}", 
+            Misc.logSwallowedException(logger,
+                                       e,
+                                       "Failed to queue task {}",
                                        entry);
         }
     }
@@ -220,9 +223,9 @@ public class AsynchronousSession extends AbstractStatsSession {
                 try {
                     dataRecorder.update(this, tracker, now);
                 } catch (Exception e) {
-                    Misc.logSwallowedException(logger, 
-                                               e, 
-                                               "Failed to update {}", 
+                    Misc.logSwallowedException(logger,
+                                               e,
+                                               "Failed to update {}",
                                                dataRecorder);
                 }
             }
@@ -380,7 +383,7 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     /*
      * NOTE: Must be called while holding updateQueueProcessingLock
-     */ 
+     */
     private void processUpdateQueue() {
         // Re-query queue size to avoid allocating a buffer if some
         // other thread has already processed the events
@@ -448,6 +451,20 @@ public class AsynchronousSession extends AbstractStatsSession {
         @Override
         public String toString() {
             return tracker + " @ " + now + " " + (track ? "track" : "update");
+        }
+    }
+
+    /* NESTED CLASSES */
+
+    public static final class Factory implements StatsSessionFactory {
+        @Override
+        public StatsSession createSession(final StatsKey key,
+                                          final StatsManager manager,
+                                          final DataRecorder[] dataRecorders) {
+            return new AsynchronousSession(key,
+                                           manager.getEventManager(),
+                                           manager.getTaskService(),
+                                           dataRecorders);
         }
     }
 

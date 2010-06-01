@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.configuration;
 
 import java.io.Serializable;
 
@@ -23,7 +23,7 @@ import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerFactory;
 
 /**
- * Represents the configuration that can be applied to a single target for which statistics 
+ * Represents the configuration that can be applied to a single target for which statistics
  * can be collected. Implementations of this interface are immutable.
  *
  * @author The Stajistics Project

@@ -15,9 +15,12 @@
 package org.stajistics;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.configuration.DefaultStatsConfigBuilder;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigBuilder;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.TrackerFactory;
