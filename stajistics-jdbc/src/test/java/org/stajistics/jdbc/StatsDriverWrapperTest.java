@@ -32,7 +32,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.aop.StatsProxy;
 import org.stajistics.jdbc.wrapper.StatsConnectionWrapper;
 
@@ -40,13 +39,15 @@ import org.stajistics.jdbc.wrapper.StatsConnectionWrapper;
  *
  * @author The Stajistics Project
  */
-public class StatsDriverWrapperTest extends AbstractStajisticsTestCase {
+@RunWith(JMock.class)
+public class StatsDriverWrapperTest {
 
     private static final String VENDOR_DRIVER_CLASS_NAME = "java.lang.Object";
     private static final String VENDOR_URL = "jdbc:vendor";
     private static final String STATS_URL = "jdbc:stajistics:vendor statsDelegateDriver=" +
                                                 VENDOR_DRIVER_CLASS_NAME;
 
+    private Mockery mockery;
     private Driver mockDriver;
     private Connection mockConnection;
 
@@ -54,6 +55,7 @@ public class StatsDriverWrapperTest extends AbstractStajisticsTestCase {
 
     @Before
     public void setUp() throws SQLException {
+        mockery = new Mockery();
         mockDriver = mockery.mock(Driver.class);
         mockConnection = mockery.mock(Connection.class);
 
