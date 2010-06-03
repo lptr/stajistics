@@ -14,22 +14,21 @@
  */
 package org.stajistics.management;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.session.StatsSession;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.stajistics.configuration.StatsConfig;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
-import org.stajistics.session.StatsSession;
 
 /**
  *

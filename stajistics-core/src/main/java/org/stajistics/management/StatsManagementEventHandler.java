@@ -14,9 +14,9 @@
  */
 package org.stajistics.management;
 
-import org.stajistics.configuration.StatsConfig;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.configuration.StatsConfig;
 import org.stajistics.event.EventHandler;
 import org.stajistics.event.EventType;
 import org.stajistics.session.StatsSession;

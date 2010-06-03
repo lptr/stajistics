@@ -14,17 +14,12 @@
  */
 package org.stajistics.jdbc;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -35,7 +30,7 @@ public class StatsDataBaseURL {
     public static final Set<String> DEFAULT_PARAMETER_NAMES = new HashSet<String>(
         Arrays.asList(
             new String[] {
-                Parameters.DELEGATE_DRIVER.getParameterName() 
+                Parameters.DELEGATE_DRIVER.getParameterName()
             }
         )
     );
@@ -123,11 +118,11 @@ public class StatsDataBaseURL {
 
         return Collections.unmodifiableMap(parameterMap);
     }
-    
+
     /**
      * Removes a parameter name-value pair from the URL contained in <tt>buf</tt>
-     * for the given <tt>paramName</tt>. Modifies <tt>buf</tt> to recreate the format of 
-     * the URL as if the parameter not been defined in the first place. 
+     * for the given <tt>paramName</tt>. Modifies <tt>buf</tt> to recreate the format of
+     * the URL as if the parameter not been defined in the first place.
      * Does nothing if <tt>paramName</tt> is not found in <tt>buf</tt>.
      *
      * @param buf The StringBuilder containing the data base URL.
@@ -156,7 +151,7 @@ public class StatsDataBaseURL {
             int i = start + paramName.length();
 
             // Skip spaces
-            while (isChar(buf, i, ' ')) { 
+            while (isChar(buf, i, ' ')) {
                 i++;
             }
 
@@ -164,7 +159,7 @@ public class StatsDataBaseURL {
             if (isChar(buf, i, '=')) {
 
                 // pass the '='
-                i++; 
+                i++;
 
                 // Skip spaces
                 while (isChar(buf, i, ' ')) {
@@ -175,10 +170,10 @@ public class StatsDataBaseURL {
                 int valueStart = i;
 
                 // Skip to space/ampersand/end
-                while (i < buf.length() && 
+                while (i < buf.length() &&
                         !isChar(buf, i, ' ') &&
-                        !isChar(buf, i, '&')) { 
-                    i++; 
+                        !isChar(buf, i, '&')) {
+                    i++;
                 }
 
                 // Mark the end of the value
@@ -220,8 +215,8 @@ public class StatsDataBaseURL {
         return paramValue;
     }
 
-    private boolean isChar(final StringBuilder buf, 
-                           final int index, 
+    private boolean isChar(final StringBuilder buf,
+                           final int index,
                            final char test) {
         if (index < 0 || index >= buf.length()) {
             return false;
@@ -249,7 +244,7 @@ public class StatsDataBaseURL {
 
         return buf.toString();
     }
-    
+
     /* NESTED CLASSES */
 
     public enum Parameters {

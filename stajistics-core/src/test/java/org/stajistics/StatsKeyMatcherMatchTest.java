@@ -14,37 +14,13 @@
  */
 package org.stajistics;
 
-import static org.stajistics.StatsKeyMatcher.all;
-import static org.stajistics.StatsKeyMatcher.attrNameContains;
-import static org.stajistics.StatsKeyMatcher.attrNameEquals;
-import static org.stajistics.StatsKeyMatcher.attrNameLength;
-import static org.stajistics.StatsKeyMatcher.attrNameMatchesRegEx;
-import static org.stajistics.StatsKeyMatcher.attrNamePrefix;
-import static org.stajistics.StatsKeyMatcher.attrNameSuffix;
-import static org.stajistics.StatsKeyMatcher.attrValueContains;
-import static org.stajistics.StatsKeyMatcher.attrValueEquals;
-import static org.stajistics.StatsKeyMatcher.attrValueLength;
-import static org.stajistics.StatsKeyMatcher.attrValueMatchesRegEx;
-import static org.stajistics.StatsKeyMatcher.attrValuePrefix;
-import static org.stajistics.StatsKeyMatcher.attrValueSuffix;
-import static org.stajistics.StatsKeyMatcher.attributeCount;
-import static org.stajistics.StatsKeyMatcher.contains;
-import static org.stajistics.StatsKeyMatcher.depth;
-import static org.stajistics.StatsKeyMatcher.descendentOf;
-import static org.stajistics.StatsKeyMatcher.exactMatch;
-import static org.stajistics.StatsKeyMatcher.length;
-import static org.stajistics.StatsKeyMatcher.matchesRegEx;
-import static org.stajistics.StatsKeyMatcher.nameEquals;
-import static org.stajistics.StatsKeyMatcher.none;
-import static org.stajistics.StatsKeyMatcher.prefix;
-import static org.stajistics.StatsKeyMatcher.suffix;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jmock.Mockery;
 
 import java.lang.reflect.Field;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.jmock.Mockery;
+import static org.stajistics.StatsKeyMatcher.*;
 
 /**
  *

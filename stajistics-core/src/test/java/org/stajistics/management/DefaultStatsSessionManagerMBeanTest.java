@@ -14,13 +14,13 @@
  */
 package org.stajistics.management;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.management.ObjectName;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.session.StatsSessionManager;
+
+import javax.management.ObjectName;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

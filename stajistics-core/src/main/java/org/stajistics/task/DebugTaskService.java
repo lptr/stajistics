@@ -14,11 +14,7 @@
  */
 package org.stajistics.task;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * @author The Stajistics Project
@@ -67,7 +63,7 @@ public class DebugTaskService implements TaskService {
         }
 
         @Override
-        public T get(final long timeout, 
+        public T get(final long timeout,
                      final TimeUnit unit) throws InterruptedException, ExecutionException,
                 TimeoutException {
             return get();

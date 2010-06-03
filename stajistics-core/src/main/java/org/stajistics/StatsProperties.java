@@ -14,11 +14,11 @@
  */
 package org.stajistics;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Provides access to configuration properties that are used by Stajistics internals.

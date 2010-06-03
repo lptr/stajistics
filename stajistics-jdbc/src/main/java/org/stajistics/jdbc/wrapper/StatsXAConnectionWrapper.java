@@ -14,17 +14,16 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.XAConnection;
-import javax.transaction.xa.XAResource;
-
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractXAConnectionDecorator;
 
+import javax.sql.XAConnection;
+import javax.transaction.xa.XAResource;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */

@@ -14,16 +14,15 @@
  */
 package org.stajistics.jdbc;
 
-import java.io.PrintWriter;
-import java.sql.SQLException;
+import org.stajistics.jdbc.wrapper.StatsPooledConnectionWrapper;
 
 import javax.sql.ConnectionPoolDataSource;
 import javax.sql.PooledConnection;
-
-import org.stajistics.jdbc.wrapper.StatsPooledConnectionWrapper;
+import java.io.PrintWriter;
+import java.sql.SQLException;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */
@@ -86,17 +85,17 @@ public class StatsConnectionPoolDataSourceWrapper implements ConnectionPoolDataS
 
     @Override
     public PooledConnection getPooledConnection() throws SQLException {
-        PooledConnection pc = new StatsPooledConnectionWrapper(delegate().getPooledConnection(), 
+        PooledConnection pc = new StatsPooledConnectionWrapper(delegate().getPooledConnection(),
                                                                requireConfig());
 
         return pc;
     }
 
     @Override
-    public PooledConnection getPooledConnection(final String user, 
+    public PooledConnection getPooledConnection(final String user,
                                                 final String password)
             throws SQLException {
-        PooledConnection pc = new StatsPooledConnectionWrapper(delegate().getPooledConnection(user, password), 
+        PooledConnection pc = new StatsPooledConnectionWrapper(delegate().getPooledConnection(user, password),
                                                                requireConfig());
 
         return pc;

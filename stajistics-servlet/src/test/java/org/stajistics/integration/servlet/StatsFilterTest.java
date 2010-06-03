@@ -14,18 +14,17 @@
  */
 package org.stajistics.integration.servlet;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.stajistics.DefaultStatsManager;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

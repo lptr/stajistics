@@ -14,12 +14,6 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
@@ -27,9 +21,11 @@ import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractConnectionDecorator;
 import org.stajistics.tracker.span.SpanTracker;
 
+import java.sql.*;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -51,7 +47,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
             throw new NullPointerException("config");
         }
 
-        this.config = config; 
+        this.config = config;
 
         callableStatementProxyFactory = config.getProxyFactory(CallableStatement.class);
         preparedStatementProxyFactory = config.getProxyFactory(PreparedStatement.class);
@@ -83,7 +79,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
     }
 
     @Override
-    public Statement createStatement(final int resultSetType, final int resultSetConcurrency) 
+    public Statement createStatement(final int resultSetType, final int resultSetConcurrency)
             throws SQLException {
         Statement s = new StatsStatementWrapper(delegate().createStatement(resultSetType, resultSetConcurrency), this, config);
 
@@ -93,9 +89,9 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
     }
 
     @Override
-    public Statement createStatement(final int resultSetType, 
-                                     final int resultSetConcurrency, 
-                                     final int resultSetHoldability) 
+    public Statement createStatement(final int resultSetType,
+                                     final int resultSetConcurrency,
+                                     final int resultSetHoldability)
             throws SQLException {
         Statement s = new StatsStatementWrapper(delegate().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability), this, config);
 
@@ -114,7 +110,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
     }
 
     @Override
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) 
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency)
             throws SQLException {
         CallableStatement cs = new StatsCallableStatementWrapper(delegate().prepareCall(sql, resultSetType, resultSetConcurrency), this, sql, config);
 
@@ -172,7 +168,7 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) 
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
             throws SQLException {
         PreparedStatement ps = new StatsPreparedStatementWrapper(delegate().prepareStatement(sql, resultSetType, resultSetConcurrency), this, sql, config);
 

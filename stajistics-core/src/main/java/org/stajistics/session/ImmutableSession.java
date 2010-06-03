@@ -14,15 +14,15 @@
  */
 package org.stajistics.session;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DataSets;
 import org.stajistics.data.NullDataSet;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.Tracker;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A {@link StatsSession} implementation which does not respond to updates.

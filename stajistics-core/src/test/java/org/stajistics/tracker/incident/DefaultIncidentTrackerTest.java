@@ -15,16 +15,16 @@
 
 package org.stajistics.tracker.incident;
 
-import static org.junit.Assert.assertEquals;
-
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.TestUtil;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractTrackerTestCase;
 
+import static org.junit.Assert.assertEquals;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */

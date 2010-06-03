@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@XmlSchema(namespace = "http://www.stajistics.org/configuration")
+@XmlSchema(namespace = "http://www.stajistics.org/configuration/1.0")
 package org.stajistics.configuration.xml.binding;
 
 import javax.xml.bind.annotation.XmlSchema;

@@ -14,15 +14,16 @@
  */
 package org.stajistics;
 
-import org.stajistics.configuration.*;
 import org.stajistics.configuration.DefaultStatsConfigBuilderFactory;
+import org.stajistics.configuration.DefaultStatsConfigManager;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.SynchronousEventManager;
 import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.task.ThreadPoolTaskService;
 import org.stajistics.task.TaskService;
+import org.stajistics.task.ThreadPoolTaskService;
 import org.stajistics.tracker.DefaultTrackerLocator;
 import org.stajistics.tracker.NullTrackerLocator;
 import org.stajistics.tracker.TrackerLocator;

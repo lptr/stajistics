@@ -14,24 +14,24 @@
  */
 package org.stajistics.tracker.incident;
 
-import java.util.List;
-
 import org.stajistics.tracker.AbstractCompositeTracker;
 
+import java.util.List;
+
 /**
- * 
+ *
  *
  * @author The Stajistics Project
  */
-public class CompositeIncidentTracker 
-    extends AbstractCompositeTracker<IncidentTracker> 
+public class CompositeIncidentTracker
+    extends AbstractCompositeTracker<IncidentTracker>
     implements IncidentTracker {
 
     public CompositeIncidentTracker(final IncidentTracker... trackers) {
         super(trackers);
     }
 
-    public CompositeIncidentTracker(final List<IncidentTracker> trackers) { 
+    public CompositeIncidentTracker(final List<IncidentTracker> trackers) {
         super(trackers);
     }
 

@@ -14,23 +14,18 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.ConnectionEvent;
-import javax.sql.ConnectionEventListener;
-import javax.sql.PooledConnection;
-import javax.sql.StatementEvent;
-import javax.sql.StatementEventListener;
-
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractPooledConnectionDecorator;
 import org.stajistics.tracker.span.SpanTracker;
 
+import javax.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */
@@ -68,7 +63,7 @@ public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecora
         try {
             delegate().close();
         } finally {
-            
+
         }
     }
 
@@ -81,34 +76,34 @@ public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecora
 
         return con;
     }
-    
+
     /* NESTED CLASSES */
 
     private class ConnectionEventHandler implements ConnectionEventListener {
 
         @Override
         public void connectionClosed(final ConnectionEvent event) {
-            
+
         }
 
         @Override
         public void connectionErrorOccurred(final ConnectionEvent event) {
-            
+
         }
     }
 
     private class StatementEventHandler implements StatementEventListener {
-     
+
         @Override
         public void statementClosed(final StatementEvent event) {
-            
+
         }
 
         @Override
         public void statementErrorOccurred(final StatementEvent event) {
-            
+
         }
-        
+
     }
-    
+
 }

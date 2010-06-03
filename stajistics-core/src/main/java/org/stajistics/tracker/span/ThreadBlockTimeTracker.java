@@ -14,16 +14,16 @@
  */
 package org.stajistics.tracker.span;
 
-import java.lang.management.ThreadInfo;
-
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.Tracker;
 
+import java.lang.management.ThreadInfo;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */

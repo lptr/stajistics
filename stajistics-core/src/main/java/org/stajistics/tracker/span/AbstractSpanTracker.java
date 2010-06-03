@@ -1,7 +1,5 @@
 package org.stajistics.tracker.span;
 
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.session.StatsSession;
@@ -10,13 +8,15 @@ import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerFactory;
 import org.stajistics.util.Misc;
 
+import java.util.Date;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public abstract class AbstractSpanTracker extends AbstractTracker 
+public abstract class AbstractSpanTracker extends AbstractTracker
     implements SpanTracker {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSpanTracker.class);
@@ -44,8 +44,8 @@ public abstract class AbstractSpanTracker extends AbstractTracker
             startImpl(startTime);
 
         } catch (Exception e) {
-            Misc.logSwallowedException(logger, 
-                                       e, 
+            Misc.logSwallowedException(logger,
+                                       e,
                                        "Caught Exception in track()");
         }
 
@@ -69,8 +69,8 @@ public abstract class AbstractSpanTracker extends AbstractTracker
 
             stopImpl(-1);
         } catch (Exception e) {
-            Misc.logSwallowedException(logger, 
-                                       e, 
+            Misc.logSwallowedException(logger,
+                                       e,
                                        "Caught Exception in commit()");
         }
     }

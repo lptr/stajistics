@@ -22,7 +22,6 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyBuilder;
 import org.stajistics.TestUtil;
 import org.stajistics.tracker.TrackerLocator;
-import org.stajistics.tracker.span.SpanTracker;
 
 import java.util.Observable;
 import java.util.Observer;

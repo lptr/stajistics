@@ -14,19 +14,19 @@
  */
 package org.stajistics.tracker.incident;
 
-import java.util.List;
-
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.tracker.AbstractCompositeTrackerTestCase;
 
+import java.util.List;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class CompositeIncidentTrackerTest 
+public class CompositeIncidentTrackerTest
     extends AbstractCompositeTrackerTestCase<IncidentTracker> {
 
     @Override

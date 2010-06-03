@@ -14,24 +14,24 @@
  */
 package org.stajistics.tracker.span;
 
-import java.util.List;
-
 import org.stajistics.tracker.AbstractCompositeTracker;
 
+import java.util.List;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public class CompositeSpanTracker extends AbstractCompositeTracker<SpanTracker> 
+public class CompositeSpanTracker extends AbstractCompositeTracker<SpanTracker>
     implements SpanTracker {
 
     public CompositeSpanTracker(final SpanTracker... trackers) {
         super(trackers);
     }
 
-    public CompositeSpanTracker(final List<SpanTracker> trackers) { 
+    public CompositeSpanTracker(final List<SpanTracker> trackers) {
         super(trackers);
     }
 

@@ -14,8 +14,6 @@
  */
 package org.stajistics;
 
-import java.util.Collections;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
@@ -25,6 +23,8 @@ import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.tracker.manual.ManualTracker;
+
+import java.util.Collections;
 
 /**
  *

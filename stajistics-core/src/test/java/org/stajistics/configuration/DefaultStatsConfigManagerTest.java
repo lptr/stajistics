@@ -12,27 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.stajistics.configuration;
 
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.configuration.DefaultStatsConfig;
-import org.stajistics.configuration.DefaultStatsConfigManager;
-import org.stajistics.configuration.StatsConfig;
+import org.stajistics.*;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  *

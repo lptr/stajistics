@@ -14,17 +14,6 @@
  */
 package org.stajistics.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
-import java.util.Properties;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -34,6 +23,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.stajistics.aop.StatsProxy;
 import org.stajistics.jdbc.wrapper.StatsConnectionWrapper;
+
+import java.sql.*;
+import java.util.Properties;
+
+import static org.junit.Assert.*;
 
 /**
  *

@@ -14,12 +14,12 @@
  */
 package org.stajistics.session;
 
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
-
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyMatcher;
 
 /**
  * Manages the lifecycle of StatsSession instances.

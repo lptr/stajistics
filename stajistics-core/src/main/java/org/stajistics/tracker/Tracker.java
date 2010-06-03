@@ -14,8 +14,6 @@
  */
 package org.stajistics.tracker;
 
-import java.io.Serializable;
-
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
@@ -23,6 +21,8 @@ import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
+
+import java.io.Serializable;
 
 
 /**
@@ -39,10 +39,10 @@ import org.stajistics.tracker.span.SpanTracker;
  * single data element that is collected by a tracker is published to the associated
  * {@link StatsSession} in which the full data set is represented.</p>
  *
- * <p>StatsTrackers are intentionally designed, by default, to be manipulated by only one thread 
- * at a time and as such, are thread-unsafe. A Tracker instance should not be stored or reused 
+ * <p>StatsTrackers are intentionally designed, by default, to be manipulated by only one thread
+ * at a time and as such, are thread-unsafe. A Tracker instance should not be stored or reused
  * unless it is known that it will be accessed in a thread-safe manner. Rather, it is recommended that
- * an instance be retrieved when needed using one of the convenience methods defined in 
+ * an instance be retrieved when needed using one of the convenience methods defined in
  * {@link Stats}.</p>
  *
  * @see StatsManager#getTrackerLocator()

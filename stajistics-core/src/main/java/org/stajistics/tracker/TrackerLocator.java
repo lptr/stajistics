@@ -14,14 +14,14 @@
  */
 package org.stajistics.tracker;
 
-import java.io.Serializable;
-
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.incident.CompositeIncidentTracker;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.CompositeSpanTracker;
 import org.stajistics.tracker.span.SpanTracker;
+
+import java.io.Serializable;
 
 /**
  * Provides access to various types of Tracker instances that are associated with

@@ -14,19 +14,17 @@
  */
 package org.stajistics.tracker.span;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.tracker.AbstractCompositeTrackerTestCase;
 
+import java.util.List;
+
+import static org.junit.Assert.*;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */

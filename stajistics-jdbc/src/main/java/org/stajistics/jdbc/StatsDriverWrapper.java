@@ -14,32 +14,22 @@
  */
 package org.stajistics.jdbc;
 
-import java.lang.management.ManagementFactory;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.aop.ProxyFactory;
 import org.stajistics.jdbc.management.DefaultStatsDriverWrapperMBean;
 import org.stajistics.jdbc.wrapper.StatsConnectionWrapper;
 
+import javax.management.*;
+import java.lang.management.ManagementFactory;
+import java.sql.*;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -47,7 +37,7 @@ public class StatsDriverWrapper implements Driver {
 
     private static final Logger logger = LoggerFactory.getLogger(StatsDriverWrapper.class);
 
-    private final ConcurrentMap<Key,Entry> dataBaseURLMap = 
+    private final ConcurrentMap<Key,Entry> dataBaseURLMap =
         new ConcurrentHashMap<Key,Entry>();
 
     private volatile boolean enabled = true;
@@ -64,7 +54,7 @@ public class StatsDriverWrapper implements Driver {
     protected StatsDriverWrapper() {
         registerMBean();
     }
- 
+
     private void registerMBean() {
 
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -73,7 +63,7 @@ public class StatsDriverWrapper implements Driver {
             ObjectName name = new ObjectName("org.stajistics:type=manager,name=StatsDriverWrapper");
 
             mBeanServer.registerMBean(new DefaultStatsDriverWrapperMBean(this), name);
-  
+
         } catch (MalformedObjectNameException e) {
             logger.error("", e);
 
@@ -137,18 +127,18 @@ public class StatsDriverWrapper implements Driver {
     }
 
     @Override
-    public DriverPropertyInfo[] getPropertyInfo(final String url, 
+    public DriverPropertyInfo[] getPropertyInfo(final String url,
                                                 final Properties info) throws SQLException {
 
         Entry entry = getEntry(url, info);
 
-        DriverPropertyInfo[] delegatePropertyInfo = 
+        DriverPropertyInfo[] delegatePropertyInfo =
             entry.driver.getPropertyInfo(entry.statsDataBaseURL.getDelegateURL(), info);
 
         DriverPropertyInfo[] propertyInfo = new DriverPropertyInfo[delegatePropertyInfo.length + 1];
         System.arraycopy(delegatePropertyInfo, 0, propertyInfo, 0, delegatePropertyInfo.length);
 
-        propertyInfo[propertyInfo.length - 1] = 
+        propertyInfo[propertyInfo.length - 1] =
             new DriverPropertyInfo(StatsDataBaseURL.Parameters
                                                    .DELEGATE_DRIVER
                                                    .getParameterName(),
@@ -181,7 +171,7 @@ public class StatsDriverWrapper implements Driver {
     }
 
     private Entry getEntry(final String url,
-                           final Properties properties) 
+                           final Properties properties)
             throws SQLException {
 
         final Key key = new Key(url, properties);
@@ -214,9 +204,9 @@ public class StatsDriverWrapper implements Driver {
 
         ProxyFactory<Connection> connectionProxyFactory = config.getProxyFactory(Connection.class);
 
-        Entry result = new Entry(statsURL, 
-                                 delegateDriver, 
-                                 config, 
+        Entry result = new Entry(statsURL,
+                                 delegateDriver,
+                                 config,
                                  connectionProxyFactory);
 
         return result;

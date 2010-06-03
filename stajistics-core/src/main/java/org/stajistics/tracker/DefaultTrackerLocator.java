@@ -16,9 +16,9 @@ package org.stajistics.tracker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.StatsKey;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
-import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.incident.CompositeIncidentTracker;
 import org.stajistics.tracker.incident.IncidentTracker;

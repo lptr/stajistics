@@ -14,9 +14,9 @@
  */
 package org.stajistics.management;
 
-import java.io.IOException;
-
 import org.stajistics.configuration.StatsConfigManager;
+
+import java.io.IOException;
 
 /**
  *

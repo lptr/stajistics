@@ -15,7 +15,6 @@
 package org.stajistics.bootstrap;
 
 import org.stajistics.DefaultStatsManager;
-import org.stajistics.StatsManager;
 import org.stajistics.StatsProperties;
 import org.stajistics.management.DefaultStatsManagement;
 import org.stajistics.management.StatsManagement;
