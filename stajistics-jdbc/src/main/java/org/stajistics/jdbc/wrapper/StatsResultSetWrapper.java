@@ -14,17 +14,17 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractResultSetDecorator;
 import org.stajistics.tracker.span.SpanTracker;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */
@@ -42,8 +42,8 @@ public class StatsResultSetWrapper extends AbstractResultSetDecorator {
             throw new NullPointerException("config");
         }
 
-        this.config = config; 
-        
+        this.config = config;
+
         StatsKey openClosedKey = Stats.buildKey(ResultSet.class.getName())
                                       .withNameSuffix("open")
                                       .newKey();

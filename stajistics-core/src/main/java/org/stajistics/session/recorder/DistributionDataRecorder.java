@@ -14,9 +14,6 @@
  */
 package org.stajistics.session.recorder;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
@@ -24,16 +21,19 @@ import org.stajistics.util.AtomicDouble;
 import org.stajistics.util.Misc;
 import org.stajistics.util.ThreadSafe;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
 @ThreadSafe
 public class DistributionDataRecorder implements DataRecorder {
 
-    private static final Set<String> SUPPORTED_FIELD_NAMES = 
+    private static final Set<String> SUPPORTED_FIELD_NAMES =
         Collections.unmodifiableSet(Misc.getStaticFieldValues(Field.class, String.class));
 
     protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
@@ -46,8 +46,8 @@ public class DistributionDataRecorder implements DataRecorder {
     }
 
     @Override
-    public void update(final StatsSession session, 
-                       final Tracker tracker, 
+    public void update(final StatsSession session,
+                       final Tracker tracker,
                        final long now) {
 
         final double currentValue = tracker.getValue();

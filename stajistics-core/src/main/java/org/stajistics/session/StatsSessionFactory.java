@@ -14,11 +14,11 @@
  */
 package org.stajistics.session;
 
-import java.io.Serializable;
-
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.session.recorder.DataRecorder;
+
+import java.io.Serializable;
 
 /**
  * A factory for {@link StatsSession} instances.

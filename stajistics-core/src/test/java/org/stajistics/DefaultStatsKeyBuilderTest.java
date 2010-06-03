@@ -14,19 +14,12 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.stajistics.TestUtil.buildStatsKeyExpectations;
-
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import static org.junit.Assert.*;
+import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
 /**
  *

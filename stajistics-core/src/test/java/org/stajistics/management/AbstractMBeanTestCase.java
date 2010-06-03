@@ -14,25 +14,13 @@
  */
 package org.stajistics.management;
 
-import java.io.IOException;
-
-import javax.management.JMX;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerConnection;
-import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
-
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.stajistics.AbstractStajisticsTestCase;
+
+import javax.management.*;
+import javax.management.remote.*;
+import java.io.IOException;
 
 /**
  * Thanks to Eamonn McManus for the MBean testing strategy:

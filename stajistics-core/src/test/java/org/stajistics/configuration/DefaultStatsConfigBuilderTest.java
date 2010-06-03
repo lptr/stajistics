@@ -12,15 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
+package org.stajistics.configuration;
 
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.configuration.DefaultStatsConfigBuilder;
-import org.stajistics.configuration.StatsConfig;
-import org.stajistics.configuration.StatsConfigBuilder;
-import org.stajistics.configuration.StatsConfigManager;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.TrackerFactory;

@@ -14,18 +14,16 @@
  */
 package org.stajistics.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -170,5 +168,5 @@ public class RangeTest {
         assertEquals(1, it.next().intValue());
     }
 
-    
+
 }

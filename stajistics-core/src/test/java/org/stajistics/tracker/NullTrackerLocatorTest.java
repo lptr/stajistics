@@ -14,15 +14,12 @@
  */
 package org.stajistics.tracker;
 
-import static org.junit.Assert.assertEquals;
-
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

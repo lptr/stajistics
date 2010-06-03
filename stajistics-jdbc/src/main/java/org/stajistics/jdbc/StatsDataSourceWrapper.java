@@ -14,18 +14,17 @@
  */
 package org.stajistics.jdbc;
 
+import org.stajistics.jdbc.decorator.AbstractWrapper;
+import org.stajistics.jdbc.wrapper.StatsConnectionWrapper;
+
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
-import org.stajistics.jdbc.decorator.AbstractWrapper;
-import org.stajistics.jdbc.wrapper.StatsConnectionWrapper;
-
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -49,7 +48,7 @@ public class StatsDataSourceWrapper extends AbstractWrapper implements DataSourc
 
         this.delegate = delegate;
     }
-    
+
     public StatsJDBCConfig getConfig() {
         return config;
     }
@@ -59,7 +58,7 @@ public class StatsDataSourceWrapper extends AbstractWrapper implements DataSourc
             throw new NullPointerException("config");
         }
 
-        this.config = config; 
+        this.config = config;
     }
 
     @Override
@@ -93,7 +92,7 @@ public class StatsDataSourceWrapper extends AbstractWrapper implements DataSourc
     @Override
     public Connection getConnection(String username, String password)
             throws SQLException {
-        Connection connection = new StatsConnectionWrapper(delegate().getConnection(username, password), 
+        Connection connection = new StatsConnectionWrapper(delegate().getConnection(username, password),
                                                            requireConfig());
 
         connection = config.getProxyFactory(Connection.class)

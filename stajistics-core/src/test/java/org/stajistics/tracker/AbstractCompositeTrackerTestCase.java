@@ -14,20 +14,17 @@
  */
 package org.stajistics.tracker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import org.jmock.Expectations;
+import org.junit.Before;
+import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.stajistics.AbstractStajisticsTestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 /**
  *

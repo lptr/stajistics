@@ -14,13 +14,6 @@
  */
 package org.stajistics.session;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
@@ -30,8 +23,15 @@ import org.stajistics.event.EventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.util.Misc;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  */
 public abstract class AbstractStatsSession implements StatsSession {
@@ -90,7 +90,7 @@ public abstract class AbstractStatsSession implements StatsSession {
     protected abstract void setMax(double max);
 
     protected abstract void setSum(double sum);
-    
+
     @Override
     public StatsKey getKey() {
         return key;
@@ -148,9 +148,9 @@ public abstract class AbstractStatsSession implements StatsSession {
                     }
                 }
             } catch (Exception e) {
-                Misc.logSwallowedException(logger, 
-                                           e, 
-                                           "Failed to getField({}) from {}", 
+                Misc.logSwallowedException(logger,
+                                           e,
+                                           "Failed to getField({}) from {}",
                                            name,
                                            dataRecorders[i]);
             }
@@ -166,7 +166,7 @@ public abstract class AbstractStatsSession implements StatsSession {
         final DataSet dataSet = new DefaultDataSet();
 
         dataSet.getMetaData()
-               .setField(DataSet.MetaField.COLLECTION_STAMP, 
+               .setField(DataSet.MetaField.COLLECTION_STAMP,
                          System.currentTimeMillis());
 
         dataSet.setField(DataSet.Field.HITS, getHits());
@@ -183,9 +183,9 @@ public abstract class AbstractStatsSession implements StatsSession {
             try {
                 dataRecorder.collectData(this, dataSet);
             } catch (Exception e) {
-                Misc.logSwallowedException(logger, 
-                                           e, 
-                                           "Failed to collectData() from {}", 
+                Misc.logSwallowedException(logger,
+                                           e,
+                                           "Failed to collectData() from {}",
                                            dataRecorder);
             }
         }
@@ -202,9 +202,9 @@ public abstract class AbstractStatsSession implements StatsSession {
 
             Long restoredHits = dataSet.getField(DataSet.Field.HITS,
                                                  DataSet.Field.Default.HITS);
-            Long restoredFirstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, 
+            Long restoredFirstHitStamp = dataSet.getField(DataSet.Field.FIRST_HIT_STAMP,
                                                           DataSet.Field.Default.FIRST_HIT_STAMP);
-            Long restoredLastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP, 
+            Long restoredLastHitStamp = dataSet.getField(DataSet.Field.LAST_HIT_STAMP,
                                                          DataSet.Field.Default.LAST_HIT_STAMP);
 
             // Only restore if hits, firstHitStamp, and lastHitStamp are defined
@@ -223,7 +223,7 @@ public abstract class AbstractStatsSession implements StatsSession {
 
                 // Only restore "update()" data if commits, first, and last are defined
                 if (restoredCommits > DataSet.Field.Default.COMMITS &&
-                        restoredFirst != null && 
+                        restoredFirst != null &&
                         restoredLast != null) {
 
                     setCommits(restoredCommits);
@@ -238,9 +238,9 @@ public abstract class AbstractStatsSession implements StatsSession {
                         try {
                             dataRecorder.restore(dataSet);
                         } catch (Exception e) {
-                            Misc.logSwallowedException(logger, 
+                            Misc.logSwallowedException(logger,
                                                        e,
-                                                       "Failed to restore {}", 
+                                                       "Failed to restore {}",
                                                        dataRecorder);
                         }
                     }
@@ -264,9 +264,9 @@ public abstract class AbstractStatsSession implements StatsSession {
             try {
                 dataRecorder.clear();
             } catch (Exception e) {
-                Misc.logSwallowedException(logger, 
-                                           e, 
-                                           "Failed to clear {}", 
+                Misc.logSwallowedException(logger,
+                                           e,
+                                           "Failed to clear {}",
                                            dataRecorder);
             }
         }

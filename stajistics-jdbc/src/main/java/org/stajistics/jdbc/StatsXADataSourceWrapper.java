@@ -14,16 +14,15 @@
  */
 package org.stajistics.jdbc;
 
-import java.io.PrintWriter;
-import java.sql.SQLException;
+import org.stajistics.jdbc.wrapper.StatsXAConnectionWrapper;
 
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-
-import org.stajistics.jdbc.wrapper.StatsXAConnectionWrapper;
+import java.io.PrintWriter;
+import java.sql.SQLException;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */
@@ -79,7 +78,7 @@ public class StatsXADataSourceWrapper implements XADataSource {
 
         return config;
     }
-    
+
     public int getLoginTimeout() throws SQLException {
         return delegate().getLoginTimeout();
     }
@@ -95,7 +94,7 @@ public class StatsXADataSourceWrapper implements XADataSource {
         return xac;
     }
 
-    public XAConnection getXAConnection(final String user, 
+    public XAConnection getXAConnection(final String user,
                                         final String password)
             throws SQLException {
         XAConnection xac = new StatsXAConnectionWrapper(delegate().getXAConnection(user, password),
@@ -111,5 +110,5 @@ public class StatsXADataSourceWrapper implements XADataSource {
     public void setLogWriter(PrintWriter out) throws SQLException {
         delegate().setLogWriter(out);
     }
-    
+
 }

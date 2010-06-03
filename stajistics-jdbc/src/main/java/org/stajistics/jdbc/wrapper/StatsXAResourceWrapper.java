@@ -1,11 +1,11 @@
 package org.stajistics.jdbc.wrapper;
 
-import javax.transaction.xa.XAResource;
-
 import org.stajistics.jdbc.decorator.AbstractXAResourceDecorator;
 
+import javax.transaction.xa.XAResource;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */
@@ -15,5 +15,5 @@ public class StatsXAResourceWrapper extends AbstractXAResourceDecorator {
         super(delegate);
     }
 
-    
+
 }

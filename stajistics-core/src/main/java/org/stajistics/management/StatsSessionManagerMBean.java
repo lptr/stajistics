@@ -14,13 +14,12 @@
  */
 package org.stajistics.management;
 
+import javax.management.MXBean;
 import java.io.IOException;
 
-import javax.management.MXBean;
-
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */

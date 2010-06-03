@@ -14,12 +14,7 @@
  */
 package org.stajistics;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Formatter;
 
 import static org.junit.Assert.assertNotNull;
@@ -157,5 +152,4 @@ public class StajisticsAssert {
             fail(e, message, "Failed to deserialize object: %s", test);
         }
     }
-
 }

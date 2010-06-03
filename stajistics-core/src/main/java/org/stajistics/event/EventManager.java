@@ -14,16 +14,16 @@
  */
 package org.stajistics.event;
 
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyMatcher;
-
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */

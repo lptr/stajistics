@@ -15,23 +15,21 @@
 package org.stajistics.tracker.span;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.TestUtil;
 import org.stajistics.tracker.AbstractTrackerTestCase;
 
+import static org.junit.Assert.*;
+
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
-public abstract class AbstractSpanTrackerTestCase 
+public abstract class AbstractSpanTrackerTestCase
     extends AbstractTrackerTestCase<SpanTracker> {
 
     @Test

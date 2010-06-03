@@ -14,26 +14,25 @@
  */
 package org.stajistics.management;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.stajistics.TestUtil.buildStatsKeyExpectations;
+import org.jmock.Expectations;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.jmock.Expectations;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.stajistics.*;
-import org.stajistics.configuration.StatsConfig;
-import org.stajistics.configuration.StatsConfigBuilderFactory;
-import org.stajistics.session.StatsSession;
-import org.stajistics.session.StatsSessionManager;
+import static org.junit.Assert.*;
+import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
 /**
  *

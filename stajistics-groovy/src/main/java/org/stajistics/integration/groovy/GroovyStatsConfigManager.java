@@ -14,16 +14,16 @@
  */
 package org.stajistics.integration.groovy;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.stajistics.StatsConfig;
 import org.stajistics.StatsConfigManager;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  */
 public class GroovyStatsConfigManager implements StatsConfigManager {

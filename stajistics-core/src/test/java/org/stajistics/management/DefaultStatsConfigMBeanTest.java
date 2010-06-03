@@ -14,20 +14,20 @@
  */
 package org.stajistics.management;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import javax.management.ObjectName;
-
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilder;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
+
+import javax.management.ObjectName;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *

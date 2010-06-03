@@ -14,14 +14,10 @@
  */
 package org.stajistics.data;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  */
 class DefaultMetaData extends AbstractDataContainer implements MetaData {

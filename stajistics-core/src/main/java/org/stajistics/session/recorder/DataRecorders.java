@@ -14,15 +14,15 @@
  */
 package org.stajistics.session.recorder;
 
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Decorator;
 import org.stajistics.util.ThreadSafe;
+
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provides utility methods for manipulating {@link DataRecorder}s.
@@ -67,7 +67,7 @@ public final class DataRecorders {
      * using the given <tt>lock</tt>.
      *
      * @param dataRecorder The {@link DataRecorder} to wrap.
-     * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt> method calls. 
+     * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt> method calls.
      *             May be <tt>null</tt> to create a new {@link Lock}.
      * @return A new {@link DataRecorder} instance that wraps <tt>dataRecorder</tt>.
      *
@@ -79,9 +79,9 @@ public final class DataRecorders {
     }
 
     /**
-     * A convenience method for wrapping all elements of <tt>dataRecorders</tt> in the same 
+     * A convenience method for wrapping all elements of <tt>dataRecorders</tt> in the same
      * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}. This will
-     * create a new {@link Lock} instance for each <tt>dataRecorders</tt> element. 
+     * create a new {@link Lock} instance for each <tt>dataRecorders</tt> element.
      * Equivalent to calling <tt>locking(DataRecorder[], null)</tt>.
      *
      * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
@@ -94,7 +94,7 @@ public final class DataRecorders {
     }
 
     /**
-     * A convenience method for wrapping all elements of <tt>dataRecorders</tt> in the same 
+     * A convenience method for wrapping all elements of <tt>dataRecorders</tt> in the same
      * manner as {@link #locking(DataRecorder, Lock)} does for a single {@link DataRecorder}.
      *
      * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
@@ -139,7 +139,7 @@ public final class DataRecorders {
      * but only if {@link #isThreadSafe(DataRecorder)} returns <tt>false</tt> for the <tt>dataRecorder</tt>.
      *
      * @param dataRecorder The {@link DataRecorder} to wrap if it is not thread safe.
-     * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt> method calls 
+     * @param lock The {@link Lock} to use to lock all <tt>dataRecorder</tt> method calls
      *             if it is not thread safe. May be <tt>null</tt> to create a new {@link Lock}.
      * @return A new {@link DataRecorder} instance that wraps <tt>dataRecorder</tt> if it is not thread safe.
      *         If <tt>dataRecorder</tt> is thread safe, it is returned untouched.
@@ -156,10 +156,10 @@ public final class DataRecorders {
     }
 
     /**
-     * A convenience method for wrapping elements of <tt>dataRecorders</tt> in the same 
-     * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}, however, 
-     * an element will only be wrapped if {@link #isThreadSafe(DataRecorder)} returns 
-     * <tt>false</tt> for it. This will create a new {@link Lock} for each element that needs to be decorated. 
+     * A convenience method for wrapping elements of <tt>dataRecorders</tt> in the same
+     * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}, however,
+     * an element will only be wrapped if {@link #isThreadSafe(DataRecorder)} returns
+     * <tt>false</tt> for it. This will create a new {@link Lock} for each element that needs to be decorated.
      * Equivalent to calling <tt>lockingIfNeeded(DataRecorder[], null)</tt>.
      *
      * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
@@ -172,9 +172,9 @@ public final class DataRecorders {
     }
 
     /**
-     * A convenience method for wrapping elements of <tt>dataRecorders</tt> in the same 
-     * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}, however, 
-     * an element will only be wrapped if {@link #isThreadSafe(DataRecorder)} returns 
+     * A convenience method for wrapping elements of <tt>dataRecorders</tt> in the same
+     * manner as {@link #locking(DataRecorder)} does for a single {@link DataRecorder}, however,
+     * an element will only be wrapped if {@link #isThreadSafe(DataRecorder)} returns
      * <tt>false</tt> for it.
      *
      * @param dataRecorders An array of {@link DataRecorder}s to be wrapped. This array will not be modified.
@@ -202,7 +202,7 @@ public final class DataRecorders {
     /* NESTED CLASSES */
 
     @ThreadSafe
-    private static final class LockingDataRecorderDecorator 
+    private static final class LockingDataRecorderDecorator
             implements DataRecorder,Decorator<DataRecorder> {
 
         private final DataRecorder delegate;
@@ -239,7 +239,7 @@ public final class DataRecorders {
         }
 
         @Override
-        public Object getField(final StatsSession session, 
+        public Object getField(final StatsSession session,
                                final String name) {
             lock.lock();
             try {
@@ -250,7 +250,7 @@ public final class DataRecorders {
         }
 
         @Override
-        public void collectData(final StatsSession session, 
+        public void collectData(final StatsSession session,
                                 final DataSet dataSet) {
             lock.lock();
             try {
@@ -281,8 +281,8 @@ public final class DataRecorders {
         }
 
         @Override
-        public void update(final StatsSession session, 
-                           final Tracker tracker, 
+        public void update(final StatsSession session,
+                           final Tracker tracker,
                            final long now) {
             lock.lock();
             try {

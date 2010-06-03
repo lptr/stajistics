@@ -14,18 +14,18 @@
  */
 package org.stajistics.tracker.span;
 
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
-import java.util.List;
-
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.Tracker;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.util.List;
+
 /**
  * TODO: This tracker currently depends on the ordering of ManagementFactory.getGarbageCollectorMXBeans(). Is that safe?
- * 
+ *
  *
  * @author The Stajistics Project
  */
@@ -48,7 +48,7 @@ public class GarbageCollectionTimeTracker extends AbstractSpanTracker {
 
         int i = 0;
         for (GarbageCollectorMXBean gcMXBean : gcMXBeans) {
-            startGCNames[i] = gcMXBean.getName(); 
+            startGCNames[i] = gcMXBean.getName();
             startGCTimes[i] = gcMXBean.getCollectionTime();
             i++;
         }

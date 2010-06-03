@@ -14,30 +14,20 @@
  */
 package org.stajistics.management;
 
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.AttributeNotFoundException;
-import javax.management.DynamicMBean;
-import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.ReflectionException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsProperties;
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSessionManager;
 
+import javax.management.*;
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -46,11 +36,11 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     private static final Logger sessionLogger = LoggerFactory
             .getLogger(DefaultStatsSessionManagerMBean.SESSION_DUMP_LOGGER_NAME);
 
-    private static final String PROP_CACHE_DATA_SET = 
+    private static final String PROP_CACHE_DATA_SET =
         DefaultStatsSessionMBean.class.getName() + ".cacheDataSet";
     private static final boolean DEFAULT_CACHE_DATA_SET = true;
 
-    private static final String PROP_CACHED_DATA_SET_LIFE_SPAN = 
+    private static final String PROP_CACHED_DATA_SET_LIFE_SPAN =
         DefaultStatsSessionMBean.class.getName() + ".cachedDataSetLifeSpanMillis";
     private static final long DEFAULT_CACHED_DATA_SET_LIFE_SPAN = 2000; // 2 seconds
 
@@ -98,7 +88,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     private DataSet getDataSet() {
 
         // If not caching
-        if (!StatsProperties.getBooleanProperty(PROP_CACHE_DATA_SET, 
+        if (!StatsProperties.getBooleanProperty(PROP_CACHE_DATA_SET,
                                                 DEFAULT_CACHE_DATA_SET)) {
             return session.collectData();
         }
@@ -112,7 +102,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
                 dataSet = cachedDataSetRef.get();
             }
 
-            final long cacheLifeSpan = StatsProperties.getLongProperty(PROP_CACHED_DATA_SET_LIFE_SPAN, 
+            final long cacheLifeSpan = StatsProperties.getLongProperty(PROP_CACHED_DATA_SET_LIFE_SPAN,
                                                                        DEFAULT_CACHED_DATA_SET_LIFE_SPAN);
 
             if (dataSet != null) {
@@ -123,7 +113,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
             if (dataSet == null) {
                 dataSet = session.collectData();
-    
+
                 cachedDataSetLastAccess = now;
                 cachedDataSetRef = new WeakReference<DataSet>(dataSet);
             }
@@ -251,8 +241,8 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     }
 
     @Override
-    public Object invoke(final String actionName, 
-                         final Object[] params, 
+    public Object invoke(final String actionName,
+                         final Object[] params,
                          final String[] signature)
             throws MBeanException, ReflectionException {
 

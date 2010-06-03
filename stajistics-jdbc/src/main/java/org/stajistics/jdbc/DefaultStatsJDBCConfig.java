@@ -14,24 +14,19 @@
  */
 package org.stajistics.jdbc;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import org.stajistics.aop.ProxyFactory;
+import org.stajistics.jdbc.sql.SQLAnalyzer;
 
 import javax.sql.PooledConnection;
 import javax.sql.XAConnection;
 import javax.transaction.xa.XAResource;
-
-import org.stajistics.aop.ProxyFactory;
-import org.stajistics.jdbc.sql.SQLAnalyzer;
+import java.sql.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */
@@ -61,7 +56,7 @@ public class DefaultStatsJDBCConfig implements StatsJDBCConfig {
         @SuppressWarnings("unchecked")
         Map<Class,ProxyFactory> proxyFactoryMap = new HashMap<Class,ProxyFactory>();
 
-        proxyFactoryMap.put(CallableStatement.class, 
+        proxyFactoryMap.put(CallableStatement.class,
                             DefaultJDBCProxyFactory.createWithDefaults(CallableStatement.class));
         proxyFactoryMap.put(Connection.class,
                             DefaultJDBCProxyFactory.createWithDefaults(Connection.class));

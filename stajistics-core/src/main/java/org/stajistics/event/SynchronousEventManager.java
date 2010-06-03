@@ -14,24 +14,19 @@
  */
 package org.stajistics.event;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
 
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -64,12 +59,12 @@ public class SynchronousEventManager implements EventManager {
             return Collections.emptyMap();
         }
 
-        Map<StatsKey,Collection<EventHandler>> matches = 
+        Map<StatsKey,Collection<EventHandler>> matches =
             new HashMap<StatsKey,Collection<EventHandler>>(sessionEventHandlers.size());
 
         for (Map.Entry<StatsKey,List<EventHandler>> entry : sessionEventHandlers.entrySet()) {
             if (keyMatcher.matches(entry.getKey())) {
-                matches.put(entry.getKey(), 
+                matches.put(entry.getKey(),
                             Collections.unmodifiableCollection(new ArrayList<EventHandler>(entry.getValue())));
             }
         }
@@ -87,7 +82,7 @@ public class SynchronousEventManager implements EventManager {
     }
 
     @Override
-    public void addEventHandler(final StatsKey key, 
+    public void addEventHandler(final StatsKey key,
                                 final EventHandler eventHandler) {
         if (key == null) {
             throw new NullPointerException("key");
@@ -149,7 +144,7 @@ public class SynchronousEventManager implements EventManager {
     }
 
     @Override
-    public void fireEvent(final EventType eventType, 
+    public void fireEvent(final EventType eventType,
                           final StatsKey key,
                           final Object target) {
         if (eventType == null) {
@@ -173,7 +168,7 @@ public class SynchronousEventManager implements EventManager {
     }
 
     protected void fireEvent(final List<EventHandler> handlers,
-                             final EventType eventType, 
+                             final EventType eventType,
                              final StatsKey key,
                              final Object target) {
         for (EventHandler handler : handlers) {

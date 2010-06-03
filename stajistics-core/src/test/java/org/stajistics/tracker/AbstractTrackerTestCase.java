@@ -14,19 +14,9 @@
  */
 package org.stajistics.tracker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.lang.reflect.Field;
-import java.util.List;
-
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
@@ -34,6 +24,11 @@ import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.session.recorder.DataRecorder;
+
+import java.lang.reflect.Field;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  *

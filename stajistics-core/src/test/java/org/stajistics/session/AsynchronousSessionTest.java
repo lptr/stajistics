@@ -14,16 +14,16 @@
  */
 package org.stajistics.session;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.DebugTaskService;
 import org.stajistics.task.TaskService;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author The Stajistics Project
@@ -86,8 +86,8 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
 
     @Test
     public void testTrackWithNastyTaskService() {
-        StatsSession service = new AsynchronousSession(mockKey, 
-                                                            mockEventManager, 
+        StatsSession service = new AsynchronousSession(mockKey,
+                                                            mockEventManager,
                                                             new NastyTaskService());
 
         service.track(mockTracker, 1L);
@@ -95,8 +95,8 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
 
     @Test
     public void testUpdateWithNastyTaskService() {
-        StatsSession service = new AsynchronousSession(mockKey, 
-                                                            mockEventManager, 
+        StatsSession service = new AsynchronousSession(mockKey,
+                                                            mockEventManager,
                                                             new NastyTaskService());
 
         service.update(mockTracker, 1L);

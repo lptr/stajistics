@@ -14,11 +14,6 @@
  */
 package org.stajistics.session;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
@@ -30,6 +25,11 @@ import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Misc;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>An implementation of {@link StatsSession} that can potentially pad the

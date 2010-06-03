@@ -14,24 +14,24 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertNull;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertNull;
 
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
 public class SimpleStatsKeyTest extends AbstractStatsKeyTestCase {
 
     @Override
-    protected StatsKey createStatsKey(final String name, 
+    protected StatsKey createStatsKey(final String name,
                                       final StatsKeyFactory keyFactory,
                                       final Map<String, Object> attributes) {
         return new SimpleStatsKey(name, keyFactory);

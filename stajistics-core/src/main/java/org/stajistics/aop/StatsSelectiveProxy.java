@@ -14,15 +14,15 @@
  */
 package org.stajistics.aop;
 
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
 
 /**
  *

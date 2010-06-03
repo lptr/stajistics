@@ -14,11 +14,6 @@
  */
 package org.stajistics.aop;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
@@ -28,6 +23,11 @@ import org.stajistics.StatsManager;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  *

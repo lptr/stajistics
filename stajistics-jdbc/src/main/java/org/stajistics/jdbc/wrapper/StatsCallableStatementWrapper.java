@@ -14,13 +14,6 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
@@ -28,8 +21,15 @@ import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractCallableStatementDecorator;
 import org.stajistics.tracker.span.SpanTracker;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */

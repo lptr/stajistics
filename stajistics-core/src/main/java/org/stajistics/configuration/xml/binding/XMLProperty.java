@@ -14,13 +14,15 @@
  */
 package org.stajistics.configuration.xml.binding;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlValue;
 
 /**
  * @author The Stajistics Project
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class XMLProperty {
 
     @XmlAttribute(name = "name", required = true)

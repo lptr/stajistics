@@ -14,12 +14,12 @@
  */
 package org.stajistics.session.recorder;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
+
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  *

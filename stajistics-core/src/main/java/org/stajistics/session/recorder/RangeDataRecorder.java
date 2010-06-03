@@ -14,13 +14,6 @@
  */
 package org.stajistics.session.recorder;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.data.DataSet;
@@ -30,9 +23,12 @@ import org.stajistics.util.Range;
 import org.stajistics.util.RangeList;
 import org.stajistics.util.ThreadSafe;
 
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */
@@ -75,7 +71,7 @@ public class RangeDataRecorder implements DataRecorder {
 
     @Override
     public void update(final StatsSession session,
-                       final Tracker tracker, 
+                       final Tracker tracker,
                        final long now) {
         final double value = tracker.getValue();
         final boolean hasOverlap = rangeList.hasOverlap();
@@ -130,7 +126,7 @@ public class RangeDataRecorder implements DataRecorder {
 
             if (value == null) {
                 // The full range list is not present, so do not limp along with partial data
-                logger.warn("Dropping restore() call due to partial field data. Missing: {}", 
+                logger.warn("Dropping restore() call due to partial field data. Missing: {}",
                             range.getName());
                 return;
             }

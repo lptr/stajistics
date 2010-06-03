@@ -17,7 +17,7 @@ package org.stajistics;
 import org.junit.Test;
 import org.stajistics.configuration.StatsConfig;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 
 /**
  *

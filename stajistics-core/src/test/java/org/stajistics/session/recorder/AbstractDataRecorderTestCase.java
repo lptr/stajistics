@@ -15,11 +15,8 @@
 package org.stajistics.session.recorder;
 
 import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.jmock.integration.junit4.JMock;
 import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;

@@ -14,16 +14,15 @@
  */
 package org.stajistics.jdbc.decorator;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import javax.sql.ConnectionEventListener;
 import javax.sql.StatementEventListener;
 import javax.sql.XAConnection;
 import javax.transaction.xa.XAResource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
- * 
+ *
  * @author The Stajistics Project
  *
  */

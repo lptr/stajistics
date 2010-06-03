@@ -14,13 +14,13 @@
  */
 package org.stajistics.event;
 
-import java.io.Serializable;
-
 import org.stajistics.StatsKey;
 
+import java.io.Serializable;
+
 /**
- * 
- * 
+ *
+ *
  *
  * @author The Stajistics Project
  */

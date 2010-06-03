@@ -14,23 +14,23 @@
  */
 package org.stajistics.session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
+import org.stajistics.StatsProperties;
+import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigManager;
+import org.stajistics.event.EventManager;
+import org.stajistics.event.EventType;
+import org.stajistics.session.recorder.DataRecorder;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
-import org.stajistics.configuration.StatsConfig;
-import org.stajistics.configuration.StatsConfigManager;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyMatcher;
-import org.stajistics.StatsProperties;
-import org.stajistics.event.EventManager;
-import org.stajistics.event.EventType;
-import org.stajistics.session.recorder.DataRecorder;
 
 /**
  * The default implementation of {@link StatsSessionManager}. All operations are done in a

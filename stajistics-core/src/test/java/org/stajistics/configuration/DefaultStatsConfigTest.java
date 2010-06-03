@@ -12,22 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+package org.stajistics.configuration;
 
 import org.junit.Test;
-import org.stajistics.configuration.DefaultStatsConfig;
-import org.stajistics.configuration.StatsConfig;
+import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.MilliTimeDurationTracker;
 import org.stajistics.tracker.span.NanoTimeDurationTracker;
+
+import static org.junit.Assert.*;
 
 /**
  *
