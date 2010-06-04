@@ -22,28 +22,20 @@ import javax.xml.bind.annotation.XmlValue;
 /**
  * @author The Stajistics Project
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public class XMLProperty {
+class XMLProperty {
 
-    @XmlAttribute(name = "name", required = true)
-    private String name;
+    @XmlAttribute(required = true)
+    String name;
 
     @XmlValue
-    private String value;
+    String value;
 
-    public String getName() {
-        return name;
-    }
+    XMLProperty() {}
 
-    public void setName(String name) {
+    XMLProperty(final String name,
+                final String value) {
         this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
         this.value = value;
     }
+
 }
