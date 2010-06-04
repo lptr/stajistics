@@ -19,16 +19,17 @@ import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
 
 import java.io.InputStream;
-import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author The Stajistics Project
  */
 public class XMLConfigBindingManagerTest extends AbstractStajisticsTestCase {
 
-    private static final String TEST_CONFIG_XML_FILE = "org/stajistics/configuration/xml/testConfig.xml";
+    private static final String TEST_CONFIG_XML_FILE = "/org/stajistics/configuration/xml/testConfig.xml";
 
     private XMLConfigBindingManager manager;
 
@@ -37,15 +38,23 @@ public class XMLConfigBindingManagerTest extends AbstractStajisticsTestCase {
         manager = new XMLConfigBindingManager();
     }
 
+    protected InputStream getTestConfigFile() {
+        InputStream in = getClass().getResourceAsStream(TEST_CONFIG_XML_FILE);
+        if (in == null) {
+            throw new RuntimeException("Resource not found: " + TEST_CONFIG_XML_FILE);
+        }
+        return in;
+    }
+
     @Test
     public void testUnmarshalGetProperties() {
-        InputStream in = getClass().getResourceAsStream(TEST_CONFIG_XML_FILE);
+        InputStream in = getTestConfigFile();
         XMLConfigDocument doc = manager.unmarshal(in);
 
-        List<XMLProperty> props = doc.getProperties();
-        assertEquals("name1", props.get(0).getName());
-        assertEquals("value1", props.get(0).getValue());
-        assertEquals("name2", props.get(1).getName());
-        assertEquals("value2", props.get(1).getValue());
+        Map<String,String> props = doc.getProperties();
+        assertTrue(props.containsKey("name1"));
+        assertEquals("value1", props.get("name1"));
+        assertTrue(props.containsKey("name2"));
+        assertEquals("value2", props.get("name2"));
     }
 }

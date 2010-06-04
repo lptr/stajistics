@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.*;
 
 /**
@@ -27,8 +28,9 @@ import java.util.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLConfigDocument {
 
-    @XmlElement(name = "property", required = false)
-    private List<XMLProperty> properties;
+    @XmlElement(name = "properties", required = false)
+    @XmlJavaTypeAdapter(XMLPropertiesAdapter.class)
+    private HashMap properties;
 
     @XmlElement(name = "rootConfig", required = false)
     private XMLRootStatsConfig rootConfig;
@@ -36,20 +38,15 @@ public class XMLConfigDocument {
     @XmlElement(name = "config", required = false)
     private List<XMLStatsConfig> configs;
 
-    public List<XMLProperty> getProperties() {
+    public Map<String,String> getProperties() {
+        if (properties == null) {
+            return Collections.emptyMap();
+        }
         return properties;
     }
 
-    public Map<String,String> getPropertiesMap() {
-        Map<String,String> result = new HashMap<String,String>(configs.size());
-        for (XMLProperty prop : properties) {
-            result.put(prop.getName(), prop.getValue());
-        }
-        return result;
-    }
-
-    public void setProperties(List<XMLProperty> properties) {
-        this.properties = properties;
+    public void setProperties(final Map<String,String> properties) {
+        this.properties = new HashMap<String,String>(properties);
     }
 
     public XMLRootStatsConfig getRootConfig() {
