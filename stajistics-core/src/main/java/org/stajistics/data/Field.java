@@ -1,7 +1,9 @@
 package org.stajistics.data;
 
-public interface Field {
-	
+import java.io.Serializable;
+
+public interface Field extends Serializable {
+
 	public enum Type {
 		LONG(Long.class), DOUBLE(Double.class);
 		

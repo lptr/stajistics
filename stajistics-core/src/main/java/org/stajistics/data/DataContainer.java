@@ -14,8 +14,6 @@
  */
 package org.stajistics.data;
 
-import java.util.List;
-
 /**
  * Stores a mapping of name-value pairs, where the values may be
  * <code>long</code>s or <code>double</code>s.
@@ -23,13 +21,9 @@ import java.util.List;
  * @author The Stajistics Project
  */
 public interface DataContainer {
-    
-    List<? extends Field> getFields();
 
-    List<String> getFieldNames();
-    
-    int getFieldCount();
-    
+    FieldSet getFieldSet();
+
     Object getObject(Field field);
 
     Object getObject(String fieldName);

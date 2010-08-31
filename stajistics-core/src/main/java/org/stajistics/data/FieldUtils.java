@@ -5,15 +5,15 @@ public final class FieldUtils {
         // Utility class
     }
     
-    public static long longDefaultValue(Field field) {
+    public static long longDefault(Field field) {
         return ((Number) field.defaultValue()).longValue();
     }
     
-    public static long doubleDefaultValue(Field field) {
-        return ((Number) field.defaultValue()).longValue();
+    public static double doubleDefault(Field field) {
+        return ((Number) field.defaultValue()).doubleValue();
     }
 
-    public static boolean booleanDefaultValue(Field field) {
+    public static boolean booleanDefault(Field field) {
         return ((Number) field.defaultValue()).longValue() != 0;
     }
 }

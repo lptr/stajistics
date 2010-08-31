@@ -66,13 +66,16 @@ public abstract class AbstractStatsSession implements StatsSession {
     
     public AbstractStatsSession(final StatsKey key,
                                 final EventManager eventManager,
-                                final FieldSetFactory dataSetBuilderFactory,
+                                final FieldSetFactory fieldSetFactory,
                                 final DataRecorder... dataRecorders) {
         if (key == null) {
             throw new NullPointerException("key");
         }
         if (eventManager == null) {
             throw new NullPointerException("eventManager");
+        }
+        if (fieldSetFactory == null) {
+            throw new NullPointerException("fieldSetFactory");
         }
 
         this.key = key;
@@ -88,15 +91,19 @@ public abstract class AbstractStatsSession implements StatsSession {
             ImmutableMap.Builder<Field,DataRecorder> fieldsToRecorderBuilder = ImmutableMap.builder();
             this.dataRecorders = dataRecorders;
             for (DataRecorder recorder : dataRecorders) {
-                List<? extends Field> recorderFields = recorder.getSupportedFields();
-                fieldBuilder.addAll(recorderFields);
-                for (Field recorderField : recorderFields) {
-                    fieldsToRecorderBuilder.put(recorderField, recorder);
+                try {
+                    List<? extends Field> recorderFields = recorder.getSupportedFields();
+                    fieldBuilder.addAll(recorderFields);
+                    for (Field recorderField : recorderFields) {
+                        fieldsToRecorderBuilder.put(recorderField, recorder);
+                    }
+                } catch (Exception e) {
+                    Misc.logSwallowedException(logger, e, "Could not get fields from recorder: {}", recorder);
                 }
             }
             this.fieldsToRecorders = fieldsToRecorderBuilder.build();
         }
-        this.fields = dataSetBuilderFactory.newFieldSet(fieldBuilder.build());
+        this.fields = fieldSetFactory.newFieldSet(fieldBuilder.build());
     }
 
     protected abstract void setHits(long hits);
@@ -267,7 +274,7 @@ public abstract class AbstractStatsSession implements StatsSession {
         long restoredLastHitStamp = dataSet.getLong(StandardField.lastHitStamp);
 
         // Only restore if hits, firstHitStamp, and lastHitStamp are defined
-        if (restoredHits > -1L
+        if (restoredHits > 0L
                 && restoredFirstHitStamp > -1L
                 && restoredLastHitStamp > -1L) {
 

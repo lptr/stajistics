@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.stajistics.*;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
+import org.stajistics.data.FieldSetFactory;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.session.recorder.DataRecorderFactory;
@@ -54,6 +55,7 @@ public abstract class AbstractStatsSessionManagerTestCase extends AbstractStajis
     protected StatsSession mockGetOrCreate(final StatsKey key) {
         final StatsConfig mockConfig = mockery.mock(StatsConfig.class);
         final DataRecorderFactory mockDataRecorderFactory = mockery.mock(DataRecorderFactory.class);
+        final FieldSetFactory mockFieldSetFactory = mockery.mock(FieldSetFactory.class);
         final DataRecorder mockDataRecorder = mockery.mock(DataRecorder.class);
         final DataRecorder[] mockDataRecorders = new DataRecorder[] { mockDataRecorder };
         final StatsSessionFactory mockSessionFactory = mockery.mock(StatsSessionFactory.class);
@@ -61,11 +63,13 @@ public abstract class AbstractStatsSessionManagerTestCase extends AbstractStajis
 
         mockery.checking(new Expectations() {{
             one(mockConfigManager).getOrCreateConfig(key); will(returnValue(mockConfig));
+            one(mockConfig).getFieldSetFactory(); will(returnValue(mockFieldSetFactory));
             one(mockConfig).getDataRecorderFactory(); will(returnValue(mockDataRecorderFactory));
             one(mockDataRecorderFactory).createDataRecorders(); will(returnValue(mockDataRecorders));
             one(mockConfig).getSessionFactory(); will(returnValue(mockSessionFactory));
             one(mockSessionFactory).createSession(with(key),
                                                   with(aNonNull(StatsManager.class)),
+                                                  with(aNonNull(FieldSetFactory.class)),
                                                   with(mockDataRecorders));
             will(returnValue(mockSession));
             allowing(mockSession).getKey(); will(returnValue(key));

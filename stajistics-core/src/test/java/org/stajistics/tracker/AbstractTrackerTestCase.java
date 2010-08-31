@@ -140,17 +140,32 @@ public abstract class AbstractTrackerTestCase<T extends Tracker> extends Abstrac
         }
 
         @Override
+        public double getDouble(org.stajistics.data.Field field) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public long getLong(org.stajistics.data.Field field) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public Object getObject(org.stajistics.data.Field field) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public Object getObject(String name) {
+            throw new RuntimeException();
+        }
+
+        @Override
         public long getCommits() {
             throw new RuntimeException();
         }
 
         @Override
         public List<DataRecorder> getDataRecorders() {
-            throw new RuntimeException();
-        }
-
-        @Override
-        public Object getField(String name) {
             throw new RuntimeException();
         }
 

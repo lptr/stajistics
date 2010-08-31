@@ -1,8 +1,11 @@
 package org.stajistics.data.fast;
 
+import static com.google.common.base.Preconditions.*;
+
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DataSetBuilder;
 import org.stajistics.data.Field;
+import org.stajistics.data.FieldUtils;
 
 final class FastDataSetBuilder extends AbstractFastDataContainer implements DataSetBuilder {
 	private boolean built;
@@ -44,58 +47,80 @@ final class FastDataSetBuilder extends AbstractFastDataContainer implements Data
 	}
 
 	@Override
-	public void set(Field field, long value) {
+	public long set(Field field, long value) {
+	    checkNotNull(field, "field");
 		checkState();
 		int index = fields.indexOf(field);
+		if (index == -1) {
+		    return FieldUtils.longDefault(field);
+		}
+		long oldValue;
 		switch (field.type()) {
 		case LONG:
-			longValues[index] = (long) value;
+            oldValue = longValues[index];
+            longValues[index] = (long) value;
 			break;
 		case DOUBLE:
+		    oldValue = (long) doubleValues[index];
 			doubleValues[index] = value;
 			break;
 		default:
 			throw new AssertionError();
 		}
+		return oldValue;
 	}
 
 	@Override
-	public void set(Field field, double value) {
+	public double set(Field field, double value) {
+        checkNotNull(field, "field");
 		checkState();
 		int index = fields.indexOf(field);
+        if (index == -1) {
+            return FieldUtils.doubleDefault(field);
+        }
+		double oldValue;
 		switch (field.type()) {
 		case LONG:
+		    oldValue = longValues[index];
 			longValues[index] = (long) value;
 			break;
 		case DOUBLE:
+		    oldValue = doubleValues[index];
 			doubleValues[index] = value;
 			break;
 		default:
 			throw new AssertionError();
 		}
+		return oldValue;
 	}
 
 	@Override
-	public void set(String fieldName, long value) {
-		checkState();
-		set(fields.getField(fieldName), value);
+	public boolean set(Field field, boolean value) {
+	    return set(field, value ? 1L : 0L) != 0;
 	}
 
 	@Override
-	public void set(String fieldName, double value) {
-		checkState();
-		set(fields.getField(fieldName), value);
+	public Object set(String name, Object value) {
+	    checkNotNull(name, "name");
+	    checkArgument(name.length() > 0, "empty name");
+	    Field field = fields.getField(name);
+	    if (field == null) {
+	        return null;
+	    }
+	    return set(field, value);
 	}
 
 	@Override
-	public void set(Field field, boolean value) {
-	    checkState();
-	    set(field, value ? 0L : 1L);
-	}
-	
-	@Override
-	public void set(String field, boolean value) {
-	    checkState();
-	    set(fields.getField(field), value);
+	public Object set(Field field, Object value) {
+	    checkNotNull(field, "field");
+	    checkNotNull(value, "value");
+	    switch (field.type()) {
+        case LONG:
+            return set(field, ((Number) value).longValue());
+        case DOUBLE:
+            return set(field, ((Number) value).doubleValue());
+        default:
+            throw new AssertionError();
+	    }
 	}
 }

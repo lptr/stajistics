@@ -16,6 +16,7 @@ package org.stajistics.configuration;
 
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.data.fast.FastFieldSetFactory;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
@@ -38,6 +39,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
             new DefaultStatsConfig(true,
                                    null,
                                    DefaultSessionFactory.getInstance(),
+                                   FastFieldSetFactory.getInstance(),
                                    DefaultDataRecorderFactory.getInstance(),
                                    "unit",
                                    "description");
@@ -53,6 +55,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
             new DefaultStatsConfig(true,
                                    MilliTimeDurationTracker.FACTORY,
                                    null,
+                                   FastFieldSetFactory.getInstance(),
                                    DefaultDataRecorderFactory.getInstance(),
                                    "unit",
                                    "description");
@@ -68,6 +71,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
             new DefaultStatsConfig(true,
                                    MilliTimeDurationTracker.FACTORY,
                                    DefaultSessionFactory.getInstance(),
+                                   FastFieldSetFactory.getInstance(),
                                    DefaultDataRecorderFactory.getInstance(),
                                    null,
                                    "description");
@@ -83,6 +87,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
             new DefaultStatsConfig(true,
                                    MilliTimeDurationTracker.FACTORY,
                                    DefaultSessionFactory.getInstance(),
+                                   FastFieldSetFactory.getInstance(),
                                    DefaultDataRecorderFactory.getInstance(),
                                    "",
                                    "description");
@@ -97,6 +102,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         new DefaultStatsConfig(true,
                                MilliTimeDurationTracker.FACTORY,
                                DefaultSessionFactory.getInstance(),
+                               FastFieldSetFactory.getInstance(),
                                DefaultDataRecorderFactory.getInstance(),
                                "unit",
                                null);
@@ -107,6 +113,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config = new DefaultStatsConfig(true,
                                                     MilliTimeDurationTracker.FACTORY,
                                                     DefaultSessionFactory.getInstance(),
+                                                    FastFieldSetFactory.getInstance(),
                                                     DefaultDataRecorderFactory.getInstance(),
                                                     "unit",
                                                     "description");
@@ -115,6 +122,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         config = new DefaultStatsConfig(false,
                                         MilliTimeDurationTracker.FACTORY,
                                         DefaultSessionFactory.getInstance(),
+                                        FastFieldSetFactory.getInstance(),
                                         DefaultDataRecorderFactory.getInstance(),
                                         "unit",
                                         "description");
@@ -126,6 +134,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config = new DefaultStatsConfig(true,
                                                     MilliTimeDurationTracker.FACTORY,
                                                     DefaultSessionFactory.getInstance(),
+                                                    FastFieldSetFactory.getInstance(),
                                                     DefaultDataRecorderFactory.getInstance(),
                                                     "unit",
                                                     "description");
@@ -137,6 +146,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config = new DefaultStatsConfig(true,
                                                     MilliTimeDurationTracker.FACTORY,
                                                     DefaultSessionFactory.getInstance(),
+                                                    FastFieldSetFactory.getInstance(),
                                                     DefaultDataRecorderFactory.getInstance(),
                                                     "unit",
                                                     "description");
@@ -148,6 +158,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config = new DefaultStatsConfig(true,
                                                     MilliTimeDurationTracker.FACTORY,
                                                     DefaultSessionFactory.getInstance(),
+                                                    FastFieldSetFactory.getInstance(),
                                                     DefaultDataRecorderFactory.getInstance(),
                                                     "unit",
                                                     "description");
@@ -159,6 +170,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config = new DefaultStatsConfig(true,
                                                     MilliTimeDurationTracker.FACTORY,
                                                     DefaultSessionFactory.getInstance(),
+                                                    FastFieldSetFactory.getInstance(),
                                                     DefaultDataRecorderFactory.getInstance(),
                                                     "unit",
                                                     "description");
@@ -170,6 +182,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config = new DefaultStatsConfig(true,
                                                     MilliTimeDurationTracker.FACTORY,
                                                     DefaultSessionFactory.getInstance(),
+                                                    FastFieldSetFactory.getInstance(),
                                                     DefaultDataRecorderFactory.getInstance(),
                                                     "unit",
                                                     "description");
@@ -182,12 +195,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -199,12 +214,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(false,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -216,12 +233,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      NanoTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -233,12 +252,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      mockery.mock(StatsSessionFactory.class),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -250,12 +271,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit1",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit2",
                                                      "description");
@@ -267,12 +290,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description1");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description2");
@@ -284,12 +309,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -301,12 +328,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(false,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -318,12 +347,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      NanoTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -335,12 +366,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      mockery.mock(StatsSessionFactory.class),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description");
@@ -352,12 +385,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit1",
                                                      "description");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit2",
                                                      "description");
@@ -369,12 +404,14 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config1 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description1");
         StatsConfig config2 = new DefaultStatsConfig(true,
                                                      MilliTimeDurationTracker.FACTORY,
                                                      DefaultSessionFactory.getInstance(),
+                                                     FastFieldSetFactory.getInstance(),
                                                      DefaultDataRecorderFactory.getInstance(),
                                                      "unit",
                                                      "description2");
@@ -386,6 +423,7 @@ public class DefaultStatsConfigTest extends AbstractStajisticsTestCase {
         StatsConfig config = new DefaultStatsConfig(true,
                                                     MilliTimeDurationTracker.FACTORY,
                                                     DefaultSessionFactory.getInstance(),
+                                                    FastFieldSetFactory.getInstance(),
                                                     DefaultDataRecorderFactory.getInstance(),
                                                     "unit",
                                                     "description");
