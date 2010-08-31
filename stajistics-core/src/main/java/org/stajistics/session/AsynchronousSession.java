@@ -26,8 +26,6 @@ import org.stajistics.StatsManager;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DataSetBuilder;
 import org.stajistics.data.FieldSetFactory;
-import org.stajistics.data.FieldUtils;
-import org.stajistics.data.DataSet.StandardField;
 import org.stajistics.data.DataSet.StandardMetaField;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;

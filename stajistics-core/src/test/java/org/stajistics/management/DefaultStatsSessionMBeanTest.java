@@ -14,19 +14,20 @@
  */
 package org.stajistics.management;
 
+import static org.junit.Assert.*;
+
+import java.util.Collections;
+
+import javax.management.ObjectName;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
+import org.stajistics.data.FieldSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-
-import javax.management.ObjectName;
-import java.util.Collections;
-import java.util.HashSet;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -39,6 +40,7 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
     protected StatsKey mockKey;
     protected StatsSessionManager mockSessionManager;
     protected StatsSession mockSession;
+    protected FieldSet mockFieldSet;
     protected DataSet mockDataSet;
 
     @Before
@@ -46,6 +48,7 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
         mockKey = mockery.mock(StatsKey.class);
         mockSessionManager = mockery.mock(StatsSessionManager.class);
         mockSession = mockery.mock(StatsSession.class);
+        mockFieldSet = mockery.mock(FieldSet.class);
         mockDataSet = mockery.mock(DataSet.class);
     }
 
@@ -55,9 +58,10 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
 
     private void buildEmptyDataSetExpectations() {
         mockery.checking(new Expectations() {{
-            allowing(mockDataSet).size(); will(returnValue(0));
-            allowing(mockDataSet).getFieldNames(); will(returnValue(Collections.emptySet()));
-            allowing(mockDataSet).getValue(with(any(String.class))); will(returnValue(null));
+            allowing(mockDataSet).getFieldSet(); will(returnValue(mockFieldSet));
+            allowing(mockFieldSet).size(); will(returnValue(0));
+            allowing(mockFieldSet).getFieldNames(); will(returnValue(Collections.emptyList()));
+            allowing(mockDataSet).getObject(with(any(String.class))); will(returnValue(null));
         }});
     }
 
@@ -82,15 +86,18 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
     @Test
     public void testGetDataSetField() throws Exception {
 
+        final Long mockValue = 12L;
         mockery.checking(new Expectations() {{
             // For MBean registration
-            allowing(mockDataSet).size(); will(returnValue(1));
-            allowing(mockDataSet).getFieldNames(); will(returnValue(new HashSet<String>(Collections.singletonList("test"))));
-            allowing(mockDataSet).getValue(with("test")); will(returnValue("value"));
+            
+            allowing(mockDataSet).getFieldSet(); will(returnValue(mockFieldSet));
+            allowing(mockFieldSet).size(); will(returnValue(1));
+            allowing(mockFieldSet).getFieldNames(); will(returnValue(Collections.singletonList("test")));
+            allowing(mockDataSet).getObject(with("test")); will(returnValue(mockValue));
             allowing(mockSession).collectData(); will(returnValue(mockDataSet));
 
             // For this test
-            allowing(mockSession).getField(with("test")); will(returnValue("value"));
+            allowing(mockSession).getObject(with("test")); will(returnValue(mockValue));
         }});
 
         StatsSessionMBean mBean = createSessionMBean(mockSession);
@@ -98,7 +105,7 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
 
         mBean = registerMBean(mBean, name, StatsSessionMBean.class);
 
-        assertEquals("value", getMBeanServerConnection().getAttribute(name, "_test"));
+        assertEquals(mockValue, getMBeanServerConnection().getAttribute(name, "_test"));
     }
 
     @Test

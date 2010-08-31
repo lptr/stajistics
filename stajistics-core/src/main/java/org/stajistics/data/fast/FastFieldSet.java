@@ -2,6 +2,7 @@ package org.stajistics.data.fast;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
 
-final class FastFieldSet implements FieldSet {
+final class FastFieldSet implements FieldSet, Serializable {
     private final Map<Field,Integer> fieldIndexes;
     private final Map<String,Field> fieldsByName;
     private final List<Field> fields;
@@ -129,8 +130,7 @@ final class FastFieldSet implements FieldSet {
     public Field getField(String fieldName) {
         Field field = fieldsByName.get(fieldName);
         if (field == null) {
-            throw new IllegalArgumentException("Field not found in set: "
-                    + field);
+            return null;
         }
         return field;
     }
@@ -139,8 +139,7 @@ final class FastFieldSet implements FieldSet {
     public int indexOf(Field field) {
         Integer index = fieldIndexes.get(field);
         if (index == null) {
-            throw new IllegalArgumentException("Field not found in set: "
-                    + field);
+            return -1;
         }
         return index;
     }

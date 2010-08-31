@@ -15,6 +15,7 @@
 package org.stajistics.data;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -31,35 +32,25 @@ public final class NullDataSet implements DataSet {
     public static NullDataSet getInstance() {
         return instance;
     }
-
+    
     @Override
     public double getDouble(Field field) {
-        return FieldUtils.doubleDefaultValue(field);
+        return FieldUtils.doubleDefault(field);
     }
 
     @Override
-    public int getFieldCount() {
-        return 0;
-    }
-
-    @Override
-    public List<String> getFieldNames() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public List<? extends Field> getFields() {
-        return Collections.emptyList();
+    public FieldSet getFieldSet() {
+        return NullFieldSet.getInstance();
     }
 
     @Override
     public long getLong(Field field) {
-        return FieldUtils.doubleDefaultValue(field);
+        return FieldUtils.longDefault(field);
     }
     
     @Override
     public boolean getBoolean(Field field) {
-        return FieldUtils.booleanDefaultValue(field);
+        return FieldUtils.booleanDefault(field);
     }
 
     @Override
@@ -71,5 +62,59 @@ public final class NullDataSet implements DataSet {
     public Object getObject(String fieldName) {
         return null;
     }
+    
+    private static class NullFieldSet implements FieldSet {
+        private static final FieldSet INSTANCE = new NullFieldSet();
+        
+        public static FieldSet getInstance() {
+            return INSTANCE;
+        }
+
+        @Override
+        public boolean contains(Field field) {
+            return false;
+        }
+
+        @Override
+        public boolean contains(String fieldName) {
+            return false;
+        }
+
+        @Override
+        public Field getField(String fieldName) {
+            return null;
+        }
+
+        @Override
+        public List<String> getFieldNames() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<Field> getFields() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public int indexOf(Field field) {
+            return -1;
+        }
+
+        @Override
+        public DataSetBuilder newDataSetBuilder() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public Iterator<Field> iterator() {
+            return Collections.<Field> emptyList().iterator();
+        }
+   }
+
 
 }

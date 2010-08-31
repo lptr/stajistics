@@ -17,6 +17,7 @@ package org.stajistics.session;
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -28,14 +29,14 @@ public class ConcurrentSessionTest extends AbstractStatsSessionTestCase {
 
     @Override
     protected StatsSession createStatsSession(final DataRecorder... dataRecorders) {
-        return new ConcurrentSession(mockKey, mockEventManager, dataRecorders);
+        return new ConcurrentSession(mockKey, mockEventManager, mockFieldSetFactory, dataRecorders);
     }
 
     @Override
     @Test
     public void testConstructWithNullKey() {
         try {
-            new ConcurrentSession(null, mockEventManager, new DataRecorder[0]);
+            new ConcurrentSession(null, mockEventManager, mockFieldSetFactory, new DataRecorder[0]);
 
         } catch (NullPointerException npe) {
             assertEquals("key", npe.getMessage());
@@ -46,10 +47,22 @@ public class ConcurrentSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullEventManager() {
         try {
-            new ConcurrentSession(mockKey, null, new DataRecorder[0]);
+            new ConcurrentSession(mockKey, null, mockFieldSetFactory, new DataRecorder[0]);
 
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());
         }
     }
+
+    @Override
+    @Test
+    public void testConstructWithNullFieldSetFactory() {
+        try {
+            new ConcurrentSession(mockKey, mockEventManager, null, (DataRecorder[])null);
+            fail();
+        } catch (NullPointerException npe) {
+            assertEquals("fieldSetFactory", npe.getMessage());
+        }
+    }
+
 }

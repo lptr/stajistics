@@ -1,10 +1,13 @@
 package org.stajistics.data.fast;
 
+import static com.google.common.base.Preconditions.*;
+
 import java.util.Arrays;
-import java.util.List;
 
 import org.stajistics.data.DataContainer;
 import org.stajistics.data.Field;
+import org.stajistics.data.FieldSet;
+import org.stajistics.data.FieldUtils;
 
 abstract class AbstractFastDataContainer implements DataContainer {
 	protected final FastFieldSet fields;
@@ -19,19 +22,29 @@ abstract class AbstractFastDataContainer implements DataContainer {
 
 	@Override
 	public Object getObject(Field field) {
-		switch (field.type()) {
+	    checkNotNull(field, "field");
+		int index = fields.indexOf(field);
+		if (index == -1) {
+		    return null;
+		}
+        switch (field.type()) {
 		case LONG:
-			return Long.valueOf(longValues[fields.indexOf(field)]);
+			return Long.valueOf(longValues[index]);
 		case DOUBLE:
-			return Double.valueOf(doubleValues[fields.indexOf(field)]);
+			return Double.valueOf(doubleValues[index]);
 		default:
 			throw new AssertionError();
 		}
 	}
 
 	@Override
-	public Object getObject(String fieldName) {
-		return getObject(fields.getField(fieldName));
+	public Object getObject(String name) {
+	    checkNotNull(name, "name");
+		Field field = fields.getField(name);
+		if (field == null) {
+		    return null;
+		}
+        return getObject(field);
 	}
 	
 	@Override
@@ -42,6 +55,9 @@ abstract class AbstractFastDataContainer implements DataContainer {
 	@Override
 	public long getLong(Field field) {
 		int index = fields.indexOf(field);
+		if (index == -1) {
+		    return FieldUtils.longDefault(field);
+		}
 		switch (field.type()) {
 		case LONG:
 			return longValues[index];
@@ -55,6 +71,9 @@ abstract class AbstractFastDataContainer implements DataContainer {
 	@Override
 	public double getDouble(Field field) {
 		int index = fields.indexOf(field);
+		if (index == -1) {
+		    return FieldUtils.doubleDefault(field);
+		}
 		switch (field.type()) {
 		case LONG:
 			return longValues[index];
@@ -66,20 +85,9 @@ abstract class AbstractFastDataContainer implements DataContainer {
 	}
 
 	@Override
-	public int getFieldCount() {
-	    return fields.size();
+	public FieldSet getFieldSet() {
+	    return fields;
 	}
-
-	@Override
-	public List<? extends Field> getFields() {
-		return fields.getFields();
-	}
-
-	@Override
-	public List<String> getFieldNames() {
-		return fields.getFieldNames();
-	}
-	
 
 	/**
 	 * Do not use {@link FastDataSet} as keys in hash tables.

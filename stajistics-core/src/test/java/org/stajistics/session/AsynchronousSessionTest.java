@@ -39,14 +39,14 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
 
     @Override
     protected StatsSession createStatsSession(final DataRecorder... dataRecorders) {
-        return new AsynchronousSession(mockKey, mockEventManager, mockTaskService, dataRecorders);
+        return new AsynchronousSession(mockKey, mockEventManager, mockTaskService, mockFieldSetFactory, dataRecorders);
     }
 
     @Override
     @Test
     public void testConstructWithNullKey() {
         try {
-            new AsynchronousSession(null, mockEventManager, mockTaskService, (DataRecorder[])null);
+            new AsynchronousSession(null, mockEventManager, mockTaskService, mockFieldSetFactory, (DataRecorder[])null);
             fail();
         } catch (NullPointerException npe) {
             assertEquals("key", npe.getMessage());
@@ -57,17 +57,28 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullEventManager() {
         try {
-            new AsynchronousSession(mockKey, null, mockTaskService, (DataRecorder[])null);
+            new AsynchronousSession(mockKey, null, mockTaskService, mockFieldSetFactory, (DataRecorder[])null);
             fail();
         } catch (NullPointerException npe) {
             assertEquals("eventManager", npe.getMessage());
         }
     }
 
+    @Override
+    @Test
+    public void testConstructWithNullFieldSetFactory() {
+        try {
+            new AsynchronousSession(mockKey, mockEventManager, mockTaskService, null, (DataRecorder[])null);
+            fail();
+        } catch (NullPointerException npe) {
+            assertEquals("fieldSetFactory", npe.getMessage());
+        }
+    }
+
     @Test
     public void testConstructWithNullTaskService() {
         try {
-            new AsynchronousSession(mockKey, mockEventManager, null, (DataRecorder[])null);
+            new AsynchronousSession(mockKey, mockEventManager, null, mockFieldSetFactory, (DataRecorder[])null);
             fail();
         } catch (NullPointerException npe) {
             assertEquals("taskService", npe.getMessage());
@@ -77,7 +88,7 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullUpdateQueue() {
         try {
-            new AsynchronousSession(mockKey, mockEventManager, mockTaskService, null, (DataRecorder[])null);
+            new AsynchronousSession(mockKey, mockEventManager, mockTaskService, null, mockFieldSetFactory, (DataRecorder[])null);
             fail();
         } catch (NullPointerException npe) {
             assertEquals("updateQueue", npe.getMessage());
@@ -88,7 +99,8 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
     public void testTrackWithNastyTaskService() {
         StatsSession service = new AsynchronousSession(mockKey,
                                                             mockEventManager,
-                                                            new NastyTaskService());
+                                                            new NastyTaskService(),
+                                                            mockFieldSetFactory);
 
         service.track(mockTracker, 1L);
     }
@@ -97,7 +109,8 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
     public void testUpdateWithNastyTaskService() {
         StatsSession service = new AsynchronousSession(mockKey,
                                                             mockEventManager,
-                                                            new NastyTaskService());
+                                                            new NastyTaskService(),
+                                                            mockFieldSetFactory);
 
         service.update(mockTracker, 1L);
     }

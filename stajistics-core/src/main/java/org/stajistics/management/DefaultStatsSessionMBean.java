@@ -14,16 +14,27 @@
  */
 package org.stajistics.management;
 
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.AttributeNotFoundException;
+import javax.management.DynamicMBean;
+import javax.management.InvalidAttributeValueException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
+import javax.management.MBeanOperationInfo;
+import javax.management.ReflectionException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsProperties;
 import org.stajistics.data.DataSet;
+import org.stajistics.data.FieldSet;
 import org.stajistics.session.StatsSessionManager;
-
-import javax.management.*;
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -182,7 +193,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     public MBeanInfo getMBeanInfo() {
         DataSet dataSet = getDataSet();
 
-        MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.getFieldCount() + 2];
+        MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.getFieldSet().size() + 2];
 
         int i = 0;
 
@@ -199,7 +210,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
                                             false,
                                             false);
 
-        for (String name : dataSet.getFieldNames()) {
+        for (String name : dataSet.getFieldSet().getFieldNames()) {
             Object value = dataSet.getObject(name);
             attrs[i++] = new MBeanAttributeInfo(FIELD_PREFIX + name,
                                                 value.getClass().getName(),
@@ -259,8 +270,9 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
         } else if (actionName.equals(OP_COLLECT_DATA)) {
             DataSet dataSet = session.collectData();
-            Map<String,Object> result = new HashMap<String,Object>(dataSet.getFieldCount());
-            for (String fieldName : dataSet.getFieldNames())
+            FieldSet fieldSet = dataSet.getFieldSet();
+            Map<String,Object> result = new HashMap<String,Object>(fieldSet.size());
+            for (String fieldName : fieldSet.getFieldNames())
             {
                 result.put(fieldName, dataSet.getObject(fieldName));
             }

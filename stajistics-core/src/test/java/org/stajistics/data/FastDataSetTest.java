@@ -14,24 +14,17 @@
  */
 package org.stajistics.data;
 
-import org.junit.Ignore;
+import org.stajistics.data.fast.FastFieldSetFactory;
 
 /**
  *
  * @author The Stajistics Project
  */
-public class NullMetaDataTest extends NullDataSetTest {
+public class FastDataSetTest extends AbstractDataSetTestCase {
 
     @Override
-    protected DataContainer dc() {
-        return NullMetaData.getInstance();
+    protected DataSetBuilder createDataSetBuilder(Field... fields) {
+        return new FastFieldSetFactory().newFieldSet(fields).newDataSetBuilder();
     }
 
-    @Override
-    @Ignore
-    public void testGetMetaData() {}
-
-    @Override
-    @Ignore
-    public void testGetFieldMetaDataSet() {}
 }

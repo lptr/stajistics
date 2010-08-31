@@ -14,12 +14,12 @@
  */
 package org.stajistics.data;
 
+import static org.junit.Assert.*;
+
+import java.util.List;
+
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-
-import java.util.Set;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -34,57 +34,22 @@ public class NullDataSetTest extends AbstractStajisticsTestCase {
     }
 
     @Test
-    public void testGetMetaData() {
-        assertEquals(NullMetaData.getInstance(),
-                     NullDataSet.getInstance().getMetaData());
-    }
-
-    @Test
-    public void testGetFieldMetaDataSet() {
-        FieldMetaDataSet mds = NullDataSet.getInstance().getFieldMetaDataSet();
-        assertNotNull(mds);
-        assertEquals(NullMetaData.getInstance(),
-                     mds.getMetaData("anything"));
-    }
-
-    @Test
     public void testGetField() {
-        assertNull(dc().getValue("a"));
-        assertNull(dc().getValue("b"));
+        assertNull(dc().getObject("a"));
     }
 
     @Test
-    public void testGetFieldWithClass() {
-        assertNull(dc().getField("a", Double.class));
-        assertNull(dc().getField("b", Long.class));
-    }
-
-    @Test
-    public void testGetFieldNames() {
-        Set<String> fieldNames = dc().getFieldNames();
+    public void testGetFields() {
+        List<? extends Field> fieldNames = dc().getFieldSet().getFields();
         assertNotNull(fieldNames);
         assertTrue(fieldNames.isEmpty());
     }
 
     @Test
-    public void testIsEmpty() {
-        assertTrue(dc().isEmpty());
-    }
-
-    @Test
-    public void testSize() {
-        assertEquals(0, dc().size());
-    }
-
-    @Test
-    public void testClear() {
-        dc().clear(); // umm.. what to test?
-    }
-
-    @Test
-    public void testSetAndRemoveField() {
-        dc().setField("a", true);
-        assertNull(dc().removeField("a"));
+    public void testGetFieldNames() {
+        List<String> fieldNames = dc().getFieldSet().getFieldNames();
+        assertNotNull(fieldNames);
+        assertTrue(fieldNames.isEmpty());
     }
 
 }
