@@ -22,6 +22,7 @@ import org.stajistics.StatsKeyMatcher;
 import org.stajistics.StatsProperties;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
+import org.stajistics.data.FieldSetFactory;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
@@ -156,11 +157,13 @@ public class DefaultSessionManager implements StatsSessionManager {
 
         DataRecorder[] dataRecorders = config.getDataRecorderFactory()
                                              .createDataRecorders();
+        FieldSetFactory fieldSetFactory = config.getFieldSetFactory();
 
         //TODO: How to get StatsManager properly
         StatsSession session = config.getSessionFactory()
                                      .createSession(key,
                                                     Stats.getManager(),
+                                                    fieldSetFactory,
                                                     dataRecorders);
 
         logger.debug("Created StatsSession for key: {}", key);

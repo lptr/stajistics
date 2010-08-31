@@ -14,6 +14,7 @@
  */
 package org.stajistics.configuration;
 
+import org.stajistics.data.FieldSetFactory;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
@@ -58,6 +59,8 @@ public interface StatsConfig extends Serializable {
      */
     DataRecorderFactory getDataRecorderFactory();
 
+    FieldSetFactory getFieldSetFactory();
+    
     /**
      * Get the unit applicable to the data that is collected for the associated target.
      *

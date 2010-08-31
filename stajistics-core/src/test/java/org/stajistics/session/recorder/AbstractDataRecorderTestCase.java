@@ -14,16 +14,23 @@
  */
 package org.stajistics.session.recorder;
 
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.data.DataSet;
-import org.stajistics.data.DefaultDataSet;
+import org.stajistics.data.DataSetBuilder;
+import org.stajistics.data.Field;
+import org.stajistics.data.FieldSet;
+import org.stajistics.data.DataSet.StandardField;
+import org.stajistics.data.DataSet.StandardMetaField;
+import org.stajistics.data.fast.FastFieldSetFactory;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
-
-import static org.junit.Assert.*;
 
 /**
  * @author The Stajistics Project
@@ -61,8 +68,8 @@ public abstract class AbstractDataRecorderTestCase extends AbstractStajisticsTes
 
     @Test
     public void testGetSupportedFieldNamesNotEmpty() {
-        assertNotNull(dataRecorder.getSupportedFieldNames());
-        assertFalse(dataRecorder.getSupportedFieldNames()
+        assertNotNull(dataRecorder.getSupportedFields());
+        assertFalse(dataRecorder.getSupportedFields()
                                 .isEmpty());
     }
 
@@ -71,9 +78,9 @@ public abstract class AbstractDataRecorderTestCase extends AbstractStajisticsTes
 
         buildStatsSessionExpectations();
 
-        for (String fieldName : dataRecorder.getSupportedFieldNames()) {
-            assertNotNull(fieldName + " is null",
-                          dataRecorder.getField(mockSession, fieldName));
+        for (Field field : dataRecorder.getSupportedFields()) {
+            assertNotNull(field + " is null",
+                          dataRecorder.getObject(mockSession, field));
         }
     }
 
@@ -88,14 +95,16 @@ public abstract class AbstractDataRecorderTestCase extends AbstractStajisticsTes
 
         dataRecorder.update(mockSession, mockTracker, 0L);
         dataRecorder.clear();
-
-        DataSet emptyDataSet = new DefaultDataSet();
-        dataRecorder.collectData(mockSession, emptyDataSet);
+        
+        FieldSet standardFieldSet = FastFieldSetFactory.getInstance()
+                .newFieldSet(dataRecorder.getSupportedFields());
+        DataSetBuilder emptyDataSetBuilder = standardFieldSet.newDataSetBuilder();
+        dataRecorder.collectData(mockSession, emptyDataSetBuilder);
 
         dataRecorder = createDataRecorder(); // Create a new DataRecorder
-        DataSet newDataSet = new DefaultDataSet();
-        dataRecorder.collectData(mockSession, newDataSet);
+        DataSetBuilder newDataSetBuilder = standardFieldSet.newDataSetBuilder();
+        dataRecorder.collectData(mockSession, newDataSetBuilder);
 
-        assertEquals(emptyDataSet, newDataSet);
+        assertEquals(emptyDataSetBuilder.build(), newDataSetBuilder.build());
     }
 }

@@ -15,7 +15,7 @@
 package org.stajistics.data;
 
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 /**
  * A {@link DataSet} implementation conforming to the null object pattern.
@@ -26,16 +26,6 @@ public final class NullDataSet implements DataSet {
 
     private static final NullDataSet instance = new NullDataSet();
 
-    private static final FieldMetaDataSet NULL_META_DATA_SET = new FieldMetaDataSet() {
-        @Override
-        public MetaData getMetaData(final String fieldName) {
-            return NullMetaData.getInstance();
-        }
-
-        @Override
-        public void clear() {}
-    };
-
     private NullDataSet() {}
 
     public static NullDataSet getInstance() {
@@ -43,83 +33,43 @@ public final class NullDataSet implements DataSet {
     }
 
     @Override
-    public MetaData getMetaData() {
-        return NullMetaData.getInstance();
+    public double getDouble(Field field) {
+        return FieldUtils.doubleDefaultValue(field);
     }
 
     @Override
-    public FieldMetaDataSet getFieldMetaDataSet() {
-        return NULL_META_DATA_SET;
-    }
-
-    /**
-     * @return <tt>null</tt>.
-     */
-    @Override
-    public Object getField(String name) {
-        return null;
-    }
-
-    /**
-     * @return <tt>null</tt>.
-     */
-    @Override
-    public <T> T getField(String name, Class<T> type) {
-        return null;
-    }
-
-    /**
-     * @return <tt>defaultValue</tt>.
-     */
-    @Override
-    public <T> T getField(String name, T defaultValue) {
-        return defaultValue;
-    }
-
-    /**
-     * @return An empty Set.
-     */
-    @Override
-    public Set<String> getFieldNames() {
-        return Collections.emptySet();
-    }
-
-    /**
-     * @return <tt>true</tt>.
-     */
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    /**
-     * @return <tt>0</tt>.
-     */
-    @Override
-    public int size() {
+    public int getFieldCount() {
         return 0;
     }
 
-    /**
-     * Does nothing.
-     */
     @Override
-    public void clear() {}
-
-    /**
-     * Does nothing.
-     *
-     * @return <tt>null</tt>.
-     */
-    @Override
-    public Object removeField(String name) {
-        return null;
+    public List<String> getFieldNames() {
+        return Collections.emptyList();
     }
 
-    /**
-     * Does nothing.
-     */
     @Override
-    public void setField(String name, Object value) {}
+    public List<? extends Field> getFields() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public long getLong(Field field) {
+        return FieldUtils.doubleDefaultValue(field);
+    }
+    
+    @Override
+    public boolean getBoolean(Field field) {
+        return FieldUtils.booleanDefaultValue(field);
+    }
+
+    @Override
+    public Object getObject(Field field) {
+        return field.defaultValue();
+    }
+
+    @Override
+    public Object getObject(String fieldName) {
+        return null;
+    }
 
 }

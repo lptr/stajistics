@@ -48,7 +48,7 @@ public abstract class AbstractDataContainerTestCase extends AbstractStajisticsTe
         assertEquals(0, dataContainer.size());
         assertNotNull(dataContainer.getFieldNames());
         assertTrue(dataContainer.getFieldNames().isEmpty());
-        assertNull(dataContainer.getField("test1"));
+        assertNull(dataContainer.getValue("test1"));
         assertNull(dataContainer.getField("test2", Double.class));
         assertNull(dataContainer.removeField("test3"));
     }
@@ -79,7 +79,7 @@ public abstract class AbstractDataContainerTestCase extends AbstractStajisticsTe
 
     @Test
     public void testGetFieldWithNullName() {
-        assertNull(dataContainer.getField(null));
+        assertNull(dataContainer.getValue(null));
     }
 
     @Test
@@ -156,9 +156,9 @@ public abstract class AbstractDataContainerTestCase extends AbstractStajisticsTe
     @Test
     public void testSetGetField() {
         dataContainer.setField("test1", "value1");
-        assertEquals("value1", dataContainer.getField("test1"));
+        assertEquals("value1", dataContainer.getValue("test1"));
         dataContainer.setField("test2", "value2");
-        assertEquals("value2", dataContainer.getField("test2"));
+        assertEquals("value2", dataContainer.getValue("test2"));
     }
 
     @Test
@@ -209,7 +209,7 @@ public abstract class AbstractDataContainerTestCase extends AbstractStajisticsTe
 
         dataContainer.clear();
 
-        assertNull(dataContainer.getField("test"));
+        assertNull(dataContainer.getValue("test"));
         assertTrue(dataContainer.isEmpty());
         assertEquals(0, dataContainer.size());
     }

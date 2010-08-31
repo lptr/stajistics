@@ -14,100 +14,29 @@
  */
 package org.stajistics.data;
 
-import java.util.Set;
+import java.util.List;
 
 /**
- * Stores a mapping of name-value pairs, where the values may be arbitrary types.
- *
+ * Stores a mapping of name-value pairs, where the values may be
+ * <code>long</code>s or <code>double</code>s.
+ * 
  * @author The Stajistics Project
  */
 public interface DataContainer {
+    
+    List<? extends Field> getFields();
 
-    /**
-     * Obtain the number of fields in this DataContainer.
-     *
-     * @return The current number of fields.
-     */
-    int size();
+    List<String> getFieldNames();
+    
+    int getFieldCount();
+    
+    Object getObject(Field field);
 
-    /**
-     * Determine if this DataContainer is empty.
-     *
-     * @return <tt>true</tt> if there are zero elements, <tt>false</tt> otherwise.
-     */
-    boolean isEmpty();
+    Object getObject(String fieldName);
 
-    /**
-     * Get the value of a single field by the given <tt>name</tt>.
-     *
-     * @param name The name of the field to retrieve.
-     * @return The field value, or <tt>null</tt> if not found or if <tt>name</tt> is <tt>null</tt>.
-     */
-    Object getField(String name);
+    long getLong(Field field);
 
-    /**
-     * Get the value of a single field by the given <tt>name</tt>. Coerce the 
-     * resulting value into the given type <tt>type</tt>.
-     *
-     * @param <T> The expected type of the value. 
-     * @param name The name of the field to retrieve.
-     * @param type The type into which to coerce the value, if found.
-     * @return The field value, or <tt>null</tt> if not found.
-     * @throws ClassCastException If the existing value cannot be coerced into the given <tt>type</tt>.
-     */
-    <T> T getField(String name, Class<T> type) throws ClassCastException;
+    double getDouble(Field field);
 
-    /**
-     * Get the value of a single field by the given <tt>name</tt>.
-     * 
-     * @param <T>
-     * @param name The name of the field to retrieve.
-     * @param defaultValue The value to return if the field doesn't exist or is not of type <tt>T</tt>.
-     * @return The field value, or <tt>defaultValue</tt> if not found or if the value is not of type <tt>T</tt>.
-     */
-    <T> T getField(String name, T defaultValue);
-
-    /**
-     * Obtains a Set of field names that are contained in this DataContainer.
-     * @return The Set of field names, never <tt>null</tt>.
-     */
-    Set<String> getFieldNames();
-
-    /**
-     * Store a name-value pair in this DataContainer, replacing a possibly existing field
-     * having the same <tt>name</tt>.
-     *
-     * @param name The name of the field to add.
-     * @param value The value of the field to add.
-     */
-    void setField(String name, Object value);
-
-    /**
-     * Remove the field defined by <tt>name</tt> from this DataContainer.
-     *
-     * @param name The name of the field to remove.
-     * @return The removed field value if found, <tt>null</tt> if not found.
-     */
-    Object removeField(String name);
-
-    /**
-     * Clear all stored name-value pairs.
-     */
-    void clear();
-
-    /* NESTED INTERFACES */
-
-    /**
-     * A {@link DataContainer} entry which provides access to a 
-     * field name and it's associated value.
-     */
-    interface Entry {
-
-        String getName();
-
-        Object getValue();
-
-        <T> T getValue(Class<T> type);
-
-    }
+    boolean getBoolean(Field field);
 }

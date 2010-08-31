@@ -21,6 +21,7 @@ import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
 import org.stajistics.data.DataSet;
+import org.stajistics.data.DataSetBuilder;
 import org.stajistics.data.DataSet.Field;
 import org.stajistics.data.DefaultDataSet;
 import org.stajistics.event.EventManager;
@@ -439,10 +440,10 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
 
         DataSet dataSet = session.collectData();
 
-        assertEquals(10L, dataSet.getField(DataSet.Field.HITS));
-        assertEquals(1L, dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
-        assertEquals(10L, dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
-        assertEquals(10L, dataSet.getField(DataSet.Field.COMMITS));
+        assertEquals(10L, dataSet.getValue(DataSet.Field.HITS));
+        assertEquals(1L, dataSet.getValue(DataSet.Field.FIRST_HIT_STAMP));
+        assertEquals(10L, dataSet.getValue(DataSet.Field.LAST_HIT_STAMP));
+        assertEquals(10L, dataSet.getValue(DataSet.Field.COMMITS));
         assertEquals(1.0, dataSet.getField(DataSet.Field.FIRST, Double.class), TestUtil.DELTA);
         assertEquals(1.0, dataSet.getField(DataSet.Field.MIN, Double.class), TestUtil.DELTA);
         assertEquals(1.0, dataSet.getField(DataSet.Field.MAX, Double.class), TestUtil.DELTA);
@@ -464,10 +465,10 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
 
         DataSet dataSet = session.collectData();
 
-        assertEquals(session.getHits(), dataSet.getField(DataSet.Field.HITS));
-        assertEquals(session.getFirstHitStamp(), dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
-        assertEquals(session.getLastHitStamp(), dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
-        assertEquals(session.getCommits(), dataSet.getField(DataSet.Field.COMMITS));
+        assertEquals(session.getHits(), dataSet.getValue(DataSet.Field.HITS));
+        assertEquals(session.getFirstHitStamp(), dataSet.getValue(DataSet.Field.FIRST_HIT_STAMP));
+        assertEquals(session.getLastHitStamp(), dataSet.getValue(DataSet.Field.LAST_HIT_STAMP));
+        assertEquals(session.getCommits(), dataSet.getValue(DataSet.Field.COMMITS));
         assertEquals(session.getFirst(), dataSet.getField(DataSet.Field.FIRST, Double.class), TestUtil.DELTA);
         assertEquals(session.getMin(), dataSet.getField(DataSet.Field.MIN, Double.class), TestUtil.DELTA);
         assertEquals(session.getMax(), dataSet.getField(DataSet.Field.MAX, Double.class), TestUtil.DELTA);
@@ -490,10 +491,10 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
 
         DataSet dataSet = session.drainData();
 
-        assertEquals(10L, dataSet.getField(DataSet.Field.HITS));
-        assertEquals(1L, dataSet.getField(DataSet.Field.FIRST_HIT_STAMP));
-        assertEquals(10L, dataSet.getField(DataSet.Field.LAST_HIT_STAMP));
-        assertEquals(10L, dataSet.getField(DataSet.Field.COMMITS));
+        assertEquals(10L, dataSet.getValue(DataSet.Field.HITS));
+        assertEquals(1L, dataSet.getValue(DataSet.Field.FIRST_HIT_STAMP));
+        assertEquals(10L, dataSet.getValue(DataSet.Field.LAST_HIT_STAMP));
+        assertEquals(10L, dataSet.getValue(DataSet.Field.COMMITS));
         assertEquals(1.0, dataSet.getField(DataSet.Field.FIRST, Double.class), TestUtil.DELTA);
         assertEquals(1.0, dataSet.getField(DataSet.Field.MIN, Double.class), TestUtil.DELTA);
         assertEquals(1.0, dataSet.getField(DataSet.Field.MAX, Double.class), TestUtil.DELTA);
@@ -758,7 +759,7 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
         }
 
         @Override
-        public void collectData(StatsSession session, DataSet dataSet) {
+        public void collectData(StatsSession session, DataSetBuilder dataSet) {
             throw new RuntimeException();
         }
 

@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.data.FieldSetFactory;
 import org.stajistics.session.recorder.DataRecorder;
 
 import java.io.Serializable;
@@ -38,6 +39,7 @@ public interface StatsSessionFactory extends Serializable {
      */
     StatsSession createSession(StatsKey key,
                                StatsManager manager,
+                               FieldSetFactory fieldSetFactory,
                                DataRecorder[] dataRecorders);
 
 }

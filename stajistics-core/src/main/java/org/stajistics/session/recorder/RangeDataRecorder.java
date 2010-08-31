@@ -14,17 +14,18 @@
  */
 package org.stajistics.session.recorder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.stajistics.data.DataSet;
+import org.stajistics.data.DataSetBuilder;
+import org.stajistics.data.Field;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Range;
 import org.stajistics.util.RangeList;
 import org.stajistics.util.ThreadSafe;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
@@ -34,8 +35,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @ThreadSafe
 public class RangeDataRecorder implements DataRecorder {
-
-    private static final Logger logger = LoggerFactory.getLogger(RangeDataRecorder.class);
 
     private final RangeList rangeList;
     private final AtomicLong[] hits;
@@ -59,14 +58,8 @@ public class RangeDataRecorder implements DataRecorder {
     }
 
     @Override
-    public Set<String> getSupportedFieldNames() {
-        Set<String> result = new HashSet<String>(rangeList.size());
-
-        for (Range range : rangeList) {
-            result.add(range.getName());
-        }
-
-        return Collections.unmodifiableSet(result);
+    public List<? extends Field> getSupportedFields() {
+        return rangeList.getRanges();
     }
 
     @Override
@@ -84,30 +77,42 @@ public class RangeDataRecorder implements DataRecorder {
             }
         } while (i != -1 && hasOverlap);
     }
+    
+    @Override
+    public Object getObject(StatsSession session, Field field) {
+        return getLong(session, field);
+    }
+    
+    @Override
+    public double getDouble(StatsSession session, Field field) {
+        return getLong(session, field);
+    }
 
     @Override
-    public Object getField(final StatsSession session,
-                           final String name) {
+    public long getLong(StatsSession session, Field field) {
+        if (!(field instanceof Range)) {
+            throw new IllegalArgumentException("Field not found: " + field);
+        }
+
+        Range range = (Range) field;
+        
         List<Range> ranges = rangeList.getRanges();
         final int rangeCount = ranges.size();
         for (int i = 0; i < rangeCount; i++) {
-            if (ranges.get(i)
-                      .getName()
-                      .equals(name)) {
+            if (ranges.get(i).equals(range)) {
                 return hits[i].get();
             }
         }
 
-        // Not found
-        return null;
+        return 0;
     }
 
     @Override
-    public void collectData(final StatsSession session, final DataSet dataSet) {
+    public void collectData(final StatsSession session, final DataSetBuilder dataSet) {
         List<Range> ranges = rangeList.getRanges();
         final int rangeCount = ranges.size();
         for (int i = 0; i < rangeCount; i++) {
-            dataSet.setField(ranges.get(i).getName(), hits[i].get());
+            dataSet.set(ranges.get(i).getName(), hits[i].get());
         }
     }
 
@@ -117,21 +122,11 @@ public class RangeDataRecorder implements DataRecorder {
         long[] values = new long[rangeList.size()];
 
         Range range;
-        Long value;
         int i = 0;
 
         for (Iterator<Range> itr = rangeList.iterator(); itr.hasNext(); i++) {
             range = itr.next();
-            value = dataSet.getField(range.getName(), Long.class);
-
-            if (value == null) {
-                // The full range list is not present, so do not limp along with partial data
-                logger.warn("Dropping restore() call due to partial field data. Missing: {}",
-                            range.getName());
-                return;
-            }
-
-            values[i] = value;
+            values[i] = dataSet.getLong(range);
         }
 
         // The full range list is available, so restore it now

@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
+import org.stajistics.data.Field;
+
 /**
  * 
  * 
@@ -28,9 +30,11 @@ import java.util.NoSuchElementException;
  * @author The Stajistics Project
  */
 @ThreadSafe
-public class Range implements Iterable<Double>,Serializable {
+public class Range implements Iterable<Double>, Serializable, Field {
 
     protected static final boolean DEFAULT_EXCLUSIVE_RANGE_END = true;
+    
+    private static final Long DEFAULT = 0L;
 
     private static final DecimalFormat DECIMAL_FORMAT;
     static {
@@ -246,5 +250,20 @@ public class Range implements Iterable<Double>,Serializable {
         public void remove() {
             throw new UnsupportedOperationException();
         }
+    }
+    
+    @Override
+    public Object defaultValue() {
+        return DEFAULT;
+    }
+    
+    @Override
+    public Type type() {
+        return Type.LONG;
+    }
+    
+    @Override
+    public String name() {
+        return name;
     }
 }

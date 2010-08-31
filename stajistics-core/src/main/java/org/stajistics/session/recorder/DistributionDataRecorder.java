@@ -14,15 +14,16 @@
  */
 package org.stajistics.session.recorder;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.stajistics.data.DataSet;
+import org.stajistics.data.DataSetBuilder;
+import org.stajistics.data.Field;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.AtomicDouble;
-import org.stajistics.util.Misc;
 import org.stajistics.util.ThreadSafe;
-
-import java.util.Collections;
-import java.util.Set;
 
 /**
  *
@@ -33,16 +34,13 @@ import java.util.Set;
 @ThreadSafe
 public class DistributionDataRecorder implements DataRecorder {
 
-    private static final Set<String> SUPPORTED_FIELD_NAMES =
-        Collections.unmodifiableSet(Misc.getStaticFieldValues(Field.class, String.class));
-
     protected final AtomicDouble product = new AtomicDouble(1); // For geometric mean
     protected final AtomicDouble sumOfInverses = new AtomicDouble(0); // For harmonic mean
     protected final AtomicDouble sumOfSquares = new AtomicDouble(0); // For standard deviation and quadratic mean
 
     @Override
-    public Set<String> getSupportedFieldNames() {
-        return SUPPORTED_FIELD_NAMES;
+    public List<? extends Field> getSupportedFields() {
+        return Arrays.<Field> asList(RecorderField.values());
     }
 
     @Override
@@ -71,59 +69,70 @@ public class DistributionDataRecorder implements DataRecorder {
 
     @Override
     public void restore(final DataSet dataSet) {
-        product.set(dataSet.getField(Field.PRODUCT, Double.class));
-        sumOfSquares.set(dataSet.getField(Field.SUM_OF_SQUARES, Double.class));
-        sumOfInverses.set(dataSet.getField(Field.SUM_OF_INVERSES, Double.class));
+        product.set(dataSet.getDouble(RecorderField.product));
+        sumOfSquares.set(dataSet.getDouble(RecorderField.sumOfSquares));
+        sumOfInverses.set(dataSet.getDouble(RecorderField.sumOfInverses));
+    }
+    
+    @Override
+    public Object getObject(StatsSession session,
+                            org.stajistics.data.Field field) {
+        switch (field.type()) {
+        case LONG:
+            return getLong(session, field);
+        case DOUBLE:
+            return getDouble(session, field);
+        default:
+            throw new AssertionError();
+        }
+    }
+    
+    @Override
+    public long getLong(StatsSession session, org.stajistics.data.Field field) {
+        return 0;
     }
 
     @Override
-    public Object getField(final StatsSession session,
-                           String name) {
-        // Intern the name to allow fast reference equality checks
-        name = name.intern();
-
-        if (name == Field.PRODUCT) {
+    public double getDouble(StatsSession session, Field field) {
+        if (!(field instanceof RecorderField)) {
+            throw new IllegalArgumentException("Unknown field: " + field);
+        }
+        switch ((RecorderField) field) {
+        case product:
             return product.get();
-        }
-        if (name == Field.SUM_OF_SQUARES) {
+        case sumOfSquares:
             return sumOfSquares.get();
-        }
-        if (name == Field.SUM_OF_INVERSES) {
+        case sumOfInverses:
             return sumOfInverses.get();
-        }
-        if (name == Field.ARITHMETIC_MEAN) {
+        case aMean:
             return getArithmeticMean(session);
-        }
-        if (name == Field.GEOMETRIC_MEAN) {
+        case gMean:
             return getGeometricMean(session);
-        }
-        if (name == Field.HARMONIC_MEAN) {
+        case hMean:
             return getHarmonicMean(session);
-        }
-        if (name == Field.QUADRATIC_MEAN) {
+        case qMean:
             return getQuadraticMean(session);
-        }
-        if (name == Field.STANDARD_DEVIATION) {
+        case stdDev:
             return getStandardDeviation(session);
+        default:
+            throw new AssertionError();
         }
-
-        return null;
     }
 
     @Override
-    public void collectData(final StatsSession session, final DataSet dataSet) {
-        dataSet.setField(Field.PRODUCT, product.get());
-        dataSet.setField(Field.SUM_OF_SQUARES, sumOfSquares.get());
-        dataSet.setField(Field.SUM_OF_INVERSES, sumOfInverses.get());
-        dataSet.setField(Field.ARITHMETIC_MEAN,
+    public void collectData(final StatsSession session, final DataSetBuilder dataSet) {
+        dataSet.set(RecorderField.product, product.get());
+        dataSet.set(RecorderField.sumOfSquares, sumOfSquares.get());
+        dataSet.set(RecorderField.sumOfInverses, sumOfInverses.get());
+        dataSet.set(RecorderField.aMean,
                          getArithmeticMean(session));
-        dataSet.setField(Field.GEOMETRIC_MEAN,
+        dataSet.set(RecorderField.gMean,
                          getGeometricMean(session));
-        dataSet.setField(Field.HARMONIC_MEAN,
+        dataSet.set(RecorderField.hMean,
                          getHarmonicMean(session));
-        dataSet.setField(Field.QUADRATIC_MEAN,
+        dataSet.set(RecorderField.qMean,
                          getQuadraticMean(session));
-        dataSet.setField(Field.STANDARD_DEVIATION,
+        dataSet.set(RecorderField.stdDev,
                          getStandardDeviation(session));
     }
 
@@ -191,15 +200,26 @@ public class DistributionDataRecorder implements DataRecorder {
 
     /* NESTED CLASSES */
 
-    public static interface Field {
-        public static final String PRODUCT = "product";
-        public static final String SUM_OF_INVERSES = "sumOfInverses";
-        public static final String SUM_OF_SQUARES = "sumOfSquares";
+    public static enum RecorderField implements Field {
+        product,
+        sumOfInverses,
+        sumOfSquares,
 
-        public static final String ARITHMETIC_MEAN = "aMean";
-        public static final String GEOMETRIC_MEAN = "gMean";
-        public static final String HARMONIC_MEAN = "hMean";
-        public static final String QUADRATIC_MEAN = "qMean";
-        public static final String STANDARD_DEVIATION = "stdDev";
+        aMean,
+        gMean,
+        hMean,
+        qMean,
+        stdDev;
+
+        @Override
+        public Type type() {
+            return Type.DOUBLE;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return Double.NaN;
+        }
+
     }
 }

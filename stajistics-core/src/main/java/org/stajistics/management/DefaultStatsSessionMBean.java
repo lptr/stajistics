@@ -141,7 +141,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
         if (attribute.startsWith(FIELD_PREFIX)) {
             attribute = attribute.substring(FIELD_PREFIX.length());
 
-            Object value = session.getField(attribute);
+            Object value = session.getObject(attribute);
             if (value == null) {
                 throw new AttributeNotFoundException(attribute);
             }
@@ -171,7 +171,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
             } else {
                 name = name.substring(FIELD_PREFIX.length());
-                attrList.add(new Attribute(name, dataSet.getField(name)));
+                attrList.add(new Attribute(name, dataSet.getObject(name)));
             }
         }
 
@@ -182,7 +182,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
     public MBeanInfo getMBeanInfo() {
         DataSet dataSet = getDataSet();
 
-        MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.size() + 2];
+        MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[dataSet.getFieldCount() + 2];
 
         int i = 0;
 
@@ -200,7 +200,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
                                             false);
 
         for (String name : dataSet.getFieldNames()) {
-            Object value = dataSet.getField(name);
+            Object value = dataSet.getObject(name);
             attrs[i++] = new MBeanAttributeInfo(FIELD_PREFIX + name,
                                                 value.getClass().getName(),
                                                 "DataSet field " + name,
@@ -259,10 +259,10 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
         } else if (actionName.equals(OP_COLLECT_DATA)) {
             DataSet dataSet = session.collectData();
-            Map<String,Object> result = new HashMap<String,Object>(dataSet.size());
+            Map<String,Object> result = new HashMap<String,Object>(dataSet.getFieldCount());
             for (String fieldName : dataSet.getFieldNames())
             {
-                result.put(fieldName, dataSet.getField(fieldName));
+                result.put(fieldName, dataSet.getObject(fieldName));
             }
 
             return result;

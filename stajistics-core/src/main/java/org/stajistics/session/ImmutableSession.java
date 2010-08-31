@@ -14,15 +14,16 @@
  */
 package org.stajistics.session;
 
-import org.stajistics.StatsKey;
-import org.stajistics.data.DataSet;
-import org.stajistics.data.DataSets;
-import org.stajistics.data.NullDataSet;
-import org.stajistics.session.recorder.DataRecorder;
-import org.stajistics.tracker.Tracker;
-
 import java.util.Collections;
 import java.util.List;
+
+import org.stajistics.StatsKey;
+import org.stajistics.data.DataSet;
+import org.stajistics.data.Field;
+import org.stajistics.data.NullDataSet;
+import org.stajistics.data.DataSet.StandardField;
+import org.stajistics.session.recorder.DataRecorder;
+import org.stajistics.tracker.Tracker;
 
 /**
  * A {@link StatsSession} implementation which does not respond to updates.
@@ -53,7 +54,7 @@ public class ImmutableSession implements StatsSession {
         }
 
         this.key = key;
-        this.dataSet = DataSets.unmodifiable(dataSet);
+        this.dataSet = dataSet;
     }
 
     @Override
@@ -70,8 +71,23 @@ public class ImmutableSession implements StatsSession {
     }
 
     @Override
-    public Object getField(final String name) {
-        return dataSet.getField(name);
+    public double getDouble(Field field) {
+        return dataSet.getDouble(field);
+    }
+
+    @Override
+    public long getLong(Field field) {
+        return dataSet.getLong(field);
+    }
+
+    @Override
+    public Object getObject(Field field) {
+        return dataSet.getObject(field);
+    }
+
+    @Override
+    public Object getObject(String name) {
+        return dataSet.getObject(name);
     }
 
     @Override
@@ -92,47 +108,47 @@ public class ImmutableSession implements StatsSession {
 
     @Override
     public double getFirst() {
-        return dataSet.getField(DataSet.Field.FIRST, Double.class);
+        return dataSet.getDouble(StandardField.first);
     }
 
     @Override
     public long getFirstHitStamp() {
-        return dataSet.getField(DataSet.Field.FIRST_HIT_STAMP, Long.class);
+        return dataSet.getLong(StandardField.firstHitStamp);
     }
 
     @Override
     public long getHits() {
-        return dataSet.getField(DataSet.Field.HITS, Long.class);
+        return dataSet.getLong(StandardField.hits);
     }
 
     @Override
     public long getCommits() {
-        return dataSet.getField(DataSet.Field.COMMITS, Long.class);
+        return dataSet.getLong(StandardField.commits);
     }
 
     @Override
     public double getLast() {
-        return dataSet.getField(DataSet.Field.LAST, Double.class);
+        return dataSet.getDouble(StandardField.last);
     }
 
     @Override
     public long getLastHitStamp() {
-        return dataSet.getField(DataSet.Field.LAST_HIT_STAMP, Long.class);
+        return dataSet.getLong(StandardField.lastHitStamp);
     }
 
     @Override
     public double getMax() {
-        return dataSet.getField(DataSet.Field.MAX, Double.class);
+        return dataSet.getDouble(StandardField.max);
     }
 
     @Override
     public double getMin() {
-        return dataSet.getField(DataSet.Field.MIN, Double.class);
+        return dataSet.getDouble(StandardField.min);
     }
 
     @Override
     public double getSum() {
-        return dataSet.getField(DataSet.Field.SUM, Double.class);
+        return dataSet.getDouble(StandardField.sum);
     }
 
     /**

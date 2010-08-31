@@ -28,56 +28,73 @@ import java.io.Serializable;
  *
  * @author The Stajistics Project
  */
-public interface DataSet extends DataContainer,Serializable {
+public interface DataSet extends DataContainer, Serializable {
+    
+    public static final double UNINITIALIZED_VALUE = Double.NaN;
+    public static final long UNINITIALIZED_TIMESTAMP = -1L;
 
-    /**
-     * Common field names.
-     */
-    interface Field {
-        public static final String HITS = "hits";
-        public static final String FIRST_HIT_STAMP = "firstHitStamp";
-        public static final String LAST_HIT_STAMP = "lastHitStamp";
-        public static final String COMMITS = "commits";
-        public static final String FIRST = "first";
-        public static final String LAST = "last";
-        public static final String MIN = "min";
-        public static final String MAX = "max";
-        public static final String SUM = "sum";
+    public enum StandardField implements Field {
+        hits(0L),
+        firstHitStamp(UNINITIALIZED_TIMESTAMP),
+        lastHitStamp(UNINITIALIZED_TIMESTAMP),
+        commits(0L),
+        first(UNINITIALIZED_VALUE),
+        last(UNINITIALIZED_VALUE),
+        min(UNINITIALIZED_VALUE),
+        max(UNINITIALIZED_VALUE),
+        sum(0.0D);
 
-        /**
-         * Default values for common field names. 
-         */
-        interface Default {
-            public static final Long HITS = 0L;
-            public static final Long FIRST_HIT_STAMP = -1L;
-            public static final Long LAST_HIT_STAMP = -1L;
-            public static final Long COMMITS = 0L;
-            public static final Double FIRST = Double.NaN;
-            public static final Double LAST = Double.NaN;
-            public static final Double MIN = Double.NaN;
-            public static final Double MAX = Double.NaN;
-            public static final Double SUM = 0D;
+        private final Type type;
+        private final Object defaultValue;
+
+        StandardField(long defaultValue) {
+            this.type = Type.LONG;
+            this.defaultValue = defaultValue;
         }
+
+        StandardField(double defaultValue) {
+            this.type = Type.DOUBLE;
+            this.defaultValue = defaultValue;
+        }
+
+        @Override
+        public Type type() {
+            return type;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return defaultValue;
+        }
+
     }
 
-    interface MetaField {
-        public static final String COLLECTION_STAMP = "collectionStamp";
-        public static final String DRAINED_SESSION = "drainedSession";
+    public enum StandardMetaField implements Field {
+        collectionStamp(UNINITIALIZED_TIMESTAMP),
+        drainedSession(0L);
+
+        private final Type type;
+        private final Object defaultValue;
+
+        StandardMetaField(long defaultValue) {
+            this.type = Type.LONG;
+            this.defaultValue = defaultValue;
+        }
+
+        StandardMetaField(double defaultValue) {
+            this.type = Type.DOUBLE;
+            this.defaultValue = defaultValue;
+        }
+
+        @Override
+        public Type type() {
+            return type;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return defaultValue;
+        }
+
     }
-
-    /**
-     * Obtain a {@link MetaData} instance which contains meta data related to this DataSet.
-     *
-     * @return A {@link MetaData} instance, never <tt>null</tt>.
-     */
-    MetaData getMetaData();
-
-    /**
-     * Obtain a {@link FieldMetaDataSet} instance which provides access to meta data associated with
-     * individual fields of this DataSet.
-     *
-     * @return A {@link FieldMetaDataSet} instance, never <tt>null</tt>.
-     */
-    FieldMetaDataSet getFieldMetaDataSet();
-
 }
