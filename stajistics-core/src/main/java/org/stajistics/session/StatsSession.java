@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
+import org.stajistics.data.Field;
 import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.Tracker;
@@ -126,7 +127,12 @@ public interface StatsSession extends Serializable {
      * @param name The name of the field for which to return the value.
      * @return The value of the requested field, or <tt>null</tt> if not found.
      */
-    Object getField(String name);
+    Object getObject(Field field);
+    Object getObject(String name);
+
+    long getLong(Field field);
+
+    double getDouble(Field field);
 
     /**
      * Obtain a {@link DataSet} that is populated with all data collected for this session.

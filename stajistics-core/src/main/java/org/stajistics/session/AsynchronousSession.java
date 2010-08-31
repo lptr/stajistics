@@ -14,22 +14,27 @@
  */
 package org.stajistics.session;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.data.DataSet;
+import org.stajistics.data.DataSetBuilder;
+import org.stajistics.data.FieldSetFactory;
+import org.stajistics.data.FieldUtils;
+import org.stajistics.data.DataSet.StandardField;
+import org.stajistics.data.DataSet.StandardMetaField;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Misc;
-
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>An implementation of {@link StatsSession} that can potentially pad the
@@ -63,16 +68,17 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     private static final Logger logger = LoggerFactory.getLogger(AsynchronousSession.class);
 
-    private volatile long hits = DataSet.Field.Default.HITS;
-    private volatile long firstHitStamp = DataSet.Field.Default.FIRST_HIT_STAMP;
-    private volatile long lastHitStamp = DataSet.Field.Default.LAST_HIT_STAMP;
-    private volatile long commits = DataSet.Field.Default.COMMITS;
+    private volatile long hits = 0L;
+    private volatile long firstHitStamp = DataSet.UNINITIALIZED_TIMESTAMP;
+    private volatile long lastHitStamp =  DataSet.UNINITIALIZED_TIMESTAMP;
+    private volatile long commits =  0L;
 
-    private volatile Double first = null; // The proper default is taken care of in getFirst()
-    private volatile double last = DataSet.Field.Default.LAST;
+    // The proper default is taken care of in getFirst()
+    private volatile Double first = null; 
+    private volatile double last = DataSet.UNINITIALIZED_VALUE;
     private volatile double min = Double.POSITIVE_INFINITY;
     private volatile double max = Double.NEGATIVE_INFINITY;
-    private volatile double sum = DataSet.Field.Default.SUM;
+    private volatile double sum = 0D;
 
     private final TaskService taskService;
 
@@ -84,16 +90,18 @@ public class AsynchronousSession extends AbstractStatsSession {
     public AsynchronousSession(final StatsKey key,
                                final EventManager eventManager,
                                final TaskService taskService,
+                               final FieldSetFactory fieldSetFactory,
                                final DataRecorder... dataRecorders) {
-        this(key, eventManager, taskService, new ConcurrentLinkedQueue<TrackerEntry>(), dataRecorders);
+        this(key, eventManager, taskService, new ConcurrentLinkedQueue<TrackerEntry>(), fieldSetFactory, dataRecorders);
     }
 
     public AsynchronousSession(final StatsKey key,
                                final EventManager eventManager,
                                final TaskService taskService,
                                final Queue<TrackerEntry> updateQueue,
+                               final FieldSetFactory fieldSetFactory,
                                final DataRecorder... dataRecorders) {
-        super(key, eventManager, dataRecorders);
+        super(key, eventManager, fieldSetFactory, dataRecorders);
 
         if (taskService == null) {
             throw new NullPointerException("taskService");
@@ -131,7 +139,7 @@ public class AsynchronousSession extends AbstractStatsSession {
         try {
             hits++;
 
-            if (firstHitStamp == DataSet.Field.Default.FIRST_HIT_STAMP) {
+            if (firstHitStamp == DataSet.UNINITIALIZED_TIMESTAMP) {
                 firstHitStamp = now;
             }
 
@@ -243,7 +251,7 @@ public class AsynchronousSession extends AbstractStatsSession {
         Double firstValue = first;
 
         if (firstValue == null) {
-            return DataSet.Field.Default.FIRST;
+            return DataSet.UNINITIALIZED_VALUE;
         }
 
         return firstValue;
@@ -266,9 +274,9 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     @Override
     public double getMin() {
-        Double result = min;
-        if (result.equals(Double.POSITIVE_INFINITY)) {
-            result = DataSet.Field.Default.MIN;
+        double result = min;
+        if (result == Double.POSITIVE_INFINITY) {
+            result = DataSet.UNINITIALIZED_VALUE;
         }
         return result;
     }
@@ -280,9 +288,9 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     @Override
     public double getMax() {
-        Double result = max;
-        if (result.equals(Double.NEGATIVE_INFINITY)) {
-            result = DataSet.Field.Default.MAX;
+        double result = max;
+        if (result == Double.NEGATIVE_INFINITY) {
+            result = DataSet.UNINITIALIZED_VALUE;
         }
         return result;
     }
@@ -361,16 +369,15 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     @Override
     public DataSet drainData() {
-        DataSet data;
+        DataSetBuilder data = fields.newDataSetBuilder();
 
         // Do not allow other threads to process entries
         updateQueueProcessingLock.lock();
         try {
             processUpdateQueue();
-            data = collectData();
+            collectDataInternal(data);
 
-            data.getMetaData()
-                .setField(DataSet.MetaField.DRAINED_SESSION, true);
+            data.set(StandardMetaField.drainedSession, true);
 
             clearState();
         } finally {
@@ -378,7 +385,7 @@ public class AsynchronousSession extends AbstractStatsSession {
         }
 
         fireCleared();
-        return data;
+        return data.build();
     }
 
     /*
@@ -460,10 +467,12 @@ public class AsynchronousSession extends AbstractStatsSession {
         @Override
         public StatsSession createSession(final StatsKey key,
                                           final StatsManager manager,
+                                          final FieldSetFactory fieldSetFactory,
                                           final DataRecorder[] dataRecorders) {
             return new AsynchronousSession(key,
                                            manager.getEventManager(),
                                            manager.getTaskService(),
+                                           fieldSetFactory,
                                            dataRecorders);
         }
     }

@@ -15,6 +15,7 @@
 package org.stajistics.configuration;
 
 import org.stajistics.StatsKey;
+import org.stajistics.data.FieldSetFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.TrackerFactory;
@@ -51,6 +52,8 @@ public interface StatsConfigBuilder extends Serializable {
      * @return <tt>this</tt>.
      */
     StatsConfigBuilder withSessionFactory(StatsSessionFactory sessionFactory);
+
+    StatsConfigBuilder withFieldSetFactory(FieldSetFactory fieldSetFactory);
 
     /**
      * Build the configuration with the given {@link DataRecorderFactory}.

@@ -16,6 +16,8 @@ package org.stajistics.configuration;
 
 import org.stajistics.StatsConstants;
 import org.stajistics.StatsKey;
+import org.stajistics.data.FieldSetFactory;
+import org.stajistics.data.fast.FastFieldSetFactory;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
@@ -37,6 +39,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
     protected boolean enabled = true;
     protected TrackerFactory<?> trackerFactory;
     protected StatsSessionFactory sessionFactory;
+    protected FieldSetFactory fieldSetFactory;
     protected DataRecorderFactory dataRecorderFactory;
     protected String unit;
     protected String description;
@@ -73,6 +76,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
             enabled = config.isEnabled();
             trackerFactory = config.getTrackerFactory();
             sessionFactory = config.getSessionFactory();
+            fieldSetFactory = config.getFieldSetFactory();
             dataRecorderFactory = config.getDataRecorderFactory();
             unit = config.getUnit();
             description = config.getDescription();
@@ -102,6 +106,16 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         }
 
         this.trackerFactory = trackerFactory;
+        return this;
+    }
+
+    @Override
+    public StatsConfigBuilder withFieldSetFactory(final FieldSetFactory fieldSetFactory) {
+        if (fieldSetFactory == null) {
+            throw new NullPointerException("fieldSetFactory");
+        }
+
+        this.fieldSetFactory = fieldSetFactory;
         return this;
     }
 
@@ -149,6 +163,10 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return DefaultSessionFactory.getInstance();
     }
 
+    protected FieldSetFactory createDefaultFieldSetFactory() {
+        return FastFieldSetFactory.getInstance();
+    }
+
     /**
      * A factory method for getting the default {@link DataRecorderFactory}.
      *
@@ -181,6 +199,9 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         if (sessionFactory == null) {
             sessionFactory = createDefaultSessionFactory();
         }
+        if (fieldSetFactory == null) {
+            fieldSetFactory = createDefaultFieldSetFactory();
+        }
         if (dataRecorderFactory == null) {
             dataRecorderFactory = createDefaultDataRecorderFactory();
         }
@@ -191,6 +212,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
         return new DefaultStatsConfig(enabled,
                                       trackerFactory,
                                       sessionFactory,
+                                      fieldSetFactory,
                                       dataRecorderFactory,
                                       unit,
                                       this.description);

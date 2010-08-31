@@ -49,8 +49,8 @@ public class NullDataSetTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testGetField() {
-        assertNull(dc().getField("a"));
-        assertNull(dc().getField("b"));
+        assertNull(dc().getValue("a"));
+        assertNull(dc().getValue("b"));
     }
 
     @Test

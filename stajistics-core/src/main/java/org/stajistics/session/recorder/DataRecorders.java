@@ -14,15 +14,17 @@
  */
 package org.stajistics.session.recorder;
 
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.stajistics.data.DataSet;
+import org.stajistics.data.DataSetBuilder;
+import org.stajistics.data.Field;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Decorator;
 import org.stajistics.util.ThreadSafe;
-
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provides utility methods for manipulating {@link DataRecorder}s.
@@ -239,11 +241,33 @@ public final class DataRecorders {
         }
 
         @Override
-        public Object getField(final StatsSession session,
-                               final String name) {
+        public Object getObject(final StatsSession session,
+                               final Field field) {
             lock.lock();
             try {
-                return delegate.getField(session, name);
+                return delegate.getObject(session, field);
+            } finally {
+                lock.unlock();
+            }
+        }
+        
+        @Override
+        public long getLong(final StatsSession session, 
+                            final Field field) {
+            lock.lock();
+            try {
+                return delegate.getLong(session, field);
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        @Override
+        public double getDouble(final StatsSession session, 
+                                final Field field) {
+            lock.lock();
+            try {
+                return delegate.getDouble(session, field);
             } finally {
                 lock.unlock();
             }
@@ -251,7 +275,7 @@ public final class DataRecorders {
 
         @Override
         public void collectData(final StatsSession session,
-                                final DataSet dataSet) {
+                                final DataSetBuilder dataSet) {
             lock.lock();
             try {
                 delegate.collectData(session, dataSet);
@@ -261,10 +285,10 @@ public final class DataRecorders {
         }
 
         @Override
-        public Set<String> getSupportedFieldNames() {
+        public List<? extends Field> getSupportedFields() {
             lock.lock();
             try {
-                return delegate.getSupportedFieldNames();
+                return delegate.getSupportedFields();
             } finally {
                 lock.unlock();
             }

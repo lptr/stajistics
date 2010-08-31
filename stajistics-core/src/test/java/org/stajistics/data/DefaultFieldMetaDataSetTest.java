@@ -65,11 +65,11 @@ public class DefaultFieldMetaDataSetTest extends AbstractStajisticsTestCase {
     public void testClear() {
         MetaData metaData = fieldMetaDataSet.getMetaData("test");
         metaData.setField("test", "value");
-        assertEquals("value", metaData.getField("test"));
+        assertEquals("value", metaData.getValue("test"));
         fieldMetaDataSet.clear();
-        assertNull(metaData.getField("test"));
+        assertNull(metaData.getValue("test"));
         metaData = fieldMetaDataSet.getMetaData("test");
-        assertNull(metaData.getField("test"));
+        assertNull(metaData.getValue("test"));
     }
 
 }

@@ -57,7 +57,7 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
         mockery.checking(new Expectations() {{
             allowing(mockDataSet).size(); will(returnValue(0));
             allowing(mockDataSet).getFieldNames(); will(returnValue(Collections.emptySet()));
-            allowing(mockDataSet).getField(with(any(String.class))); will(returnValue(null));
+            allowing(mockDataSet).getValue(with(any(String.class))); will(returnValue(null));
         }});
     }
 
@@ -86,7 +86,7 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
             // For MBean registration
             allowing(mockDataSet).size(); will(returnValue(1));
             allowing(mockDataSet).getFieldNames(); will(returnValue(new HashSet<String>(Collections.singletonList("test"))));
-            allowing(mockDataSet).getField(with("test")); will(returnValue("value"));
+            allowing(mockDataSet).getValue(with("test")); will(returnValue("value"));
             allowing(mockSession).collectData(); will(returnValue(mockDataSet));
 
             // For this test

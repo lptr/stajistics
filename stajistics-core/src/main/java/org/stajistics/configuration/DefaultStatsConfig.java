@@ -15,6 +15,7 @@
 package org.stajistics.configuration;
 
 import org.stajistics.Util;
+import org.stajistics.data.FieldSetFactory;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.TrackerFactory;
@@ -30,6 +31,7 @@ public class DefaultStatsConfig implements StatsConfig {
 
     private final TrackerFactory<?> trackerFactory;
     private final StatsSessionFactory sessionFactory;
+    private final FieldSetFactory fieldSetFactory;
     private final DataRecorderFactory dataRecorderFactory;
 
     private final String unit;
@@ -44,6 +46,7 @@ public class DefaultStatsConfig implements StatsConfig {
         this(template.isEnabled(),
              template.getTrackerFactory(),
              template.getSessionFactory(),
+             template.getFieldSetFactory(),
              template.getDataRecorderFactory(),
              template.getUnit(),
              template.getDescription());
@@ -66,6 +69,7 @@ public class DefaultStatsConfig implements StatsConfig {
     public DefaultStatsConfig(final boolean enabled,
                               final TrackerFactory<?> trackerFactory,
                               final StatsSessionFactory sessionFactory,
+                              final FieldSetFactory fieldSetFactory,
                               final DataRecorderFactory dataRecorderFactory,
                               final String unit,
                               final String description) {
@@ -79,6 +83,9 @@ public class DefaultStatsConfig implements StatsConfig {
         if (dataRecorderFactory == null) {
             throw new NullPointerException("dataRecorderFactory");
         }
+        if (fieldSetFactory == null) {
+            throw new NullPointerException("fieldSetFactory");
+        }
         if (unit == null) {
             throw new NullPointerException("unit");
         }
@@ -89,6 +96,7 @@ public class DefaultStatsConfig implements StatsConfig {
         this.enabled = enabled;
         this.trackerFactory = trackerFactory;
         this.sessionFactory = sessionFactory;
+        this.fieldSetFactory = fieldSetFactory;
         this.dataRecorderFactory = dataRecorderFactory;
         this.unit = unit;
         this.description = description;
@@ -117,6 +125,11 @@ public class DefaultStatsConfig implements StatsConfig {
     @Override
     public TrackerFactory<?> getTrackerFactory() {
         return trackerFactory;
+    }
+    
+    @Override
+    public FieldSetFactory getFieldSetFactory() {
+        return fieldSetFactory;
     }
 
     @Override

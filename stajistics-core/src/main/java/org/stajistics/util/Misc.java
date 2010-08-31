@@ -16,28 +16,6 @@ public final class Misc {
 
     private Misc() {}
 
-    @SuppressWarnings("unchecked")
-    public static <T> Set<T> getStaticFieldValues(final Class<?> target,
-                                                  final Class<T> fieldType) {
-        Set<T> result = new HashSet<T>();
-
-        for (Field field : target.getDeclaredFields()) {
-            if ((field.getModifiers() & Modifier.STATIC) != 0 &&
-                    field.getType().equals(fieldType)) {
-                try {
-                    result.add((T)field.get(null));
-
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return result;
-    }
-
     /**
      * Log an error message to indicate that an Exception has been swallowed.
      * This always logs a brief ERROR level message, but if DEBUG level is

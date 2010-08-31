@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.data.DataSet;
+import org.stajistics.data.DataSetBuilder;
+import org.stajistics.data.FieldSetFactory;
+import org.stajistics.data.DataSet.StandardMetaField;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
@@ -57,24 +60,26 @@ public class ConcurrentSession extends AbstractStatsSession {
 
     private static final Logger logger = LoggerFactory.getLogger(ConcurrentSession.class);
 
-    protected final AtomicLong hits = new AtomicLong(DataSet.Field.Default.HITS);
-    protected final AtomicLong firstHitStamp = new AtomicLong(DataSet.Field.Default.FIRST_HIT_STAMP);
-    protected volatile long lastHitStamp = DataSet.Field.Default.LAST_HIT_STAMP;
-    protected final AtomicLong commits = new AtomicLong(DataSet.Field.Default.COMMITS);
+    protected final AtomicLong hits = new AtomicLong(0L);
+    protected final AtomicLong firstHitStamp = new AtomicLong(DataSet.UNINITIALIZED_TIMESTAMP);
+    protected volatile long lastHitStamp = DataSet.UNINITIALIZED_TIMESTAMP;
+    protected final AtomicLong commits = new AtomicLong(0L);
 
     // The proper default is taken care of in getFirst()
     protected final AtomicReference<Double> first = new AtomicReference<Double>(null);
 
-    protected volatile double last = DataSet.Field.Default.LAST;
+    protected volatile double last = DataSet.UNINITIALIZED_VALUE;
     protected final AtomicDouble min = new AtomicDouble(Double.POSITIVE_INFINITY);
     protected final AtomicDouble max = new AtomicDouble(Double.NEGATIVE_INFINITY);
-    protected final AtomicDouble sum = new AtomicDouble(DataSet.Field.Default.SUM);
+    protected final AtomicDouble sum = new AtomicDouble(0D);
 
     public ConcurrentSession(final StatsKey key,
                                   final EventManager eventManager,
+                                  final FieldSetFactory fieldSetFactory,
                                   final DataRecorder... dataRecorders) {
         super(key,
               eventManager,
+              fieldSetFactory,
               DataRecorders.lockingIfNeeded(dataRecorders));
     }
 
@@ -87,8 +92,8 @@ public class ConcurrentSession extends AbstractStatsSession {
 
         hits.incrementAndGet();
 
-        if (firstHitStamp.get() == DataSet.Field.Default.FIRST_HIT_STAMP) {
-            firstHitStamp.compareAndSet(DataSet.Field.Default.FIRST_HIT_STAMP, now);
+        if (firstHitStamp.get() == DataSet.UNINITIALIZED_TIMESTAMP) {
+            firstHitStamp.compareAndSet(DataSet.UNINITIALIZED_TIMESTAMP, now);
         }
         lastHitStamp = now;
 
@@ -201,7 +206,7 @@ public class ConcurrentSession extends AbstractStatsSession {
         Double firstValue = first.get();
 
         if (firstValue == null) {
-            return DataSet.Field.Default.FIRST;
+            return DataSet.UNINITIALIZED_VALUE;
         }
 
         return firstValue;
@@ -226,7 +231,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     public double getMin() {
         Double result = min.get();
         if (result.equals(Double.POSITIVE_INFINITY)) {
-            result = DataSet.Field.Default.MIN;
+            result = DataSet.UNINITIALIZED_VALUE;
         }
         return result;
     }
@@ -240,7 +245,7 @@ public class ConcurrentSession extends AbstractStatsSession {
     public double getMax() {
         Double result = max.get();
         if (result.equals(Double.NEGATIVE_INFINITY)) {
-            result = DataSet.Field.Default.MAX;
+            result = DataSet.UNINITIALIZED_VALUE;
         }
         return result;
     }
@@ -285,13 +290,12 @@ public class ConcurrentSession extends AbstractStatsSession {
 
     @Override
     public DataSet drainData() {
-        DataSet data = collectData();
+        DataSetBuilder data = fields.newDataSetBuilder();
 
-        data.getMetaData()
-            .setField(DataSet.MetaField.DRAINED_SESSION, true);
+        data.set(StandardMetaField.drainedSession, 1L);
 
         clear();
-        return data;
+        return data.build();
     }
 
     /* NESTED CLASSES */
@@ -300,9 +304,11 @@ public class ConcurrentSession extends AbstractStatsSession {
         @Override
         public StatsSession createSession(final StatsKey key,
                                           final StatsManager manager,
+                                          final FieldSetFactory fieldSetFactory,
                                           final DataRecorder[] dataRecorders) {
             return new ConcurrentSession(key,
                                          manager.getEventManager(),
+                                         fieldSetFactory,
                                          dataRecorders);
         }
     }

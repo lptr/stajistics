@@ -14,12 +14,14 @@
  */
 package org.stajistics.session.recorder;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.stajistics.data.DataSet;
+import org.stajistics.data.DataSetBuilder;
+import org.stajistics.data.Field;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
-
-import java.io.Serializable;
-import java.util.Set;
 
 /**
  *
@@ -34,7 +36,7 @@ public interface DataRecorder extends Serializable {
      *
      * @return A Set of supported field names, never empty, and never <tt>null</tt>.
      */
-    Set<String> getSupportedFieldNames();
+    List<? extends Field> getSupportedFields();
 
     /**
      * Get the value of a single field.
@@ -43,7 +45,9 @@ public interface DataRecorder extends Serializable {
      * @param name The name of the field.
      * @return The field value, or <tt>null</tt> if not found.
      */
-    Object getField(StatsSession session, String name);
+    Object getObject(StatsSession session, Field field);
+    long getLong(StatsSession session, Field field);
+    double getDouble(StatsSession session, Field field);
 
     /**
      * Examine the tracker collected value, perform calculations, and store
@@ -69,7 +73,7 @@ public interface DataRecorder extends Serializable {
      * @param session The session that owns this DataRecorder instance.
      * @param dataSet The DataSet to populate with data fields.
      */
-    void collectData(StatsSession session, DataSet dataSet);
+    void collectData(StatsSession session, DataSetBuilder dataSet);
 
     /**
      * Clear all stored data. After this call the externally visible state will

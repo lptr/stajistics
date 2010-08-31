@@ -18,6 +18,7 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.*;
+import org.stajistics.data.fast.FastFieldSetFactory;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;
@@ -52,6 +53,7 @@ public class DefaultStatsConfigManagerTest extends AbstractStajisticsTestCase {
         return new DefaultStatsConfig(true,
                                       TimeDurationTracker.FACTORY,
                                       DefaultSessionFactory.getInstance(),
+                                      FastFieldSetFactory.getInstance(),
                                       DefaultDataRecorderFactory.getInstance(),
                                       "test",
                                       null);

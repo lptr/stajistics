@@ -1,6 +1,7 @@
 package org.stajistics.configuration;
 
 import org.stajistics.*;
+import org.stajistics.data.fast.FastFieldSetFactory;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;
@@ -104,6 +105,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         return new DefaultStatsConfig(true,
                                       TimeDurationTracker.FACTORY,
                                       DefaultSessionFactory.getInstance(),
+                                      FastFieldSetFactory.getInstance(),
                                       DefaultDataRecorderFactory.getInstance(),
                                       StatsConstants.DEFAULT_UNIT,
                                       null);
