@@ -162,6 +162,7 @@ public class DefaultStatsManager implements StatsManager {
         protected StatsKeyFactory keyFactory = null;
         protected StatsConfigBuilderFactory configBuilderFactory = null;
         protected TaskService taskService = null;
+        protected boolean enabled = true;
 
         public Builder withConfigManager(final StatsConfigManager configManager) {
             if (configManager == null) {
@@ -226,6 +227,11 @@ public class DefaultStatsManager implements StatsManager {
             return this;
         }
 
+        public Builder withEnabled(final boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
         public DefaultStatsManager newManager() {
 
             StatsKeyFactory keyFactory = this.keyFactory;
@@ -272,6 +278,8 @@ public class DefaultStatsManager implements StatsManager {
                                                                   keyFactory,
                                                                   configBuilderFactory,
                                                                   taskService);
+
+            manager.setEnabled(enabled);
 
             return manager;
         }
