@@ -15,6 +15,7 @@
 package org.stajistics.bootstrap;
 
 import org.stajistics.DefaultStatsManager;
+import org.stajistics.StatsManager;
 import org.stajistics.StatsProperties;
 import org.stajistics.management.DefaultStatsManagement;
 import org.stajistics.management.StatsManagement;
@@ -25,11 +26,15 @@ import org.stajistics.management.StatsManagementEventHandler;
  */
 public class DefaultStatsManagerFactory implements StatsManagerFactory {
 
+    private static final String PROP_STAJISTICS_ENABLED = StatsManager.class.getName() + ".enabled";
     private static final String PROP_MANAGEMENT_ENABLED = StatsManagement.class.getName() + ".enabled";
 
     @Override
     public DefaultStatsManager createManager() {
-        DefaultStatsManager manager = new DefaultStatsManager.Builder().newManager();
+        boolean stajisticsEnabled = StatsProperties.getBooleanProperty(PROP_STAJISTICS_ENABLED, true);
+        DefaultStatsManager manager = new DefaultStatsManager.Builder()
+                                                             .withEnabled(stajisticsEnabled)
+                                                             .newManager();
 
         if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
             StatsManagement management = new DefaultStatsManagement();

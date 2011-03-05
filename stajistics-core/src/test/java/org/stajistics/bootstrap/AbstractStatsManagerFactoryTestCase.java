@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsManager;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author The Stajistics Project
@@ -76,5 +76,35 @@ public abstract class AbstractStatsManagerFactoryTestCase extends AbstractStajis
     public void testManagerHasNonNullConfigFactory() {
         StatsManager mgr = createManager();
         assertNotNull(mgr.getConfigBuilderFactory());
+    }
+
+    @Test
+    public void testDefaultInitialEnabledStateIsTrue() {
+        StatsManager mgr = createManager();
+        assertTrue(mgr.isEnabled());
+    }
+
+    @Test
+    public void testInitialEnabledStateFromSystemPropertyIsTrue() {
+        final String propName = StatsManager.class.getName() + ".enabled";
+        try {
+            System.setProperty(propName, Boolean.TRUE.toString());
+            StatsManager mgr = createManager();
+            assertTrue(mgr.isEnabled());
+        } finally {
+            System.getProperties().remove(propName);
+        }
+    }
+
+    @Test
+    public void testInitialEnabledStateFromSystemPropertyIsFalse() {
+        final String propName = StatsManager.class.getName() + ".enabled";
+        try {
+            System.setProperty(propName, Boolean.FALSE.toString());
+            StatsManager mgr = createManager();
+            assertFalse(mgr.isEnabled());
+        } finally {
+            System.getProperties().remove(propName);
+        }
     }
 }
