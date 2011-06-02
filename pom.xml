@@ -165,6 +165,16 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.5</version>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+            <encoding>utf-8</encoding>
+            <useFile>false</useFile>
+            <includes>
+              <include>**/*Test.java</include>
+              <include>**/*TestCase.java</include>
+            </includes>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -389,17 +399,17 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>stajistics.org-snapshots</id>
-      <url>scp://stajistics.org/home/troyk/repository.stajistics.org/snapshots/</url>
+      <id>nexus</id>
+      <url>http://nexus.tis.local/nexus/content/repositories/stajistics-hosted-snapshots</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
     <repository>
-      <id>stajistics.org-releases</id>
-      <url>scp://stajistics.org/home/troyk/repository.stajistics.org/releases/</url>
+      <id>nexus</id>
+      <url>http://nexus.tis.local/nexus/content/repositories/stajistics-hosted-releases</url>
     </repository>
     <site>
-      <id>stajistics.org</id>
-      <url>scp://stajistics.org/home/troyk/stajistics.org/</url>
+      <id>maven-reports</id>
+      <url>scp://vm-buildsvc.tis.local/var/www/maven-sites/</url>
     </site>
   </distributionManagement>
 
