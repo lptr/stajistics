@@ -73,9 +73,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:svn:http://stajistics.googlecode.com/svn/trunk/</connection>
-    <developerConnection>scm:svn:https://stajistics.googlecode.com/svn/trunk/</developerConnection>
-    <url>http://code.google.com/p/stajistics/source/browse/trunk/</url>
+    <connection>scm:hg:http://stajistics.googlecode.com/hg/</connection>
+    <developerConnection>scm:hg:https://stajistics.googlecode.com/hg/</developerConnection>
+    <url>http://code.google.com/p/stajistics/source/browse/</url>
   </scm>
 
   <properties>
