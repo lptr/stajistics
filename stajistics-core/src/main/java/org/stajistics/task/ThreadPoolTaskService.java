@@ -50,7 +50,7 @@ public class ThreadPoolTaskService implements TaskService {
         int corePoolSize = StatsProperties.getIntegerProperty(PROP_CORE_POOL_SIZE,
                                                               noCPUs + 1);
         int maxPoolSize = StatsProperties.getIntegerProperty(PROP_MAX_POOL_SIZE,
-                                                             DEFAULT_MAX_POOL_SIZE);
+                                                             Math.max(corePoolSize, DEFAULT_MAX_POOL_SIZE));
 
         long keepAliveTime = StatsProperties.getIntegerProperty(PROP_KEEP_ALIVE_TIME_SECONDS,
                                                                 DEFAULT_KEEP_ALIVE_TIME_SECONDS);
