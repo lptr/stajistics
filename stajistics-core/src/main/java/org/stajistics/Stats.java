@@ -122,6 +122,7 @@ public final class Stats {
         StatsManager manager = null;
 
         String managerClassName = System.getProperty(StatsManager.class.getName());
+        System.out.println("Loading StatsManager: " + managerClassName);
         if (managerClassName != null) {
             @SuppressWarnings("unchecked")
             Class<StatsManager> managerClass =
