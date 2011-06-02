@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,6 +48,12 @@ public class StatsPropertiesTest {
         propsMap.put("long", String.valueOf(Long.MAX_VALUE));
 
         StatsProperties.load(new StatsProperties.MapStatsProperties(propsMap));
+    }
+    
+    @After
+    public void tearDown() {
+    	// Revert back to using system properties after tests
+    	StatsProperties.load(new StatsProperties.SystemStatsProperties());
     }
 
     @Test

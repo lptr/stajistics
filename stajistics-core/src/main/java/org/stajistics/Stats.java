@@ -16,6 +16,7 @@ package org.stajistics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.StatsTest.ClassLoadableMockStatsManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.NullTracker;
@@ -111,6 +112,7 @@ public final class Stats {
         StatsManager manager = null;
 
         String managerClassName = StatsProperties.getProperty(StatsManager.class.getName());
+        System.out.println("Loading StatsManager: " + managerClassName);
         if (managerClassName != null) {
             @SuppressWarnings("unchecked")
             Class<StatsManager> managerClass = (Class<StatsManager>)Class.forName(managerClassName);
