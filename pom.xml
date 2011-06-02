@@ -4,7 +4,7 @@
   <artifactId>stajistics-parent</artifactId>
   <packaging>pom</packaging>
   <name>Stajistics Parent</name>
-  <version>0.3.1</version>
+  <version>0.4-SNAPSHOT</version>
   <description>A Java monitoring and performance statistics collection API</description>
   <url>http://www.stajistics.org</url>
 
