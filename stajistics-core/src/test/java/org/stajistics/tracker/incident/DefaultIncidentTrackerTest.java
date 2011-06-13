@@ -17,7 +17,7 @@ package org.stajistics.tracker.incident;
 
 import org.jmock.Expectations;
 import org.junit.Test;
-import org.stajistics.TestUtil;
+import org.stajistics.*;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractTrackerTestCase;
 
@@ -73,8 +73,19 @@ public class DefaultIncidentTrackerTest extends AbstractTrackerTestCase<Incident
 
     @Test
     public void testIncidentEatsSessionException() {
-        final IncidentTracker tracker = createStatsTracker(new NastySession());
+        final UncaughtExceptionHandler mockUncaughtExceptionHandler = mockery.mock(UncaughtExceptionHandler.class);
+        mockery.checking(new Expectations() {{
+            one(mockUncaughtExceptionHandler).uncaughtException(with(mockKey),
+                                                                with(aNonNull(RuntimeException.class)));
+        }});
 
-        tracker.incident();
+        Stats.setUncaughtExceptionHandler(mockUncaughtExceptionHandler);
+        try {
+            final IncidentTracker tracker = createStatsTracker(new NastySession(mockKey));
+
+            tracker.incident();
+        } finally {
+            Stats.setUncaughtExceptionHandler(null);
+        }
     }
 }

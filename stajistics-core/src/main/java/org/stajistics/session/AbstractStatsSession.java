@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
@@ -148,11 +149,12 @@ public abstract class AbstractStatsSession implements StatsSession {
                     }
                 }
             } catch (Exception e) {
-                Misc.logSwallowedException(logger,
-                                           e,
-                                           "Failed to getField({}) from {}",
-                                           name,
-                                           dataRecorders[i]);
+                Misc.logHandledException(logger,
+                        e,
+                        "Failed to getField({}) from {}",
+                        name,
+                        dataRecorders[i]);
+                Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
 
@@ -183,10 +185,11 @@ public abstract class AbstractStatsSession implements StatsSession {
             try {
                 dataRecorder.collectData(this, dataSet);
             } catch (Exception e) {
-                Misc.logSwallowedException(logger,
-                                           e,
-                                           "Failed to collectData() from {}",
-                                           dataRecorder);
+                Misc.logHandledException(logger,
+                        e,
+                        "Failed to collectData() from {}",
+                        dataRecorder);
+                Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
 
@@ -238,10 +241,11 @@ public abstract class AbstractStatsSession implements StatsSession {
                         try {
                             dataRecorder.restore(dataSet);
                         } catch (Exception e) {
-                            Misc.logSwallowedException(logger,
-                                                       e,
-                                                       "Failed to restore {}",
-                                                       dataRecorder);
+                            Misc.logHandledException(logger,
+                                    e,
+                                    "Failed to restore {}",
+                                    dataRecorder);
+                            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
                         }
                     }
                 }
@@ -264,10 +268,11 @@ public abstract class AbstractStatsSession implements StatsSession {
             try {
                 dataRecorder.clear();
             } catch (Exception e) {
-                Misc.logSwallowedException(logger,
-                                           e,
-                                           "Failed to clear {}",
-                                           dataRecorder);
+                Misc.logHandledException(logger,
+                        e,
+                        "Failed to clear {}",
+                        dataRecorder);
+                Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
     }

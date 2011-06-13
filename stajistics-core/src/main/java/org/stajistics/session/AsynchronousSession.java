@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.data.DataSet;
@@ -114,10 +115,11 @@ public class AsynchronousSession extends AbstractStatsSession {
             ProcessUpdateQueueTask processQueueTask = new ProcessUpdateQueueTask();
             taskService.execute(getClass(), processQueueTask);
         } catch (Exception e) {
-            Misc.logSwallowedException(logger,
-                                       e,
-                                       "Failed to queue task {}",
-                                       entry);
+            Misc.logHandledException(logger,
+                    e,
+                    "Failed to queue task {}",
+                    entry);
+            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
         }
     }
 
@@ -223,10 +225,11 @@ public class AsynchronousSession extends AbstractStatsSession {
                 try {
                     dataRecorder.update(this, tracker, now);
                 } catch (Exception e) {
-                    Misc.logSwallowedException(logger,
-                                               e,
-                                               "Failed to update {}",
-                                               dataRecorder);
+                    Misc.logHandledException(logger,
+                            e,
+                            "Failed to update {}",
+                            dataRecorder);
+                    Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
                 }
             }
         } finally {
