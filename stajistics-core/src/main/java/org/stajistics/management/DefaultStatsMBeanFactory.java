@@ -28,6 +28,11 @@ import org.stajistics.session.StatsSession;
 public class DefaultStatsMBeanFactory implements StatsMBeanFactory {
 
     @Override
+    public StatsManagerMBean createManagerMBean(StatsManager statsManager) {
+        return new DefaultStatsManagerMBean(statsManager);
+    }
+
+    @Override
     public StatsConfigManagerMBean createConfigManagerMBean(final StatsManager statsManager) {
         return new DefaultStatsConfigManagerMBean(statsManager.getConfigManager());
     }

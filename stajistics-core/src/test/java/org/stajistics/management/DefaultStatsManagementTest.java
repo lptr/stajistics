@@ -233,12 +233,44 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
     }
 
     @Test
+    public void testRegisterManagerMBean() throws Exception {
+
+        final StatsManagerMBean mockManagerMBean = mockery.mock(StatsManagerMBean.class);
+
+        mockery.checking(new Expectations() {{
+            one(mockMBeanFactory).createManagerMBean(mockStatsManager);
+            will(returnValue(mockManagerMBean));
+        }});
+
+        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
+                                                                                DefaultStatsManagement.MANAGER_NAME_STATS));
+
+        assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
+        statsManagement.registerManagerMBean(mockStatsManager);
+        assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
+    }
+
+    @Test
+    public void testUnregisterManagerMBean() throws Exception {
+        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
+                                                                                DefaultStatsManagement.MANAGER_NAME_STATS));
+
+        final StatsManagerMBean mockManagerMBean = mockery.mock(StatsManagerMBean.class);
+
+        mBeanServer.registerMBean(mockManagerMBean, objectName);
+
+        statsManagement.unregisterManagerMBean(mockStatsManager);
+        assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
+    }
+
+    @Test
     public void testRegisterSessionManagerMBean() throws Exception {
 
         final StatsSessionManagerMBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockMBeanFactory).createSessionManagerMBean(with(mockStatsManager)); will(returnValue(mockSessionManagerMBean));
+            one(mockMBeanFactory).createSessionManagerMBean(with(mockStatsManager));
+            will(returnValue(mockSessionManagerMBean));
         }});
 
         ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
