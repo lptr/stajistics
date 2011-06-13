@@ -62,7 +62,7 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
     }
 
     @Test
-    public void testIsEnabled() throws Exception {
+    public void testGetEnabled() throws Exception {
 
         mockery.checking(new Expectations() {{
             one(mockConfig).isEnabled(); will(returnValue(true));

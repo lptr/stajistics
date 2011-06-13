@@ -38,6 +38,7 @@ public class DefaultStatsManagerFactory implements StatsManagerFactory {
 
         if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
             StatsManagement management = new DefaultStatsManagement();
+            management.registerManagerMBean(manager);
             management.registerConfigManagerMBean(manager);
             management.registerSessionManagerMBean(manager);
 

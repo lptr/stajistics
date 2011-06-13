@@ -48,6 +48,7 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
     static final String SUBTYPE_SESSION = "session";
     static final String SUBTYPE_CONFIG = "config";
 
+    static final String MANAGER_NAME_STATS = "StatsManager";
     static final String MANAGER_NAME_CONFIG = "ConfigManager";
     static final String MANAGER_NAME_SESSION = "SessionManager";
     static final String MANAGER_NAME_SNAPSHOT = "SnapshotManager";
@@ -111,6 +112,47 @@ public class DefaultStatsManagement implements StatsManagement,Serializable {
         buf.append(managerName);
 
         return buf.toString();
+    }
+
+    @Override
+    public void registerManagerMBean(StatsManager statsManager) {
+
+        String name = buildManagerName(statsManager, MANAGER_NAME_STATS);
+
+        try {
+            StatsManagerMBean statsManagerMBean =
+                mBeanFactory.createManagerMBean(statsManager);
+
+            ObjectName objectName = new ObjectName(name);
+
+            registerMBean(statsManagerMBean, objectName);
+
+            logRegistrationSuccess(true, StatsManagerMBean.class, null, objectName);
+
+        } catch (Exception e) {
+            logRegistrationFailure(true, StatsManagerMBean.class, null, name, e);
+
+            throw new StatsManagementException(e);
+        }
+    }
+
+    @Override
+    public void unregisterManagerMBean(StatsManager statsManager) {
+
+        String name = buildManagerName(statsManager, MANAGER_NAME_STATS);
+
+        try {
+            ObjectName objectName = new ObjectName(name) ;
+            mBeanServer.unregisterMBean(objectName);
+
+            logRegistrationSuccess(false, StatsManagerMBean.class, null, objectName);
+
+        } catch (Exception e) {
+            logRegistrationFailure(false, StatsManagerMBean.class, null, name, e);
+
+            throw new StatsManagementException(e);
+        }
+
     }
 
     @Override

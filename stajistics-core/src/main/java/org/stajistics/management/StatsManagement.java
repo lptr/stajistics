@@ -31,6 +31,10 @@ public interface StatsManagement {
 
     MBeanServer getMBeanServer();
 
+    void registerManagerMBean(StatsManager statsManager);
+
+    void unregisterManagerMBean(StatsManager statsManager);
+
     void registerConfigManagerMBean(StatsManager statsManager);
 
     void unregisterConfigManagerMBean(StatsManager statsManager);

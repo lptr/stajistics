@@ -29,6 +29,8 @@ import java.io.Serializable;
  */
 public interface StatsMBeanFactory extends Serializable {
 
+    StatsManagerMBean createManagerMBean(StatsManager statsManager);
+
     StatsConfigManagerMBean createConfigManagerMBean(StatsManager statsManager);
 
     StatsConfigMBean createConfigMBean(StatsManager statsManager,
