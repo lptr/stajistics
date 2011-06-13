@@ -47,7 +47,9 @@ public final class Stats {
 
     private static final Logger logger = LoggerFactory.getLogger(Stats.class);
 
-    private static StatsManager manager;
+    private static volatile StatsManager manager;
+
+    private static volatile UncaughtExceptionHandler uncaughtExceptionHandler = NullUncaughtExceptionHandler.getInstance();
 
     /**
      * Specify the sole default {@link StatsManager} instance, replacing any existing instance.
@@ -549,4 +551,17 @@ public final class Stats {
                            .createConfigBuilder();
     }
 
+
+    public static UncaughtExceptionHandler getUncaughtExceptionHandler() {
+        return uncaughtExceptionHandler;
+    }
+
+
+    public static void setUncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler) {
+        if (uncaughtExceptionHandler == null) {
+            Stats.uncaughtExceptionHandler = NullUncaughtExceptionHandler.getInstance();
+        } else {
+            Stats.uncaughtExceptionHandler = uncaughtExceptionHandler;
+        }
+    }
 }

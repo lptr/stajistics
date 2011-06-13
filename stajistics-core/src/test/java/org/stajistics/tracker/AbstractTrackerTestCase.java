@@ -124,6 +124,16 @@ public abstract class AbstractTrackerTestCase<T extends Tracker> extends Abstrac
 
     public static final class NastySession implements StatsSession {
 
+        private StatsKey key;
+
+        public NastySession() {
+            this(null);
+        }
+
+        public NastySession(StatsKey key) {
+            this.key = key;
+        }
+
         @Override
         public void clear() {
             throw new RuntimeException();
@@ -171,7 +181,7 @@ public abstract class AbstractTrackerTestCase<T extends Tracker> extends Abstrac
 
         @Override
         public StatsKey getKey() {
-            throw new RuntimeException();
+            return key;
         }
 
         @Override

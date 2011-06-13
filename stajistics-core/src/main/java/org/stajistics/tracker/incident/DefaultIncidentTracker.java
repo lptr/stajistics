@@ -16,6 +16,7 @@ package org.stajistics.tracker.incident;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
@@ -49,9 +50,10 @@ public class DefaultIncidentTracker extends AbstractTracker implements IncidentT
             session.track(this, now);
             session.update(this, now);
         } catch (Exception e) {
-            Misc.logSwallowedException(logger, 
-                                       e, 
-                                       "Caught Exception in incident()");
+            Misc.logHandledException(logger,
+                    e,
+                    "Caught Exception in incident()");
+            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
         }
 
         return this;

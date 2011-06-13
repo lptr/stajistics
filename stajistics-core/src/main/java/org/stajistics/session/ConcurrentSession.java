@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.data.DataSet;
@@ -184,10 +185,11 @@ public class ConcurrentSession extends AbstractStatsSession {
             try {
                 dataRecorder.update(this, tracker, now);
             } catch (Exception e) {
-                Misc.logSwallowedException(logger,
-                                           e,
-                                           "Failed to update {}",
-                                           dataRecorder);
+                Misc.logHandledException(logger,
+                        e,
+                        "Failed to update {}",
+                        dataRecorder);
+                Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
 

@@ -52,22 +52,22 @@ public final class Misc {
      *              Must not be <tt>null</tt>.
      * @param args The arguments to insert into the <tt>message</tt>. May be <tt>null</tt> or empty.
      */
-    public static void logSwallowedException(final Logger logger,
-                                             final Throwable error,
-                                             final String message,
-                                             final Object... args) {
-        if (logger == null || error == null || message == null) {
-            // Do not throw an Exception ourselves, because this would defeat the purpose
-            // of "swallowing" an Exception.
-            System.err.println("Passed null parameter(s): org.stajistics.util.Misc.logSwallowedException(" +
-                               logger + ", " +
-                               error + ", " +
-                               message + ", " +
-                               args + ")");
-            return;
-        }
-
+    public static void logHandledException(final Logger logger,
+                                           final Throwable error,
+                                           final String message,
+                                           final Object... args) {
         try {
+            if (logger == null || error == null || message == null) {
+                // Do not throw an Exception ourselves, because this would defeat the purpose
+                // of "swallowing" an Exception.
+                System.err.println("Passed null parameter(s): org.stajistics.util.Misc.logHandledException(" +
+                                   logger + ", " +
+                                   error + ", " +
+                                   message + ", " +
+                                   args + ")");
+                return;
+            }
+
             // If debug is on, include a full stack trace
             if (logger.isDebugEnabled()) {
                 logger.error(message, args);
