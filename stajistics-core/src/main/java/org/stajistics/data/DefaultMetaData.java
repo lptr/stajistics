@@ -14,7 +14,6 @@
  */
 package org.stajistics.data;
 
-import java.util.*;
 
 /**
  *
@@ -22,101 +21,6 @@ import java.util.*;
  */
 class DefaultMetaData extends AbstractDataContainer implements MetaData {
 
-    private static final String DELIMITER = "__" + DefaultMetaData.class.getSimpleName() + "__";
+    DefaultMetaData() {}
 
-    private final Map<String,Object> dataMap;
-    private final String fieldName;
-
-    private int size = 0;
-
-    private Set<String> attributeNames = null;
-
-    DefaultMetaData(final Map<String,Object> dataMap, final String fieldName) {
-        if (fieldName == null) {
-            throw new NullPointerException("fieldName");
-        }
-
-        this.dataMap = dataMap;
-        this.fieldName = fieldName;
-    }
-
-    @Override
-    public Object getField(final String name) {
-        if (name == null) {
-            return null;
-        }
-
-        return dataMap.get(keyFor(name));
-    }
-
-    @Override
-    public Set<String> getFieldNames() {
-        if (attributeNames == null) {
-            attributeNames = findAttributeNames();
-        }
-
-        return attributeNames;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    @Override
-    public int size() {
-        return size;
-    }
-
-    @Override
-    public void clear() {
-        final String prefix = fieldName + DELIMITER;
-        for (Iterator<String> it = dataMap.keySet().iterator(); it.hasNext(); ) {
-            if (it.next().startsWith(prefix)) {
-                it.remove();
-            }
-        }
-        size = 0;
-    }
-
-    @Override
-    public Object removeField(final String name) {
-        Object value = dataMap.remove(keyFor(name));
-        if (value != null) {
-            size--;
-        }
-        return value;
-    }
-
-    @Override
-    public void setField(final String name, final Object value) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
-
-        if (dataMap.put(keyFor(name), value) == null) {
-            size++;
-        }
-    }
-
-    private String keyFor(final String attrName) {
-        StringBuilder buf = new StringBuilder(fieldName.length() + DELIMITER.length() + attrName.length());
-        buf.append(fieldName);
-        buf.append(DELIMITER);
-        buf.append(attrName);
-        return buf.toString();
-    }
-
-    private Set<String> findAttributeNames() {
-        final String prefix = fieldName + DELIMITER;
-        Set<String> attrNames = new HashSet<String>();
-        for (Map.Entry<String,Object> entry : dataMap.entrySet()) {
-            if (entry.getKey().startsWith(prefix)) {
-                String attrName = entry.getKey().substring(prefix.length());
-                attrNames.add(attrName);
-            }
-        }
-
-        return Collections.unmodifiableSet(attrNames);
-    }
 }

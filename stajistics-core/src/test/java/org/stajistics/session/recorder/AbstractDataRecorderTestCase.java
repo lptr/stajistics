@@ -89,11 +89,11 @@ public abstract class AbstractDataRecorderTestCase extends AbstractStajisticsTes
         dataRecorder.update(mockSession, mockTracker, 0L);
         dataRecorder.clear();
 
-        DataSet emptyDataSet = new DefaultDataSet();
+        DataSet emptyDataSet = new DefaultDataSet(-1L, false);
         dataRecorder.collectData(mockSession, emptyDataSet);
 
         dataRecorder = createDataRecorder(); // Create a new DataRecorder
-        DataSet newDataSet = new DefaultDataSet();
+        DataSet newDataSet = new DefaultDataSet(-1L, false);
         dataRecorder.collectData(mockSession, newDataSet);
 
         assertEquals(emptyDataSet, newDataSet);

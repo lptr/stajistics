@@ -26,16 +26,6 @@ public final class NullDataSet implements DataSet {
 
     private static final NullDataSet instance = new NullDataSet();
 
-    private static final FieldMetaDataSet NULL_META_DATA_SET = new FieldMetaDataSet() {
-        @Override
-        public MetaData getMetaData(final String fieldName) {
-            return NullMetaData.getInstance();
-        }
-
-        @Override
-        public void clear() {}
-    };
-
     private NullDataSet() {}
 
     public static NullDataSet getInstance() {
@@ -43,13 +33,23 @@ public final class NullDataSet implements DataSet {
     }
 
     @Override
-    public MetaData getMetaData() {
-        return NullMetaData.getInstance();
+    public long getCollectionTimeStamp() {
+        return 0;
     }
 
     @Override
-    public FieldMetaDataSet getFieldMetaDataSet() {
-        return NULL_META_DATA_SET;
+    public boolean isSessionDrained() {
+        return false;
+    }
+
+    @Override
+    public boolean hasMetaData() {
+        return false;
+    }
+
+    @Override
+    public MetaData getMetaData() {
+        return NullMetaData.getInstance();
     }
 
     /**

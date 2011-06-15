@@ -27,7 +27,7 @@ public class DataSets {
     private DataSets() {}
 
     public static DataSet unmodifiable(final DataSet dataSet) {
-        if (dataSet instanceof ImmutableDataSetDecorator) {
+        if (dataSet.getClass() == ImmutableDataSetDecorator.class) {
             return dataSet;
         }
 
@@ -40,7 +40,6 @@ public class DataSets {
 
         private final DataSet delegate;
         private final MetaData delegateMetaData;
-        private final FieldMetaDataSet delegateFieldMetaDataSet;
 
         ImmutableDataSetDecorator(final DataSet delegate) {
             if (delegate == null) {
@@ -48,20 +47,32 @@ public class DataSets {
             }
 
             this.delegate = delegate;
-            this.delegateMetaData = 
-                new ImmutableMetaDataDecorator(delegate.getMetaData());
-            this.delegateFieldMetaDataSet = 
-                new ImmutableFieldMetaDataSetDecorator(delegate.getFieldMetaDataSet());
+
+            if (delegate.hasMetaData()) {
+                this.delegateMetaData = new ImmutableMetaDataDecorator(delegate.getMetaData());
+            } else {
+                this.delegateMetaData = NullMetaData.getInstance();
+            }
         }
 
         @Override
-        public FieldMetaDataSet getFieldMetaDataSet() {
-            return delegateFieldMetaDataSet;
+        public boolean hasMetaData() {
+            return !delegateMetaData.isEmpty();
         }
 
         @Override
         public MetaData getMetaData() {
             return delegateMetaData;
+        }
+
+        @Override
+        public long getCollectionTimeStamp() {
+            return 0;
+        }
+
+        @Override
+        public boolean isSessionDrained() {
+            return false;
         }
 
         @Override
@@ -170,26 +181,4 @@ public class DataSets {
         }
     }
 
-    private static final class ImmutableFieldMetaDataSetDecorator implements FieldMetaDataSet {
-
-        private final FieldMetaDataSet delegate;
-
-        ImmutableFieldMetaDataSetDecorator(final FieldMetaDataSet delegate) {
-            if (delegate == null) {
-                throw new NullPointerException("delegate");
-            }
-            this.delegate = delegate;
-        }
-
-        @Override
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public MetaData getMetaData(final String fieldName) {
-            return new ImmutableMetaDataDecorator(delegate.getMetaData(fieldName));
-        }
-
-    }
 }

@@ -14,20 +14,9 @@
  */
 package org.stajistics.data;
 
-import java.io.Serializable;
 
 /**
  * 
  * @author The Stajistics Project
  */
-public interface MetaData extends DataContainer,Serializable {
-
-    /**
-     * Common meta data field names.
-     */
-    interface Field {
-        public static final String TYPE = "type";
-        public static final String GENERATED = "generated";
-    }
-
-}
+public interface MetaData extends DataContainer {}

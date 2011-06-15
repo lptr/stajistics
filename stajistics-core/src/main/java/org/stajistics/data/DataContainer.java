@@ -14,6 +14,7 @@
  */
 package org.stajistics.data;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public interface DataContainer {
+public interface DataContainer extends Serializable {
 
     /**
      * Obtain the number of fields in this DataContainer.

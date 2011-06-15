@@ -370,10 +370,9 @@ public class AsynchronousSession extends AbstractStatsSession {
         updateQueueProcessingLock.lock();
         try {
             processUpdateQueue();
-            data = collectData();
 
-            data.getMetaData()
-                .setField(DataSet.MetaField.DRAINED_SESSION, true);
+            data = createDataSet(true);
+            collectData(data);
 
             clearState();
         } finally {

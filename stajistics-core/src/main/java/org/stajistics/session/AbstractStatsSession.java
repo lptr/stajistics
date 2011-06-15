@@ -162,15 +162,19 @@ public abstract class AbstractStatsSession implements StatsSession {
         return null;
     }
 
+    protected DataSet createDataSet(boolean drainedSession) {
+        DataSet dataSet = new DefaultDataSet(System.currentTimeMillis(), drainedSession);
+        return dataSet;
+    }
+
     @Override
     public DataSet collectData() {
+        final DataSet dataSet = createDataSet(false);
+        collectData(dataSet);
+        return dataSet;
+    }
 
-        final DataSet dataSet = new DefaultDataSet();
-
-        dataSet.getMetaData()
-               .setField(DataSet.MetaField.COLLECTION_STAMP,
-                         System.currentTimeMillis());
-
+    protected void collectData(final DataSet dataSet) {
         dataSet.setField(DataSet.Field.HITS, getHits());
         dataSet.setField(DataSet.Field.FIRST_HIT_STAMP, getFirstHitStamp());
         dataSet.setField(DataSet.Field.LAST_HIT_STAMP, getLastHitStamp());
@@ -192,8 +196,6 @@ public abstract class AbstractStatsSession implements StatsSession {
                 Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
-
-        return dataSet;
     }
 
     protected void restoreState(final DataSet dataSet) {

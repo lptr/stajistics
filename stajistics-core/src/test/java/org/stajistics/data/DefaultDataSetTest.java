@@ -14,9 +14,10 @@
  */
 package org.stajistics.data;
 
-import org.junit.Test;
-
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
 
 /**
  *
@@ -26,7 +27,7 @@ public class DefaultDataSetTest extends AbstractDataContainerTestCase {
 
     @Override
     protected DataSet createDataContainer() {
-        return new DefaultDataSet();
+        return new DefaultDataSet(-1L, false);
     }
 
     @Override
@@ -40,7 +41,12 @@ public class DefaultDataSetTest extends AbstractDataContainerTestCase {
     }
 
     @Test
-    public void testGetFieldMetaDataSet() {
-        assertNotNull(dc().getFieldMetaDataSet());
+    public void testGetCollectionTimeStamp() {
+        assertEquals(-1L, dc().getCollectionTimeStamp());
+    }
+
+    @Test
+    public void testIsSessionDrained() {
+        assertEquals(false, dc().isSessionDrained());
     }
 }

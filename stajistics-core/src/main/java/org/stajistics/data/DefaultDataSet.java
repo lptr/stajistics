@@ -14,9 +14,6 @@
  */
 package org.stajistics.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -26,125 +23,87 @@ import java.util.Set;
  */
 public class DefaultDataSet extends AbstractDataContainer implements DataSet {
 
-    private final Map<String,Object> dataMap = createDataMap();
-    private Map<String,Object> metaDataMap = null;
-
     private MetaData metaData = null;
-    private FieldMetaDataSet fieldMetaDataSet = null;
 
-    public DefaultDataSet() {}
+    private long collectionTimeStamp;
+    private boolean drainedSession;
 
-    protected Map<String,Object> createDataMap() {
-        return new HashMap<String,Object>();
+    public DefaultDataSet(final long collectionTimeStamp,
+                          final boolean drainedSession) {
+        this.collectionTimeStamp = collectionTimeStamp;
+        this.drainedSession = drainedSession;
     }
 
-    private void ensureMetaDataInitialized() {
-        if (metaDataMap == null) {
-            metaDataMap = createDataMap();
-            metaData = new DefaultMetaData(metaDataMap, "");
-            fieldMetaDataSet = new DefaultFieldMetaDataSet(metaDataMap);
-        }
+    @Override
+    public long getCollectionTimeStamp() {
+        return collectionTimeStamp;
+    }
+
+    @Override
+    public boolean isSessionDrained() {
+        return drainedSession;
+    }
+
+    @Override
+    public boolean hasMetaData() {
+        return metaData != null && !metaData.isEmpty();
     }
 
     @Override
     public MetaData getMetaData() {
-        ensureMetaDataInitialized();
+        if (metaData == null) {
+            metaData = new DefaultMetaData();
+        }
         return metaData;
     }
 
     @Override
-    public FieldMetaDataSet getFieldMetaDataSet() {
-        ensureMetaDataInitialized();
-        return fieldMetaDataSet;
-    }
-
-    @Override
-    public Object getField(final String name) {
-        if (name == null) {
-            return null;
-        }
-
-        return dataMap.get(name);
-    }
-
-    @Override
-    public Set<String> getFieldNames() {
-        return dataMap.keySet();
-    }
-
-    @Override
-    public void setField(final String name, final Object value) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
-        if (value == null) {
-            throw new NullPointerException("value");
-        }
-        if (name.length() == 0) {
-            throw new IllegalArgumentException("empty name");
-        }
-
-        dataMap.put(name, value);
-    }
-
-    @Override
-    public Object removeField(final String name) {
-        return dataMap.remove(name);
-    }
-
-    @Override
-    public void clear() {
-        dataMap.clear();
-    }
-
-    @Override
-    public int size() {
-        return dataMap.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return dataMap.isEmpty();
-    }
-
-    @Override
     public int hashCode() {
-        int hash = dataMap.hashCode();
-        if (metaDataMap != null) {
-            hash += 31 * metaDataMap.hashCode();
-            hash += 31 * metaData.hashCode();
-            hash += 31 * fieldMetaDataSet.hashCode();
-        }
-        return hash;
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (int) (collectionTimeStamp ^ (collectionTimeStamp >>> 32));
+        result = prime * result + (drainedSession ? 1231 : 1237);
+        result = prime * result + ((metaData == null) ? 0 : metaData.hashCode());
+        return result;
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return (obj instanceof DataSet) && equals((DataSet)obj);
-    }
-
-    public boolean equals(final DataSet other) {
-
-        if (this.size() != other.size()) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
             return false;
         }
 
-        for (String fieldName : this.getFieldNames()) {
-            Object thisValue = this.getField(fieldName);
-            Object otherValue = other.getField(fieldName);
+        DataSet other;
+        try {
+            other = (DataSet)obj;
+        } catch (ClassCastException cce) {
+            return false;
+        }
 
-            if (otherValue == null || !thisValue.equals(otherValue)) {
+        if (collectionTimeStamp != other.getCollectionTimeStamp()) {
+            return false;
+        }
+        if (drainedSession != other.isSessionDrained()) {
+            return false;
+        }
+
+        if (hasMetaData()) {
+            if (!other.hasMetaData()) {
+                return false;
+            }
+
+            return (metaData.equals(other.getMetaData()));
+
+        } else {
+            if (other.hasMetaData()) {
                 return false;
             }
         }
 
-        if (this.getMetaData().equals(other.getMetaData())) {
-            return false;
-        }
-        if (this.getFieldMetaDataSet().equals(other.getFieldMetaDataSet())) {
-            return false;
-        }
-
         return true;
     }
+
 }
