@@ -14,15 +14,16 @@
  */
 package org.stajistics.session;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DataSets;
 import org.stajistics.data.NullDataSet;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.Tracker;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A {@link StatsSession} implementation which does not respond to updates.
@@ -30,6 +31,8 @@ import java.util.List;
  * @author The Stajistics Project
  */
 public class ImmutableSession implements StatsSession {
+
+    public static final Factory FACTORY = new Factory();
 
     private final StatsKey key;
     private final DataSet dataSet;
@@ -44,7 +47,7 @@ public class ImmutableSession implements StatsSession {
     }
 
     public ImmutableSession(final StatsKey key,
-                                 final DataSet dataSet) {
+                            final DataSet dataSet) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -152,4 +155,15 @@ public class ImmutableSession implements StatsSession {
      */
     @Override
     public void clear() {}
+
+    /* NESTED CLASSES */
+
+    public static final class Factory implements StatsSessionFactory {
+        @Override
+        public StatsSession createSession(final StatsKey key,
+                                          final StatsManager manager,
+                                          final DataRecorder[] dataRecorders) {
+            return new ImmutableSession(key);
+        }
+    }
 }
