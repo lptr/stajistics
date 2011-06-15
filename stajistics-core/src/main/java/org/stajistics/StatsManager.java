@@ -31,6 +31,9 @@ import java.io.Serializable;
  */
 public interface StatsManager extends Serializable {
 
+
+    String getNamespace();
+    
     /**
      * Get the {@link org.stajistics.configuration.StatsConfigManager}.
      *
@@ -94,6 +97,9 @@ public interface StatsManager extends Serializable {
      */
     void setEnabled(boolean enabled);
 
+    
+    void initialize();
+    
     /**
      * Firstly, set the manager state to disabled, then proceed to clean up any resources
      * associated with statistics collection. A future call to {@link #setEnabled(boolean)} passing

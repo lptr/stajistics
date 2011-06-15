@@ -222,6 +222,12 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         destroyEntry(rootKeyEntry);
     }
 
+    @Override
+    public void shutdown() {
+        eventManager.fireEvent(EventType.CONFIG_MANAGER_SHUTTING_DOWN, null, this);
+        clearConfigs();
+    }
+
     /* PRIVATE METHODS */
 
     private KeyEntry entryFor(final StatsKey key) {

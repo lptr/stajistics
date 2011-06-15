@@ -101,4 +101,6 @@ public interface StatsSessionManager extends Serializable {
      * Call {@link StatsSession#clear()} on each {@link StatsSession} instance known to this manager.
      */
     void clearAllSessions();
+
+    void shutdown();
 }

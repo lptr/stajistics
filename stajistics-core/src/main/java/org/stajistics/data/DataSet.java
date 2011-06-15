@@ -20,12 +20,7 @@ import org.stajistics.session.StatsSession;
 /**
  * <p>Stores statistical data and meta data as a mapping of key-value pairs known as fields. 
  * Statistical data is stored as fields, while meta data that is not directly related to
- * statistics can be stored at the scope of the DataSet instance, as well as at the scope
- * of a single field of the DataSet instance.</p>
- *
- * <p>DataSet implementations are generally optimized for reduced memory consumption
- * and fast reads and writes of single fields, while iteration of all fields or meta data
- * fields may be less performant than a regular O(n) iteration.</p>
+ * statistics can be stored with the DataSet.</p>
  *
  * @author The Stajistics Project
  */

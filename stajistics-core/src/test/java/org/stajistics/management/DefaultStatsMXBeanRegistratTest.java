@@ -14,6 +14,25 @@
  */
 package org.stajistics.management;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.stajistics.TestUtil.buildStatsKeyExpectations;
+import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_CONFIG;
+import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_SESSION;
+import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_STATS;
+import static org.stajistics.management.StatsMXBeanUtil.SUBTYPE_CONFIG;
+import static org.stajistics.management.StatsMXBeanUtil.SUBTYPE_SESSION;
+import static org.stajistics.management.StatsMXBeanUtil.TYPE_KEYS;
+import static org.stajistics.management.StatsMXBeanUtil.buildManagerName;
+import static org.stajistics.management.StatsMXBeanUtil.buildName;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import org.jmock.Expectations;
 import org.junit.After;
 import org.junit.Before;
@@ -23,16 +42,14 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
+import org.stajistics.configuration.StatsConfigManager;
+import org.stajistics.management.beans.StatsConfigMXBean;
+import org.stajistics.management.beans.StatsConfigManagerMXBean;
+import org.stajistics.management.beans.StatsManagerMXBean;
+import org.stajistics.management.beans.StatsSessionMXBean;
+import org.stajistics.management.beans.StatsSessionManagerMXBean;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
-import static org.junit.Assert.*;
-import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
 /**
  *
@@ -40,41 +57,70 @@ import static org.stajistics.TestUtil.buildStatsKeyExpectations;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
+public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase {
 
+    private static final String NAMESPACE = "ns";
+    
     private static final String TYPE_TEST = "test";
     private static final String SUBTYPE_TEST = "test";
 
     private static final String NORMAL = "normal";
 
     private StatsKey mockKey;
-    private StatsMBeanFactory mockMBeanFactory;
+    private StatsMXBeanFactory mockMBeanFactory;
     private StatsManager mockStatsManager;
+    private StatsSessionManager mockSessionManager;
+    private StatsConfigManager mockConfigManager;
 
     private MBeanServer mBeanServer;
 
-    private DefaultStatsManagement statsManagement;
+    private DefaultStatsMXBeanRegistrar mxBeanRegistrar;
 
     @Before
     public void setUp() {
         mockKey = mockery.mock(StatsKey.class);
         mockStatsManager = mockery.mock(StatsManager.class);
-        mockMBeanFactory = mockery.mock(StatsMBeanFactory.class);
+        mockSessionManager = mockery.mock(StatsSessionManager.class);
+        mockConfigManager = mockery.mock(StatsConfigManager.class);
+        mockMBeanFactory = mockery.mock(StatsMXBeanFactory.class);
 
         mBeanServer = MBeanServerFactory.newMBeanServer();
 
-        statsManagement = new DefaultStatsManagement(mockMBeanFactory, mBeanServer);
+        mxBeanRegistrar = new DefaultStatsMXBeanRegistrar(NAMESPACE, mockMBeanFactory, mBeanServer);
+
+        mockery.checking(new Expectations() {{
+            allowing(mockStatsManager).getNamespace();
+            will(returnValue(NAMESPACE));
+        }});
     }
 
     @After
     public void tearDown() {
-        statsManagement = null;
+        mxBeanRegistrar = null;
+    }
+
+    @Test
+    public void testConstructWithNullNamespace() {
+        try {
+            new DefaultStatsMXBeanRegistrar(null, mockMBeanFactory, MBeanServerFactory.newMBeanServer());
+        } catch (NullPointerException npe) {
+            assertEquals("namespace", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructWithEmptyNamespace() {
+        try {
+            new DefaultStatsMXBeanRegistrar("", mockMBeanFactory, MBeanServerFactory.newMBeanServer());
+        } catch (IllegalArgumentException e) {
+            assertEquals("empty namespace", e.getMessage());
+        }
     }
 
     @Test
     public void testConstructWithNullMBeanFactory() {
         try {
-            new DefaultStatsManagement(null, MBeanServerFactory.newMBeanServer());
+            new DefaultStatsMXBeanRegistrar(NAMESPACE, null, MBeanServerFactory.newMBeanServer());
         } catch (NullPointerException npe) {
             assertEquals("mBeanFactory", npe.getMessage());
         }
@@ -83,7 +129,7 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
     @Test
     public void testConstructWithNullMBeanServer() {
         try {
-            new DefaultStatsManagement(mockMBeanFactory, null);
+            new DefaultStatsMXBeanRegistrar(NAMESPACE, mockMBeanFactory, null);
         } catch (NullPointerException npe) {
             assertEquals("mBeanServer", npe.getMessage());
         }
@@ -91,14 +137,14 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testGetMBeanServer() {
-        assertSame(mBeanServer, statsManagement.getMBeanServer());
+        assertSame(mBeanServer, mxBeanRegistrar.getMBeanServer());
     }
 
     @Test
     public void testBuildNameDomain() {
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
-        String name = statsManagement.buildName(mockStatsManager, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
-        assertTrue(name.startsWith(DefaultStatsManagement.DOMAIN));
+        String name = StatsMXBeanUtil.buildName(NAMESPACE, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
+        assertTrue(name.startsWith(StatsMXBeanUtil.STAJISTICS_DOMAIN));
     }
 
     @Test
@@ -235,88 +281,83 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
     @Test
     public void testRegisterManagerMBean() throws Exception {
 
-        final StatsManagerMBean mockManagerMBean = mockery.mock(StatsManagerMBean.class);
+        final StatsManagerMXBean mockManagerMBean = mockery.mock(StatsManagerMXBean.class);
 
         mockery.checking(new Expectations() {{
             one(mockMBeanFactory).createManagerMBean(mockStatsManager);
             will(returnValue(mockManagerMBean));
         }});
 
-        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
-                                                                                DefaultStatsManagement.MANAGER_NAME_STATS));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_STATS));
 
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-        statsManagement.registerManagerMBean(mockStatsManager);
+        mxBeanRegistrar.registerManagerMXBean(mockStatsManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
     }
 
     @Test
     public void testUnregisterManagerMBean() throws Exception {
-        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
-                                                                                DefaultStatsManagement.MANAGER_NAME_STATS));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE,MANAGER_NAME_STATS));
 
-        final StatsManagerMBean mockManagerMBean = mockery.mock(StatsManagerMBean.class);
+        final StatsManagerMXBean mockManagerMBean = mockery.mock(StatsManagerMXBean.class);
 
         mBeanServer.registerMBean(mockManagerMBean, objectName);
 
-        statsManagement.unregisterManagerMBean(mockStatsManager);
+        mxBeanRegistrar.unregisterManagerMXBean(mockStatsManager);
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
     }
 
     @Test
     public void testRegisterSessionManagerMBean() throws Exception {
 
-        final StatsSessionManagerMBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMBean.class);
+        final StatsSessionManagerMXBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMXBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockMBeanFactory).createSessionManagerMBean(with(mockStatsManager));
+            one(mockMBeanFactory).createSessionManagerMBean(with(mockSessionManager));
             will(returnValue(mockSessionManagerMBean));
         }});
 
-        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
-                                                                                DefaultStatsManagement.MANAGER_NAME_SESSION));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_SESSION));
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-        statsManagement.registerSessionManagerMBean(mockStatsManager);
+        mxBeanRegistrar.registerSessionManagerMXBean(mockSessionManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
     }
 
     @Test
     public void testUnregisterSessionManagerMBean() throws Exception {
-        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
-                                                                                DefaultStatsManagement.MANAGER_NAME_SESSION));
-        final StatsSessionManagerMBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMBean.class);
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_SESSION));
+        final StatsSessionManagerMXBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMXBean.class);
 
         mBeanServer.registerMBean(mockSessionManagerMBean, objectName);
 
-        statsManagement.unregisterSessionManagerMBean(mockStatsManager);
+        mxBeanRegistrar.unregisterSessionManagerMXBean();
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
     }
 
     @Test
     public void testRegisterConfigManagerMBean() throws Exception {
 
-        final StatsConfigManagerMBean mockConfigManagerMBean = mockery.mock(StatsConfigManagerMBean.class);
+        final StatsConfigManagerMXBean mockConfigManagerMBean = mockery.mock(StatsConfigManagerMXBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockMBeanFactory).createConfigManagerMBean(mockStatsManager); will(returnValue(mockConfigManagerMBean));
+            one(mockMBeanFactory).createConfigManagerMBean(mockConfigManager);
+            will(returnValue(mockConfigManagerMBean));
         }});
 
-        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
-                                                                                DefaultStatsManagement.MANAGER_NAME_CONFIG));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE,MANAGER_NAME_CONFIG));
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-        statsManagement.registerConfigManagerMBean(mockStatsManager);
+        mxBeanRegistrar.registerConfigManagerMXBean(mockConfigManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
     }
 
     @Test
     public void testUnregisterConfigManagerMBean() throws Exception {
-        ObjectName objectName = new ObjectName(statsManagement.buildManagerName(mockStatsManager,
-                                                                                DefaultStatsManagement.MANAGER_NAME_CONFIG));
-        final StatsConfigManagerMBean mockConfigManagerMBean = mockery.mock(StatsConfigManagerMBean.class);
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_CONFIG));
+        final StatsConfigManagerMXBean mockConfigManagerMBean = mockery.mock(StatsConfigManagerMXBean.class);
 
         mBeanServer.registerMBean(mockConfigManagerMBean, objectName);
 
-        statsManagement.unregisterConfigManagerMBean(mockStatsManager);
+        mxBeanRegistrar.unregisterConfigManagerMXBean();
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
     }
 
@@ -327,18 +368,18 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
 
         final StatsConfig mockConfig = mockery.mock(StatsConfig.class);
         final StatsConfigBuilderFactory mockConfigBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
-        final StatsConfigMBean mockConfigMBean = mockery.mock(StatsConfigMBean.class);
+        final StatsConfigMXBean mockConfigMBean = mockery.mock(StatsConfigMXBean.class);
 
         mockery.checking(new Expectations() {{
             allowing(mockStatsManager).getConfigBuilderFactory(); will(returnValue(mockConfigBuilderFactory));
-            one(mockMBeanFactory).createConfigMBean(mockStatsManager, mockKey, mockConfig); will(returnValue(mockConfigMBean));
+            one(mockMBeanFactory).createConfigMBean(NAMESPACE, mockKey, mockConfig); will(returnValue(mockConfigMBean));
             ignoring(mockConfig);
         }});
 
-        ObjectName name = new ObjectName(statsManagement.buildName(mockStatsManager, mockKey, DefaultStatsManagement.TYPE_KEYS, DefaultStatsManagement.SUBTYPE_CONFIG, false));
+        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_CONFIG, false));
 
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
-        statsManagement.registerConfigMBean(mockStatsManager, mockKey, mockConfig);
+        mxBeanRegistrar.registerConfigMXBean(mockKey, mockConfig);
         assertEquals(1, mBeanServer.queryMBeans(name, null).size());
     }
 
@@ -348,17 +389,17 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
         final StatsConfig mockConfig = mockery.mock(StatsConfig.class);
-        final StatsConfigMBean mockConfigMbean = mockery.mock(StatsConfigMBean.class);
+        final StatsConfigMXBean mockConfigMbean = mockery.mock(StatsConfigMXBean.class);
 
         mockery.checking(new Expectations() {{
             ignoring(mockConfig);
         }});
 
-        ObjectName name = new ObjectName(statsManagement.buildName(mockStatsManager, mockKey, DefaultStatsManagement.TYPE_KEYS, DefaultStatsManagement.SUBTYPE_CONFIG, false));
+        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_CONFIG, false));
 
         mBeanServer.registerMBean(mockConfigMbean, name);
 
-        statsManagement.unregisterConfigMBeanIfNecessary(mockStatsManager, mockKey);
+        mxBeanRegistrar.unregisterConfigMXBeanIfNecessary(mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
     }
 
@@ -367,9 +408,9 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
 
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
-        ObjectName name = new ObjectName(statsManagement.buildName(mockStatsManager, mockKey, DefaultStatsManagement.TYPE_KEYS, DefaultStatsManagement.SUBTYPE_SESSION, false));
+        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, false));
 
-        statsManagement.unregisterConfigMBeanIfNecessary(mockStatsManager, mockKey);
+        mxBeanRegistrar.unregisterConfigMXBeanIfNecessary(mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
     }
 
@@ -379,20 +420,19 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
         final StatsSession mockSession = mockery.mock(StatsSession.class);
-        final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);
-        final StatsSessionMBean mockSessionMBean = mockery.mock(StatsSessionMBean.class);
+        final StatsSessionMXBean mockSessionMBean = mockery.mock(StatsSessionMXBean.class);
 
         mockery.checking(new Expectations() {{
             allowing(mockStatsManager).getSessionManager(); will(returnValue(mockSessionManager));
-            one(mockMBeanFactory).createSessionMBean(mockStatsManager, mockSession); will(returnValue(mockSessionMBean));
+            one(mockMBeanFactory).createSessionMBean(NAMESPACE, mockSession); will(returnValue(mockSessionMBean));
             allowing(mockSession).getKey(); will(returnValue(mockKey));
             ignoring(mockSession);
         }});
 
-        ObjectName name = new ObjectName(statsManagement.buildName(mockStatsManager, mockKey, DefaultStatsManagement.TYPE_KEYS, DefaultStatsManagement.SUBTYPE_SESSION, false));
+        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, false));
 
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
-        statsManagement.registerSessionMBean(mockStatsManager, mockSession);
+        mxBeanRegistrar.registerSessionMXBean(mockSession);
         assertEquals(1, mBeanServer.queryMBeans(name, null).size());
     }
 
@@ -402,18 +442,18 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
         final StatsSession mockSession = mockery.mock(StatsSession.class);
-        final StatsSessionMBean mockSessionMBean = mockery.mock(StatsSessionMBean.class);
+        final StatsSessionMXBean mockSessionMBean = mockery.mock(StatsSessionMXBean.class);
 
         mockery.checking(new Expectations() {{
             allowing(mockSession).getKey(); will(returnValue(mockKey));
             ignoring(mockSession);
         }});
 
-        ObjectName name = new ObjectName(statsManagement.buildName(mockStatsManager, mockKey, DefaultStatsManagement.TYPE_KEYS, DefaultStatsManagement.SUBTYPE_SESSION, false));
+        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, false));
 
         mBeanServer.registerMBean(mockSessionMBean, name);
 
-        statsManagement.unregisterSessionMBeanIfNecessary(mockStatsManager, mockKey);
+        mxBeanRegistrar.unregisterSessionMXBeanIfNecessary(mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
     }
 
@@ -422,15 +462,15 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
 
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
-        ObjectName name = new ObjectName(statsManagement.buildName(mockStatsManager, mockKey, DefaultStatsManagement.TYPE_KEYS, DefaultStatsManagement.SUBTYPE_SESSION, false));
+        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, false));
 
-        statsManagement.unregisterSessionMBeanIfNecessary(mockStatsManager, mockKey);
+        mxBeanRegistrar.unregisterSessionMXBeanIfNecessary(mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
     }
 
     private void assertValidObjectName() {
 
-        String name = statsManagement.buildName(mockStatsManager, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
+        String name = buildName(NAMESPACE, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
 
         try {
             new ObjectName(name);
@@ -440,7 +480,7 @@ public class DefaultStatsManagementTest extends AbstractStajisticsTestCase {
     }
 
     private void assertInvalidObjectName() {
-        String name = statsManagement.buildName(mockStatsManager, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
+        String name = buildName(NAMESPACE, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
 
         try {
             new ObjectName(name);

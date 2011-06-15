@@ -12,12 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.configuration.StatsConfigManager;
+import org.stajistics.management.AbstractMXBeanTestCase;
+import org.stajistics.management.beans.DefaultStatsConfigManagerMXBean;
+import org.stajistics.management.beans.StatsConfigManagerMXBean;
 
 import javax.management.ObjectName;
 
@@ -29,7 +32,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsConfigManagerMBeanTest extends AbstractMBeanTestCase {
+public class DefaultStatsConfigManagerMXBeanTest extends AbstractMXBeanTestCase {
 
     protected StatsConfigManager mockConfigManager;
 
@@ -38,17 +41,17 @@ public class DefaultStatsConfigManagerMBeanTest extends AbstractMBeanTestCase {
         mockConfigManager = mockery.mock(StatsConfigManager.class);
     }
 
-    protected StatsConfigManagerMBean createConfigManagerMBean(final StatsConfigManager configManager) {
-        return new DefaultStatsConfigManagerMBean(configManager);
+    protected StatsConfigManagerMXBean createConfigManagerMBean(final StatsConfigManager configManager) {
+        return new DefaultStatsConfigManagerMXBean(configManager);
     }
 
     @Test
     public void testGetImplementation() throws Exception {
 
-        StatsConfigManagerMBean mBean = createConfigManagerMBean(mockConfigManager);
+        StatsConfigManagerMXBean mBean = createConfigManagerMBean(mockConfigManager);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigManagerMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigManagerMXBean.class);
 
         assertEquals(mockConfigManager.getClass().getName(),
                      mBean.getImplementation());
@@ -61,10 +64,10 @@ public class DefaultStatsConfigManagerMBeanTest extends AbstractMBeanTestCase {
             one(mockConfigManager).getConfigCount(); will(returnValue(42));
         }});
 
-        StatsConfigManagerMBean mBean = createConfigManagerMBean(mockConfigManager);
+        StatsConfigManagerMXBean mBean = createConfigManagerMBean(mockConfigManager);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigManagerMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigManagerMXBean.class);
 
         assertEquals(42, mBean.getConfigCount());
     }

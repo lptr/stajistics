@@ -182,4 +182,11 @@ public class DefaultSessionManager implements StatsSessionManager {
             session.clear();
         }
     }
+
+    @Override
+    public void shutdown() {
+        eventManager.fireEvent(EventType.SESSION_MANAGER_SHUTTING_DOWN, null, this);
+        clear();
+    }
+
 }

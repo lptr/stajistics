@@ -22,33 +22,104 @@ package org.stajistics.event;
  */
 public enum EventType {
 
-    CONFIG_CREATED(0),
-    CONFIG_CHANGED(0),
-    CONFIG_DESTROYED(0),
+    STATS_MANAGER_INITIALIZED,
+    STATS_MANAGER_SHUTTING_DOWN,
 
-    SESSION_CREATED(1),
-    SESSION_CLEARED(1),
-    SESSION_RESTORED(1),
-    SESSION_DESTROYED(1),
+    CONFIG_MANAGER_INITIALIZED,
+    CONFIG_MANAGER_SHUTTING_DOWN,
 
-    TRACKER_TRACKING(2),
-    TRACKER_COMMITTED(2);
+    SESSION_MANAGER_INITIALIZED,
+    SESSION_MANAGER_SHUTTING_DOWN,
 
-    private final int eventGroup;
+    TASK_SERVICE_INITIALIZED,
+    TASK_SERVICE_SHUTTING_DOWN,
 
-    private EventType(final int eventGroup) {
-        this.eventGroup = eventGroup;
+    CONFIG_CREATED,
+    CONFIG_CHANGED,
+    CONFIG_DESTROYED,
+
+    SESSION_CREATED,
+    SESSION_CLEARED,
+    SESSION_RESTORED,
+    SESSION_DESTROYED,
+
+    TRACKER_TRACKING,
+    TRACKER_COMMITTED;
+
+    public boolean isManagerEvent() {
+        return isStatsManagerEvent() || isSessionManagerEvent() || isConfigEvent();
+    }
+
+    public boolean isStatsManagerEvent() {
+        switch (this) {
+            case STATS_MANAGER_INITIALIZED:
+            case STATS_MANAGER_SHUTTING_DOWN:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public boolean isConfigManagerEvent() {
+        switch (this) {
+            case CONFIG_MANAGER_INITIALIZED:
+            case CONFIG_MANAGER_SHUTTING_DOWN:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public boolean isSessionManagerEvent() {
+        switch (this) {
+            case SESSION_MANAGER_INITIALIZED:
+            case SESSION_MANAGER_SHUTTING_DOWN:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public boolean isTaskServiceEvent() {
+        switch (this) {
+            case TASK_SERVICE_INITIALIZED:
+            case TASK_SERVICE_SHUTTING_DOWN:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public boolean isConfigEvent() {
-        return eventGroup == 0;
+        switch (this) {
+            case CONFIG_CREATED:
+            case CONFIG_CHANGED:
+            case CONFIG_DESTROYED:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public boolean isSessionEvent() {
-        return eventGroup == 1;
+        switch (this) {
+            case SESSION_CREATED:
+            case SESSION_CLEARED:
+            case SESSION_RESTORED:
+            case SESSION_DESTROYED:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public boolean isTrackerEvent() {
-        return eventGroup == 2;
+        switch (this) {
+            case TRACKER_TRACKING:
+            case TRACKER_COMMITTED:
+                return true;
+            default:
+                return false;
+        }
     }
 }

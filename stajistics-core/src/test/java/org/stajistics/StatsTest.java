@@ -387,6 +387,17 @@ public class StatsTest extends AbstractStajisticsTestCase {
     public static final class ClassLoadableMockStatsManager implements StatsManager {
 
         @Override
+        public String getNamespace() {
+            return "ns";
+        }
+
+        @Override
+        public void initialize() {}
+
+        @Override
+        public void shutdown() {}
+
+        @Override
         public StatsConfigManager getConfigManager() {
             return null;
         }
@@ -429,8 +440,6 @@ public class StatsTest extends AbstractStajisticsTestCase {
         @Override
         public void setEnabled(boolean enabled) {}
 
-        @Override
-        public void shutdown() {}
     }
 
     public static final class ClassLoadableMockStatsManagerFactory implements StatsManagerFactory {
