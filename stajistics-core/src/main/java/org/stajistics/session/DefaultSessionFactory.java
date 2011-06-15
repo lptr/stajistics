@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.StatsProperties;
 import org.stajistics.session.recorder.DataRecorder;
 
 /**
@@ -27,6 +28,9 @@ public class DefaultSessionFactory implements StatsSessionFactory {
 
     private static DefaultSessionFactory INSTANCE = new DefaultSessionFactory();
 
+    public static final String PROP_DEFAULT_SESSION_IMPL =
+        StatsSessionFactory.class.getName() + ".defaultSessionImpl";
+
     private DefaultSessionFactory() {}
 
     public static DefaultSessionFactory getInstance() {
@@ -37,8 +41,22 @@ public class DefaultSessionFactory implements StatsSessionFactory {
     public StatsSession createSession(final StatsKey key,
                                       final StatsManager manager,
                                       final DataRecorder[] dataRecorders) {
-        return new ConcurrentSession(key, 
-                                          manager.getEventManager(), 
-                                          dataRecorders);
+
+        StatsSessionFactory sessionFactory = ConcurrentSession.FACTORY;
+
+        String sessionImpl = StatsProperties.getProperty(PROP_DEFAULT_SESSION_IMPL);
+        if (sessionImpl != null && sessionImpl.length() > 0) {
+            sessionImpl = sessionImpl.intern();
+
+            if (sessionImpl == "concurrent") {
+                sessionFactory = ConcurrentSession.FACTORY;
+            } else if (sessionImpl == "asynchronous") {
+                sessionFactory = AsynchronousSession.FACTORY;
+            } else if (sessionImpl == "immutable") {
+                sessionFactory = ImmutableSession.FACTORY;
+            }
+        }
+
+        return sessionFactory.createSession(key, manager, dataRecorders);
     }
 }
