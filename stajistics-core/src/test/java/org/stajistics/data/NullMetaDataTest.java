@@ -31,7 +31,4 @@ public class NullMetaDataTest extends NullDataSetTest {
     @Ignore
     public void testGetMetaData() {}
 
-    @Override
-    @Ignore
-    public void testGetFieldMetaDataSet() {}
 }

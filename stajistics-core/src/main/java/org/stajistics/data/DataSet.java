@@ -14,7 +14,8 @@
  */
 package org.stajistics.data;
 
-import java.io.Serializable;
+import org.stajistics.session.StatsSession;
+
 
 /**
  * <p>Stores statistical data and meta data as a mapping of key-value pairs known as fields. 
@@ -28,10 +29,10 @@ import java.io.Serializable;
  *
  * @author The Stajistics Project
  */
-public interface DataSet extends DataContainer,Serializable {
+public interface DataSet extends DataContainer {
 
     /**
-     * Common field names.
+     * Standard field names.
      */
     interface Field {
         public static final String HITS = "hits";
@@ -45,7 +46,7 @@ public interface DataSet extends DataContainer,Serializable {
         public static final String SUM = "sum";
 
         /**
-         * Default values for common field names. 
+         * Default values for standard field names. 
          */
         interface Default {
             public static final Long HITS = 0L;
@@ -60,10 +61,27 @@ public interface DataSet extends DataContainer,Serializable {
         }
     }
 
-    interface MetaField {
-        public static final String COLLECTION_STAMP = "collectionStamp";
-        public static final String DRAINED_SESSION = "drainedSession";
-    }
+    /**
+     * Get the time stamp at which this DataSet was collected from a {@link StatsSession}.
+     * @return The collection time stamp.
+     */
+    long getCollectionTimeStamp();
+
+    /**
+     * Determine if the collection that resulted in this DataSet drained the {@link StatsSession}.
+     * @return <tt>true</tt> if the session was drained.
+     * @see StatsSession#drainData()
+     */
+    boolean isSessionDrained();
+
+    /**
+     * Determine if this DataSet has any meta data. Internal meta data structures are lazily initialised 
+     * when {@link #getMetaData()} is called to try to save resources where possible. Therefore, calling
+     * this method is preferable to calling <tt>!getMetaData().isEmpty()</tt> because this method will
+     * not lazily initialise the meta data structures.
+     * @return <tt>true</tt> if at least one meta data attribute is available.
+     */
+    boolean hasMetaData();
 
     /**
      * Obtain a {@link MetaData} instance which contains meta data related to this DataSet.
@@ -71,13 +89,5 @@ public interface DataSet extends DataContainer,Serializable {
      * @return A {@link MetaData} instance, never <tt>null</tt>.
      */
     MetaData getMetaData();
-
-    /**
-     * Obtain a {@link FieldMetaDataSet} instance which provides access to meta data associated with
-     * individual fields of this DataSet.
-     *
-     * @return A {@link FieldMetaDataSet} instance, never <tt>null</tt>.
-     */
-    FieldMetaDataSet getFieldMetaDataSet();
 
 }

@@ -14,6 +14,14 @@
  */
 package org.stajistics.session;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Set;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,10 +36,6 @@ import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Decorator;
-
-import java.util.Set;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -150,6 +154,19 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
     }
 
     @Test
+    public void testCreateDataSetIsNotNull() {
+        AbstractStatsSession abstractSession = (AbstractStatsSession) session;
+        assertNotNull(abstractSession.createDataSet(false));
+    }
+
+    @Test
+    public void testCreateDataSetPassesAlongIsSessionDrained() {
+        AbstractStatsSession abstractSession = (AbstractStatsSession) session;
+        DataSet dataSet = abstractSession.createDataSet(true);
+        assertTrue(dataSet.isSessionDrained());
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void testGetDataRecorders() {
         final DataRecorder mockDataRecorder = mockery.mock(DataRecorder.class);
@@ -212,55 +229,6 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
         session.clear();
 
         assertInitialState(session);
-    }
-
-    @Test
-    public void testCollectDataHasMetaCollectionStamp() {
-        mockery.checking(new Expectations() {{
-            ignoring(mockEventManager);
-        }});
-
-        final long now = System.currentTimeMillis();
-
-        DataSet dataSet = session.collectData();
-
-        final Long collectionStamp = dataSet.getMetaData()
-                                            .getField(DataSet.MetaField.COLLECTION_STAMP,
-                                                      Long.class);
-        assertNotNull(collectionStamp);
-        assertTrue(collectionStamp >= now);
-    }
-
-    @Test
-    public void testDrainDataHasMetaCollectionStamp() {
-        mockery.checking(new Expectations() {{
-            ignoring(mockEventManager);
-        }});
-
-        final long now = System.currentTimeMillis();
-
-        DataSet dataSet = session.drainData();
-
-        final Long collectionStamp = dataSet.getMetaData()
-                                            .getField(DataSet.MetaField.COLLECTION_STAMP,
-                                                      Long.class);
-        assertNotNull(collectionStamp);
-        assertTrue(collectionStamp >= now);
-    }
-
-    @Test
-    public void testDrainDataHasMetaDrainedSession() {
-        mockery.checking(new Expectations() {{
-            ignoring(mockEventManager);
-        }});
-
-        DataSet dataSet = session.drainData();
-
-        final Boolean drained = dataSet.getMetaData()
-                                       .getField(DataSet.MetaField.DRAINED_SESSION,
-                                                 Boolean.class);
-        assertNotNull(drained);
-        assertTrue(drained);
     }
 
     @Test
@@ -570,7 +538,7 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
             ignoring(mockEventManager);
         }});
 
-        session.restore(new DefaultDataSet());
+        session.restore(new DefaultDataSet(-1L, false));
 
         // Should equal initial/cleared state
         assertEquals(DataSet.Field.Default.HITS.longValue(), session.getHits());
@@ -710,7 +678,7 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
             ignoring(mockEventManager);
         }});
 
-        session.restore(new DefaultDataSet());
+        session.restore(new DefaultDataSet(-1L, false));
     }
 
     @Test

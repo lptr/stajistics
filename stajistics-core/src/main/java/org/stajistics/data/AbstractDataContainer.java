@@ -14,6 +14,10 @@
  */
 package org.stajistics.data;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 
 /**
  * A convenience base implementation of {@link DataContainer}.
@@ -21,6 +25,26 @@ package org.stajistics.data;
  * @author The Stajistics Project
  */
 public abstract class AbstractDataContainer implements DataContainer {
+
+    private final Map<String,Object> dataMap = createDataMap();
+
+    protected Map<String,Object> createDataMap() {
+        return new HashMap<String,Object>();
+    }
+
+    @Override
+    public Object getField(final String name) {
+        if (name == null) {
+            return null;
+        }
+
+        return dataMap.get(name);
+    }
+
+    @Override
+    public Set<String> getFieldNames() {
+        return dataMap.keySet();
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -59,6 +83,67 @@ public abstract class AbstractDataContainer implements DataContainer {
         }
 
         return result;
+    }
+
+    @Override
+    public void setField(final String name, final Object value) {
+        if (name == null) {
+            throw new NullPointerException("name");
+        }
+        if (value == null) {
+            throw new NullPointerException("value");
+        }
+        if (name.length() == 0) {
+            throw new IllegalArgumentException("empty name");
+        }
+
+        dataMap.put(name, value);
+    }
+
+    @Override
+    public Object removeField(final String name) {
+        return dataMap.remove(name);
+    }
+
+    @Override
+    public void clear() {
+        dataMap.clear();
+    }
+
+    @Override
+    public int size() {
+        return dataMap.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return dataMap.isEmpty();
+    }
+
+    @Override
+    public int hashCode() {
+        return dataMap.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+
+        AbstractDataContainer other;
+
+        try {
+            // This is optimised for the success case (i.e. to avoid instanceof)
+            other = (AbstractDataContainer) obj;
+        } catch (ClassCastException cce) {
+            return false;
+        }
+
+        return dataMap.equals(other.dataMap);
     }
 
 }

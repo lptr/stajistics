@@ -287,11 +287,8 @@ public class ConcurrentSession extends AbstractStatsSession {
 
     @Override
     public DataSet drainData() {
-        DataSet data = collectData();
-
-        data.getMetaData()
-            .setField(DataSet.MetaField.DRAINED_SESSION, true);
-
+        DataSet data = createDataSet(true);
+        collectData(data);
         clear();
         return data;
     }

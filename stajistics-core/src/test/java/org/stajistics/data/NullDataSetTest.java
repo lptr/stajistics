@@ -40,14 +40,6 @@ public class NullDataSetTest extends AbstractStajisticsTestCase {
     }
 
     @Test
-    public void testGetFieldMetaDataSet() {
-        FieldMetaDataSet mds = NullDataSet.getInstance().getFieldMetaDataSet();
-        assertNotNull(mds);
-        assertEquals(NullMetaData.getInstance(),
-                     mds.getMetaData("anything"));
-    }
-
-    @Test
     public void testGetField() {
         assertNull(dc().getField("a"));
         assertNull(dc().getField("b"));
