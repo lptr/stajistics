@@ -12,28 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
 import javax.management.MXBean;
-import java.io.IOException;
 
 /**
- *
- *
+ * 
+ * 
  *
  * @author The Stajistics Project
  */
 @MXBean
-public interface StatsSessionManagerMBean {
+public interface StatsConfigMXBean {
 
-    String getImplementation() throws IOException;
+    boolean getEnabled();
 
-    int getSessionCount() throws IOException;
+    void setEnabled(boolean enabled);
 
-    void dumpAllSessions() throws IOException;
+    String getUnit();
 
-    void clearAllSessions() throws IOException;
+    void setUnit(String unit);
 
-    void destroyAllSessions() throws IOException;
+    String getDescription();
 
+    void setDescription(String description);
+
+    String getTrackerFactory();
+
+    String getSessionFactory();
+
+    void enableTree(boolean enabled);
 }

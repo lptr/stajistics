@@ -14,12 +14,14 @@
  */
 package org.stajistics.management;
 
+import javax.management.MBeanServer;
+
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
+import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.session.StatsSession;
-
-import java.io.Serializable;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  *
@@ -27,18 +29,29 @@ import java.io.Serializable;
  *
  * @author The Stajistics Project
  */
-public interface StatsMBeanFactory extends Serializable {
+public interface StatsMXBeanRegistrar {
 
-    StatsManagerMBean createManagerMBean(StatsManager statsManager);
+    String getNamespace();
+    
+    MBeanServer getMBeanServer();
 
-    StatsConfigManagerMBean createConfigManagerMBean(StatsManager statsManager);
+    void registerManagerMXBean(StatsManager statsManager);
 
-    StatsConfigMBean createConfigMBean(StatsManager statsManager,
-                                       StatsKey key,
-                                       StatsConfig config);
+    void unregisterManagerMXBean(StatsManager statsManager);
 
-    StatsSessionManagerMBean createSessionManagerMBean(StatsManager statsManager);
+    void registerConfigManagerMXBean(StatsConfigManager configManager);
 
-    StatsSessionMBean createSessionMBean(StatsManager statsManager,
-                                         StatsSession session);
+    void unregisterConfigManagerMXBean();
+
+    void registerConfigMXBean(StatsKey key, StatsConfig config);
+
+    void unregisterConfigMXBeanIfNecessary(StatsKey key);
+
+    void registerSessionManagerMXBean(StatsSessionManager sessionManager);
+
+    void unregisterSessionManagerMXBean();
+
+    void registerSessionMXBean(StatsSession session);
+
+    void unregisterSessionMXBeanIfNecessary(StatsKey key);
 }

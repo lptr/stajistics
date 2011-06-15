@@ -12,10 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.management.AbstractMXBeanTestCase;
+import org.stajistics.management.beans.DefaultStatsSessionManagerMXBean;
+import org.stajistics.management.beans.StatsSessionManagerMXBean;
 import org.stajistics.session.StatsSessionManager;
 
 import javax.management.ObjectName;
@@ -28,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsSessionManagerMBeanTest extends AbstractMBeanTestCase {
+public class DefaultStatsSessionManagerMXBeanTest extends AbstractMXBeanTestCase {
 
      protected StatsSessionManager mockSessionManager;
 
@@ -37,17 +40,17 @@ public class DefaultStatsSessionManagerMBeanTest extends AbstractMBeanTestCase {
          mockSessionManager = mockery.mock(StatsSessionManager.class);
      }
 
-     protected DefaultStatsSessionManagerMBean createSessionManagerMBean(final StatsSessionManager sessionManager) {
-         return new DefaultStatsSessionManagerMBean(sessionManager);
+     protected DefaultStatsSessionManagerMXBean createSessionManagerMBean(final StatsSessionManager sessionManager) {
+         return new DefaultStatsSessionManagerMXBean(sessionManager);
      }
 
      @Test
      public void testGetImplementation() throws Exception {
 
-         StatsSessionManagerMBean mBean = createSessionManagerMBean(mockSessionManager);
+         StatsSessionManagerMXBean mBean = createSessionManagerMBean(mockSessionManager);
          ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-         mBean = registerMBean(mBean, name, StatsSessionManagerMBean.class);
+         mBean = registerMBean(mBean, name, StatsSessionManagerMXBean.class);
 
          assertEquals(mockSessionManager.getClass().getName(),
                       mBean.getImplementation());

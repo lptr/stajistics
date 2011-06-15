@@ -12,21 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
-import org.jmock.Expectations;
-import org.junit.Before;
-import org.junit.Test;
-import org.stajistics.StatsKey;
-import org.stajistics.data.DataSet;
-import org.stajistics.session.StatsSession;
-import org.stajistics.session.StatsSessionManager;
+import static org.junit.Assert.assertEquals;
 
-import javax.management.ObjectName;
 import java.util.Collections;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
+import javax.management.ObjectName;
+
+import org.jmock.Expectations;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
+import org.stajistics.StatsManagerRegistry;
+import org.stajistics.data.DataSet;
+import org.stajistics.management.AbstractMXBeanTestCase;
+import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  *
@@ -34,9 +39,12 @@ import static org.junit.Assert.assertEquals;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
+public class DefaultStatsSessionMXBeanTest extends AbstractMXBeanTestCase {
+
+    private static final String NAMESPACE = "ns";
 
     protected StatsKey mockKey;
+    protected StatsManager mockManager;
     protected StatsSessionManager mockSessionManager;
     protected StatsSession mockSession;
     protected DataSet mockDataSet;
@@ -44,13 +52,29 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
     @Before
     public void setUp() {
         mockKey = mockery.mock(StatsKey.class);
+        mockManager = mockery.mock(StatsManager.class);
         mockSessionManager = mockery.mock(StatsSessionManager.class);
         mockSession = mockery.mock(StatsSession.class);
         mockDataSet = mockery.mock(DataSet.class);
+        
+        mockery.checking(new Expectations() {{
+            allowing(mockManager).getNamespace();
+            will(returnValue(NAMESPACE));
+
+            allowing(mockManager).getSessionManager();
+            will(returnValue(mockSessionManager));
+        }});
+        
+        StatsManagerRegistry.registerStatsManager(mockManager);
     }
 
-    protected DefaultStatsSessionMBean createSessionMBean(final StatsSession session) {
-        return new DefaultStatsSessionMBean(mockSessionManager, session);
+    @After
+    public void tearDown() {
+        StatsManagerRegistry.removeStatsManager(mockManager);
+    }
+    
+    protected DefaultStatsSessionMXBean createSessionMBean(final StatsSession session) {
+        return new DefaultStatsSessionMXBean(NAMESPACE, session);
     }
 
     private void buildEmptyDataSetExpectations() {
@@ -70,10 +94,10 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
             allowing(mockSession).collectData(); will(returnValue(mockDataSet));
         }});
 
-        StatsSessionMBean mBean = createSessionMBean(mockSession);
+        StatsSessionMXBean mBean = createSessionMBean(mockSession);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsSessionMBean.class);
+        mBean = registerMBean(mBean, name, StatsSessionMXBean.class);
 
         assertEquals(mockSession.getClass().getName(),
                      getMBeanServerConnection().getAttribute(name, "Implementation"));
@@ -93,10 +117,10 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
             allowing(mockSession).getField(with("test")); will(returnValue("value"));
         }});
 
-        StatsSessionMBean mBean = createSessionMBean(mockSession);
+        StatsSessionMXBean mBean = createSessionMBean(mockSession);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsSessionMBean.class);
+        mBean = registerMBean(mBean, name, StatsSessionMXBean.class);
 
         assertEquals("value", getMBeanServerConnection().getAttribute(name, "_test"));
     }
@@ -110,10 +134,10 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
             one(mockSession).clear();
         }});
 
-        StatsSessionMBean mBean = createSessionMBean(mockSession);
+        StatsSessionMXBean mBean = createSessionMBean(mockSession);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsSessionMBean.class);
+        mBean = registerMBean(mBean, name, StatsSessionMXBean.class);
 
         getMBeanServerConnection().invoke(name, "clear", null, null);
     }
@@ -127,10 +151,10 @@ public class DefaultStatsSessionMBeanTest extends AbstractMBeanTestCase {
             one(mockSessionManager).remove(with(mockSession));
         }});
 
-        StatsSessionMBean mBean = createSessionMBean(mockSession);
+        StatsSessionMXBean mBean = createSessionMBean(mockSession);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsSessionMBean.class);
+        mBean = registerMBean(mBean, name, StatsSessionMXBean.class);
 
         getMBeanServerConnection().invoke(name, "destroy", null, null);
     }

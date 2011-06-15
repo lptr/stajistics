@@ -131,7 +131,10 @@ public class SynchronousEventManager implements EventManager {
 
     private List<EventHandler> getEventHandlers(final StatsKey key,
                                                 final boolean create) {
-        List<EventHandler> eventHandlers = sessionEventHandlers.get(key);
+        List<EventHandler> eventHandlers = null;
+        if (key != null) {
+            eventHandlers = sessionEventHandlers.get(key);
+        }
         if (eventHandlers == null && create) {
             eventHandlers = createEventHandlerList();
             List<EventHandler> old = sessionEventHandlers.putIfAbsent(key, eventHandlers);
@@ -149,9 +152,6 @@ public class SynchronousEventManager implements EventManager {
                           final Object target) {
         if (eventType == null) {
             throw new NullPointerException("eventType");
-        }
-        if (key == null) {
-            throw new NullPointerException("key");
         }
         if (target == null) {
             throw new NullPointerException("target");

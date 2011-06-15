@@ -12,11 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
 import org.stajistics.StatsManager;
+import org.stajistics.StatsManagerRegistry;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 
@@ -28,17 +29,17 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsConfigMBean implements StatsConfigMBean {
+public class DefaultStatsConfigMXBean implements StatsConfigMXBean {
 
-    protected final StatsManager statsManager;
+    protected final String namespace;
     protected final StatsKey key;
     protected final StatsConfig config;
 
-    public DefaultStatsConfigMBean(final StatsManager statsManager,
-                                   final StatsKey key,
-                                   final StatsConfig config) {
-        if (statsManager == null) {
-            throw new NullPointerException("statsManager");
+    public DefaultStatsConfigMXBean(final String namespace,
+                                    final StatsKey key,
+                                    final StatsConfig config) {
+        if (namespace == null) {
+            throw new NullPointerException("namespace");
         }
         if (key == null) {
             throw new NullPointerException("key");
@@ -47,7 +48,7 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
             throw new NullPointerException("config");
         }
 
-        this.statsManager = statsManager;
+        this.namespace = namespace;
         this.key = key;
         this.config = config;
     }
@@ -57,16 +58,20 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
         return config.isEnabled();
     }
 
+    protected StatsManager getStatsManager() {
+        return StatsManagerRegistry.getStatsManager(namespace);
+    }
+
     @Override
     public void setEnabled(final boolean enabled) {
         if (enabled == config.isEnabled()) {
             return;
         }
 
-        statsManager.getConfigBuilderFactory()
-                    .createConfigBuilder(config)
-                    .withEnabledState(enabled)
-                    .setConfigFor(key);
+        getStatsManager().getConfigBuilderFactory()
+                         .createConfigBuilder(config)
+                         .withEnabledState(enabled)
+                         .setConfigFor(key);
     }
 
     @Override
@@ -80,7 +85,7 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
             return;
         }
 
-        statsManager.getConfigBuilderFactory()
+        getStatsManager().getConfigBuilderFactory()
                     .createConfigBuilder(config)
                     .withUnit(unit)
                     .setConfigFor(key);
@@ -97,7 +102,7 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
             return;
         }
 
-        statsManager.getConfigBuilderFactory()
+        getStatsManager().getConfigBuilderFactory()
                     .createConfigBuilder(config)
                     .withDescription(description)
                     .setConfigFor(key);
@@ -117,6 +122,8 @@ public class DefaultStatsConfigMBean implements StatsConfigMBean {
     public void enableTree(final boolean enabled) {
 
         setEnabled(enabled);
+
+        StatsManager statsManager = getStatsManager();
 
         StatsConfigBuilderFactory configBuilderFactory = statsManager.getConfigBuilderFactory();
 

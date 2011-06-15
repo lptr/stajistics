@@ -12,22 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import javax.management.ObjectName;
 
 import org.jmock.Expectations;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.StatsManagerRegistry;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilder;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
-
-import javax.management.ObjectName;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.stajistics.management.AbstractMXBeanTestCase;
 
 /**
  *
@@ -35,16 +38,18 @@ import static org.junit.Assert.assertTrue;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
+public class DefaultStatsConfigMXBeanTest extends AbstractMXBeanTestCase {
 
+    private static final String NAMESPACE = "ns";
+    
     protected StatsKey mockKey = null;
     protected StatsManager mockManager = null;
     protected StatsConfigBuilderFactory mockConfigBuilderFactory = null;
     protected StatsConfigManager mockConfigManager = null;
     protected StatsConfig mockConfig = null;
 
-    protected DefaultStatsConfigMBean createStatsConfigMBean(final StatsConfig config) {
-        return new DefaultStatsConfigMBean(mockManager, mockKey, config);
+    protected DefaultStatsConfigMXBean createStatsConfigMBean(final StatsConfig config) {
+        return new DefaultStatsConfigMXBean(NAMESPACE, mockKey, config);
     }
 
     @Before
@@ -56,11 +61,22 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
         mockConfig = mockery.mock(StatsConfig.class);
 
         mockery.checking(new Expectations() {{
-            allowing(mockManager).getConfigBuilderFactory(); will(returnValue(mockConfigBuilderFactory));
-            allowing(mockManager).getConfigManager(); will(returnValue(mockConfigManager));
+            allowing(mockManager).getNamespace();
+            will(returnValue(NAMESPACE));
+            allowing(mockManager).getConfigBuilderFactory();
+            will(returnValue(mockConfigBuilderFactory));
+            allowing(mockManager).getConfigManager();
+            will(returnValue(mockConfigManager));
         }});
+
+        StatsManagerRegistry.registerStatsManager(mockManager);
     }
 
+    @After
+    public void tearDown() {
+        StatsManagerRegistry.removeStatsManager(mockManager);
+    }
+    
     @Test
     public void testGetEnabled() throws Exception {
 
@@ -68,10 +84,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(mockConfig).isEnabled(); will(returnValue(true));
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         assertTrue(mBean.getEnabled());
     }
@@ -87,10 +103,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(configBuilder).setConfigFor(mockKey);
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         mBean.setEnabled(false);
     }
@@ -101,10 +117,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(mockConfig).isEnabled(); will(returnValue(true));
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         mBean.setEnabled(true);
     }
@@ -116,10 +132,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(mockConfig).getUnit(); will(returnValue("aUnit"));
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         assertEquals("aUnit", mBean.getUnit());
     }
@@ -135,10 +151,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(configBuilder).setConfigFor(mockKey);
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         mBean.setUnit("unit2");
     }
@@ -149,10 +165,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(mockConfig).getUnit(); will(returnValue("unit1"));
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         mBean.setUnit("unit1");
     }
@@ -164,10 +180,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(mockConfig).getDescription(); will(returnValue("aDescription"));
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         assertEquals("aDescription", mBean.getDescription());
     }
@@ -183,10 +199,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(configBuilder).setConfigFor(mockKey);
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         mBean.setDescription("d2");
     }
@@ -197,10 +213,10 @@ public class DefaultStatsConfigMBeanTest extends AbstractMBeanTestCase {
             one(mockConfig).getDescription(); will(returnValue("d1"));
         }});
 
-        StatsConfigMBean mBean = createStatsConfigMBean(mockConfig);
+        StatsConfigMXBean mBean = createStatsConfigMBean(mockConfig);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsConfigMBean.class);
+        mBean = registerMBean(mBean, name, StatsConfigMXBean.class);
 
         mBean.setDescription("d1");
     }

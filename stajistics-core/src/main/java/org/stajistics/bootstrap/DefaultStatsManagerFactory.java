@@ -17,8 +17,8 @@ package org.stajistics.bootstrap;
 import org.stajistics.DefaultStatsManager;
 import org.stajistics.StatsManager;
 import org.stajistics.StatsProperties;
-import org.stajistics.management.DefaultStatsManagement;
-import org.stajistics.management.StatsManagement;
+import org.stajistics.management.DefaultStatsMXBeanRegistrar;
+import org.stajistics.management.StatsMXBeanRegistrar;
 import org.stajistics.management.StatsManagementEventHandler;
 
 /**
@@ -27,7 +27,7 @@ import org.stajistics.management.StatsManagementEventHandler;
 public class DefaultStatsManagerFactory implements StatsManagerFactory {
 
     private static final String PROP_STAJISTICS_ENABLED = StatsManager.class.getName() + ".enabled";
-    private static final String PROP_MANAGEMENT_ENABLED = StatsManagement.class.getName() + ".enabled";
+    private static final String PROP_MANAGEMENT_ENABLED = StatsMXBeanRegistrar.class.getName() + ".enabled";
 
     @Override
     public DefaultStatsManager createManager() {
@@ -37,15 +37,13 @@ public class DefaultStatsManagerFactory implements StatsManagerFactory {
                                                              .newManager();
 
         if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
-            StatsManagement management = new DefaultStatsManagement();
-            management.registerManagerMBean(manager);
-            management.registerConfigManagerMBean(manager);
-            management.registerSessionManagerMBean(manager);
-
-            StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(manager, management);
+            StatsMXBeanRegistrar management = new DefaultStatsMXBeanRegistrar(manager.getNamespace());
+            StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(management);
             manager.getEventManager()
                    .addGlobalEventHandler(eventHandler);
         }
+
+        manager.initialize();
 
         return manager;
     }

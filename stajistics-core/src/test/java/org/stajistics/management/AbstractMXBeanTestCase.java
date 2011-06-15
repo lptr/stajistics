@@ -28,7 +28,7 @@ import java.io.IOException;
  *
  * @author The Stajistics Project
  */
-public abstract class AbstractMBeanTestCase extends AbstractStajisticsTestCase {
+public abstract class AbstractMXBeanTestCase extends AbstractStajisticsTestCase {
 
     private MBeanServer mBeanServer = null;
     private JMXConnector connector = null;

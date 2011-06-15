@@ -12,18 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.stajistics.StatsProperties;
-import org.stajistics.data.DataSet;
-import org.stajistics.session.StatsSessionManager;
-
-import javax.management.*;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.AttributeNotFoundException;
+import javax.management.DynamicMBean;
+import javax.management.InvalidAttributeValueException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
+import javax.management.MBeanOperationInfo;
+import javax.management.ReflectionException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stajistics.StatsManager;
+import org.stajistics.StatsManagerRegistry;
+import org.stajistics.StatsProperties;
+import org.stajistics.data.DataSet;
+import org.stajistics.session.StatsSession;
+import org.stajistics.session.StatsSessionManager;
 
 /**
  *
@@ -31,17 +44,17 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean {
+public class DefaultStatsSessionMXBean implements StatsSessionMXBean,DynamicMBean {
 
     private static final Logger sessionLogger = LoggerFactory
-            .getLogger(DefaultStatsSessionManagerMBean.SESSION_DUMP_LOGGER_NAME);
+            .getLogger(DefaultStatsSessionManagerMXBean.SESSION_DUMP_LOGGER_NAME);
 
     private static final String PROP_CACHE_DATA_SET =
-        DefaultStatsSessionMBean.class.getName() + ".cacheDataSet";
+        DefaultStatsSessionMXBean.class.getName() + ".cacheDataSet";
     private static final boolean DEFAULT_CACHE_DATA_SET = true;
 
     private static final String PROP_CACHED_DATA_SET_LIFE_SPAN =
-        DefaultStatsSessionMBean.class.getName() + ".cachedDataSetLifeSpanMillis";
+        DefaultStatsSessionMXBean.class.getName() + ".cachedDataSetLifeSpanMillis";
     private static final long DEFAULT_CACHED_DATA_SET_LIFE_SPAN = 2000; // 2 seconds
 
     protected static final String ATTR_IMPLEMENTATION = "Implementation";
@@ -54,24 +67,29 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
 
     protected static final String FIELD_PREFIX = "_";
 
-    protected final StatsSessionManager sessionManager;
+    protected final String namespace;
     protected final org.stajistics.session.StatsSession session;
 
     // DataSet cache members
     private transient long cachedDataSetLastAccess = 0L;
     private transient WeakReference<DataSet> cachedDataSetRef = null;
 
-    public DefaultStatsSessionMBean(final StatsSessionManager sessionManager,
-                                    final org.stajistics.session.StatsSession session) {
-        if (sessionManager == null) {
-            throw new NullPointerException("sessionManager");
+    public DefaultStatsSessionMXBean(final String namespace,
+                                     final StatsSession session) {
+        if (namespace == null) {
+            throw new NullPointerException("namespace");
         }
         if (session == null) {
             throw new NullPointerException("session");
         }
 
-        this.sessionManager = sessionManager;
+        this.namespace = namespace;
         this.session = session;
+    }
+
+    protected StatsSessionManager getSessionManager() {
+        StatsManager manager = StatsManagerRegistry.getStatsManager(namespace);
+        return manager.getSessionManager();
     }
 
     public String getImplementation() {
@@ -233,7 +251,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
         };
 
         return new MBeanInfo(getClass().getName(),
-                             StatsSessionMBean.class.getSimpleName(),
+                             StatsSessionMXBean.class.getSimpleName(),
                              attrs,
                              null,
                              ops,
@@ -250,7 +268,7 @@ public class DefaultStatsSessionMBean implements StatsSessionMBean,DynamicMBean 
             session.clear();
 
         } else if (actionName.equals(OP_DESTROY)) {
-            sessionManager.remove(session);
+            getSessionManager().remove(session);
 
         } else if (actionName.equals(OP_DUMP)) {
             if (sessionLogger.isInfoEnabled()) {

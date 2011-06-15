@@ -1,11 +1,20 @@
 package org.stajistics.util;
 
-import org.stajistics.configuration.xml.binding.XMLConfigDocument;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
 
 /**
  * @author The Stajistics Project

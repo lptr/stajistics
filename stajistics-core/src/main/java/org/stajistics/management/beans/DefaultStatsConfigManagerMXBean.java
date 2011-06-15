@@ -12,36 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
-import org.stajistics.StatsManager;
+import org.stajistics.configuration.StatsConfigManager;
+
+import java.io.IOException;
 
 /**
+ *
+ *
+ *
  * @author The Stajistics Project
  */
-public class DefaultStatsManagerMBean implements StatsManagerMBean {
+public class DefaultStatsConfigManagerMXBean implements StatsConfigManagerMXBean {
 
-    private final StatsManager statsManager;
-    
-    public DefaultStatsManagerMBean(final StatsManager statsManager) {
-        if (statsManager == null) {
-            throw new NullPointerException("statsManager");
+    private final StatsConfigManager configManager;
+
+    public DefaultStatsConfigManagerMXBean(final StatsConfigManager configManager) {
+        if (configManager == null) {
+            throw new NullPointerException("configManager");
         }
-        this.statsManager = statsManager;
+
+        this.configManager = configManager;
     }
 
     @Override
-    public boolean getEnabled() {
-        return statsManager.isEnabled();
+    public String getImplementation() throws IOException {
+        return configManager.getClass().getName();
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        statsManager.setEnabled(enabled);
-    }
-
-    @Override
-    public void shutdown() {
-        statsManager.shutdown();
+    public int getConfigCount() throws IOException {
+        return configManager.getConfigCount();
     }
 }

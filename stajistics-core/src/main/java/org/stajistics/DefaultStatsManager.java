@@ -19,6 +19,7 @@ import org.stajistics.configuration.DefaultStatsConfigManager;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
+import org.stajistics.event.EventType;
 import org.stajistics.event.SynchronousEventManager;
 import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSessionManager;
@@ -38,6 +39,7 @@ public class DefaultStatsManager implements StatsManager {
 
     private volatile boolean enabled = true;
 
+    protected final String namespace;
     protected final StatsConfigManager configManager;
     protected final StatsSessionManager sessionManager;
     protected final EventManager eventManager;
@@ -58,14 +60,14 @@ public class DefaultStatsManager implements StatsManager {
      * @param taskService The {@link TaskService} to use. Must not be <tt>null</tt>.
      * @throws NullPointerException If any parameter is <tt>null</tt>.
      */
-    public DefaultStatsManager(final StatsConfigManager configManager,
+    public DefaultStatsManager(final String namespace,
+                               final StatsConfigManager configManager,
                                final StatsSessionManager sessionManager,
                                final EventManager eventManager,
                                final TrackerLocator trackerLocator,
                                final StatsKeyFactory keyFactory,
                                final StatsConfigBuilderFactory configBuilderFactory,
                                final TaskService taskService) {
-
         if (configManager == null) {
             throw new NullPointerException("configManager");
         }
@@ -88,6 +90,12 @@ public class DefaultStatsManager implements StatsManager {
             throw new NullPointerException("taskService");
         }
 
+        if (namespace != null && namespace.isEmpty()) {
+            this.namespace = null;
+        } else {
+            this.namespace = namespace;
+        }
+
         this.keyFactory = keyFactory;
         this.configManager = configManager;
         this.sessionManager = sessionManager;
@@ -95,6 +103,38 @@ public class DefaultStatsManager implements StatsManager {
         this.eventManager = eventManager;
         this.configBuilderFactory = configBuilderFactory;
         this.taskService = taskService;
+    }
+
+    @Override
+    public void initialize() {
+        StatsManagerRegistry.registerStatsManager(this);
+
+        eventManager.fireEvent(EventType.TASK_SERVICE_INITIALIZED, null, taskService);
+        eventManager.fireEvent(EventType.CONFIG_MANAGER_INITIALIZED, null, configManager);
+        eventManager.fireEvent(EventType.SESSION_MANAGER_INITIALIZED, null, sessionManager);
+        eventManager.fireEvent(EventType.STATS_MANAGER_INITIALIZED, null, this);
+    }
+
+    @Override
+    public void shutdown() {
+        eventManager.fireEvent(EventType.STATS_MANAGER_SHUTTING_DOWN, null, this);
+
+        setEnabled(false);
+
+        sessionManager.shutdown();
+        configManager.shutdown();
+        taskService.shutdown();
+
+        StatsManagerRegistry.removeStatsManager(this);
+    }
+
+    @Override
+    public String getNamespace() {
+        if (namespace == null) {
+            return Integer.toHexString(System.identityHashCode(this));
+        }
+
+        return namespace;
     }
 
     @Override
@@ -146,15 +186,11 @@ public class DefaultStatsManager implements StatsManager {
         this.enabled = enabled;
     }
 
-    public void shutdown() {
-        setEnabled(false);
-        taskService.shutdown();
-    }
-
     /* NESTED CLASSES */
 
     public static class Builder {
 
+        protected String namespace = null;
         protected StatsConfigManager configManager = null;
         protected StatsSessionManager sessionManager = null;
         protected EventManager eventManager = null;
@@ -163,6 +199,11 @@ public class DefaultStatsManager implements StatsManager {
         protected StatsConfigBuilderFactory configBuilderFactory = null;
         protected TaskService taskService = null;
         protected boolean enabled = true;
+
+        public Builder withNamespace(final String namespace) {
+            this.namespace = namespace;
+            return this;
+        }
 
         public Builder withConfigManager(final StatsConfigManager configManager) {
             if (configManager == null) {
@@ -254,7 +295,6 @@ public class DefaultStatsManager implements StatsManager {
             if (configManager == null) {
                 configManager = new DefaultStatsConfigManager(eventManager, keyFactory);
             }
-
             if (sessionManager == null) {
                 sessionManager = new DefaultSessionManager(configManager, eventManager);
             }
@@ -268,10 +308,11 @@ public class DefaultStatsManager implements StatsManager {
             }
 
             if (taskService == null) {
-                taskService = new ThreadPoolTaskService();
+                taskService = new ThreadPoolTaskService(eventManager);
             }
 
-            DefaultStatsManager manager = new DefaultStatsManager(configManager,
+            DefaultStatsManager manager = new DefaultStatsManager(namespace,
+                                                                  configManager,
                                                                   sessionManager,
                                                                   eventManager,
                                                                   trackerLocator,

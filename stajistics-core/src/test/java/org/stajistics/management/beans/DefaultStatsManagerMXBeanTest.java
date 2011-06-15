@@ -12,13 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfigBuilder;
+import org.stajistics.management.AbstractMXBeanTestCase;
+import org.stajistics.management.beans.DefaultStatsManagerMXBean;
+import org.stajistics.management.beans.StatsManagerMXBean;
 
 import javax.management.ObjectName;
 
@@ -27,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author The Stajistics Project
  */
-public class DefaultStatsManagerMBeanTest extends AbstractMBeanTestCase {
+public class DefaultStatsManagerMXBeanTest extends AbstractMXBeanTestCase {
 
     protected StatsManager mockManager = null;
 
@@ -42,10 +45,10 @@ public class DefaultStatsManagerMBeanTest extends AbstractMBeanTestCase {
             one(mockManager).isEnabled(); will(returnValue(true));
         }});
 
-        StatsManagerMBean mBean = new DefaultStatsManagerMBean(mockManager);
+        StatsManagerMXBean mBean = new DefaultStatsManagerMXBean(mockManager);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsManagerMBean.class);
+        mBean = registerMBean(mBean, name, StatsManagerMXBean.class);
 
         assertTrue(mBean.getEnabled());
     }
@@ -57,10 +60,10 @@ public class DefaultStatsManagerMBeanTest extends AbstractMBeanTestCase {
             one(mockManager).setEnabled(true);
         }});
 
-        StatsManagerMBean mBean = new DefaultStatsManagerMBean(mockManager);
+        StatsManagerMXBean mBean = new DefaultStatsManagerMXBean(mockManager);
         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-        mBean = registerMBean(mBean, name, StatsManagerMBean.class);
+        mBean = registerMBean(mBean, name, StatsManagerMXBean.class);
 
         mBean.setEnabled(false);
         mBean.setEnabled(true);

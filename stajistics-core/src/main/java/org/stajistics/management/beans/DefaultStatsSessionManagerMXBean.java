@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import java.io.IOException;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsSessionManagerMBean implements StatsSessionManagerMBean {
+public class DefaultStatsSessionManagerMXBean implements StatsSessionManagerMXBean {
 
     protected static final String SESSION_DUMP_LOGGER_NAME = "stajistics.session.dump";
     private static final Logger sessionLogger = LoggerFactory
@@ -35,7 +35,7 @@ public class DefaultStatsSessionManagerMBean implements StatsSessionManagerMBean
 
     protected final StatsSessionManager sessionManager;
 
-    public DefaultStatsSessionManagerMBean(final StatsSessionManager sessionManager) {
+    public DefaultStatsSessionManagerMXBean(final StatsSessionManager sessionManager) {
         if (sessionManager == null) {
             throw new NullPointerException("sessionManager");
         }

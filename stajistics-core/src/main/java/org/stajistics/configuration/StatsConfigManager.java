@@ -145,4 +145,7 @@ public interface StatsConfigManager extends Serializable {
      * Delete all known configurations except for the root configuration.
      */
     void clearConfigs();
+    
+    
+    void shutdown();
 }

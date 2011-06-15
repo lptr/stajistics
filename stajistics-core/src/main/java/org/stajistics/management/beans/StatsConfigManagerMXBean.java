@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.management;
+package org.stajistics.management.beans;
 
 import javax.management.MXBean;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.io.IOException;
  * @author The Stajistics Project
  */
 @MXBean
-public interface StatsConfigManagerMBean {
+public interface StatsConfigManagerMXBean {
 
     String getImplementation() throws IOException;
 

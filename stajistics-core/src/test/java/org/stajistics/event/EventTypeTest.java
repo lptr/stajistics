@@ -30,8 +30,71 @@ import static org.stajistics.event.EventType.*;
 public class EventTypeTest extends AbstractStajisticsTestCase {
 
     @Test
+    public void testStatsManagerInitialized() {
+        assertFalse(STATS_MANAGER_INITIALIZED.isConfigEvent());
+        assertTrue(STATS_MANAGER_INITIALIZED.isStatsManagerEvent());
+        assertFalse(STATS_MANAGER_INITIALIZED.isSessionManagerEvent());
+        assertFalse(STATS_MANAGER_INITIALIZED.isConfigManagerEvent());
+        assertFalse(STATS_MANAGER_INITIALIZED.isSessionEvent());
+        assertFalse(STATS_MANAGER_INITIALIZED.isTrackerEvent());
+    }
+
+    @Test
+    public void testStatsManagerShuttingDown() {
+        assertFalse(STATS_MANAGER_SHUTTING_DOWN.isConfigEvent());
+        assertTrue(STATS_MANAGER_SHUTTING_DOWN.isStatsManagerEvent());
+        assertFalse(STATS_MANAGER_SHUTTING_DOWN.isSessionManagerEvent());
+        assertFalse(STATS_MANAGER_SHUTTING_DOWN.isConfigManagerEvent());
+        assertFalse(STATS_MANAGER_SHUTTING_DOWN.isSessionEvent());
+        assertFalse(STATS_MANAGER_SHUTTING_DOWN.isTrackerEvent());
+    }
+
+    @Test
+    public void testSessionManagerInitialized() {
+        assertFalse(SESSION_MANAGER_INITIALIZED.isConfigEvent());
+        assertFalse(SESSION_MANAGER_INITIALIZED.isStatsManagerEvent());
+        assertTrue(SESSION_MANAGER_INITIALIZED.isSessionManagerEvent());
+        assertFalse(SESSION_MANAGER_INITIALIZED.isConfigManagerEvent());
+        assertFalse(SESSION_MANAGER_INITIALIZED.isSessionEvent());
+        assertFalse(SESSION_MANAGER_INITIALIZED.isTrackerEvent());
+    }
+
+    @Test
+    public void testSessionManagerShuttingDown() {
+        assertFalse(SESSION_MANAGER_SHUTTING_DOWN.isConfigEvent());
+        assertFalse(SESSION_MANAGER_SHUTTING_DOWN.isStatsManagerEvent());
+        assertTrue(SESSION_MANAGER_SHUTTING_DOWN.isSessionManagerEvent());
+        assertFalse(SESSION_MANAGER_SHUTTING_DOWN.isConfigManagerEvent());
+        assertFalse(SESSION_MANAGER_SHUTTING_DOWN.isSessionEvent());
+        assertFalse(SESSION_MANAGER_SHUTTING_DOWN.isTrackerEvent());
+    }
+
+    @Test
+    public void testConfigManagerInitialized() {
+        assertFalse(CONFIG_MANAGER_INITIALIZED.isConfigEvent());
+        assertFalse(CONFIG_MANAGER_INITIALIZED.isStatsManagerEvent());
+        assertFalse(CONFIG_MANAGER_INITIALIZED.isSessionManagerEvent());
+        assertTrue(CONFIG_MANAGER_INITIALIZED.isConfigManagerEvent());
+        assertFalse(CONFIG_MANAGER_INITIALIZED.isSessionEvent());
+        assertFalse(CONFIG_MANAGER_INITIALIZED.isTrackerEvent());
+    }
+
+    @Test
+    public void testConfigManagerShuttingDown() {
+        assertFalse(CONFIG_MANAGER_SHUTTING_DOWN.isConfigEvent());
+        assertFalse(CONFIG_MANAGER_SHUTTING_DOWN.isStatsManagerEvent());
+        assertFalse(CONFIG_MANAGER_SHUTTING_DOWN.isSessionManagerEvent());
+        assertTrue(CONFIG_MANAGER_SHUTTING_DOWN.isConfigManagerEvent());
+        assertFalse(CONFIG_MANAGER_SHUTTING_DOWN.isSessionEvent());
+        assertFalse(CONFIG_MANAGER_SHUTTING_DOWN.isTrackerEvent());
+    }
+
+    @Test
     public void testConfigCreated() {
         assertTrue(CONFIG_CREATED.isConfigEvent());
+        assertFalse(CONFIG_CREATED.isStatsManagerEvent());
+        assertFalse(CONFIG_CREATED.isSessionManagerEvent());
+        assertFalse(CONFIG_CREATED.isConfigManagerEvent());
         assertFalse(CONFIG_CREATED.isSessionEvent());
         assertFalse(CONFIG_CREATED.isTrackerEvent());
     }
@@ -39,6 +102,9 @@ public class EventTypeTest extends AbstractStajisticsTestCase {
     @Test
     public void testConfigChanged() {
         assertTrue(CONFIG_CHANGED.isConfigEvent());
+        assertFalse(CONFIG_CHANGED.isStatsManagerEvent());
+        assertFalse(CONFIG_CHANGED.isSessionManagerEvent());
+        assertFalse(CONFIG_CHANGED.isConfigManagerEvent());
         assertFalse(CONFIG_CHANGED.isSessionEvent());
         assertFalse(CONFIG_CHANGED.isTrackerEvent());
     }
@@ -46,12 +112,18 @@ public class EventTypeTest extends AbstractStajisticsTestCase {
     @Test
     public void testConfigDestroyed() {
         assertTrue(CONFIG_DESTROYED.isConfigEvent());
+        assertFalse(CONFIG_DESTROYED.isStatsManagerEvent());
+        assertFalse(CONFIG_DESTROYED.isSessionManagerEvent());
+        assertFalse(CONFIG_DESTROYED.isConfigManagerEvent());
         assertFalse(CONFIG_DESTROYED.isSessionEvent());
         assertFalse(CONFIG_DESTROYED.isTrackerEvent());
     }
 
     @Test
     public void testSessionCreated() {
+        assertFalse(SESSION_CREATED.isStatsManagerEvent());
+        assertFalse(SESSION_CREATED.isSessionManagerEvent());
+        assertFalse(SESSION_CREATED.isConfigManagerEvent());
         assertFalse(SESSION_CREATED.isConfigEvent());
         assertTrue(SESSION_CREATED.isSessionEvent());
         assertFalse(SESSION_CREATED.isTrackerEvent());
@@ -59,6 +131,9 @@ public class EventTypeTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testSessionCleared() {
+        assertFalse(SESSION_CLEARED.isStatsManagerEvent());
+        assertFalse(SESSION_CLEARED.isSessionManagerEvent());
+        assertFalse(SESSION_CLEARED.isConfigManagerEvent());
         assertFalse(SESSION_CLEARED.isConfigEvent());
         assertTrue(SESSION_CLEARED.isSessionEvent());
         assertFalse(SESSION_CLEARED.isTrackerEvent());
@@ -66,6 +141,9 @@ public class EventTypeTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testSessionDestroyed() {
+        assertFalse(SESSION_DESTROYED.isStatsManagerEvent());
+        assertFalse(SESSION_DESTROYED.isSessionManagerEvent());
+        assertFalse(SESSION_DESTROYED.isConfigManagerEvent());
         assertFalse(SESSION_DESTROYED.isConfigEvent());
         assertTrue(SESSION_DESTROYED.isSessionEvent());
         assertFalse(SESSION_DESTROYED.isTrackerEvent());
@@ -73,6 +151,9 @@ public class EventTypeTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testTrackerTracking() {
+        assertFalse(TRACKER_TRACKING.isStatsManagerEvent());
+        assertFalse(TRACKER_TRACKING.isSessionManagerEvent());
+        assertFalse(TRACKER_TRACKING.isConfigManagerEvent());
         assertFalse(TRACKER_TRACKING.isConfigEvent());
         assertFalse(TRACKER_TRACKING.isSessionEvent());
         assertTrue(TRACKER_TRACKING.isTrackerEvent());
@@ -80,6 +161,9 @@ public class EventTypeTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testTrackerCommitted() {
+        assertFalse(TRACKER_COMMITTED.isStatsManagerEvent());
+        assertFalse(TRACKER_COMMITTED.isSessionManagerEvent());
+        assertFalse(TRACKER_COMMITTED.isConfigManagerEvent());
         assertFalse(TRACKER_COMMITTED.isConfigEvent());
         assertFalse(TRACKER_COMMITTED.isSessionEvent());
         assertTrue(TRACKER_COMMITTED.isTrackerEvent());
