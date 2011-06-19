@@ -15,7 +15,7 @@
 package org.stajistics.management.beans;
 
 import javax.management.MXBean;
-import java.io.IOException;
+import java.util.Set;
 
 /**
  *
@@ -26,14 +26,17 @@ import java.io.IOException;
 @MXBean
 public interface StatsSessionManagerMXBean {
 
-    String getImplementation() throws IOException;
+    String getImplementation();
 
-    int getSessionCount() throws IOException;
+    int getSessionCount();
 
-    void dumpAllSessions() throws IOException;
+    void dumpAllSessions();
 
-    void clearAllSessions() throws IOException;
+    void clearAllSessions();
 
-    void destroyAllSessions() throws IOException;
+    void destroyAllSessions();
 
+    Set<String> statsKeys();
+
+    Set<String> subKeys(String keyName);
 }

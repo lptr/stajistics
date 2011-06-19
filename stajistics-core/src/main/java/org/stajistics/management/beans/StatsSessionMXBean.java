@@ -24,7 +24,5 @@ import javax.management.MXBean;
  */
 @MXBean
 public interface StatsSessionMXBean {
-
-    
-
+    // Implementations are dynamic
 }

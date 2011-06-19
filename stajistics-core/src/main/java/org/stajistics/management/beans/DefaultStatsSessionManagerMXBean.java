@@ -16,10 +16,12 @@ package org.stajistics.management.beans;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.StatsKeyMatcher;
+import org.stajistics.management.StatsKeyOpenTypeConverter;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
 
-import java.io.IOException;
+import java.util.Set;
 
 /**
  *
@@ -44,17 +46,17 @@ public class DefaultStatsSessionManagerMXBean implements StatsSessionManagerMXBe
     }
 
     @Override
-    public String getImplementation() throws IOException {
+    public String getImplementation() {
         return sessionManager.getClass().getName();
     }
 
     @Override
-    public int getSessionCount() throws IOException {
-        return sessionManager.getSessions().size();
+    public int getSessionCount() {
+        return sessionManager.getSessionCount();
     }
 
     @Override
-    public void dumpAllSessions() throws IOException {
+    public void dumpAllSessions() {
         if (sessionLogger.isInfoEnabled()) {
             for (StatsSession session : sessionManager.getSessions()) {
                 sessionLogger.info(session.toString());
@@ -63,13 +65,26 @@ public class DefaultStatsSessionManagerMXBean implements StatsSessionManagerMXBe
     }
 
     @Override
-    public void clearAllSessions() throws IOException {
+    public void clearAllSessions() {
         sessionManager.clearAllSessions();
     }
 
     @Override
-    public void destroyAllSessions() throws IOException {
+    public void destroyAllSessions() {
         sessionManager.clear();
+    }
+
+    @Override
+    public Set<String> statsKeys() {
+        StatsKeyOpenTypeConverter converter = new StatsKeyOpenTypeConverter();
+        return converter.toOpenType(sessionManager.getKeys());
+    }
+
+    @Override
+    public Set<String> subKeys(final String keyName) {
+        StatsKeyOpenTypeConverter converter = new StatsKeyOpenTypeConverter();
+        StatsKeyMatcher matcher = StatsKeyMatcher.nameEquals(keyName);
+        return converter.toOpenType(sessionManager.getKeys(matcher));
     }
 
 }

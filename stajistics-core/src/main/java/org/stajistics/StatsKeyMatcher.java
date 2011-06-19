@@ -262,6 +262,16 @@ public abstract class StatsKeyMatcher implements Serializable {
         return Collections.unmodifiableCollection(filteredList);
     }
 
+    public Set<StatsKey> filterCopy(final Set<StatsKey> keys) {
+        Set<StatsKey> filteredSet = new HashSet<StatsKey>(keys.size());
+        for (StatsKey key : keys) {
+            if (matches(key)) {
+                filteredSet.add(key);
+            }
+        }
+        return Collections.unmodifiableSet(filteredSet);
+    }
+
     public <T> void filter(final Map<StatsKey,T> map) {
         Iterator<Map.Entry<StatsKey,T>> itr = map.entrySet().iterator();
         while (itr.hasNext()) {

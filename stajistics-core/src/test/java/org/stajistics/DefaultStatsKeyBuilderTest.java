@@ -336,33 +336,6 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
     }
 
     @Test
-    public void testPutAttributeWithInvalidName() {
-
-        String[] invalidNames = { "*",   "?",   ",",   "=",   ":",
-                                  "a*",  "a?",  "a,",  "a=",  "a:",
-                                  "*a",  "?a",  ",a",  "=a",  ":a",
-                                  "*a*", "?a?", ",a,", "=a=", ":a:",
-                                  "a*a", "a?a", "a,a", "a=a", "a:a" };
-
-        for (String invalidName : invalidNames) {
-            resetMockery();
-            setUp();
-
-            buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
-            buildStatsKeyBuildCopyExpectations();
-
-            try {
-                mockKey.buildCopy()
-                       .withAttribute(invalidName, "value");
-                fail("Allowed withAttribute with invalid name: '" + invalidName + "'");
-
-            } catch (IllegalArgumentException iae) {
-                // expected
-            }
-        }
-    }
-
-    @Test
     public void testPutAttributeWithNullStringValue() {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();

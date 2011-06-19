@@ -14,6 +14,8 @@
  */
 package org.stajistics.data;
 
+import java.util.Map;
+
 
 /**
  *
@@ -21,6 +23,8 @@ package org.stajistics.data;
  */
 class DefaultMetaData extends AbstractDataContainer implements MetaData {
 
-    DefaultMetaData() {}
+    DefaultMetaData(final Map<String,Object> dataMap) {
+        super(dataMap);
+    }
 
 }

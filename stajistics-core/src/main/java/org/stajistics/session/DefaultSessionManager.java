@@ -92,6 +92,11 @@ public class DefaultSessionManager implements StatsSessionManager {
     }
 
     @Override
+    public Set<StatsKey> getKeys(final StatsKeyMatcher keyMatcher) {
+        return keyMatcher.filterCopy(sessionMap.keySet());
+    }
+
+    @Override
     public Collection<StatsSession> getSessions() {
         return Collections.unmodifiableCollection(sessionMap.values());
     }

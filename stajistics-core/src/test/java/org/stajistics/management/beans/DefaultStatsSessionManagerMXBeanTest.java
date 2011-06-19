@@ -14,11 +14,10 @@
  */
 package org.stajistics.management.beans;
 
+import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.management.AbstractMXBeanTestCase;
-import org.stajistics.management.beans.DefaultStatsSessionManagerMXBean;
-import org.stajistics.management.beans.StatsSessionManagerMXBean;
+import org.stajistics.management.AbstractJMXTestCase;
 import org.stajistics.session.StatsSessionManager;
 
 import javax.management.ObjectName;
@@ -31,7 +30,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsSessionManagerMXBeanTest extends AbstractMXBeanTestCase {
+public class DefaultStatsSessionManagerMXBeanTest extends AbstractJMXTestCase {
 
      protected StatsSessionManager mockSessionManager;
 
@@ -55,7 +54,8 @@ public class DefaultStatsSessionManagerMXBeanTest extends AbstractMXBeanTestCase
          assertEquals(mockSessionManager.getClass().getName(),
                       mBean.getImplementation());
      }
-/*   TODO: this fails
+
+
      @Test
      public void testGetSessionCount() throws Exception {
 
@@ -63,14 +63,15 @@ public class DefaultStatsSessionManagerMXBeanTest extends AbstractMXBeanTestCase
              one(mockSessionManager).getSessionCount(); will(returnValue(42));
          }});
 
-         StatsSessionManagerMBean mBean = createSessionManagerMBean(mockSessionManager);
-         ObjectName name = new ObjectName(getClass().getName() + ":name=test");
+         StatsSessionManagerMXBean mBean = createSessionManagerMBean(mockSessionManager);
+         //ObjectName name = new ObjectName(getClass().getName() + ":name=test");
 
-         mBean = registerMBean(mBean, name, StatsSessionManagerMBean.class);
+         // Don't register because it screws up on serialization of Mockery.. what to do?
+         //mBean = registerMBean(mBean, name, StatsSessionManagerMXBean.class);
 
          assertEquals(42, mBean.getSessionCount());
 
          mockery.assertIsSatisfied();
      }
-     */
+
 }

@@ -22,14 +22,12 @@ import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.recorder.DataRecorder;
+import org.stajistics.util.FastPutsTableMap;
 import org.stajistics.util.Misc;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  *
@@ -162,8 +160,24 @@ public abstract class AbstractStatsSession implements StatsSession {
         return null;
     }
 
-    protected DataSet createDataSet(boolean drainedSession) {
-        DataSet dataSet = new DefaultDataSet(System.currentTimeMillis(), drainedSession);
+    /**
+     * A factory method for creating a DataSet instance that will be populated with this session's data.
+     * @param drainedSession
+     * @return
+     */
+    protected DataSet createDataSet(final boolean drainedSession) {
+
+        final int estimatedSize = 10 + (dataRecorders.length * 4);
+
+        DataSet dataSet = new DefaultDataSet(System.currentTimeMillis(), 
+                                             drainedSession,
+                                             new FastPutsTableMap<String,Object>(estimatedSize)) {
+            @Override
+            protected Map<String, Object> createMetaDataMap() {
+                return new FastPutsTableMap<String,Object>(8);
+            }
+        };
+
         return dataSet;
     }
 

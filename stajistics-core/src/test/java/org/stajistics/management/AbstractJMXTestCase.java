@@ -21,6 +21,10 @@ import org.stajistics.AbstractStajisticsTestCase;
 import javax.management.*;
 import javax.management.remote.*;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 /**
  * Thanks to Eamonn McManus for the MBean testing strategy:
@@ -28,12 +32,56 @@ import java.io.IOException;
  *
  * @author The Stajistics Project
  */
-public abstract class AbstractMXBeanTestCase extends AbstractStajisticsTestCase {
+public abstract class AbstractJMXTestCase extends AbstractStajisticsTestCase {
+
+    private static final Registry rmiRegistry;
+    static {
+        try {
+            rmiRegistry = LocateRegistry.createRegistry(getPort());
+        } catch (RemoteException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     private MBeanServer mBeanServer = null;
     private JMXConnector connector = null;
     private JMXConnectorServer connectorServer = null;
     private MBeanServerConnection mBeanServerConnection = null;
+
+    @Before
+    public void setUpMBeanServerConnection() throws Exception {
+
+        mBeanServer = MBeanServerFactory.newMBeanServer();
+
+        JMXServiceURL url = getJMXServiceURL();
+        connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, mBeanServer);
+        connectorServer.start();
+
+        JMXServiceURL addr = connectorServer.getAddress();
+        connector = JMXConnectorFactory.connect(addr);
+        mBeanServerConnection = connector.getMBeanServerConnection();
+    }
+
+    @After
+    public void tearDownMBeanServerConnection() throws Exception {
+
+        if (connector != null) {
+            try {
+                connector.close();
+            } catch (IOException ioe) {}
+        }
+
+        if (connectorServer != null) {
+            try {
+                connectorServer.stop();
+            } catch (IOException ioe) {}
+        }
+
+        mBeanServer = null;
+        connector = null;
+        connectorServer = null;
+        mBeanServerConnection = null;
+    }
 
     protected MBeanServer getMBeanServer() {
         if (mBeanServer == null) {
@@ -66,40 +114,16 @@ public abstract class AbstractMXBeanTestCase extends AbstractStajisticsTestCase 
         return remoteMBean;
     }
 
-    @Before
-    public void setUpMBeanServerConnection() throws Exception {
-
-        mBeanServer = MBeanServerFactory.newMBeanServer();
-
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi://");
-        connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, mBeanServer);
-        connectorServer.start();
-
-        JMXConnector connector = null;
-        JMXServiceURL addr = connectorServer.getAddress();
-        connector = JMXConnectorFactory.connect(addr);
-        mBeanServerConnection = connector.getMBeanServerConnection();
+    protected static int getPort() {
+        return Integer.getInteger(AbstractJMXTestCase.class.getName() + ".rmiPort", 2099);
     }
 
-    @After
-    public void tearDownMBeanServerConnection() throws Exception {
-
-        if (connector != null) {
-            try {
-                connector.close();
-            } catch (IOException ioe) {}
-        }
-
-        if (connectorServer != null) {
-            try {
-                connectorServer.stop();
-            } catch (IOException ioe) {}
-        }
-
-        mBeanServer = null;
-        connector = null;
-        connectorServer = null;
-        mBeanServerConnection = null;
+    protected String getServiceURL() {
+        return "service:jmx:rmi:///jndi/rmi://127.0.0.1:" + getPort() + "/unitTestServer";
     }
 
+    protected JMXServiceURL getJMXServiceURL() throws MalformedURLException {
+        JMXServiceURL url = new JMXServiceURL(getServiceURL());
+        return url;
+    }
 }

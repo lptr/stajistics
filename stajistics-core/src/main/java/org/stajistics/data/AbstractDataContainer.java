@@ -14,7 +14,6 @@
  */
 package org.stajistics.data;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,10 +25,13 @@ import java.util.Set;
  */
 public abstract class AbstractDataContainer implements DataContainer {
 
-    private final Map<String,Object> dataMap = createDataMap();
+    private final Map<String,Object> dataMap;
 
-    protected Map<String,Object> createDataMap() {
-        return new HashMap<String,Object>();
+    protected AbstractDataContainer(final Map<String,Object> dataMap) {
+        if (dataMap == null) {
+            throw new NullPointerException("dataMap");
+        }
+        this.dataMap = dataMap;
     }
 
     @Override
