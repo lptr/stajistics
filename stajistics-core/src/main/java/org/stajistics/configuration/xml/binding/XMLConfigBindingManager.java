@@ -14,7 +14,7 @@
  */
 package org.stajistics.configuration.xml.binding;
 
-import org.stajistics.util.AbstractXMLBindingManager;
+import org.stajistics.util.xml.AbstractXMLBindingManager;
 
 /**
  * @author The Stajistics Project

@@ -15,7 +15,7 @@
 package org.stajistics.management.beans;
 
 import javax.management.MXBean;
-import java.io.IOException;
+import java.util.Set;
 
 /**
  *
@@ -26,7 +26,10 @@ import java.io.IOException;
 @MXBean
 public interface StatsConfigManagerMXBean {
 
-    String getImplementation() throws IOException;
+    String getImplementation();
 
-    int getConfigCount() throws IOException;
+    int getConfigCount();
+
+    // Not an attribute
+    Set<String> keyNames();
 }

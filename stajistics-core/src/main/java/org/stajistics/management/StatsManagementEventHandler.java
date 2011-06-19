@@ -16,7 +16,6 @@ package org.stajistics.management;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
-import org.stajistics.StatsManagerRegistry;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventHandler;
@@ -48,11 +47,11 @@ public class StatsManagementEventHandler implements EventHandler {
                                  final Object target) {
         switch (eventType) {
             case STATS_MANAGER_INITIALIZED:
-                mxBeanRegistrar.registerManagerMXBean((StatsManager)target);
+                mxBeanRegistrar.registerStatsManagerMXBean((StatsManager)target);
                 break;
 
             case STATS_MANAGER_SHUTTING_DOWN:
-                mxBeanRegistrar.unregisterManagerMXBean((StatsManager)target);
+                mxBeanRegistrar.unregisterStatsManagerMXBean((StatsManager)target);
                 break;
 
             case CONFIG_MANAGER_INITIALIZED:

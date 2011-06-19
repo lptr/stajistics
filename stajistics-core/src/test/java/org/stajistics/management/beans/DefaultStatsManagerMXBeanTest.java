@@ -18,10 +18,7 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.StatsManager;
-import org.stajistics.configuration.StatsConfigBuilder;
-import org.stajistics.management.AbstractMXBeanTestCase;
-import org.stajistics.management.beans.DefaultStatsManagerMXBean;
-import org.stajistics.management.beans.StatsManagerMXBean;
+import org.stajistics.management.AbstractJMXTestCase;
 
 import javax.management.ObjectName;
 
@@ -30,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author The Stajistics Project
  */
-public class DefaultStatsManagerMXBeanTest extends AbstractMXBeanTestCase {
+public class DefaultStatsManagerMXBeanTest extends AbstractJMXTestCase {
 
     protected StatsManager mockManager = null;
 

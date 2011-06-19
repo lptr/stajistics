@@ -16,7 +16,7 @@ package org.stajistics.management.beans;
 
 import org.stajistics.configuration.StatsConfigManager;
 
-import java.io.IOException;
+import java.util.Set;
 
 /**
  *
@@ -37,12 +37,18 @@ public class DefaultStatsConfigManagerMXBean implements StatsConfigManagerMXBean
     }
 
     @Override
-    public String getImplementation() throws IOException {
+    public String getImplementation() {
         return configManager.getClass().getName();
     }
 
     @Override
-    public int getConfigCount() throws IOException {
+    public int getConfigCount() {
         return configManager.getConfigCount();
     }
+
+    @Override
+    public Set<String> keyNames() {
+        return configManager.getKeyNames();
+    }
+
 }

@@ -14,25 +14,6 @@
  */
 package org.stajistics.management;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.stajistics.TestUtil.buildStatsKeyExpectations;
-import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_CONFIG;
-import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_SESSION;
-import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_STATS;
-import static org.stajistics.management.StatsMXBeanUtil.SUBTYPE_CONFIG;
-import static org.stajistics.management.StatsMXBeanUtil.SUBTYPE_SESSION;
-import static org.stajistics.management.StatsMXBeanUtil.TYPE_KEYS;
-import static org.stajistics.management.StatsMXBeanUtil.buildManagerName;
-import static org.stajistics.management.StatsMXBeanUtil.buildName;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
 import org.jmock.Expectations;
 import org.junit.After;
 import org.junit.Before;
@@ -43,13 +24,17 @@ import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
-import org.stajistics.management.beans.StatsConfigMXBean;
-import org.stajistics.management.beans.StatsConfigManagerMXBean;
-import org.stajistics.management.beans.StatsManagerMXBean;
-import org.stajistics.management.beans.StatsSessionMXBean;
-import org.stajistics.management.beans.StatsSessionManagerMXBean;
+import org.stajistics.management.beans.*;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
+
+import static org.junit.Assert.*;
+import static org.stajistics.TestUtil.buildStatsKeyExpectations;
+import static org.stajistics.management.StatsMXBeanUtil.*;
 
 /**
  *
@@ -57,12 +42,9 @@ import org.stajistics.session.StatsSessionManager;
  *
  * @author The Stajistics Project
  */
-public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase {
+public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase {
 
     private static final String NAMESPACE = "ns";
-    
-    private static final String TYPE_TEST = "test";
-    private static final String SUBTYPE_TEST = "test";
 
     private static final String NORMAL = "normal";
 
@@ -141,144 +123,6 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
     }
 
     @Test
-    public void testBuildNameDomain() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
-        String name = StatsMXBeanUtil.buildName(NAMESPACE, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
-        assertTrue(name.startsWith(StatsMXBeanUtil.STAJISTICS_DOMAIN));
-    }
-
-    @Test
-    public void testBuildNameNormal() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL);
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNameWithQuestion() {
-        buildStatsKeyExpectations(mockery, mockKey, "with?question");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNameWithAsterisk() {
-        buildStatsKeyExpectations(mockery, mockKey, "with*asterisk");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNameWithQuote() {
-        buildStatsKeyExpectations(mockery, mockKey, "with\"quote");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNameWithTwoQuotes() {
-        buildStatsKeyExpectations(mockery, mockKey, "with\"two\"quotes");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNameWithThreeQuotes() {
-        buildStatsKeyExpectations(mockery, mockKey, "with\"three\"awesome\"quotes");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNameWithEquals() {
-        buildStatsKeyExpectations(mockery, mockKey, "with=equals");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNameWithComma() {
-        buildStatsKeyExpectations(mockery, mockKey, "with,comma");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropNameValNormal() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, NORMAL);
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropNameWithQuestion() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, "with?question", NORMAL);
-        assertInvalidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropNameWithAsterisk() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, "with*asterisk", NORMAL);
-        assertInvalidObjectName();
-    }
-
-    /*
-     * Hmm. This invalid(?) name is permitted by new ObjectName(name);
-     * TODO: need to manually invalidate property names of this type?
-     *
-    @Test
-    public void testBuildNamePropNameWithQuote() {
-        buildExpectations(NORMAL, "with\"quote", NORMAL);
-        assertInvalidObjectName();
-    }
-    */
-
-    @Test
-    public void testBuildNamePropNameWithEquals() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, "with=equals", NORMAL);
-        assertInvalidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropNameWithComma() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, "with,comma", NORMAL);
-        assertInvalidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropValWithQuestion() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with?question");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropValWithAsterisk() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with*asterisk");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropValWithQuote() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with\"quote");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropValWithTwoQuotes() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with\"two\"quotes");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropValWithThreeQuotes() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with\"three\"awesome\"quotes");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropValWithEquals() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with=equals");
-        assertValidObjectName();
-    }
-
-    @Test
-    public void testBuildNamePropValWithComma() {
-        buildStatsKeyExpectations(mockery, mockKey, NORMAL, NORMAL, "with,comma");
-        assertValidObjectName();
-    }
-
-    @Test
     public void testRegisterManagerMBean() throws Exception {
 
         final StatsManagerMXBean mockManagerMBean = mockery.mock(StatsManagerMXBean.class);
@@ -288,22 +132,22 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
             will(returnValue(mockManagerMBean));
         }});
 
-        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_STATS));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_STATS, true));
 
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
-        mxBeanRegistrar.registerManagerMXBean(mockStatsManager);
+        mxBeanRegistrar.registerStatsManagerMXBean(mockStatsManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
     }
 
     @Test
     public void testUnregisterManagerMBean() throws Exception {
-        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE,MANAGER_NAME_STATS));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE,MANAGER_NAME_STATS, true));
 
         final StatsManagerMXBean mockManagerMBean = mockery.mock(StatsManagerMXBean.class);
 
         mBeanServer.registerMBean(mockManagerMBean, objectName);
 
-        mxBeanRegistrar.unregisterManagerMXBean(mockStatsManager);
+        mxBeanRegistrar.unregisterStatsManagerMXBean(mockStatsManager);
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
     }
 
@@ -317,7 +161,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
             will(returnValue(mockSessionManagerMBean));
         }});
 
-        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_SESSION));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_SESSION, true));
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
         mxBeanRegistrar.registerSessionManagerMXBean(mockSessionManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
@@ -325,7 +169,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
 
     @Test
     public void testUnregisterSessionManagerMBean() throws Exception {
-        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_SESSION));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_SESSION, true));
         final StatsSessionManagerMXBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMXBean.class);
 
         mBeanServer.registerMBean(mockSessionManagerMBean, objectName);
@@ -344,7 +188,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
             will(returnValue(mockConfigManagerMBean));
         }});
 
-        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE,MANAGER_NAME_CONFIG));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE,MANAGER_NAME_CONFIG, true));
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
         mxBeanRegistrar.registerConfigManagerMXBean(mockConfigManager);
         assertEquals(1, mBeanServer.queryMBeans(objectName, null).size());
@@ -352,7 +196,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
 
     @Test
     public void testUnregisterConfigManagerMBean() throws Exception {
-        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_CONFIG));
+        ObjectName objectName = new ObjectName(buildManagerName(NAMESPACE, MANAGER_NAME_CONFIG, true));
         final StatsConfigManagerMXBean mockConfigManagerMBean = mockery.mock(StatsConfigManagerMXBean.class);
 
         mBeanServer.registerMBean(mockConfigManagerMBean, objectName);
@@ -376,7 +220,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
             ignoring(mockConfig);
         }});
 
-        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_CONFIG, false));
+        ObjectName name = new ObjectName(buildKeyName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_CONFIG, true));
 
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
         mxBeanRegistrar.registerConfigMXBean(mockKey, mockConfig);
@@ -395,7 +239,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
             ignoring(mockConfig);
         }});
 
-        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_CONFIG, false));
+        ObjectName name = new ObjectName(buildKeyName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_CONFIG, true));
 
         mBeanServer.registerMBean(mockConfigMbean, name);
 
@@ -408,7 +252,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
 
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
-        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, false));
+        ObjectName name = new ObjectName(buildKeyName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, true));
 
         mxBeanRegistrar.unregisterConfigMXBeanIfNecessary(mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
@@ -429,7 +273,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
             ignoring(mockSession);
         }});
 
-        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, false));
+        ObjectName name = new ObjectName(buildKeyName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, true));
 
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
         mxBeanRegistrar.registerSessionMXBean(mockSession);
@@ -449,7 +293,7 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
             ignoring(mockSession);
         }});
 
-        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, false));
+        ObjectName name = new ObjectName(buildKeyName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, true));
 
         mBeanServer.registerMBean(mockSessionMBean, name);
 
@@ -462,32 +306,10 @@ public class DefaultStatsMXBeanRegistratTest extends AbstractStajisticsTestCase 
 
         buildStatsKeyExpectations(mockery, mockKey, NORMAL);
 
-        ObjectName name = new ObjectName(buildName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, false));
+        ObjectName name = new ObjectName(buildKeyName(NAMESPACE, mockKey, TYPE_KEYS, SUBTYPE_SESSION, true));
 
         mxBeanRegistrar.unregisterSessionMXBeanIfNecessary(mockKey);
         assertTrue(mBeanServer.queryMBeans(name, null).isEmpty());
     }
 
-    private void assertValidObjectName() {
-
-        String name = buildName(NAMESPACE, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
-
-        try {
-            new ObjectName(name);
-        } catch (MalformedObjectNameException e) {
-            fail(e.toString());
-        }
-    }
-
-    private void assertInvalidObjectName() {
-        String name = buildName(NAMESPACE, mockKey, TYPE_TEST, SUBTYPE_TEST, true);
-
-        try {
-            new ObjectName(name);
-            fail("Malformed name is accepted: " + name);
-
-        } catch (MalformedObjectNameException e) {
-            // Expected
-        }
-    }
 }

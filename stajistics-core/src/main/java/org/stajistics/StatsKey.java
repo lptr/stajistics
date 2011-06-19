@@ -91,7 +91,6 @@ import java.util.Map;
  * </blockquote>
  * </p>
  *
- * <p>TODO: Attribute naming restrictions/caveats</p>
  * </dd>
  *
  * @see Stats

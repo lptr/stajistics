@@ -14,6 +14,9 @@
  */
 package org.stajistics.data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  *
@@ -30,6 +33,13 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
 
     public DefaultDataSet(final long collectionTimeStamp,
                           final boolean drainedSession) {
+        this(collectionTimeStamp, drainedSession, new HashMap<String,Object>());
+    }
+
+    public DefaultDataSet(final long collectionTimeStamp,
+                          final boolean drainedSession,
+                          final Map<String,Object> dataMap) {
+        super(dataMap);
         this.collectionTimeStamp = collectionTimeStamp;
         this.drainedSession = drainedSession;
     }
@@ -49,10 +59,14 @@ public class DefaultDataSet extends AbstractDataContainer implements DataSet {
         return metaData != null && !metaData.isEmpty();
     }
 
+    protected Map<String,Object> createMetaDataMap() {
+        return new HashMap<String,Object>();
+    }
+
     @Override
     public MetaData getMetaData() {
         if (metaData == null) {
-            metaData = new DefaultMetaData();
+            metaData = new DefaultMetaData(createMetaDataMap());
         }
         return metaData;
     }

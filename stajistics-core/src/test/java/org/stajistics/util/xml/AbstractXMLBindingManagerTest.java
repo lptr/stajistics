@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.stajistics.util;
+package org.stajistics.util.xml;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.util.testbinding.TestBinding;
+import org.stajistics.util.xml.testBinding.TestBinding;
 
 import java.io.*;
 import java.util.Arrays;

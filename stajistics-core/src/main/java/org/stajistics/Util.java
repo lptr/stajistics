@@ -24,34 +24,6 @@ public final class Util {
 
     private Util() {}
 
-    public static boolean isValidKeyAttributeName(final String name) {
-        if (name.length() == 0) {
-            return false;
-        }
-
-        if (name.indexOf(',') > -1) {
-            return false;
-        }
-
-        if (name.indexOf('=') > -1) {
-            return false;
-        }
-
-        if (name.indexOf(':') > -1) {
-            return false;
-        }
-
-        if (name.indexOf('*') > -1) {
-            return false;
-        }
-
-        if (name.indexOf('?') > -1) {
-            return false;
-        }
-
-        return true;
-    }
-
     public static boolean equalsNullAware(final Object obj1, final Object obj2) {
         if (obj1 == null) {
             return obj2 == null;

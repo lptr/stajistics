@@ -44,6 +44,15 @@ public interface StatsSessionManager extends Serializable {
     Set<StatsKey> getKeys();
 
     /**
+     * Get the Set of matching {@link StatsKey}s that are associated with the
+     * {@link StatsSession}s being managed. The passed <tt>keyMatcher</tt> is used to
+     * select the desired keys.
+     * @param keyMatcher The key matcher with which to filter results.
+     * @return A Set of {@link StatsKey}s, or an empty Set if there are none.
+     */
+    Set<StatsKey> getKeys(StatsKeyMatcher keyMatcher);
+
+    /**
      * Get all {@link StatsSession}s being managed.
      *
      * @return A Collection of {@link StatsSession}s, or an empty Collection if there are none.
