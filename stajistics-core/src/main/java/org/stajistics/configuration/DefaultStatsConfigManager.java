@@ -6,9 +6,11 @@ import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
+import org.stajistics.util.ServiceLifeCycle;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,6 +40,8 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
     private final EventManager eventManager;
     private final StatsKeyFactory keyFactory;
+
+    private final ServiceLifeCycle.Support lifeCycleSupport = new Support();
 
     /**
      * Create a new DefaultStatsConfigManager instance containing no initial configurations.
@@ -121,6 +125,34 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         int concurrencyLevel = StatsProperties.getIntegerProperty(PROP_CONCURRENCY_LEVEL, 64);
 
         return new ConcurrentHashMap<String,KeyEntry>(initialCapacity, loadFactor, concurrencyLevel);
+    }
+
+    @Override
+    public void initialize() {
+        lifeCycleSupport.initialize(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                eventManager.fireEvent(EventType.CONFIG_MANAGER_INITIALIZED, null, DefaultStatsConfigManager.this);
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public boolean isRunning() {
+        return lifeCycleSupport.isRunning();
+    }
+
+    @Override
+    public synchronized void shutdown() {
+        lifeCycleSupport.shutdown(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                eventManager.fireEvent(EventType.CONFIG_MANAGER_SHUTTING_DOWN, null, this);
+                clearConfigs();
+                return null;
+            }
+        });
     }
 
     @Override
@@ -220,12 +252,6 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
     @Override
     public void clearConfigs() {
         destroyEntry(rootKeyEntry);
-    }
-
-    @Override
-    public void shutdown() {
-        eventManager.fireEvent(EventType.CONFIG_MANAGER_SHUTTING_DOWN, null, this);
-        clearConfigs();
     }
 
     /* PRIVATE METHODS */

@@ -31,6 +31,31 @@ public class DefaultStatsManagerMXBean implements StatsManagerMXBean {
     }
 
     @Override
+    public String getNamespace() {
+        return statsManager.getNamespace();
+    }
+
+    @Override
+    public String getSessionManagerImpl() {
+        return statsManager.getSessionManager().getClass().getName();
+    }
+
+    @Override
+    public String getConfigManagerImpl() {
+        return statsManager.getConfigManager().getClass().getName();
+    }
+
+    @Override
+    public String getEventManagerImpl() {
+        return statsManager.getEventManager().getClass().getName();
+    }
+
+    @Override
+    public String getTaskServiceImpl() {
+        return statsManager.getTaskService().getClass().getName();
+    }
+
+    @Override
     public boolean getEnabled() {
         return statsManager.isEnabled();
     }

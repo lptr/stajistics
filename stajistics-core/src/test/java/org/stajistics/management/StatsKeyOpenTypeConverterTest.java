@@ -127,6 +127,33 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
         assertConvertUnconvertSame(key);
     }
 
+    @Test
+    public void testConvertKeyWithStringAttrValueHavingBooleanAttrTypeEscape() {
+        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("name", "b_not_really_a_boolean"));
+        String openKey = converter.toOpenType(key);
+        assertEquals("test:name=\\b_not_really_a_boolean", openKey);
+
+        assertConvertUnconvertSame(key);
+    }
+
+    @Test
+    public void testConvertKeyWithStringAttrValueHavingIntegerAttrTypeEscape() {
+        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("name", "i_not_really_an_integer"));
+        String openKey = converter.toOpenType(key);
+        assertEquals("test:name=\\i_not_really_an_integer", openKey);
+
+        assertConvertUnconvertSame(key);
+    }
+
+    @Test
+    public void testConvertKeyWithStringAttrValueHavingLongAttrTypeEscape() {
+        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("name", "l_not_really_a_long"));
+        String openKey = converter.toOpenType(key);
+        assertEquals("test:name=\\l_not_really_a_long", openKey);
+
+        assertConvertUnconvertSame(key);
+    }
+
     private void assertConvertUnconvertSame(final StatsKey key) {
         String openTypeKey = converter.toOpenType(key);
         StatsKey key2 = converter.fromOpenType(openTypeKey);

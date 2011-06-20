@@ -28,6 +28,9 @@ import org.stajistics.task.ThreadPoolTaskService;
 import org.stajistics.tracker.DefaultTrackerLocator;
 import org.stajistics.tracker.NullTrackerLocator;
 import org.stajistics.tracker.TrackerLocator;
+import org.stajistics.util.ServiceLifeCycle;
+
+import java.util.concurrent.Callable;
 
 /**
  * The default implementation of {@link StatsManager}. Clients typically do not
@@ -47,6 +50,8 @@ public class DefaultStatsManager implements StatsManager {
     protected final StatsKeyFactory keyFactory;
     protected final StatsConfigBuilderFactory configBuilderFactory;
     protected final TaskService taskService;
+
+    private final ServiceLifeCycle.Support lifeCycleSupport = new Support();
 
     /**
      * Construct a DefaultStatsManager using the given set of managers.
@@ -107,25 +112,48 @@ public class DefaultStatsManager implements StatsManager {
 
     @Override
     public void initialize() {
-        StatsManagerRegistry.registerStatsManager(this);
+        lifeCycleSupport.initialize(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
 
-        eventManager.fireEvent(EventType.TASK_SERVICE_INITIALIZED, null, taskService);
-        eventManager.fireEvent(EventType.CONFIG_MANAGER_INITIALIZED, null, configManager);
-        eventManager.fireEvent(EventType.SESSION_MANAGER_INITIALIZED, null, sessionManager);
-        eventManager.fireEvent(EventType.STATS_MANAGER_INITIALIZED, null, this);
+                StatsManagerRegistry.registerStatsManager(DefaultStatsManager.this);
+
+                eventManager.initialize();
+                taskService.initialize();
+                configManager.initialize();
+                sessionManager.initialize();
+
+                eventManager.fireEvent(EventType.STATS_MANAGER_INITIALIZED, null, DefaultStatsManager.this);
+
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public boolean isRunning() {
+        return lifeCycleSupport.isRunning();
     }
 
     @Override
     public void shutdown() {
-        eventManager.fireEvent(EventType.STATS_MANAGER_SHUTTING_DOWN, null, this);
+        lifeCycleSupport.shutdown(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                eventManager.fireEvent(EventType.STATS_MANAGER_SHUTTING_DOWN, null, DefaultStatsManager.this);
 
-        setEnabled(false);
+                setEnabled(false);
 
-        sessionManager.shutdown();
-        configManager.shutdown();
-        taskService.shutdown();
+                sessionManager.shutdown();
+                configManager.shutdown();
+                taskService.shutdown();
+                eventManager.shutdown();
 
-        StatsManagerRegistry.removeStatsManager(this);
+                StatsManagerRegistry.removeStatsManager(DefaultStatsManager.this);
+
+                return null;
+            }
+        });
     }
 
     @Override

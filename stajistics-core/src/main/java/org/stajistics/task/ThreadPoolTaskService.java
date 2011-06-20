@@ -14,18 +14,11 @@
  */
 package org.stajistics.task;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import org.stajistics.StatsProperties;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
+
+import java.util.concurrent.*;
 
 /**
  * @author The Stajistics Project
@@ -47,6 +40,8 @@ public class ThreadPoolTaskService implements TaskService {
 
     // TODO: persist and restore upon de/serialization
     private transient final ThreadPoolExecutor executor;
+
+    private final Support lifeCycleSupport = new Support();
 
     public ThreadPoolTaskService(final EventManager eventManager) {
         if (eventManager == null) {
@@ -76,8 +71,6 @@ public class ThreadPoolTaskService implements TaskService {
                                           keepAliveTimeUnit,
                                           createWorkQueue(),
                                           createThreadFactory());
-
-        executor.prestartCoreThread();
     }
 
     public ThreadPoolTaskService(final EventManager eventManager, final ThreadPoolExecutor executor) {
@@ -110,6 +103,35 @@ public class ThreadPoolTaskService implements TaskService {
     }
 
     @Override
+    public void initialize() {
+        lifeCycleSupport.initialize(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                executor.prestartCoreThread();
+                eventManager.fireEvent(EventType.TASK_SERVICE_INITIALIZED, null, this);
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public boolean isRunning() {
+        return lifeCycleSupport.isRunning();
+    }
+
+    @Override
+    public void shutdown() {
+        lifeCycleSupport.shutdown(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                eventManager.fireEvent(EventType.TASK_SERVICE_SHUTTING_DOWN, null, this);
+                executor.shutdown();
+                return null;
+            }
+        });
+    }
+
+    @Override
     public <T> Future<T> submit(final Class<?> source,
                                 final Callable<T> task) {
         return executor.submit(task);
@@ -118,11 +140,5 @@ public class ThreadPoolTaskService implements TaskService {
     @Override
     public void execute(Class<?> source, Runnable task) {
         executor.execute(task);
-    }
-
-    @Override
-    public void shutdown() {
-        eventManager.fireEvent(EventType.TASK_SERVICE_SHUTTING_DOWN, null, this);
-        executor.shutdown();
     }
 }

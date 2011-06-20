@@ -16,6 +16,7 @@ package org.stajistics.event;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
+import org.stajistics.util.ServiceLifeCycle;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -27,7 +28,7 @@ import java.util.Map;
  *
  * @author The Stajistics Project
  */
-public interface EventManager extends Serializable {
+public interface EventManager extends Serializable,ServiceLifeCycle {
 
     Collection<EventHandler> getGlobalEventHandlers();
 

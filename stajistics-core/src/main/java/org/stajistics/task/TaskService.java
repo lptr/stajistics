@@ -14,6 +14,8 @@
  */
 package org.stajistics.task;
 
+import org.stajistics.util.ServiceLifeCycle;
+
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -23,12 +25,10 @@ import java.util.concurrent.Future;
  *
  * @author The Stajistics Project
  */
-public interface TaskService extends Serializable {
+public interface TaskService extends Serializable,ServiceLifeCycle {
 
     void execute(Class<?> source, Runnable task);
 
     <T> Future<T> submit(Class<?> source, Callable<T> task);
-
-    void shutdown();
 
 }

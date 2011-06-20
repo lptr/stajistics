@@ -29,6 +29,7 @@ import org.stajistics.session.recorder.DataRecorder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -54,8 +55,10 @@ public class DefaultSessionManager implements StatsSessionManager {
     protected final StatsConfigManager configManager;
     protected final EventManager eventManager;
 
+    private final Support lifeCycleSupport = new Support();
+
     public DefaultSessionManager(final StatsConfigManager configManager,
-                                      final EventManager eventManager) {
+                                 final EventManager eventManager) {
         if (configManager == null) {
             throw new NullPointerException("configManager");
         }
@@ -65,6 +68,34 @@ public class DefaultSessionManager implements StatsSessionManager {
 
         this.configManager = configManager;
         this.eventManager = eventManager;
+    }
+
+    @Override
+    public void initialize() {
+        lifeCycleSupport.initialize(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                eventManager.fireEvent(EventType.SESSION_MANAGER_INITIALIZED, null, DefaultSessionManager.this);
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public boolean isRunning() {
+        return lifeCycleSupport.isRunning();
+    }
+
+    @Override
+    public void shutdown() {
+        lifeCycleSupport.shutdown(new Callable<Void>() {;
+            @Override
+            public Void call() throws Exception {
+                eventManager.fireEvent(EventType.SESSION_MANAGER_SHUTTING_DOWN, null, DefaultSessionManager.this);
+                clear();
+                return null;
+            }
+        });
     }
 
     /**
@@ -186,12 +217,6 @@ public class DefaultSessionManager implements StatsSessionManager {
         for (StatsSession session : sessionMap.values()) {
             session.clear();
         }
-    }
-
-    @Override
-    public void shutdown() {
-        eventManager.fireEvent(EventType.SESSION_MANAGER_SHUTTING_DOWN, null, this);
-        clear();
     }
 
 }

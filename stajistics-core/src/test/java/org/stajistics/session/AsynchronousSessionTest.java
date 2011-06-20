@@ -14,16 +14,16 @@
  */
 package org.stajistics.session;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.DebugTaskService;
 import org.stajistics.task.TaskService;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author The Stajistics Project
@@ -109,6 +109,16 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
         @Override
         public void execute(Class<?> source, Runnable task) {
             throw new RuntimeException();
+        }
+
+
+        @Override
+        public void initialize() {
+        }
+
+        @Override
+        public boolean isRunning() {
+            return false;
         }
 
         @Override

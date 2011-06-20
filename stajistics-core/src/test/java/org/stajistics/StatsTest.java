@@ -395,6 +395,11 @@ public class StatsTest extends AbstractStajisticsTestCase {
         public void initialize() {}
 
         @Override
+        public boolean isRunning() {
+            return true;
+        }
+
+        @Override
         public void shutdown() {}
 
         @Override

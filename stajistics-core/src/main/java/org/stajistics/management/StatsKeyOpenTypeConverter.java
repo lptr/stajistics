@@ -23,6 +23,7 @@ public class StatsKeyOpenTypeConverter {
     private static final String ATTR_NAME_VALUE_PAIR_DELIMITER = "&";
     private static final String ATTR_NAME_VALUE_DELIMITER = "=";
 
+    private static final String ATTR_PREFIX_ESACPE = "\\";
     private static final String ATTR_PREFIX_BOOLEAN = "b_";
     private static final String ATTR_PREFIX_INTEGER = "i_";
     private static final String ATTR_PREFIX_LONG = "l_";
@@ -62,7 +63,9 @@ public class StatsKeyOpenTypeConverter {
 
                 String strValue = value.toString();
 
-                if (valueClass == Boolean.class) {
+                if (valueClass == String.class) {
+                    strValue = escapeAttrTypePrefix(strValue);
+                } else if (valueClass == Boolean.class) {
                     Boolean b = (Boolean) value;
                     strValue = ATTR_PREFIX_BOOLEAN + (b ? 't' : 'f');
                 } else if (valueClass == Integer.class) {
@@ -120,7 +123,7 @@ public class StatsKeyOpenTypeConverter {
                 }
 
                 final String name = unescapeAttrNameValueDelimiter(nameValueParts[0]);
-                final String strValue = unescapeAttrNameValueDelimiter(nameValueParts[1]);
+                String strValue = unescapeAttrNameValueDelimiter(nameValueParts[1]);
 
                 if (strValue.startsWith(ATTR_PREFIX_BOOLEAN)) {
                     Boolean value = strValue.substring(ATTR_PREFIX_BOOLEAN.length()).equals("t");
@@ -135,12 +138,32 @@ public class StatsKeyOpenTypeConverter {
                     builder.withAttribute(name, value);
 
                 } else {
+                    strValue = unescapeAttrTypePrefix(strValue);
                     builder.withAttribute(name, strValue);
                 }
             }
         }
 
         return builder.newKey();
+    }
+
+    private String escapeAttrTypePrefix(String attrValue) {
+        if (attrValue.startsWith(ATTR_PREFIX_BOOLEAN) ||
+            attrValue.startsWith(ATTR_PREFIX_INTEGER) ||
+            attrValue.startsWith(ATTR_PREFIX_LONG)) {
+            return ATTR_PREFIX_ESACPE + attrValue;
+        }
+        return attrValue;
+    }
+
+    private String unescapeAttrTypePrefix(String attrValue) {
+        if (attrValue.startsWith(ATTR_PREFIX_ESACPE) &&
+            !attrValue.startsWith(ATTR_PREFIX_ESACPE + ATTR_PREFIX_ESACPE)) {
+            String v = attrValue.substring(ATTR_PREFIX_ESACPE.length());
+            return v;
+        }
+
+        return attrValue;
     }
 
     private String escapePart(String part) {

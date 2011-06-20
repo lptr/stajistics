@@ -39,8 +39,25 @@ public class SynchronousEventManager implements EventManager {
     private final ConcurrentMap<StatsKey,List<EventHandler>> sessionEventHandlers =
         new ConcurrentHashMap<StatsKey,List<EventHandler>>();
 
+    private final Support lifeCycleSupport = new Support();
+
     protected List<EventHandler> createEventHandlerList() {
         return new CopyOnWriteArrayList<EventHandler>();
+    }
+
+    @Override
+    public void initialize() {
+        lifeCycleSupport.initialize(null);
+    }
+
+    @Override
+    public boolean isRunning() {
+        return lifeCycleSupport.isRunning();
+    }
+
+    @Override
+    public void shutdown() {
+        lifeCycleSupport.shutdown(null);
     }
 
     @Override
