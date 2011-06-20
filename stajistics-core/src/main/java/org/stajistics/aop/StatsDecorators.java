@@ -14,15 +14,15 @@
  */
 package org.stajistics.aop;
 
-import org.stajistics.Stats;
-import org.stajistics.StatsKey;
-import org.stajistics.tracker.span.SpanTracker;
-
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
+
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  *

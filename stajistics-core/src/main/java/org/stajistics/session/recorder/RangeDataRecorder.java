@@ -14,6 +14,13 @@
  */
 package org.stajistics.session.recorder;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.data.DataSet;
@@ -22,9 +29,6 @@ import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Range;
 import org.stajistics.util.RangeList;
 import org.stajistics.util.ThreadSafe;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *

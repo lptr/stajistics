@@ -14,7 +14,14 @@
  */
 package org.stajistics;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -23,6 +30,10 @@ import java.util.*;
  * @author The Stajistics Project
  */
 public abstract class AbstractStatsKey implements StatsKey {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractStatsKey.class);
+
+    private static final String NULL = "<null>";
 
     private final StatsKeyFactory keyFactory;
     private final String name;
@@ -40,17 +51,31 @@ public abstract class AbstractStatsKey implements StatsKey {
     public AbstractStatsKey(final String name,
                             final StatsKeyFactory keyFactory) {
         if (name == null) {
-            throw new NullPointerException("name");
+            this.name = NULL;
+        } else {
+            this.name = name;
         }
 
-        this.name = name;
         this.keyFactory = keyFactory;
     }
 
     @Override
     public final StatsKeyBuilder buildCopy() {
         if (keyFactory == null) {
-            throw new UnsupportedOperationException(StatsKeyFactory.class.getSimpleName() + " unavailable");
+            if (logger.isErrorEnabled()) {
+                StringBuilder buf = new StringBuilder(128);
+                buf.append("Supplied null ");
+                buf.append(StatsKeyFactory.class.getSimpleName());
+                buf.append(" to ");
+                buf.append(AbstractStatsKey.class.getSimpleName());
+                buf.append(". buildCopy() returning ");
+                buf.append(NullStatsKeyBuilder.class.getSimpleName());
+                buf.append('.');
+
+                logger.error(buf.toString());
+            }
+
+            return NullStatsKeyBuilder.getInstance();
         }
 
         return keyFactory.createKeyBuilder(this);
@@ -69,7 +94,7 @@ public abstract class AbstractStatsKey implements StatsKey {
 
         for (int i = 0; i < nameLength; i++) {
             if (nameChars[i] == StatsConstants.KEY_HIERARCHY_DELIMITER) {
-            depth++;
+                depth++;
             }
         }
 
@@ -83,7 +108,7 @@ public abstract class AbstractStatsKey implements StatsKey {
 
     @Override
     public StatsKey getParent() {
-        String parentName = StatsKeyUtils.parentKeyName(name);
+        String parentName = StatsKeyUtil.parentKeyName(name);
         if (parentName == null) {
             return null;
         }

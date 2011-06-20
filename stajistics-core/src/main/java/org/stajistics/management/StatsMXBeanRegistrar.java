@@ -14,14 +14,14 @@
  */
 package org.stajistics.management;
 
+import javax.management.MBeanServer;
+
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-
-import javax.management.MBeanServer;
 
 /**
  *

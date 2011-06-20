@@ -14,19 +14,26 @@
  */
 package org.stajistics.aop;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
+import java.lang.reflect.Method;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.*;
+import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyUtil;
+import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerFactory;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
-
-import java.lang.reflect.Method;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -139,7 +146,7 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
         final StatsKey methodKey = mockKey.buildCopy()
                                           .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
                                           .newKey();
-        final StatsKey exceptionKey = StatsKeyUtils.keyForFailure(methodKey,
+        final StatsKey exceptionKey = StatsKeyUtil.keyForFailure(methodKey,
                                                                   new IllegalStateException());
 
         final SpanTracker methodTracker = mockery.mock(SpanTracker.class, "methodTracker");

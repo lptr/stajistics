@@ -20,9 +20,9 @@ package org.stajistics;
  *
  * @author The Stajistics Project
  */
-public final class StatsKeyUtils {
+public final class StatsKeyUtil {
 
-    private StatsKeyUtils() {}
+    private StatsKeyUtil() {}
 
     public static String parentKeyName(final String keyName) {
         String parentKeyName = null;

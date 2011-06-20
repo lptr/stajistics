@@ -15,13 +15,15 @@
 
 package org.stajistics.tracker.incident;
 
+import static org.junit.Assert.assertEquals;
+
 import org.jmock.Expectations;
 import org.junit.Test;
-import org.stajistics.*;
+import org.stajistics.Stats;
+import org.stajistics.TestUtil;
+import org.stajistics.UncaughtExceptionHandler;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractTrackerTestCase;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -79,13 +81,13 @@ public class DefaultIncidentTrackerTest extends AbstractTrackerTestCase<Incident
                                                                 with(aNonNull(RuntimeException.class)));
         }});
 
-        Stats.setUncaughtExceptionHandler(mockUncaughtExceptionHandler);
+        Stats.getManager().setUncaughtExceptionHandler(mockUncaughtExceptionHandler);
         try {
             final IncidentTracker tracker = createStatsTracker(new NastySession(mockKey));
 
             tracker.incident();
         } finally {
-            Stats.setUncaughtExceptionHandler(null);
+            Stats.getManager().setUncaughtExceptionHandler(null);
         }
     }
 }

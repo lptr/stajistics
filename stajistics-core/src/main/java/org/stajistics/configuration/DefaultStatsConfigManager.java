@@ -1,21 +1,36 @@
 package org.stajistics.configuration;
 
-import org.stajistics.*;
-import org.stajistics.event.EventManager;
-import org.stajistics.event.EventType;
-import org.stajistics.session.DefaultSessionFactory;
-import org.stajistics.session.recorder.DefaultDataRecorderFactory;
-import org.stajistics.tracker.span.TimeDurationTracker;
-import org.stajistics.util.ServiceLifeCycle;
-
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.stajistics.NullStatsKey;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyAssociation;
+import org.stajistics.StatsKeyFactory;
+import org.stajistics.StatsKeyMatcher;
+import org.stajistics.StatsKeyUtil;
+import org.stajistics.StatsProperties;
+import org.stajistics.event.EventManager;
+import org.stajistics.event.EventType;
+import org.stajistics.session.DefaultSessionFactory;
+import org.stajistics.session.recorder.DefaultDataRecorderFactory;
+import org.stajistics.tracker.span.TimeDurationTracker;
+import org.stajistics.util.ServiceLifeCycle;
 
 /**
  * The default implementation of {@link org.stajistics.configuration.StatsConfigManager}. Clients typically do not instantiate
@@ -285,7 +300,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                 if (goingUp) {
                     entry = keyMap.get(keyName);
                     if (entry == null) {
-                        String parentKeyName = StatsKeyUtils.parentKeyName(keyName);
+                        String parentKeyName = StatsKeyUtil.parentKeyName(keyName);
                         stack.addLast(keyName);
                         keyName = parentKeyName;
                         if (keyName == null) {

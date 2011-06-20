@@ -14,15 +14,15 @@
  */
 package org.stajistics.configuration.xml.binding;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.stajistics.AbstractStajisticsTestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
  * @author The Stajistics Project

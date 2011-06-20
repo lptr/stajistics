@@ -14,6 +14,9 @@
  */
 package org.stajistics.tracker;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import org.stajistics.StatsKey;
 import org.stajistics.event.EventHandler;
 import org.stajistics.event.EventManager;
@@ -21,9 +24,6 @@ import org.stajistics.event.EventType;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.util.Decorator;
 import org.stajistics.util.ThreadSafe;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * A decorator for another TrackerFactory instance that ensures only one Tracker

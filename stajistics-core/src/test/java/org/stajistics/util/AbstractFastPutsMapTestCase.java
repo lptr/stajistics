@@ -1,15 +1,15 @@
 package org.stajistics.util;
 
-import org.junit.Test;
-import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.StajisticsAssert;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StajisticsAssert;
 
 /**
  * 

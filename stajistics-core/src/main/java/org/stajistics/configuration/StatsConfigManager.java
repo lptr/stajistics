@@ -14,13 +14,13 @@
  */
 package org.stajistics.configuration;
 
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyMatcher;
-import org.stajistics.util.ServiceLifeCycle;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
+
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
+import org.stajistics.util.ServiceLifeCycle;
 
 /**
  * <p>Manages associations of {@link org.stajistics.StatsKey}s to {@link StatsConfig}s. {@link StatsConfig}s are

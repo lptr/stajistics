@@ -1,40 +1,38 @@
 package org.stajistics.io;
 
+import java.io.FilterWriter;
+import java.io.IOException;
+import java.io.Writer;
+
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.tracker.manual.ManualTracker;
 
-import java.io.FilterWriter;
-import java.io.IOException;
-import java.io.Writer;
-
 /**
  * @author The Stajistics Project
  */
-public class StatsWriter extends FilterWriter {
+public class StatsFilterWriter extends FilterWriter {
 
-    private final StatsManager statsManager;
-    private final StatsKey key;
+    private ManualTracker tracker;
 
-    private final ManualTracker tracker;
+    public StatsFilterWriter(final StatsKey key,
+                             final Writer out) {
+        this(null, key, out);
+    }
 
-    protected StatsWriter(final StatsManager statsManager,
-                          final StatsKey key,
-                          final Writer out) {
+    public StatsFilterWriter(StatsManager statsManager,
+                             final StatsKey key,
+                             final Writer out) {
         super(out);
 
         if (statsManager == null) {
-            this.statsManager = Stats.getManager();
-        } else {
-            this.statsManager = statsManager;
+            statsManager = Stats.getManager();
         }
 
         if (key == null) {
             throw new NullPointerException("key");
         }
-
-        this.key = key;
 
         tracker = statsManager.getTrackerLocator().getManualTracker(key);
     }
@@ -42,19 +40,19 @@ public class StatsWriter extends FilterWriter {
     @Override
     public void write(final int c) throws IOException {
         out.write(c);
-        tracker.addValue(1).commit();
+        tracker.addValue(1);
     }
 
     @Override
     public void write(final char[] cbuf, final int off, final int len) throws IOException {
         out.write(cbuf, off, len);
-        tracker.addValue(len).commit();
+        tracker.addValue(len);
     }
 
     @Override
     public void write(final String str, final int off, final int len) throws IOException {
         out.write(str, off, len);
-        tracker.addValue(len).commit();
+        tracker.addValue(len);
     }
 
     @Override
@@ -64,39 +62,43 @@ public class StatsWriter extends FilterWriter {
 
     @Override
     public void close() throws IOException {
+        if (tracker != null) {
+            tracker.commit();
+            tracker = null;
+        }
         out.close();
     }
 
     @Override
     public void write(final char[] cbuf) throws IOException {
         out.write(cbuf);
-        tracker.addValue(cbuf.length).commit();
+        tracker.addValue(cbuf.length);
     }
 
     @Override
     public void write(final String str) throws IOException {
         out.write(str);
-        tracker.addValue(str.length()).commit();
+        tracker.addValue(str.length());
     }
 
     @Override
     public Writer append(final CharSequence csq) throws IOException {
         out.append(csq);
-        tracker.addValue(csq.length()).commit();
+        tracker.addValue(csq.length());
         return this;
     }
 
     @Override
     public Writer append(final CharSequence csq, final int start, final int end) throws IOException {
         out.append(csq, start, end);
-        tracker.addValue(end - start).commit();
+        tracker.addValue(end - start);
         return this;
     }
 
     @Override
     public Writer append(final char c) throws IOException {
         out.append(c);
-        tracker.addValue(1).commit();
+        tracker.addValue(1);
         return this;
     }
 }

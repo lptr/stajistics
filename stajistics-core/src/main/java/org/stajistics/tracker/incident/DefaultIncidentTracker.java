@@ -53,7 +53,7 @@ public class DefaultIncidentTracker extends AbstractTracker implements IncidentT
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in incident()");
-            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
         }
 
         return this;

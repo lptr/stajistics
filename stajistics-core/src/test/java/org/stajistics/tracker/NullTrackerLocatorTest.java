@@ -14,12 +14,12 @@
  */
 package org.stajistics.tracker;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.StatsKey;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *

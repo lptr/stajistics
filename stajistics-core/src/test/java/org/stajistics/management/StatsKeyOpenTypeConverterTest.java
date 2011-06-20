@@ -1,17 +1,17 @@
 package org.stajistics.management;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.DefaultStatsKey;
 import org.stajistics.SimpleStatsKey;
 import org.stajistics.StatsKey;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * 

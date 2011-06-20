@@ -26,7 +26,7 @@ public interface ProxyFactory<T> {
 
     public static final class NoOp<T> implements ProxyFactory<T> {
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         private static final NoOp instance = new NoOp();
 
         private NoOp() {}

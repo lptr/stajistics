@@ -14,20 +14,16 @@
  */
 package org.stajistics.aop;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyUtils;
-import org.stajistics.StatsManager;
-import org.stajistics.tracker.NullTracker;
-import org.stajistics.tracker.incident.IncidentTracker;
-import org.stajistics.tracker.span.SpanTracker;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+
+import org.stajistics.Stats;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
+import org.stajistics.StatsUtil;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  *
@@ -36,8 +32,6 @@ import java.lang.reflect.Proxy;
  * @author The Stajistics Project
  */
 public class StatsProxy implements InvocationHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(StatsProxy.class);
 
     protected static final Method EQUALS_METHOD;
     static {
@@ -52,6 +46,7 @@ public class StatsProxy implements InvocationHandler {
     protected static final String ATTR_METHOD = "method";
 
     protected final StatsManager statsManager;
+    protected final StatsUtil util;
     protected final StatsKey key;
     protected final Object target;
 
@@ -64,6 +59,7 @@ public class StatsProxy implements InvocationHandler {
         } else {
             this.statsManager = statsManager;
         }
+        this.util = new StatsUtil(this.statsManager);
 
         if (key == null) {
             throw new NullPointerException("key");
@@ -166,19 +162,8 @@ public class StatsProxy implements InvocationHandler {
                                 .newKey();
 
         try {
-            SpanTracker tracker;
-
+            final SpanTracker tracker = util.track(methodKey);
             try {
-                tracker = statsManager.getTrackerLocator()
-                                      .getSpanTracker(methodKey);
-            } catch (Exception e) {
-                logger.error("Failed to obtain a " + SpanTracker.class.getSimpleName(), e);
-                tracker = NullTracker.getInstance();
-            }
-
-            try {
-                tracker.track();
-
                 if (method.equals(EQUALS_METHOD)) {
                     return target.equals(unwrap(args[0]));
                 }
@@ -197,13 +182,7 @@ public class StatsProxy implements InvocationHandler {
                 cause = t;
             }
 
-            try {
-                statsManager.getTrackerLocator()
-                            .getIncidentTracker(StatsKeyUtils.keyForFailure(methodKey, cause))
-                            .incident();
-            } catch (Exception e) {
-                logger.error("Failed to obtain and invoke an " + IncidentTracker.class.getSimpleName(), e);
-            }
+            util.failure(cause, methodKey);
 
             throw cause;
         }

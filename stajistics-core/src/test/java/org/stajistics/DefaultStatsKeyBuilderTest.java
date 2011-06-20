@@ -14,12 +14,15 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.stajistics.TestUtil.buildStatsKeyExpectations;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 
 /**
  *
@@ -76,12 +79,10 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConstructWithTemplateAndNullKeyFactory() {
-        try {
-            new DefaultStatsKeyBuilder(mockKey, null);
-
-        } catch (NullPointerException npe) {
-            assertEquals("keyFactory", npe.getMessage());
-        }
+        buildStatsKeyExpectations(mockery, mockKey, "test");
+        StatsKeyBuilder builder = new DefaultStatsKeyBuilder(mockKey, null);
+        StatsKey key = builder.newKey();
+        assertSame(NullStatsKeyBuilder.getInstance(), key.buildCopy());
     }
 
     @Test
@@ -100,13 +101,8 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, "test");
         buildStatsKeyBuildCopyExpectations();
 
-        try {
-            mockKey.buildCopy().withNameSuffix(null);
-            fail("Allowed null name suffix");
-
-        } catch (NullPointerException npe) {
-            assertEquals("nameSuffix", npe.getMessage());
-        }
+        StatsKey key = mockKey.buildCopy().withNameSuffix(null).newKey();
+        assertEquals("test.<null>", key.getName());
     }
 
     @Test
@@ -325,14 +321,10 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();
 
-        try {
-            mockKey.buildCopy()
-                   .withAttribute(null, "value");
-            fail("Allowed withAttribute with null name");
-
-        } catch (NullPointerException npe) {
-            assertEquals("name", npe.getMessage());
-        }
+        StatsKey key = mockKey.buildCopy()
+                              .withAttribute(null, "value")
+                              .newKey();
+        assertEquals("value", key.getAttribute("<null>"));
     }
 
     @Test
@@ -340,14 +332,10 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();
 
-        try {
-            mockKey.buildCopy()
-                   .withAttribute("name", (String)null);
-            fail("Allowed withAttribute with null String value");
-
-        } catch (NullPointerException npe) {
-            assertEquals("value for name: name", npe.getMessage());
-        }
+        StatsKey key = mockKey.buildCopy()
+                              .withAttribute("name", (String)null)
+                              .newKey();
+        assertNull(key.getAttribute("name"));
     }
 
     @Test
@@ -355,14 +343,10 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();
 
-        try {
-            mockKey.buildCopy()
-                   .withAttribute("name", (Boolean)null);
-            fail("Allowed withAttribute with null Boolean value");
-
-        } catch (NullPointerException npe) {
-            assertEquals("value for name: name", npe.getMessage());
-        }
+        StatsKey key = mockKey.buildCopy()
+                              .withAttribute("name", (Boolean)null)
+                              .newKey();
+        assertNull(key.getAttribute("name"));
     }
 
     @Test
@@ -370,14 +354,10 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();
 
-        try {
-            mockKey.buildCopy()
-                   .withAttribute("name", (Long)null);
-            fail("Allowed withAttribute with null Long value");
-
-        } catch (NullPointerException npe) {
-            // expected
-        }
+        StatsKey key = mockKey.buildCopy()
+                              .withAttribute("name", (Long)null)
+                              .newKey();
+        assertNull(key.getAttribute("name"));
     }
 
     @Test
@@ -385,14 +365,10 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
         buildStatsKeyExpectations(mockery, mockKey, "test", "existing", "attribute");
         buildStatsKeyBuildCopyExpectations();
 
-        try {
-            mockKey.buildCopy()
-                   .withAttribute("name", (Integer)null);
-            fail("Allowed withAttribute with null Integer value");
-
-        } catch (NullPointerException npe) {
-            // expected
-        }
+        StatsKey key = mockKey.buildCopy()
+                              .withAttribute("name", (Integer)null)
+                              .newKey();
+        assertNull(key.getAttribute("name"));
     }
 
     @Test

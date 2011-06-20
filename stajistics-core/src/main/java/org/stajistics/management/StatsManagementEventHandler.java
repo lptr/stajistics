@@ -31,14 +31,13 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class StatsManagementEventHandler implements EventHandler {
 
-    private final StatsMXBeanRegistrar mxBeanRegistrar;
+    private StatsMXBeanRegistrar mxBeanRegistrar;
 
-    public StatsManagementEventHandler(final StatsMXBeanRegistrar mxBeanRegistrar) {
-        if (mxBeanRegistrar == null) {
-            throw new NullPointerException("mxBeanRegistrar");
-        }
+    private volatile StatsConfigManager configManager;
+    private volatile StatsSessionManager sessionManager;
 
-        this.mxBeanRegistrar = mxBeanRegistrar;
+    protected StatsMXBeanRegistrar createStatsMXBeanRegistrar(final StatsManager statsManager) {
+        return new DefaultStatsMXBeanRegistrar(statsManager.getNamespace());
     }
 
     @Override
@@ -47,23 +46,45 @@ public class StatsManagementEventHandler implements EventHandler {
                                  final Object target) {
         switch (eventType) {
             case STATS_MANAGER_INITIALIZED:
-                mxBeanRegistrar.registerStatsManagerMXBean((StatsManager)target);
-                break;
+                StatsManager statsManager = (StatsManager)target;
+                mxBeanRegistrar = createStatsMXBeanRegistrar(statsManager);
 
+                // Initialize deferred components
+
+                if (configManager != null) {
+                    mxBeanRegistrar.registerConfigManagerMXBean(configManager);
+                    configManager = null;
+                }
+                if (sessionManager != null) {
+                    mxBeanRegistrar.registerSessionManagerMXBean(sessionManager);
+                    sessionManager = null;
+                }
+
+                mxBeanRegistrar.registerStatsManagerMXBean(statsManager);
+
+                break;
+    
             case STATS_MANAGER_SHUTTING_DOWN:
                 mxBeanRegistrar.unregisterStatsManagerMXBean((StatsManager)target);
+                mxBeanRegistrar = null;
                 break;
+        }
 
+        if (mxBeanRegistrar == null) {
+            return;
+        }
+
+        switch (eventType) {
             case CONFIG_MANAGER_INITIALIZED:
-                mxBeanRegistrar.registerConfigManagerMXBean((StatsConfigManager)target);
+                this.configManager = (StatsConfigManager)target; // Defer initialization
                 break;
 
             case CONFIG_MANAGER_SHUTTING_DOWN:
                 mxBeanRegistrar.unregisterConfigManagerMXBean();
                 break;
-            
+
             case SESSION_MANAGER_INITIALIZED:
-                mxBeanRegistrar.registerSessionManagerMXBean((StatsSessionManager)target);
+                this.sessionManager = (StatsSessionManager)target; // Defer initialization
                 break;
 
             case SESSION_MANAGER_SHUTTING_DOWN:

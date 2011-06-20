@@ -1,17 +1,17 @@
 package org.stajistics.management;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.StatsKey;
-
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.stajistics.TestUtil.buildStatsKeyExpectations;
 import static org.stajistics.management.StatsMXBeanUtil.buildKeyName;
+
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StatsKey;
 
 /**
  * 

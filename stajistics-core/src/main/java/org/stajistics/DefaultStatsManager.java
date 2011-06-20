@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import java.util.concurrent.Callable;
+
 import org.stajistics.configuration.DefaultStatsConfigBuilderFactory;
 import org.stajistics.configuration.DefaultStatsConfigManager;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
@@ -30,8 +32,6 @@ import org.stajistics.tracker.NullTrackerLocator;
 import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.util.ServiceLifeCycle;
 
-import java.util.concurrent.Callable;
-
 /**
  * The default implementation of {@link StatsManager}. Clients typically do not
  * instantiate this class directly. Instead use {@link Stats#getManager()}.
@@ -41,8 +41,9 @@ import java.util.concurrent.Callable;
 public class DefaultStatsManager implements StatsManager {
 
     private volatile boolean enabled = true;
+    private volatile UncaughtExceptionHandler uncaughtExceptionHandler = NullUncaughtExceptionHandler.getInstance();
 
-    protected final String namespace;
+    protected String namespace;
     protected final StatsConfigManager configManager;
     protected final StatsSessionManager sessionManager;
     protected final EventManager eventManager;
@@ -115,6 +116,13 @@ public class DefaultStatsManager implements StatsManager {
         lifeCycleSupport.initialize(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
+                if (namespace == null) {
+                    if (StatsManagerRegistry.getStatsManagerCount() == 0) {
+                        namespace = StatsConstants.DEFAULT_NAMESPACE;
+                    } else {
+                        namespace = Integer.toHexString(System.identityHashCode(this));
+                    }
+                }
 
                 StatsManagerRegistry.registerStatsManager(DefaultStatsManager.this);
 
@@ -158,10 +166,6 @@ public class DefaultStatsManager implements StatsManager {
 
     @Override
     public String getNamespace() {
-        if (namespace == null) {
-            return Integer.toHexString(System.identityHashCode(this));
-        }
-
         return namespace;
     }
 
@@ -214,6 +218,20 @@ public class DefaultStatsManager implements StatsManager {
         this.enabled = enabled;
     }
 
+    @Override
+    public UncaughtExceptionHandler getUncaughtExceptionHandler() {
+        return uncaughtExceptionHandler;
+    }
+
+    @Override
+    public void setUncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler) {
+        if (uncaughtExceptionHandler == null) {
+            this.uncaughtExceptionHandler = NullUncaughtExceptionHandler.getInstance();
+        } else {
+            this.uncaughtExceptionHandler = uncaughtExceptionHandler;
+        }
+    }
+
     /* NESTED CLASSES */
 
     public static class Builder {
@@ -227,6 +245,7 @@ public class DefaultStatsManager implements StatsManager {
         protected StatsConfigBuilderFactory configBuilderFactory = null;
         protected TaskService taskService = null;
         protected boolean enabled = true;
+        protected UncaughtExceptionHandler uncaughtExceptionHandler = null;
 
         public Builder withNamespace(final String namespace) {
             this.namespace = namespace;
@@ -301,6 +320,11 @@ public class DefaultStatsManager implements StatsManager {
             return this;
         }
 
+        public Builder withUncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler) {
+            this.uncaughtExceptionHandler = uncaughtExceptionHandler;
+            return this;
+        }
+
         public DefaultStatsManager newManager() {
 
             StatsKeyFactory keyFactory = this.keyFactory;
@@ -349,6 +373,9 @@ public class DefaultStatsManager implements StatsManager {
                                                                   taskService);
 
             manager.setEnabled(enabled);
+            if (uncaughtExceptionHandler != null) {
+                manager.setUncaughtExceptionHandler(uncaughtExceptionHandler);
+            }
 
             return manager;
         }

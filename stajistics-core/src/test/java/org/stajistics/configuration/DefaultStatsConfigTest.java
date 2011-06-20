@@ -14,6 +14,12 @@
  */
 package org.stajistics.configuration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.session.DefaultSessionFactory;
@@ -21,8 +27,6 @@ import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.MilliTimeDurationTracker;
 import org.stajistics.tracker.span.NanoTimeDurationTracker;
-
-import static org.junit.Assert.*;
 
 /**
  *

@@ -14,15 +14,22 @@
  */
 package org.stajistics.util.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.util.xml.testBinding.TestBinding;
-
-import java.io.*;
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author The Stajistics Project

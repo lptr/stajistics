@@ -14,10 +14,10 @@
  */
 package org.stajistics.tracker;
 
+import java.io.Serializable;
+
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
-
-import java.io.Serializable;
 
 /**
  * A factory for creating {@link Tracker} instances.

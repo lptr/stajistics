@@ -14,17 +14,25 @@
  */
 package org.stajistics.session;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.*;
+import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyMatcher;
+import org.stajistics.StatsManager;
+import org.stajistics.TestUtil;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.session.recorder.DataRecorderFactory;
-
-import static org.junit.Assert.*;
 
 /**
  *

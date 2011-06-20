@@ -14,6 +14,14 @@
  */
 package org.stajistics.aop;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,15 +29,11 @@ import org.stajistics.AbstractStajisticsTestCase;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
-import org.stajistics.aop.StatsSelectiveProxy.*;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.stajistics.aop.StatsSelectiveProxy.EnabledCriteria;
+import org.stajistics.aop.StatsSelectiveProxy.MethodCriteria;
+import org.stajistics.aop.StatsSelectiveProxy.MethodModifierCriteria;
+import org.stajistics.aop.StatsSelectiveProxy.MethodSetCriteria;
+import org.stajistics.aop.StatsSelectiveProxy.SelectionCriteria;
 
 /**
  * TODO: run all StatsProxy tests against StatsSelectiveProxy

@@ -79,7 +79,7 @@ public abstract class AbstractTracker implements Tracker {
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in toString()");
-            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
         }
         buf.append(']');
 

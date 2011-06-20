@@ -14,9 +14,9 @@
  */
 package org.stajistics.management.beans;
 
-import org.stajistics.configuration.StatsConfigManager;
-
 import java.util.Set;
+
+import org.stajistics.configuration.StatsConfigManager;
 
 /**
  *

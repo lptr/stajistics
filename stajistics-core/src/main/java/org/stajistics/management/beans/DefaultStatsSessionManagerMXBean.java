@@ -14,14 +14,14 @@
  */
 package org.stajistics.management.beans;
 
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKeyMatcher;
 import org.stajistics.management.StatsKeyOpenTypeConverter;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-
-import java.util.Set;
 
 /**
  *

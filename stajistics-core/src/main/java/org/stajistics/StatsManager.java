@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import java.io.Serializable;
+
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
@@ -21,8 +23,6 @@ import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.util.ServiceLifeCycle;
-
-import java.io.Serializable;
 
 /**
  * Acts as an aggregator of other managers and factories. Maintains a master enabled switch for
@@ -119,4 +119,7 @@ public interface StatsManager extends Serializable,ServiceLifeCycle {
     @Override
     void shutdown();
 
+    UncaughtExceptionHandler getUncaughtExceptionHandler();
+
+    void setUncaughtExceptionHandler(UncaughtExceptionHandler uncaughtExceptionHandler);
 }

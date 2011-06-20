@@ -14,6 +14,11 @@
  */
 package org.stajistics.management.beans;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import javax.management.ObjectName;
+
 import org.jmock.Expectations;
 import org.junit.After;
 import org.junit.Before;
@@ -26,11 +31,6 @@ import org.stajistics.configuration.StatsConfigBuilder;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.management.AbstractJMXTestCase;
-
-import javax.management.ObjectName;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  *

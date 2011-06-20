@@ -14,13 +14,13 @@
  */
 package org.stajistics.configuration;
 
+import java.io.Serializable;
+
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerFactory;
-
-import java.io.Serializable;
 
 /**
  * Represents the configuration that can be applied to a single target for which statistics

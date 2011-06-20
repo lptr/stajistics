@@ -14,12 +14,12 @@
  */
 package org.stajistics.configuration;
 
+import java.io.Serializable;
+
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.TrackerFactory;
-
-import java.io.Serializable;
 
 /**
  * A builder for immutable {@link StatsConfig} instances.

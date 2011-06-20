@@ -1,5 +1,12 @@
 package org.stajistics.management;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Set;
+
+import javax.management.ObjectName;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.DefaultStatsKeyFactory;
@@ -10,15 +17,14 @@ import org.stajistics.configuration.DefaultStatsConfigManager;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.SynchronousEventManager;
-import org.stajistics.management.beans.*;
+import org.stajistics.management.beans.DefaultStatsConfigManagerMXBean;
+import org.stajistics.management.beans.DefaultStatsManagerMXBean;
+import org.stajistics.management.beans.DefaultStatsSessionManagerMXBean;
+import org.stajistics.management.beans.StatsConfigManagerMXBean;
+import org.stajistics.management.beans.StatsManagerMXBean;
+import org.stajistics.management.beans.StatsSessionManagerMXBean;
 import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSessionManager;
-
-import javax.management.ObjectName;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * 

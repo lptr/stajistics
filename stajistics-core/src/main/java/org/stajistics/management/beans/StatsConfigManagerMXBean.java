@@ -14,8 +14,9 @@
  */
 package org.stajistics.management.beans;
 
-import javax.management.MXBean;
 import java.util.Set;
+
+import javax.management.MXBean;
 
 /**
  *

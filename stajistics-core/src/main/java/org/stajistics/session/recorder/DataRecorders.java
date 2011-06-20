@@ -14,15 +14,15 @@
  */
 package org.stajistics.session.recorder;
 
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.stajistics.data.DataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Decorator;
 import org.stajistics.util.ThreadSafe;
-
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provides utility methods for manipulating {@link DataRecorder}s.

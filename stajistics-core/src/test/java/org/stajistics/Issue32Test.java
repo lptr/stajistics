@@ -14,10 +14,10 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
 import org.stajistics.configuration.StatsConfig;
-
-import static org.junit.Assert.assertNull;
 
 /**
  *

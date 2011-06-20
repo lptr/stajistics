@@ -14,15 +14,25 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -64,26 +74,14 @@ public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCas
 
     @Test
     public void testConstructWithNullName() {
-        try {
-            createStatsKey(null);
-
-            fail("Allowed construction with null name");
-
-        } catch (NullPointerException npe) {
-            assertEquals("name", npe.getMessage());
-        }
+        StatsKey key = createStatsKey(null);
+        assertEquals("<null>", key.getName());
     }
 
     @Test
     public void testConstructWithNullKeyFactory() {
         StatsKey key = createStatsKey(TEST_NAME, null, Collections.<String,Object>emptyMap());
-        try {
-            key.buildCopy();
-            fail("Allowed buildCopy() with null key factory");
-
-        } catch (UnsupportedOperationException uoe) {
-            // expected
-        }
+        assertSame(NullStatsKeyBuilder.getInstance(), key.buildCopy());
     }
 
     @Test

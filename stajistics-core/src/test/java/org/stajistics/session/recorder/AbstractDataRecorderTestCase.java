@@ -14,6 +14,10 @@
  */
 package org.stajistics.session.recorder;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +26,6 @@ import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.Tracker;
-
-import static org.junit.Assert.*;
 
 /**
  * @author The Stajistics Project

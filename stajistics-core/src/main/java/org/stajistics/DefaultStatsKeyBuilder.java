@@ -14,9 +14,9 @@
  */
 package org.stajistics;
 
-import org.stajistics.util.FastPutsArrayMap;
-
 import java.util.Map;
+
+import org.stajistics.util.FastPutsLinkedMap;
 
 /**
  * The default implementation of {@link StatsKeyBuilder}. Do not
@@ -26,6 +26,8 @@ import java.util.Map;
  * @author The Stajistics Project
  */
 public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
+
+    private static final String NULL = "<null>";
 
     protected StatsKeyFactory keyFactory;
     protected String name;
@@ -41,18 +43,10 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
      * @param name The initial key name. Must not be <tt>null</tt>.
      * @param keyFactory The factory that supports the creation of StatsKey instances. 
      *                   Must not be <tt>null</tt>.
-     * @throws NullPointerException If <tt>name</tt> or <tt>keyFactory</tt> is <tt>null</tt>.
      */
     public DefaultStatsKeyBuilder(final String name,
                                   final StatsKeyFactory keyFactory) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
-        if (keyFactory == null) {
-            throw new NullPointerException("keyFactory");
-        }
-
-        this.name = name;
+        this.name = name == null ? NULL : name;
         this.keyFactory = keyFactory;
     }
 
@@ -66,28 +60,21 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
      */
     public DefaultStatsKeyBuilder(final StatsKey template,
                                   final StatsKeyFactory keyFactory) {
-        if (template == null) {
-            throw new NullPointerException("template");
-        }
-        if (keyFactory == null) {
-            throw new NullPointerException("keyFactory");
-        }
-
-        this.name = template.getName();
+        this.name = (template == null ? NULL : (template.getName() == null ? NULL : template.getName()));
         this.keyFactory = keyFactory;
 
-        if (template.getAttributeCount() > 0) {
+        if (template != null && template.getAttributeCount() > 0) {
             Map<String,Object> attrs = template.getAttributes();
             if (attrs != null && !attrs.isEmpty()) {
-                attributes = new FastPutsArrayMap<String,Object>(attrs);
+                attributes = new FastPutsLinkedMap<String,Object>(attrs);
             }
         }
     }
 
     @Override
-    public StatsKeyBuilder withNameSuffix(final String nameSuffix) {
+    public StatsKeyBuilder withNameSuffix(String nameSuffix) {
         if (nameSuffix == null) {
-            throw new NullPointerException("nameSuffix");
+            nameSuffix = NULL;
         }
 
         if (nameSuffix.length() > 0) {
@@ -138,14 +125,9 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         return this;
     }
 
-    protected void putAttribute(final String name, final Object value) {
-
+    protected void putAttribute(String name, Object value) {
         if (name == null) {
-            throw new NullPointerException("name");
-        }
-
-        if (value == null) {
-            throw new NullPointerException("value for name: " + name);
+            name = NULL;
         }
 
         if (attributes == null) {
@@ -153,7 +135,7 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
                 firstAttrName = name;
                 firstAttrValue = value;
             } else {
-                attributes = new FastPutsArrayMap<String,Object>();
+                attributes = new FastPutsLinkedMap<String,Object>();
                 attributes.put(firstAttrName, firstAttrValue);
                 firstAttrName = null;
                 firstAttrValue = null;
@@ -167,9 +149,8 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
 
     @Override
     public StatsKey newKey() {
-
         if (name == null) {
-            throw new IllegalStateException("Must specify a name");
+            name = NULL;
         }
 
         if (attributes == null) {

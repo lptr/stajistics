@@ -14,20 +14,27 @@
  */
 package org.stajistics.configuration;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-import org.stajistics.*;
+import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.DefaultStatsKeyFactory;
+import org.stajistics.SimpleStatsKey;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyFactory;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.DefaultSessionFactory;
 import org.stajistics.session.recorder.DefaultDataRecorderFactory;
 import org.stajistics.tracker.span.TimeDurationTracker;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  *

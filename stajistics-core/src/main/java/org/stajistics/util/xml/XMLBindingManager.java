@@ -14,7 +14,11 @@
  */
 package org.stajistics.util.xml;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * @author The Stajistics Project

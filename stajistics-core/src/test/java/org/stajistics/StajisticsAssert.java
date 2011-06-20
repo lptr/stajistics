@@ -14,10 +14,15 @@
  */
 package org.stajistics;
 
-import java.io.*;
-import java.util.Formatter;
-
 import static org.junit.Assert.assertNotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Formatter;
 
 /**
  * @author The Stajistics Project

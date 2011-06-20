@@ -14,16 +14,16 @@
  */
 package org.stajistics.session;
 
-import org.junit.Test;
-import org.stajistics.session.recorder.DataRecorder;
-import org.stajistics.task.DebugTaskService;
-import org.stajistics.task.TaskService;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.Test;
+import org.stajistics.session.recorder.DataRecorder;
+import org.stajistics.task.DebugTaskService;
+import org.stajistics.task.TaskService;
 
 /**
  * @author The Stajistics Project

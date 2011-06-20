@@ -1,7 +1,13 @@
 package org.stajistics.util;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.AbstractSet;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Optimised for very small data sets, allowing compact size and fast puts at the expense of O(n) lookups. This implementation

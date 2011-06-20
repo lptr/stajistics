@@ -14,6 +14,11 @@
  */
 package org.stajistics.session;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
@@ -26,11 +31,6 @@ import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Misc;
-
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>An implementation of {@link StatsSession} that can potentially pad the
@@ -119,7 +119,7 @@ public class AsynchronousSession extends AbstractStatsSession {
                     e,
                     "Failed to queue task {}",
                     entry);
-            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
         }
     }
 
@@ -229,7 +229,7 @@ public class AsynchronousSession extends AbstractStatsSession {
                             e,
                             "Failed to update {}",
                             dataRecorder);
-                    Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                    Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
                 }
             }
         } finally {
