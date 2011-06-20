@@ -14,6 +14,23 @@
  */
 package org.stajistics.management;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.stajistics.TestUtil.buildStatsKeyExpectations;
+import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_CONFIG;
+import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_SESSION;
+import static org.stajistics.management.StatsMXBeanUtil.MANAGER_NAME_STATS;
+import static org.stajistics.management.StatsMXBeanUtil.SUBTYPE_CONFIG;
+import static org.stajistics.management.StatsMXBeanUtil.SUBTYPE_SESSION;
+import static org.stajistics.management.StatsMXBeanUtil.TYPE_KEYS;
+import static org.stajistics.management.StatsMXBeanUtil.buildKeyName;
+import static org.stajistics.management.StatsMXBeanUtil.buildManagerName;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
+
 import org.jmock.Expectations;
 import org.junit.After;
 import org.junit.Before;
@@ -24,17 +41,13 @@ import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
-import org.stajistics.management.beans.*;
+import org.stajistics.management.beans.StatsConfigMXBean;
+import org.stajistics.management.beans.StatsConfigManagerMXBean;
+import org.stajistics.management.beans.StatsManagerMXBean;
+import org.stajistics.management.beans.StatsSessionMXBean;
+import org.stajistics.management.beans.StatsSessionManagerMXBean;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
-
-import static org.junit.Assert.*;
-import static org.stajistics.TestUtil.buildStatsKeyExpectations;
-import static org.stajistics.management.StatsMXBeanUtil.*;
 
 /**
  *

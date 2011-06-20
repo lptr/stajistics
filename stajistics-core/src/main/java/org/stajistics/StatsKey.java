@@ -14,10 +14,10 @@
  */
 package org.stajistics;
 
-import org.stajistics.session.StatsSession;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import org.stajistics.session.StatsSession;
 
 /**
  * A StatsKey acts as a handle for a single target for which statistics can be collected.

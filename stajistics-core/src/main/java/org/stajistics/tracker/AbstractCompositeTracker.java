@@ -14,13 +14,13 @@
  */
 package org.stajistics.tracker;
 
-import org.stajistics.StatsKey;
-import org.stajistics.session.StatsSession;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import org.stajistics.StatsKey;
+import org.stajistics.session.StatsSession;
 
 /**
  * A convenience base implementation of {@link CompositeTracker}.

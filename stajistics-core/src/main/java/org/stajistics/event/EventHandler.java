@@ -14,9 +14,9 @@
  */
 package org.stajistics.event;
 
-import org.stajistics.StatsKey;
-
 import java.io.Serializable;
+
+import org.stajistics.StatsKey;
 
 /**
  *

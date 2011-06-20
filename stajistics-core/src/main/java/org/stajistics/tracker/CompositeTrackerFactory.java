@@ -14,6 +14,11 @@
  */
 package org.stajistics.tracker;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.incident.CompositeIncidentTracker;
@@ -21,11 +26,6 @@ import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.CompositeSpanTracker;
 import org.stajistics.tracker.span.SpanTracker;
 import org.stajistics.util.Composite;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A {@link TrackerFactory} implementation that composes several other TrackerFactories, all

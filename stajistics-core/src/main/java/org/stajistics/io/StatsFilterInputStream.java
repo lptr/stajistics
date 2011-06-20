@@ -1,40 +1,38 @@
 package org.stajistics.io;
 
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.tracker.manual.ManualTracker;
 
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * @author The Stajistics Project
  */
-public class StatsInputStream extends FilterInputStream {
+public class StatsFilterInputStream extends FilterInputStream {
 
-    private final StatsManager statsManager;
-    private final StatsKey key;
+    private ManualTracker tracker;
 
-    private final ManualTracker tracker;
+    public StatsFilterInputStream(final StatsKey key,
+                                  final InputStream in) {
+        this(null, key, in);
+    }
 
-    protected StatsInputStream(final StatsManager statsManager,
-                               final StatsKey key,
-                               final InputStream in) {
+    public StatsFilterInputStream(StatsManager statsManager,
+                                  final StatsKey key,
+                                  final InputStream in) {
         super(in);
 
         if (statsManager == null) {
-            this.statsManager = Stats.getManager();
-        } else {
-            this.statsManager = statsManager;
+            statsManager = Stats.getManager();
         }
 
         if (key == null) {
             throw new NullPointerException("key");
         }
-
-        this.key = key;
 
         tracker = statsManager.getTrackerLocator().getManualTracker(key);
     }
@@ -43,7 +41,7 @@ public class StatsInputStream extends FilterInputStream {
     public int read() throws IOException {
         final int i = in.read();
         if (i > -1) {
-            tracker.addValue(1).commit();
+            tracker.addValue(1);
         }
         return i;
     }
@@ -52,7 +50,7 @@ public class StatsInputStream extends FilterInputStream {
     public int read(final byte[] b) throws IOException {
         final int i = in.read(b);
         if (i > -1) {
-            tracker.addValue(i).commit();
+            tracker.addValue(i);
         }
         return i;
     }
@@ -61,7 +59,7 @@ public class StatsInputStream extends FilterInputStream {
     public int read(final byte[] b, final int off, final int len) throws IOException {
         final int i = in.read(b, off, len);
         if (i > -1) {
-            tracker.addValue(i).commit();
+            tracker.addValue(i);
         }
         return i;
     }
@@ -78,6 +76,10 @@ public class StatsInputStream extends FilterInputStream {
 
     @Override
     public void close() throws IOException {
+        if (tracker != null) {
+            tracker.commit();
+            tracker = null;
+        }
         in.close();
     }
 

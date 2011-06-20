@@ -17,7 +17,6 @@ package org.stajistics.bootstrap;
 import org.stajistics.DefaultStatsManager;
 import org.stajistics.StatsManager;
 import org.stajistics.StatsProperties;
-import org.stajistics.management.DefaultStatsMXBeanRegistrar;
 import org.stajistics.management.StatsMXBeanRegistrar;
 import org.stajistics.management.StatsManagementEventHandler;
 
@@ -37,10 +36,8 @@ public class DefaultStatsManagerFactory implements StatsManagerFactory {
                                                              .newManager();
 
         if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
-            StatsMXBeanRegistrar management = new DefaultStatsMXBeanRegistrar(manager.getNamespace());
-            StatsManagementEventHandler eventHandler = new StatsManagementEventHandler(management);
             manager.getEventManager()
-                   .addGlobalEventHandler(eventHandler);
+                   .addGlobalEventHandler(new StatsManagementEventHandler());
         }
 
         manager.initialize();

@@ -14,6 +14,14 @@
  */
 package org.stajistics.aop;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.Observable;
+import java.util.Observer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadFactory;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,14 +30,6 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyBuilder;
 import org.stajistics.TestUtil;
 import org.stajistics.tracker.TrackerLocator;
-
-import java.util.Observable;
-import java.util.Observer;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadFactory;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  *

@@ -1,16 +1,16 @@
 package org.stajistics.management;
 
-import org.stajistics.DefaultStatsKeyFactory;
-import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyBuilder;
-import org.stajistics.StatsKeyFactory;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.stajistics.DefaultStatsKeyFactory;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsKeyBuilder;
+import org.stajistics.StatsKeyFactory;
 
 /**
  * 

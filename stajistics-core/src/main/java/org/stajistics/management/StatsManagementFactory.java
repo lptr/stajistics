@@ -1,9 +1,17 @@
 package org.stajistics.management;
 
-import org.stajistics.StatsKey;
-import org.stajistics.management.beans.StatsConfigManagerMXBean;
-import org.stajistics.management.beans.StatsManagerMXBean;
-import org.stajistics.management.beans.StatsSessionManagerMXBean;
+import static org.stajistics.management.StatsMXBeanUtil.OBJECT_NAME_ATTR_NAMESPACE;
+import static org.stajistics.management.StatsMXBeanUtil.getConfigManagerObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getConfigManagerObjectNameString;
+import static org.stajistics.management.StatsMXBeanUtil.getSessionManagerObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getSessionManagerObjectNameString;
+import static org.stajistics.management.StatsMXBeanUtil.getStatsManagerObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getStatsManagerObjectNameString;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.management.JMX;
 import javax.management.MBeanServerConnection;
@@ -12,12 +20,11 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.stajistics.management.StatsMXBeanUtil.*;
+import org.stajistics.StatsKey;
+import org.stajistics.management.beans.StatsConfigManagerMXBean;
+import org.stajistics.management.beans.StatsManagerMXBean;
+import org.stajistics.management.beans.StatsSessionManagerMXBean;
 
 /**
  * 

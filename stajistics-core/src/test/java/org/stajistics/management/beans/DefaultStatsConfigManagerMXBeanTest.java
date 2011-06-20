@@ -14,15 +14,15 @@
  */
 package org.stajistics.management.beans;
 
+import static org.junit.Assert.assertEquals;
+
+import javax.management.ObjectName;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.management.AbstractJMXTestCase;
-
-import javax.management.ObjectName;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *

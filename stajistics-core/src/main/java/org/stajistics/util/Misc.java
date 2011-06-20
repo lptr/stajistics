@@ -1,11 +1,11 @@
 package org.stajistics.util;
 
-import org.slf4j.Logger;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.slf4j.Logger;
 
 /**
  * Defines various static utility methods.

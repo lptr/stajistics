@@ -14,12 +14,25 @@
  */
 package org.stajistics.event;
 
-import org.junit.Test;
-import org.stajistics.AbstractStajisticsTestCase;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.stajistics.event.EventType.*;
+import static org.stajistics.event.EventType.CONFIG_CHANGED;
+import static org.stajistics.event.EventType.CONFIG_CREATED;
+import static org.stajistics.event.EventType.CONFIG_DESTROYED;
+import static org.stajistics.event.EventType.CONFIG_MANAGER_INITIALIZED;
+import static org.stajistics.event.EventType.CONFIG_MANAGER_SHUTTING_DOWN;
+import static org.stajistics.event.EventType.SESSION_CLEARED;
+import static org.stajistics.event.EventType.SESSION_CREATED;
+import static org.stajistics.event.EventType.SESSION_DESTROYED;
+import static org.stajistics.event.EventType.SESSION_MANAGER_INITIALIZED;
+import static org.stajistics.event.EventType.SESSION_MANAGER_SHUTTING_DOWN;
+import static org.stajistics.event.EventType.STATS_MANAGER_INITIALIZED;
+import static org.stajistics.event.EventType.STATS_MANAGER_SHUTTING_DOWN;
+import static org.stajistics.event.EventType.TRACKER_COMMITTED;
+import static org.stajistics.event.EventType.TRACKER_TRACKING;
+
+import org.junit.Test;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
  *

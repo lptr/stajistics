@@ -14,13 +14,13 @@
  */
 package org.stajistics.tracker.manual;
 
+import static org.junit.Assert.assertEquals;
+
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.TestUtil;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractTrackerTestCase;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *

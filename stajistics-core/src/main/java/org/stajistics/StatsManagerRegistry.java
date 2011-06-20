@@ -38,6 +38,10 @@ public class StatsManagerRegistry {
     }
 
     public static StatsManager getStatsManager(final String namespace) {
-        return registry.get(namespace);
+        StatsManager statsManager = registry.get(namespace);
+        if (statsManager == null) {
+            throw new StatsNamespaceNotFoundException(namespace);
+        }
+        return statsManager;
     }
 }

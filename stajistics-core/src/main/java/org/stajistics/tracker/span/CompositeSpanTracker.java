@@ -14,9 +14,9 @@
  */
 package org.stajistics.tracker.span;
 
-import org.stajistics.tracker.AbstractCompositeTracker;
-
 import java.util.List;
+
+import org.stajistics.tracker.AbstractCompositeTracker;
 
 /**
  *

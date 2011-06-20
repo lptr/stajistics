@@ -62,7 +62,7 @@ public class DefaultManualTracker extends AbstractTracker implements ManualTrack
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in commit()");
-            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
         }
     }
 

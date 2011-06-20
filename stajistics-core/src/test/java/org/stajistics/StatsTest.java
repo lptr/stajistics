@@ -14,6 +14,10 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,8 +32,6 @@ import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -444,6 +446,14 @@ public class StatsTest extends AbstractStajisticsTestCase {
 
         @Override
         public void setEnabled(boolean enabled) {}
+
+        @Override
+        public UncaughtExceptionHandler getUncaughtExceptionHandler() {
+            return NullUncaughtExceptionHandler.getInstance();
+        }
+
+        @Override
+        public void setUncaughtExceptionHandler(UncaughtExceptionHandler uncaughtExceptionHandler) {}
 
     }
 

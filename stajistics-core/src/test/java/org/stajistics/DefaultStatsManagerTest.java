@@ -14,6 +14,14 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.bootstrap.DefaultStatsManagerFactory;
@@ -24,8 +32,6 @@ import org.stajistics.event.EventType;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.TrackerLocator;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -62,7 +68,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                        mockery.mock(StatsKeyFactory.class),
                                                        mockery.mock(StatsConfigBuilderFactory.class),
                                                        mockery.mock(TaskService.class));
-        assertNotNull(manager.getNamespace());
+        assertNull(manager.getNamespace());
     }
 
     @Test
@@ -75,8 +81,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                        mockery.mock(StatsKeyFactory.class),
                                                        mockery.mock(StatsConfigBuilderFactory.class),
                                                        mockery.mock(TaskService.class));
-        assertNotNull(manager.getNamespace());
-        assertFalse(manager.getNamespace().isEmpty());
+        assertNull(manager.getNamespace());
     }
 
     @Test
@@ -234,7 +239,12 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
 
         expectInitialize(mgr, eventManager, taskService, configManager, sessionManager);
 
-        assertEquals(null, StatsManagerRegistry.getStatsManager("ns"));
+        try {
+            StatsManagerRegistry.getStatsManager("ns");
+            fail("Found namespace: ns");
+        } catch (StatsNamespaceNotFoundException e) {
+            // Expected
+        }
 
         try {
             mgr.initialize();

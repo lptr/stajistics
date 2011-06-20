@@ -1,64 +1,57 @@
 package org.stajistics.io;
 
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.tracker.manual.ManualTracker;
 
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 /**
  * @author The Stajistics Project
  */
-public class StatsOutputStream extends FilterOutputStream {
+public class StatsFilterOutputStream extends FilterOutputStream {
 
-    private final StatsManager statsManager;
-    private final StatsKey key;
+    private ManualTracker tracker;
 
-    private final ManualTracker tracker;
-
-    public StatsOutputStream(final StatsKey key,
-                             final OutputStream out) {
+    public StatsFilterOutputStream(final StatsKey key,
+                                   final OutputStream out) {
         this(null, key, out);
     }
 
-    public StatsOutputStream(final StatsManager statsManager,
-                             final StatsKey key,
-                             final OutputStream out) {
+    public StatsFilterOutputStream(StatsManager statsManager,
+                                   final StatsKey key,
+                                   final OutputStream out) {
         super(out);
 
         if (statsManager == null) {
-            this.statsManager = Stats.getManager();
-        } else {
-            this.statsManager = statsManager;
+            statsManager = Stats.getManager();
         }
 
         if (key == null) {
             throw new NullPointerException("key");
         }
-        
-        this.key = key;
 
         tracker = statsManager.getTrackerLocator().getManualTracker(key);
     }
 
     @Override
     public void write(final int b) throws IOException {
-        tracker.addValue(1).commit();
+        tracker.addValue(1);
         out.write(b);
     }
 
     @Override
     public void write(final byte[] b) throws IOException {
-        tracker.addValue(b.length).commit();
+        tracker.addValue(b.length);
         out.write(b);
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        tracker.addValue(len).commit();
+        tracker.addValue(len);
         out.write(b, off, len);
     }
 
@@ -69,6 +62,10 @@ public class StatsOutputStream extends FilterOutputStream {
 
     @Override
     public void close() throws IOException {
+        if (tracker != null) {
+            tracker.commit();
+            tracker = null;
+        }
         out.close();
     }
 }

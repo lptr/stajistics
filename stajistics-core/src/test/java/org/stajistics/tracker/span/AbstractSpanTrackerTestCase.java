@@ -15,15 +15,16 @@
 package org.stajistics.tracker.span;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.Stats;
 import org.stajistics.TestUtil;
 import org.stajistics.UncaughtExceptionHandler;
 import org.stajistics.tracker.AbstractTrackerTestCase;
-import org.stajistics.tracker.incident.IncidentTracker;
-
-import static org.junit.Assert.*;
 
 
 /**
@@ -227,13 +228,13 @@ public abstract class AbstractSpanTrackerTestCase
                                                                 with(aNonNull(RuntimeException.class)));
         }});
 
-        Stats.setUncaughtExceptionHandler(mockUncaughtExceptionHandler);
+        Stats.getManager().setUncaughtExceptionHandler(mockUncaughtExceptionHandler);
         try {
             final SpanTracker tracker = createStatsTracker(new NastySession(mockKey));
 
             tracker.track();
         } finally {
-            Stats.setUncaughtExceptionHandler(null);
+            Stats.getManager().setUncaughtExceptionHandler(null);
         }
     }
 

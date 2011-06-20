@@ -48,8 +48,7 @@ public final class Stats {
     private static final Logger logger = LoggerFactory.getLogger(Stats.class);
 
     private static volatile StatsManager manager;
-
-    private static volatile UncaughtExceptionHandler uncaughtExceptionHandler = NullUncaughtExceptionHandler.getInstance();
+    private static volatile StatsUtil util;
 
     /**
      * Specify the sole default {@link StatsManager} instance, replacing any existing instance.
@@ -70,6 +69,7 @@ public final class Stats {
         logger.debug("Loaded: {}: {}", StatsManager.class.getSimpleName(), manager);
 
         Stats.manager = manager;
+        Stats.util = new StatsUtil(manager);
     }
 
     /**
@@ -91,6 +91,13 @@ public final class Stats {
         }
 
         return manager;
+    }
+
+    private static StatsUtil getUtil() {
+        if (util == null) {
+            getManager(); // Assigns util
+        }
+        return util;
     }
 
     protected static StatsManager loadDefaultStatsManager() {
@@ -141,6 +148,7 @@ public final class Stats {
 
         String managerFactoryClassName = System.getProperty(StatsManagerFactory.class.getName());
         if (managerFactoryClassName != null) {
+            @SuppressWarnings("unchecked")
             Class<StatsManagerFactory> managerFactoryClass =
                     (Class<StatsManagerFactory>)Class.forName(managerFactoryClassName);
 
@@ -148,10 +156,6 @@ public final class Stats {
         }
 
         return managerFactory;
-    }
-
-    private static TrackerLocator getTrackerLocator() {
-        return getManager().getTrackerLocator();
     }
 
     /**
@@ -208,12 +212,7 @@ public final class Stats {
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final String keyName) {
-        try {
-            return getTrackerLocator().getSpanTracker(newKey(keyName));
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + SpanTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().getSpanTracker(keyName);
     }
 
     /**
@@ -225,12 +224,7 @@ public final class Stats {
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final StatsKey key) {
-        try {
-            return getTrackerLocator().getSpanTracker(key);
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + SpanTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().getSpanTracker(key);
     }
 
     /**
@@ -242,12 +236,7 @@ public final class Stats {
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final StatsKey... keys) {
-        try {
-            return getTrackerLocator().getSpanTracker(keys);
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + SpanTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().getSpanTracker(keys);
     }
 
     /**
@@ -262,13 +251,7 @@ public final class Stats {
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final String keyName) {
-        try {
-            return getTrackerLocator().getSpanTracker(newKey(keyName))
-                                      .track();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().track(keyName);
     }
 
     /**
@@ -283,13 +266,7 @@ public final class Stats {
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final StatsKey key) {
-        try {
-            return getTrackerLocator().getSpanTracker(key)
-                                      .track();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().track(key);
     }
 
     /**
@@ -304,13 +281,7 @@ public final class Stats {
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final StatsKey... keys) {
-        try {
-            return getTrackerLocator().getSpanTracker(keys)
-                                      .track();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().track(keys);
     }
 
     /**
@@ -324,12 +295,7 @@ public final class Stats {
      * @see TrackerLocator#getIncidentTracker(StatsKey)
      */
     public static IncidentTracker getIncidentTracker(final String keyName) {
-        try {
-            return getTrackerLocator().getIncidentTracker(newKey(keyName));
-        } catch (Exception e) {
-            logger.error("Failed to obtain an " + IncidentTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().getIncidentTracker(keyName);
     }
 
     /**
@@ -343,12 +309,7 @@ public final class Stats {
      * @see TrackerLocator#getIncidentTracker(StatsKey)
      */
     public static IncidentTracker getIncidentTracker(final StatsKey key) {
-        try {
-            return getTrackerLocator().getIncidentTracker(key);
-        } catch (Exception e) {
-            logger.error("Failed to obtain an " + IncidentTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().getIncidentTracker(key);
     }
 
     /**
@@ -361,12 +322,7 @@ public final class Stats {
      * @see IncidentTracker#incident()
      */
     public static void incident(final String keyName) {
-        try {
-            getTrackerLocator().getIncidentTracker(newKey(keyName))
-                               .incident();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke an " + IncidentTracker.class.getSimpleName(), e);
-        }
+        getUtil().incident(keyName);
     }
 
     /**
@@ -379,12 +335,7 @@ public final class Stats {
      * @see IncidentTracker#incident()
      */
     public static void incident(final StatsKey key) {
-        try {
-            getTrackerLocator().getIncidentTracker(key)
-                               .incident();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke an " + IncidentTracker.class.getSimpleName(), e);
-        }
+        getUtil().incident(key);
     }
 
     /**
@@ -397,12 +348,7 @@ public final class Stats {
      * @see IncidentTracker#incident()
      */
     public static void incident(final StatsKey... keys) {
-        try {
-            getTrackerLocator().getIncidentTracker(keys)
-                               .incident();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke an " + IncidentTracker.class.getSimpleName(), e);
-        }
+        getUtil().incident(keys);
     }
 
     /**
@@ -413,13 +359,7 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final String keyName) {
-        try {
-            getTrackerLocator().getIncidentTracker(StatsKeyUtils.keyForFailure(newKey(keyName),
-                                                                               failure))
-                               .incident();
-        } catch (Exception e) {
-            logger.error("Failed to report a failure", e);
-        }
+        getUtil().failure(failure, keyName);
     }
 
     /**
@@ -430,12 +370,7 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final StatsKey key) {
-        try {
-            getTrackerLocator().getIncidentTracker(StatsKeyUtils.keyForFailure(key, failure))
-                               .incident();
-        } catch (Exception e) {
-            logger.error("Failed to report a failure", e);
-        }
+        getUtil().failure(failure, key);
     }
 
     /**
@@ -446,20 +381,7 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final StatsKey... keys) {
-        try {
-            if (keys.length == 0) {
-                throw new IllegalArgumentException("must supply at least one key");
-            }
-
-            TrackerLocator trackerLocator = getTrackerLocator();
-
-            for (StatsKey key : keys) {
-                trackerLocator.getIncidentTracker(StatsKeyUtils.keyForFailure(key, failure))
-                              .incident();
-            }
-        } catch (Exception e) {
-            logger.error("Failed to report a failure", e);
-        }
+        getUtil().failure(failure, keys);
     }
 
     /**
@@ -473,12 +395,7 @@ public final class Stats {
      * @see TrackerLocator#getManualTracker(StatsKey)
      */
     public static ManualTracker getManualTracker(final String keyName) {
-        try {
-            return getTrackerLocator().getManualTracker(newKey(keyName));
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + ManualTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().getManualTracker(keyName);
     }
 
     /**
@@ -492,12 +409,7 @@ public final class Stats {
      * @see TrackerLocator#getManualTracker(StatsKey)
      */
     public static ManualTracker getManualTracker(final StatsKey key) {
-        try {
-            return getTrackerLocator().getManualTracker(key);
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + ManualTracker.class.getSimpleName(), e);
-            return NullTracker.getInstance();
-        }
+        return getUtil().getManualTracker(key);
     }
 
     /**
@@ -510,13 +422,7 @@ public final class Stats {
      * @see StatsKeyFactory#createKey(String)
      */
     public static StatsKey newKey(final String name) {
-        try {
-            return getManager().getKeyFactory()
-                               .createKey(name);
-        } catch (Exception e) {
-            logger.error("Failed to create a " + StatsKey.class.getSimpleName(), e);
-            return NullStatsKey.getInstance();
-        }
+        return getUtil().newKey(name);
     }
 
     /**
@@ -530,13 +436,7 @@ public final class Stats {
      * @see StatsKeyFactory#createKeyBuilder(StatsKey)
      */
     public static StatsKeyBuilder buildKey(final String name) {
-        try {
-            return getManager().getKeyFactory()
-                               .createKeyBuilder(name);
-        } catch (Exception e) {
-            logger.error("Failed to create a " + StatsKeyBuilder.class.getSimpleName(), e);
-            return NullStatsKeyBuilder.getInstance();
-        }
+        return getUtil().buildKey(name);
     }
 
     /**
@@ -547,21 +447,7 @@ public final class Stats {
      * @see org.stajistics.configuration.StatsConfigBuilderFactory#createConfigBuilder()
      */
     public static StatsConfigBuilder buildConfig() {
-        return getManager().getConfigBuilderFactory()
-                           .createConfigBuilder();
+        return getUtil().buildConfig();
     }
 
-
-    public static UncaughtExceptionHandler getUncaughtExceptionHandler() {
-        return uncaughtExceptionHandler;
-    }
-
-
-    public static void setUncaughtExceptionHandler(final UncaughtExceptionHandler uncaughtExceptionHandler) {
-        if (uncaughtExceptionHandler == null) {
-            Stats.uncaughtExceptionHandler = NullUncaughtExceptionHandler.getInstance();
-        } else {
-            Stats.uncaughtExceptionHandler = uncaughtExceptionHandler;
-        }
-    }
 }

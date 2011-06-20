@@ -14,6 +14,9 @@
  */
 package org.stajistics.session;
 
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
@@ -27,9 +30,6 @@ import org.stajistics.session.recorder.DataRecorders;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.AtomicDouble;
 import org.stajistics.util.Misc;
-
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>An implementation of {@link StatsSession} that reads and writes data fields atomically
@@ -189,7 +189,7 @@ public class ConcurrentSession extends AbstractStatsSession {
                         e,
                         "Failed to update {}",
                         dataRecorder);
-                Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
 

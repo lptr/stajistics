@@ -14,14 +14,14 @@
  */
 package org.stajistics.management.beans;
 
+import java.util.Map;
+
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
 import org.stajistics.StatsManager;
 import org.stajistics.StatsManagerRegistry;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
-
-import java.util.Map;
 
 /**
  *

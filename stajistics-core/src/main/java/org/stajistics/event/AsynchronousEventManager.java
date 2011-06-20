@@ -14,10 +14,10 @@
  */
 package org.stajistics.event;
 
+import java.util.concurrent.Callable;
+
 import org.stajistics.StatsKey;
 import org.stajistics.task.TaskService;
-
-import java.util.concurrent.Callable;
 
 /**
  *

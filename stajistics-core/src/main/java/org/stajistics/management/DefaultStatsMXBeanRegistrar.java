@@ -14,24 +14,38 @@
  */
 package org.stajistics.management;
 
+import static org.stajistics.management.StatsMXBeanUtil.getConfigManagerObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getConfigManagerObjectNameString;
+import static org.stajistics.management.StatsMXBeanUtil.getConfigObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getConfigObjectNameString;
+import static org.stajistics.management.StatsMXBeanUtil.getSessionManagerObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getSessionManagerObjectNameString;
+import static org.stajistics.management.StatsMXBeanUtil.getSessionObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getSessionObjectNameString;
+import static org.stajistics.management.StatsMXBeanUtil.getStatsManagerObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getStatsManagerObjectNameString;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+import java.lang.management.ManagementFactory;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
-import org.stajistics.management.beans.*;
+import org.stajistics.management.beans.StatsConfigMXBean;
+import org.stajistics.management.beans.StatsConfigManagerMXBean;
+import org.stajistics.management.beans.StatsManagerMXBean;
+import org.stajistics.management.beans.StatsSessionMXBean;
+import org.stajistics.management.beans.StatsSessionManagerMXBean;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
-import java.lang.management.ManagementFactory;
-
-import static org.stajistics.management.StatsMXBeanUtil.*;
 
 /**
  *

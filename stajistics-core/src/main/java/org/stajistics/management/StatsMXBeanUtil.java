@@ -1,10 +1,11 @@
 package org.stajistics.management;
 
-import org.stajistics.StatsKey;
+import java.util.Map;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import java.util.Map;
+
+import org.stajistics.StatsKey;
 
 /**
  * 

@@ -16,3 +16,4 @@
 package org.stajistics.configuration.xml.binding;
 
 import javax.xml.bind.annotation.XmlSchema;
+

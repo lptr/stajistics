@@ -14,11 +14,11 @@
  */
 package org.stajistics.configuration.xml.binding;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * @author The Stajistics Project

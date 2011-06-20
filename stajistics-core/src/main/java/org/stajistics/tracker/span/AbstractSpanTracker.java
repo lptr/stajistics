@@ -1,5 +1,7 @@
 package org.stajistics.tracker.span;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
@@ -8,8 +10,6 @@ import org.stajistics.tracker.AbstractTracker;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerFactory;
 import org.stajistics.util.Misc;
-
-import java.util.Date;
 
 /**
  *
@@ -48,7 +48,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in track()");
-            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
         }
 
         return this;
@@ -74,7 +74,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in commit()");
-            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
         }
     }
 

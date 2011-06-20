@@ -22,6 +22,8 @@ package org.stajistics;
  */
 public interface StatsConstants {
 
+    String DEFAULT_NAMESPACE = "default";
+
     /**
      * The character that delimits hierarchy levels in {@link StatsKey} names.
      */

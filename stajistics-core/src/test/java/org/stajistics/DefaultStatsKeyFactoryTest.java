@@ -14,10 +14,11 @@
  */
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  *
@@ -43,12 +44,8 @@ public class DefaultStatsKeyFactoryTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testCreateKeyWithNullName() {
-        try {
-            keyFactory.createKey(null);
-            fail("Allowed createKey with null name");
-        } catch (NullPointerException npe) {
-            // expected
-        }
+        StatsKey key = keyFactory.createKey(null);
+        assertEquals("<null>", key.getName());
     }
 
     @Test
@@ -58,12 +55,9 @@ public class DefaultStatsKeyFactoryTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testCreateKeyBuilderWithNullName() {
-        try {
-            keyFactory.createKeyBuilder((String)null);
-            fail("Allowed createKeyBuilder with null name");
-        } catch (NullPointerException npe) {
-            assertEquals("name", npe.getMessage());
-        }
+        StatsKeyBuilder builder = keyFactory.createKeyBuilder((String)null);
+        StatsKey key = builder.newKey();
+        assertEquals("<null>", key.getName());
     }
 
     @Test
@@ -73,12 +67,9 @@ public class DefaultStatsKeyFactoryTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testCreateKeyBuilderWithNullTemplate() {
-        try {
-            keyFactory.createKeyBuilder((StatsKey)null);
-            fail("Allowed createKeyBuilder with null template");
-        } catch (NullPointerException npe) {
-            assertEquals("template", npe.getMessage());
-        }
+        StatsKeyBuilder builder = keyFactory.createKeyBuilder((StatsKey)null);
+        StatsKey key = builder.newKey();
+        assertEquals("<null>", key.getName());
     }
 
 }

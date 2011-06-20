@@ -14,11 +14,11 @@
  */
 package org.stajistics.task;
 
-import org.stajistics.util.ServiceLifeCycle;
-
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+
+import org.stajistics.util.ServiceLifeCycle;
 
 /**
  * A service for executing tasks.

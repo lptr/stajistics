@@ -1,7 +1,8 @@
 package org.stajistics.configuration.xml.binding;
 
-import javax.xml.bind.annotation.XmlElement;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * @author The Stajistics Project

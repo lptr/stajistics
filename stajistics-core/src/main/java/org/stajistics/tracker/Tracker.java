@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import java.io.Serializable;
+
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
@@ -21,8 +23,6 @@ import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
-
-import java.io.Serializable;
 
 
 /**

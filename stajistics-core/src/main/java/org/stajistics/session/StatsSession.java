@@ -14,14 +14,14 @@
  */
 package org.stajistics.session;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.tracker.Tracker;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * Stores statistics data collected for a single {@link StatsKey}.

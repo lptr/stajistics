@@ -14,6 +14,14 @@
  */
 package org.stajistics.session;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.Stats;
@@ -24,10 +32,6 @@ import org.stajistics.event.EventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.util.FastPutsLinkedMap;
 import org.stajistics.util.Misc;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.*;
 
 /**
  *
@@ -152,7 +156,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                         "Failed to getField({}) from {}",
                         name,
                         dataRecorders[i]);
-                Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
 
@@ -204,7 +208,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                         e,
                         "Failed to collectData() from {}",
                         dataRecorder);
-                Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
     }
@@ -258,7 +262,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                                     e,
                                     "Failed to restore {}",
                                     dataRecorder);
-                            Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
                         }
                     }
                 }
@@ -285,7 +289,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                         e,
                         "Failed to clear {}",
                         dataRecorder);
-                Stats.getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
             }
         }
     }

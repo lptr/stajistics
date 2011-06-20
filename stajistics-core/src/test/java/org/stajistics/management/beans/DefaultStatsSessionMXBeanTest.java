@@ -14,6 +14,13 @@
  */
 package org.stajistics.management.beans;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Collections;
+import java.util.HashSet;
+
+import javax.management.ObjectName;
+
 import org.jmock.Expectations;
 import org.junit.After;
 import org.junit.Before;
@@ -25,12 +32,6 @@ import org.stajistics.data.DataSet;
 import org.stajistics.management.AbstractJMXTestCase;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-
-import javax.management.ObjectName;
-import java.util.Collections;
-import java.util.HashSet;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *

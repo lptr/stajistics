@@ -14,17 +14,26 @@
  */
 package org.stajistics.management;
 
-import org.junit.After;
-import org.junit.Before;
-import org.stajistics.AbstractStajisticsTestCase;
-
-import javax.management.*;
-import javax.management.remote.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+
+import javax.management.JMX;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
+
+import org.junit.After;
+import org.junit.Before;
+import org.stajistics.AbstractStajisticsTestCase;
 
 /**
  * Thanks to Eamonn McManus for the MBean testing strategy:

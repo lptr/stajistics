@@ -14,10 +14,10 @@
  */
 package org.stajistics.management;
 
+import static org.junit.Assert.assertSame;
+
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-
-import static org.junit.Assert.assertSame;
 
 /**
  *
