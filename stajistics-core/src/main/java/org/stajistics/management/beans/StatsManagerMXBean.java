@@ -8,6 +8,16 @@ import javax.management.MXBean;
 @MXBean
 public interface StatsManagerMXBean {
 
+    String getNamespace();
+
+    String getSessionManagerImpl();
+
+    String getConfigManagerImpl();
+
+    String getEventManagerImpl();
+
+    String getTaskServiceImpl();
+
     boolean getEnabled();
 
     void setEnabled(boolean enabled);

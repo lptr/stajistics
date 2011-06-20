@@ -1,5 +1,6 @@
 package org.stajistics.util;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -8,7 +9,7 @@ import java.util.*;
  *
  * @author The Stajistics Project
  */
-public class FastPutsTableMap<K,V> extends AbstractMap<K,V> {
+public class FastPutsArrayMap<K,V> extends AbstractMap<K,V> implements Serializable {
 
     private static final int UNKNOWN_SIZE = 0; // Zero so that the size is unknown after deserialization
 
@@ -16,15 +17,15 @@ public class FastPutsTableMap<K,V> extends AbstractMap<K,V> {
     protected transient int size = UNKNOWN_SIZE;
     protected transient Set<Entry<K,V>> entrySet = null;
 
-    public FastPutsTableMap() {
+    public FastPutsArrayMap() {
         this(4);
     }
 
-    public FastPutsTableMap(final int initialCapacity) {
+    public FastPutsArrayMap(final int initialCapacity) {
         entries = new ArrayList<Entry<K,V>>(initialCapacity);
     }
 
-    public FastPutsTableMap(final Map<K,V> map) {
+    public FastPutsArrayMap(final Map<K, V> map) {
         this(map.size());
         putAll(map);
     }
@@ -179,7 +180,7 @@ public class FastPutsTableMap<K,V> extends AbstractMap<K,V> {
 
                 @Override
                 public int size() {
-                    return FastPutsTableMap.this.size();
+                    return FastPutsArrayMap.this.size();
                 }
             };
         }

@@ -16,6 +16,7 @@ package org.stajistics.configuration;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
+import org.stajistics.util.ServiceLifeCycle;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -40,7 +41,7 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public interface StatsConfigManager extends Serializable {
+public interface StatsConfigManager extends Serializable,ServiceLifeCycle {
 
     /**
      * Get the root configuration.
@@ -145,7 +146,5 @@ public interface StatsConfigManager extends Serializable {
      * Delete all known configurations except for the root configuration.
      */
     void clearConfigs();
-    
-    
-    void shutdown();
+
 }

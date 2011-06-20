@@ -14,21 +14,18 @@
  */
 package org.stajistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
+import org.stajistics.event.EventType;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.TrackerLocator;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -199,6 +196,93 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
         } catch (NullPointerException npe) {
             assertEquals("taskService", npe.getMessage());
         }
+    }
+
+    private void expectInitialize(final StatsManager statsManager,
+                                  final EventManager eventManager,
+                                  final TaskService taskService,
+                                  final StatsConfigManager configManager,
+                                  final StatsSessionManager sessionManager) {
+        mockery.checking(new Expectations() {{
+            one(eventManager).initialize();
+            one(taskService).initialize();
+            one(configManager).initialize();
+            one(sessionManager).initialize();
+
+            one(eventManager).fireEvent(EventType.STATS_MANAGER_INITIALIZED, null, statsManager);
+        }});
+    }
+
+    @Test
+    public void testInitialize() {
+        final StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
+        final StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
+        final EventManager eventManager = mockery.mock(EventManager.class);
+        final TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
+        final StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
+        final StatsConfigBuilderFactory configBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
+        final TaskService taskService = mockery.mock(TaskService.class);
+
+        final StatsManager mgr = new DefaultStatsManager("ns",
+                                                         configManager,
+                                                         sessionManager,
+                                                         eventManager,
+                                                         trackerLocator,
+                                                         keyFactory,
+                                                         configBuilderFactory,
+                                                         taskService);
+
+        expectInitialize(mgr, eventManager, taskService, configManager, sessionManager);
+
+        assertEquals(null, StatsManagerRegistry.getStatsManager("ns"));
+
+        try {
+            mgr.initialize();
+
+            assertEquals(mgr, StatsManagerRegistry.getStatsManager("ns"));
+
+            // Try again to test no effect
+            mgr.initialize();
+        } finally {
+            StatsManagerRegistry.removeStatsManager("ns");
+        }
+    }
+
+    @Test
+    public void testShutdown() {
+
+        final StatsConfigManager configManager = mockery.mock(StatsConfigManager.class);
+        final StatsSessionManager sessionManager = mockery.mock(StatsSessionManager.class);
+        final EventManager eventManager = mockery.mock(EventManager.class);
+        final TrackerLocator trackerLocator = mockery.mock(TrackerLocator.class);
+        final StatsKeyFactory keyFactory = mockery.mock(StatsKeyFactory.class);
+        final StatsConfigBuilderFactory configBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
+        final TaskService taskService = mockery.mock(TaskService.class);
+
+        final StatsManager mgr = new DefaultStatsManager("ns",
+                                                         configManager,
+                                                         sessionManager,
+                                                         eventManager,
+                                                         trackerLocator,
+                                                         keyFactory,
+                                                         configBuilderFactory,
+                                                         taskService);
+
+        expectInitialize(mgr, eventManager, taskService, configManager, sessionManager);
+        mgr.initialize();
+
+        mockery.checking(new Expectations() {{
+            one(eventManager).fireEvent(EventType.STATS_MANAGER_SHUTTING_DOWN, null, mgr);
+
+            one(sessionManager).shutdown();
+            one(configManager).shutdown();
+            one(taskService).shutdown();
+            one(eventManager).shutdown();
+        }});
+
+        mgr.shutdown();
+
+        assertFalse(mgr.isEnabled());
     }
 
     @Test

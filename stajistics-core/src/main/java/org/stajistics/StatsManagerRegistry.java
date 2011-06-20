@@ -27,7 +27,14 @@ public class StatsManagerRegistry {
     }
 
     public static void removeStatsManager(final StatsManager manager) {
-        registry.remove(manager.getNamespace());
+        removeStatsManager(manager.getNamespace());
+    }
+
+    public static void removeStatsManager(final String namespace) {
+        if (namespace == null) {
+            throw new NullPointerException("namespace");
+        }
+        registry.remove(namespace);
     }
 
     public static StatsManager getStatsManager(final String namespace) {

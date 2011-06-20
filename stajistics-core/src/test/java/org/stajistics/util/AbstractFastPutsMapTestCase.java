@@ -2,6 +2,7 @@ package org.stajistics.util;
 
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StajisticsAssert;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,11 +17,17 @@ import static org.junit.Assert.assertEquals;
  * @author The Stajistics Project
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class FastPutsTableMapTest extends AbstractStajisticsTestCase {
+public abstract class AbstractFastPutsMapTestCase extends AbstractStajisticsTestCase {
+
+    protected abstract Map createFastPutsMap();
+
+    protected abstract Map createFastPutsMap(Map map);
+
+    protected abstract void compact(Map map);
 
     @Test
     public void testConstruct() {
-        FastPutsTableMap m = new FastPutsTableMap();
+        Map m = createFastPutsMap();
         assertContents(Collections.emptyMap(), m);
     }
 
@@ -31,14 +38,14 @@ public class FastPutsTableMapTest extends AbstractStajisticsTestCase {
         m1.put("one", 1);
         m1.put("two", 2);
 
-        FastPutsTableMap m2 = new FastPutsTableMap(m1);
+        Map m2 = createFastPutsMap(m1);
 
         assertContents(m1, m2);
     }
 
     @Test
     public void testSizeWithDuplicates() {
-        FastPutsTableMap m = new FastPutsTableMap();
+        Map m = createFastPutsMap();
         m.put("one", 1);
         m.put("one", -1);
         m.put("two", 2);
@@ -48,7 +55,7 @@ public class FastPutsTableMapTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testSizeAfterPuts() {
-        FastPutsTableMap m = new FastPutsTableMap();
+        Map m = createFastPutsMap();
         m.put("one", 1);
         assertEquals(1, m.size());
         m.put("two", 2);
@@ -59,7 +66,7 @@ public class FastPutsTableMapTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testSizeAfterRemove() {
-        FastPutsTableMap m = new FastPutsTableMap();
+        Map m = createFastPutsMap();
         m.put("one", 1);
         m.put("two", 2);
         m.remove("one");
@@ -69,7 +76,7 @@ public class FastPutsTableMapTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testGetWithDuplicates() {
-        FastPutsTableMap m = new FastPutsTableMap();
+        Map m = createFastPutsMap();
         m.put("one", 1);
         m.put("one", -1);
         m.put("two", 2);
@@ -80,16 +87,12 @@ public class FastPutsTableMapTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testCompact() {
-        FastPutsTableMap m = new FastPutsTableMap();
+        Map m = createFastPutsMap();
         m.put("one", 1);
         m.put("one", -1);
         m.put("two", 2);
 
-        assertEquals(3, m.entries.size());
-
-        m.compact();
-
-        assertEquals(2, m.entries.size());
+        compact(m);
 
         Map expectedContents = new HashMap();
         expectedContents.put("one", -1);
@@ -100,32 +103,57 @@ public class FastPutsTableMapTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testRemove() {
-        FastPutsTableMap m = new FastPutsTableMap();
+        Map m = createFastPutsMap();
         m.put("one", 1);
         m.put("one", -1);
         m.put("two", 2);
 
         m.remove("one");
 
-        assertEquals(1, m.entries.size()); // Ensure duplicates removed
+        // Ensure duplicates removed
+        int s = m.size();
+        compact(m);
+        assertEquals(s, m.size());
+
         assertContents(Collections.singletonMap("two", 2), m);
     }
-    
-    private void assertContents(final Map expectedContents, final FastPutsTableMap fastPutsTableMap) {
-        assertEquals(expectedContents.isEmpty(), fastPutsTableMap.isEmpty());
-        assertEquals(expectedContents.size(), fastPutsTableMap.size());
 
-        assertEquals(expectedContents.isEmpty(), fastPutsTableMap.entrySet().isEmpty());
-        assertEquals(expectedContents.size(), fastPutsTableMap.entrySet().size());
+    @Test
+    public void testClear() {
+        Map m = createFastPutsMap();
+        m.put("one", 1);
+        m.put("two", 2);
 
-        assertEquals(expectedContents.isEmpty(), fastPutsTableMap.keySet().isEmpty());
-        assertEquals(expectedContents.size(), fastPutsTableMap.keySet().size());
+        m.clear();
 
-        assertEquals(expectedContents.isEmpty(), fastPutsTableMap.values().isEmpty());
-        assertEquals(expectedContents.size(), fastPutsTableMap.values().size());
+        assertContents(Collections.emptyMap(), m);
+    }
+
+    @Test
+    public void testSerializableDeserializable() {
+        Map m = createFastPutsMap();
+        m.put("one", 1);
+        m.put("two", 2);
+        m.put("three", 3);
+
+        StajisticsAssert.assertSerializable(m);
+    }
+
+    private void assertContents(final Map expectedContents, final Map fastPutsMap) {
+        assertEquals(expectedContents.isEmpty(), fastPutsMap.isEmpty());
+        assertEquals(expectedContents.size(), fastPutsMap.size());
+
+        assertEquals(expectedContents.isEmpty(), fastPutsMap.entrySet().isEmpty());
+        assertEquals(expectedContents.size(), fastPutsMap.entrySet().size());
+
+        assertEquals(expectedContents.isEmpty(), fastPutsMap.keySet().isEmpty());
+        assertEquals(expectedContents.size(), fastPutsMap.keySet().size());
+
+        assertEquals(expectedContents.isEmpty(), fastPutsMap.values().isEmpty());
+        assertEquals(expectedContents.size(), fastPutsMap.values().size());
 
         for (Map.Entry e : (Set<Map.Entry>) expectedContents.entrySet()) {
-            assertEquals(e.getValue(), fastPutsTableMap.get(e.getKey()));
+            assertEquals(e.getValue(), fastPutsMap.get(e.getKey()));
         }
     }
 }

@@ -14,7 +14,7 @@
  */
 package org.stajistics;
 
-import org.stajistics.util.FastPutsTableMap;
+import org.stajistics.util.FastPutsArrayMap;
 
 import java.util.Map;
 
@@ -79,7 +79,7 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         if (template.getAttributeCount() > 0) {
             Map<String,Object> attrs = template.getAttributes();
             if (attrs != null && !attrs.isEmpty()) {
-                attributes = new FastPutsTableMap<String,Object>(attrs);
+                attributes = new FastPutsArrayMap<String,Object>(attrs);
             }
         }
     }
@@ -153,7 +153,7 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
                 firstAttrName = name;
                 firstAttrValue = value;
             } else {
-                attributes = new FastPutsTableMap<String,Object>();
+                attributes = new FastPutsArrayMap<String,Object>();
                 attributes.put(firstAttrName, firstAttrValue);
                 firstAttrName = null;
                 firstAttrValue = null;

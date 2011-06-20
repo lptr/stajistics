@@ -14,14 +14,9 @@
  */
 package org.stajistics.task;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.stajistics.event.EventManager;
-import org.stajistics.event.EventType;
+
+import java.util.concurrent.*;
 
 /**
  * @author The Stajistics Project
@@ -37,7 +32,18 @@ public class DebugTaskService implements TaskService {
 
         this.eventManager = eventManager;
     }
-    
+
+    @Override
+    public void initialize() {}
+
+    @Override
+    public boolean isRunning() {
+        return true;
+    }
+
+    @Override
+    public void shutdown() {}
+
     @Override
     public void execute(final Class<?> source,
                         final Runnable task) {
@@ -56,10 +62,7 @@ public class DebugTaskService implements TaskService {
         }
     }
 
-    @Override
-    public void shutdown() {
-        eventManager.fireEvent(EventType.TASK_SERVICE_SHUTTING_DOWN, null, this);
-    }
+
 
     private final static class FinishedFuture<T> implements Future<T> {
 

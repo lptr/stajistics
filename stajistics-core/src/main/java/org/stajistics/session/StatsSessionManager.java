@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
+import org.stajistics.util.ServiceLifeCycle;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -26,7 +27,7 @@ import java.util.Set;
  *
  * @author The Stajistics Project
  */
-public interface StatsSessionManager extends Serializable {
+public interface StatsSessionManager extends Serializable,ServiceLifeCycle {
 
     /**
      * Get the total number of {@link StatsSession} instance being managed.
@@ -96,7 +97,7 @@ public interface StatsSessionManager extends Serializable {
     /**
      * Remove the given <tt>session</tt> instance from this manager.
      *
-     * @param statsSession The {@link StatsSession} instance to remove.
+     * @param session The {@link StatsSession} instance to remove.
      * @return <tt>true</tt> if <tt>session</tt> was found and removed, <tt>false</tt> if not found.
      */
     boolean remove(StatsSession session);
@@ -111,5 +112,4 @@ public interface StatsSessionManager extends Serializable {
      */
     void clearAllSessions();
 
-    void shutdown();
 }

@@ -20,6 +20,7 @@ import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
 import org.stajistics.tracker.TrackerLocator;
+import org.stajistics.util.ServiceLifeCycle;
 
 import java.io.Serializable;
 
@@ -29,9 +30,13 @@ import java.io.Serializable;
  *
  * @author The Stajistics Project
  */
-public interface StatsManager extends Serializable {
+public interface StatsManager extends Serializable,ServiceLifeCycle {
 
-
+    /**
+     * Get the unique namespace identifier for this <tt>StatsManager</tt>.
+     *
+     * @return The namespace, never <tt>null</tt>.
+     */
     String getNamespace();
     
     /**
@@ -97,15 +102,21 @@ public interface StatsManager extends Serializable {
      */
     void setEnabled(boolean enabled);
 
-    
+    /**
+     * Initialize sub-components and fire initialization events. Clients do not need to call this method.
+     * Called internally as part of instance creation by a {@link org.stajistics.bootstrap.StatsManagerFactory}.
+     * After this method is called for the first time, subsequent calls will have no effect.
+     */
+    @Override
     void initialize();
-    
+
     /**
      * Firstly, set the manager state to disabled, then proceed to clean up any resources
      * associated with statistics collection. A future call to {@link #setEnabled(boolean)} passing
      * <tt>true</tt>, followed by any request to collect statistics will reinitialize any
      * necessary resources.
      */
+    @Override
     void shutdown();
 
 }
