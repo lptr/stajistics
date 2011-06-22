@@ -1,16 +1,15 @@
 package org.stajistics.management;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.stajistics.DefaultStatsKeyFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyBuilder;
 import org.stajistics.StatsKeyFactory;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -19,22 +18,17 @@ import org.stajistics.StatsKeyFactory;
  */
 public class StatsKeyOpenTypeConverter {
 
-    private static final String KEY_ATTRS_DELIMITER = ":";
-    private static final String ATTR_NAME_VALUE_PAIR_DELIMITER = "&";
-    private static final String ATTR_NAME_VALUE_DELIMITER = "=";
+    private static final char KEY_ATTRS_DELIMITER = ':';
+    private static final char ATTR_NAME_VALUE_PAIR_DELIMITER = '&';
+    private static final char ATTR_NAME_VALUE_DELIMITER = '=';
 
-    private static final String ATTR_PREFIX_ESACPE = "\\";
+    private static final char ESCAPE = '\\';
     private static final String ATTR_PREFIX_BOOLEAN = "b_";
     private static final String ATTR_PREFIX_INTEGER = "i_";
     private static final String ATTR_PREFIX_LONG = "l_";
 
-    private static final Pattern KEY_ATTRS_SPLITTER = Pattern.compile("(?<!\\\\)[:]");
-    private static final Pattern ATTR_NAME_VALUE_PAIR_SPLITTER = Pattern.compile("(?<!\\\\)[&]"); 
+    private static final Pattern ATTR_NAME_VALUE_PAIR_SPLITTER = Pattern.compile("(?<!\\\\)[&]");
     private static final Pattern ATTR_NAME_VALUE_SPLITTER = Pattern.compile("(?<!\\\\)[=]");
-
-    private static final Pattern KEY_ATTRS_UNESCAPE = Pattern.compile("\\\\:");
-    private static final Pattern ATTR_NAME_VALUE_PAIR_UNESCAPE = Pattern.compile("\\\\&");
-    private static final Pattern ATTR_NAME_VALUE_UNESCAPE = Pattern.compile("\\\\=");
 
     public Set<String> toOpenType(final Set<StatsKey> keys) {
         Set<String> result = new HashSet<String>(keys.size());
@@ -47,40 +41,60 @@ public class StatsKeyOpenTypeConverter {
     }
 
     public String toOpenType(final StatsKey key) {
-        StringBuilder buf = new StringBuilder(key.getName().length() + (key.getAttributeCount() * 10));
+        final int nameLen = key.getName().length();
+        final int attrCount = key.getAttributeCount();
 
-        String keyName = key.getName();
+        final StringBuilder buf = new StringBuilder(nameLen + (attrCount * 10));
 
-        buf.append(escapePart(keyName));
+        // Name
+        escapePart(buf, key.getName());
 
-        if (key.getAttributeCount() > 0) {
+        if (attrCount > 0) {
 
             buf.append(KEY_ATTRS_DELIMITER);
 
-            for (Map.Entry<String, Object> entry : key.getAttributes().entrySet()) {
-                Object value = entry.getValue();
-                Class<?> valueClass = value.getClass();
+            Object value;
+            Class<?> valueClass;
 
-                String strValue = value.toString();
+            for (Map.Entry<String, Object> entry : key.getAttributes().entrySet()) {
+
+                // Attr name
+                escapePart(buf, entry.getKey());
+                buf.append(ATTR_NAME_VALUE_DELIMITER);
+
+                // Attr value
+                value = entry.getValue();
+                valueClass = value.getClass();
 
                 if (valueClass == String.class) {
-                    strValue = escapeAttrTypePrefix(strValue);
+                    final String strValue = value.toString();
+                    if (strValue.length() > 1) {
+                        final char c = strValue.charAt(0);
+                        if ((c == 'b' || c == 'i' || c == 'l') && strValue.charAt(1) == '_') {
+                            buf.append(ESCAPE);
+                        }
+                    }
+
+                    escapePart(buf, strValue);
+
                 } else if (valueClass == Boolean.class) {
                     Boolean b = (Boolean) value;
-                    strValue = ATTR_PREFIX_BOOLEAN + (b ? 't' : 'f');
+                    buf.append(ATTR_PREFIX_BOOLEAN);
+                    buf.append(b ? 't' : 'f');
+
                 } else if (valueClass == Integer.class) {
-                    strValue = ATTR_PREFIX_INTEGER + strValue;
+                    buf.append(ATTR_PREFIX_INTEGER);
+                    buf.append(value.toString());
+
                 } else if (valueClass == Long.class) {
-                    strValue = ATTR_PREFIX_LONG + strValue;
+                    buf.append(ATTR_PREFIX_LONG);
+                    buf.append(value.toString());
                 }
 
-                buf.append(escapePart(entry.getKey()));
-                buf.append(ATTR_NAME_VALUE_DELIMITER);
-                buf.append(escapePart(strValue));
                 buf.append(ATTR_NAME_VALUE_PAIR_DELIMITER);
             }
 
-            if (buf.charAt(buf.length() - 1) == ATTR_NAME_VALUE_PAIR_DELIMITER.charAt(0)) {
+            if (buf.charAt(buf.length() - 1) == ATTR_NAME_VALUE_PAIR_DELIMITER) {
                 buf.setLength(buf.length() - 1);
             }
         }
@@ -104,26 +118,59 @@ public class StatsKeyOpenTypeConverter {
         return fromOpenType(openTypeKey, factory);
     }
 
-    protected StatsKey fromOpenType(final String openTypeKey, final StatsKeyFactory factory) {
-        String[] parts = KEY_ATTRS_SPLITTER.split(openTypeKey, 2);
-        if (parts.length > 2) {
-            throw new MalformedOpenTypeStatsKeyException(openTypeKey);
+    public StatsKey fromOpenType(final String openTypeKey, final StatsKeyFactory factory) {
+
+        final char[] openTypeChars = openTypeKey.toCharArray();
+        final int len = openTypeChars.length;
+
+        char c = '\0';
+        char lastChar;
+        int i;
+
+        // Find the index of the end of the key name
+        for (i = 0; i < len; i++) {
+            lastChar = c;
+            c = openTypeChars[i];
+            if (c == KEY_ATTRS_DELIMITER && lastChar != ESCAPE) {
+                // Found all of the name
+                break;
+            }
+            if (lastChar == ESCAPE && c == ESCAPE) {
+                c = '\0';
+            }
         }
 
-        StatsKeyBuilder builder = factory.createKeyBuilder(unescapePart(parts[0]));
+        String keyName = new String(openTypeChars, 0, i);
+        StringBuilder buf = new StringBuilder(Math.min(16, keyName.length() + 4));
+        unescapePart(buf, keyName);
 
-        if (parts.length > 1) {
-            String attributes = unescapeKeyAttrDelimiter(parts[1]);
+        StatsKeyBuilder builder = factory.createKeyBuilder(buf.toString());
+
+        // Are any attributes present?
+        if (i < len - 1) {
+            buf.setLength(0);
+            String attributes = new String(openTypeChars, i + 1, len - i - 1);
+            unescapeChar(buf, attributes, KEY_ATTRS_DELIMITER);
+            attributes = buf.toString();
+            
             String[] nameValuePairParts = ATTR_NAME_VALUE_PAIR_SPLITTER.split(attributes);
             for (String nameValuePair : nameValuePairParts) {
-                nameValuePair = unescapeAttrNameValuePairDelimiter(nameValuePair);
+                buf.setLength(0);
+                unescapeChar(buf, nameValuePair, ATTR_NAME_VALUE_PAIR_DELIMITER);
+                nameValuePair = buf.toString();
+
                 String[] nameValueParts = ATTR_NAME_VALUE_SPLITTER.split(nameValuePair);
                 if (nameValueParts.length != 2) {
                     throw new MalformedOpenTypeStatsKeyException(openTypeKey);
                 }
 
-                final String name = unescapeAttrNameValueDelimiter(nameValueParts[0]);
-                String strValue = unescapeAttrNameValueDelimiter(nameValueParts[1]);
+                buf.setLength(0);
+                unescapeChar(buf, nameValueParts[0], ATTR_NAME_VALUE_DELIMITER);
+                final String name = buf.toString();
+
+                buf.setLength(0);
+                unescapeChar(buf, nameValueParts[1], ATTR_NAME_VALUE_DELIMITER);
+                String strValue = buf.toString();
 
                 if (strValue.startsWith(ATTR_PREFIX_BOOLEAN)) {
                     Boolean value = strValue.substring(ATTR_PREFIX_BOOLEAN.length()).equals("t");
@@ -138,8 +185,9 @@ public class StatsKeyOpenTypeConverter {
                     builder.withAttribute(name, value);
 
                 } else {
-                    strValue = unescapeAttrTypePrefix(strValue);
-                    builder.withAttribute(name, strValue);
+                    buf.setLength(0);
+                    unescapeAttrTypePrefix(buf, strValue);
+                    builder.withAttribute(name, buf.toString());
                 }
             }
         }
@@ -147,61 +195,73 @@ public class StatsKeyOpenTypeConverter {
         return builder.newKey();
     }
 
-    private String escapeAttrTypePrefix(String attrValue) {
-        if (attrValue.startsWith(ATTR_PREFIX_BOOLEAN) ||
-            attrValue.startsWith(ATTR_PREFIX_INTEGER) ||
-            attrValue.startsWith(ATTR_PREFIX_LONG)) {
-            return ATTR_PREFIX_ESACPE + attrValue;
-        }
-        return attrValue;
-    }
+    private void unescapeAttrTypePrefix(final StringBuilder buf, final String attrValue) {
+        final int partLen = attrValue.length();
 
-    private String unescapeAttrTypePrefix(String attrValue) {
-        if (attrValue.startsWith(ATTR_PREFIX_ESACPE) &&
-            !attrValue.startsWith(ATTR_PREFIX_ESACPE + ATTR_PREFIX_ESACPE)) {
-            String v = attrValue.substring(ATTR_PREFIX_ESACPE.length());
-            return v;
+        // Unescape type
+        if (partLen > 1 && attrValue.charAt(0) == ESCAPE) {
+            final char nextChar = attrValue.charAt(1);
+            if (nextChar == 'b' || nextChar == 'i' || nextChar == 'l') {
+                buf.append(attrValue.substring(1));
+                return;
+            }
         }
 
-        return attrValue;
+        buf.append(attrValue);
     }
 
-    private String escapePart(String part) {
-        Matcher m = KEY_ATTRS_SPLITTER.matcher(part);
-        part = m.replaceAll("\\\\:");
-
-        m = ATTR_NAME_VALUE_PAIR_SPLITTER.matcher(part);
-        part = m.replaceAll("\\\\&");
-
-        m = ATTR_NAME_VALUE_SPLITTER.matcher(part);
-        part = m.replaceAll("\\\\=");
-
-        return part;
+    private void escapePart(final StringBuilder buf, final String part) {
+        final int partLen = part.length();
+        char c;
+        for (int i = 0; i < partLen; i++) {
+            c = part.charAt(i);
+            switch (c) {
+                case KEY_ATTRS_DELIMITER:
+                case ATTR_NAME_VALUE_PAIR_DELIMITER:
+                case ATTR_NAME_VALUE_DELIMITER:
+                    buf.append(ESCAPE);
+                    break;
+            }
+            buf.append(c);
+        }
     }
 
-    private String unescapePart(String part) {
-        part = unescapeKeyAttrDelimiter(part);
-        part = unescapeAttrNameValuePairDelimiter(part);
-        part = unescapeAttrNameValueDelimiter(part);
-        return part;
+    private void unescapePart(final StringBuilder buf, final String part) {
+        final int partLen = part.length();
+        char c = '\0';
+        char lastChar;
+        for (int i = 0; i < partLen; i++) {
+            lastChar = c;
+            c = part.charAt(i);
+            if (c == ESCAPE && lastChar != ESCAPE && i < partLen - 1) {
+                final char nextChar = part.charAt(i + 1);
+                if (nextChar == KEY_ATTRS_DELIMITER ||
+                    nextChar == ATTR_NAME_VALUE_PAIR_DELIMITER ||
+                    nextChar == ATTR_NAME_VALUE_DELIMITER) {
+                    // We found an escape
+                    continue;
+                }
+            }
+            buf.append(c);
+        }
     }
 
-    private String unescapeKeyAttrDelimiter(String part) {
-        Matcher m = KEY_ATTRS_UNESCAPE.matcher(part);
-        part = m.replaceAll(KEY_ATTRS_DELIMITER);
-        return part;
-    }
-
-    private String unescapeAttrNameValuePairDelimiter(String part) {
-        Matcher m = ATTR_NAME_VALUE_PAIR_UNESCAPE.matcher(part);
-        part = m.replaceAll(ATTR_NAME_VALUE_PAIR_DELIMITER);
-        return part;
-    }
-
-    private String unescapeAttrNameValueDelimiter(String part) {
-        Matcher m = ATTR_NAME_VALUE_UNESCAPE.matcher(part);
-        part = m.replaceAll(ATTR_NAME_VALUE_DELIMITER);
-        return part;
+    private void unescapeChar(final StringBuilder buf, final String part, final char escapeChar) {
+        final int partLen = part.length();
+        char c = '\0';
+        char lastChar;
+        for (int i = 0; i < partLen; i++) {
+            lastChar = c;
+            c = part.charAt(i);
+            if (c == ESCAPE && lastChar != ESCAPE && i < partLen - 1) {
+                final char nextChar = part.charAt(i + 1);
+                if (nextChar == escapeChar) {
+                    // We found an escape
+                    continue;
+                }
+            }
+            buf.append(c);
+        }
     }
 
     protected StatsKeyFactory createStatsKeyFactory() {
