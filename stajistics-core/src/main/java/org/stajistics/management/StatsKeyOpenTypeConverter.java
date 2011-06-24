@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class StatsKeyOpenTypeConverter {
 
-    private static final char KEY_ATTRS_DELIMITER = ':';
+    private static final char KEY_ATTRS_DELIMITER = '?';
     private static final char ATTR_NAME_VALUE_PAIR_DELIMITER = '&';
     private static final char ATTR_NAME_VALUE_DELIMITER = '=';
 

@@ -22,7 +22,7 @@ import java.lang.reflect.Proxy;
 import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
-import org.stajistics.StatsUtil;
+import org.stajistics.StatsFactory;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
@@ -46,7 +46,7 @@ public class StatsProxy implements InvocationHandler {
     protected static final String ATTR_METHOD = "method";
 
     protected final StatsManager statsManager;
-    protected final StatsUtil util;
+    protected final StatsFactory factory;
     protected final StatsKey key;
     protected final Object target;
 
@@ -59,7 +59,7 @@ public class StatsProxy implements InvocationHandler {
         } else {
             this.statsManager = statsManager;
         }
-        this.util = new StatsUtil(this.statsManager);
+        this.factory = new StatsFactory(this.statsManager);
 
         if (key == null) {
             throw new NullPointerException("key");
@@ -162,7 +162,7 @@ public class StatsProxy implements InvocationHandler {
                                 .newKey();
 
         try {
-            final SpanTracker tracker = util.track(methodKey);
+            final SpanTracker tracker = factory.track(methodKey);
             try {
                 if (method.equals(EQUALS_METHOD)) {
                     return target.equals(unwrap(args[0]));
@@ -182,7 +182,7 @@ public class StatsProxy implements InvocationHandler {
                 cause = t;
             }
 
-            util.failure(cause, methodKey);
+            factory.failure(cause, methodKey);
 
             throw cause;
         }

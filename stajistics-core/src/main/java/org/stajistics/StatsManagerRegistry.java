@@ -37,6 +37,10 @@ public class StatsManagerRegistry {
         registry.remove(namespace);
     }
 
+    public static boolean isStatsManagerDefined(final String namespace) {
+        return registry.containsKey(namespace);
+    }
+
     public static StatsManager getStatsManager(final String namespace) {
         StatsManager statsManager = registry.get(namespace);
         if (statsManager == null) {
