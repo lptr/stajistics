@@ -15,17 +15,53 @@ import org.stajistics.tracker.span.SpanTracker;
  *
  * @author The Stajistics Project
  */
-public class StatsUtil {
+public class StatsFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(StatsUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(StatsFactory.class);
 
     private final StatsManager statsManager;
 
-    public StatsUtil(final StatsManager statsManager) {
+    public StatsFactory(final StatsManager statsManager) {
         if (statsManager == null) {
             throw new NullPointerException("statsManager");
         }
         this.statsManager = statsManager;
+    }
+
+    public static StatsFactory forClass(final Class<?> aClass) {
+        if (aClass == null) {
+            throw new NullPointerException("aClass");
+        }
+
+        Class<?> cls = aClass;
+        while (cls != Object.class) {
+            String namespace = cls.getPackage().getName();
+            if (StatsManagerRegistry.isStatsManagerDefined(namespace)) {
+                StatsManager statsManager = StatsManagerRegistry.getStatsManager(namespace);
+                if (statsManager != null) {
+                    return new StatsFactory(statsManager);
+                }
+            }
+
+            cls = cls.getSuperclass();
+        }
+
+        throw new StatsNamespaceNotFoundException("No namespaces found for class: " + aClass.getName());
+    }
+
+    public static StatsFactory forNamespace(final String namespace) {
+        if (namespace == null) {
+            throw new NullPointerException("namespace");
+        }
+
+        if (StatsManagerRegistry.isStatsManagerDefined(namespace)) {
+            StatsManager statsManager = StatsManagerRegistry.getStatsManager(namespace);
+            if (statsManager != null) {
+                return new StatsFactory(statsManager);
+            }
+        }
+
+        throw new StatsNamespaceNotFoundException(namespace);
     }
 
     public StatsManager getManager() {

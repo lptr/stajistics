@@ -48,7 +48,7 @@ public final class Stats {
     private static final Logger logger = LoggerFactory.getLogger(Stats.class);
 
     private static volatile StatsManager manager;
-    private static volatile StatsUtil util;
+    private static volatile StatsFactory factory;
 
     /**
      * Specify the sole default {@link StatsManager} instance, replacing any existing instance.
@@ -69,7 +69,7 @@ public final class Stats {
         logger.debug("Loaded: {}: {}", StatsManager.class.getSimpleName(), manager);
 
         Stats.manager = manager;
-        Stats.util = new StatsUtil(manager);
+        Stats.factory = new StatsFactory(manager);
     }
 
     /**
@@ -93,11 +93,11 @@ public final class Stats {
         return manager;
     }
 
-    private static StatsUtil getUtil() {
-        if (util == null) {
+    private static StatsFactory getFactory() {
+        if (factory == null) {
             getManager(); // Assigns util
         }
-        return util;
+        return factory;
     }
 
     protected static StatsManager loadDefaultStatsManager() {
@@ -212,7 +212,7 @@ public final class Stats {
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final String keyName) {
-        return getUtil().getSpanTracker(keyName);
+        return getFactory().getSpanTracker(keyName);
     }
 
     /**
@@ -224,7 +224,7 @@ public final class Stats {
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final StatsKey key) {
-        return getUtil().getSpanTracker(key);
+        return getFactory().getSpanTracker(key);
     }
 
     /**
@@ -236,7 +236,7 @@ public final class Stats {
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
     public static SpanTracker getSpanTracker(final StatsKey... keys) {
-        return getUtil().getSpanTracker(keys);
+        return getFactory().getSpanTracker(keys);
     }
 
     /**
@@ -251,7 +251,7 @@ public final class Stats {
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final String keyName) {
-        return getUtil().track(keyName);
+        return getFactory().track(keyName);
     }
 
     /**
@@ -266,7 +266,7 @@ public final class Stats {
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final StatsKey key) {
-        return getUtil().track(key);
+        return getFactory().track(key);
     }
 
     /**
@@ -281,7 +281,7 @@ public final class Stats {
      * @see SpanTracker#track()
      */
     public static SpanTracker track(final StatsKey... keys) {
-        return getUtil().track(keys);
+        return getFactory().track(keys);
     }
 
     /**
@@ -295,7 +295,7 @@ public final class Stats {
      * @see TrackerLocator#getIncidentTracker(StatsKey)
      */
     public static IncidentTracker getIncidentTracker(final String keyName) {
-        return getUtil().getIncidentTracker(keyName);
+        return getFactory().getIncidentTracker(keyName);
     }
 
     /**
@@ -309,7 +309,7 @@ public final class Stats {
      * @see TrackerLocator#getIncidentTracker(StatsKey)
      */
     public static IncidentTracker getIncidentTracker(final StatsKey key) {
-        return getUtil().getIncidentTracker(key);
+        return getFactory().getIncidentTracker(key);
     }
 
     /**
@@ -322,7 +322,7 @@ public final class Stats {
      * @see IncidentTracker#incident()
      */
     public static void incident(final String keyName) {
-        getUtil().incident(keyName);
+        getFactory().incident(keyName);
     }
 
     /**
@@ -335,7 +335,7 @@ public final class Stats {
      * @see IncidentTracker#incident()
      */
     public static void incident(final StatsKey key) {
-        getUtil().incident(key);
+        getFactory().incident(key);
     }
 
     /**
@@ -348,7 +348,7 @@ public final class Stats {
      * @see IncidentTracker#incident()
      */
     public static void incident(final StatsKey... keys) {
-        getUtil().incident(keys);
+        getFactory().incident(keys);
     }
 
     /**
@@ -359,7 +359,7 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final String keyName) {
-        getUtil().failure(failure, keyName);
+        getFactory().failure(failure, keyName);
     }
 
     /**
@@ -370,7 +370,7 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final StatsKey key) {
-        getUtil().failure(failure, key);
+        getFactory().failure(failure, key);
     }
 
     /**
@@ -381,7 +381,7 @@ public final class Stats {
      */
     public static void failure(final Throwable failure,
                                final StatsKey... keys) {
-        getUtil().failure(failure, keys);
+        getFactory().failure(failure, keys);
     }
 
     /**
@@ -395,7 +395,7 @@ public final class Stats {
      * @see TrackerLocator#getManualTracker(StatsKey)
      */
     public static ManualTracker getManualTracker(final String keyName) {
-        return getUtil().getManualTracker(keyName);
+        return getFactory().getManualTracker(keyName);
     }
 
     /**
@@ -409,7 +409,7 @@ public final class Stats {
      * @see TrackerLocator#getManualTracker(StatsKey)
      */
     public static ManualTracker getManualTracker(final StatsKey key) {
-        return getUtil().getManualTracker(key);
+        return getFactory().getManualTracker(key);
     }
 
     /**
@@ -422,7 +422,7 @@ public final class Stats {
      * @see StatsKeyFactory#createKey(String)
      */
     public static StatsKey newKey(final String name) {
-        return getUtil().newKey(name);
+        return getFactory().newKey(name);
     }
 
     /**
@@ -436,7 +436,7 @@ public final class Stats {
      * @see StatsKeyFactory#createKeyBuilder(StatsKey)
      */
     public static StatsKeyBuilder buildKey(final String name) {
-        return getUtil().buildKey(name);
+        return getFactory().buildKey(name);
     }
 
     /**
@@ -447,7 +447,7 @@ public final class Stats {
      * @see org.stajistics.configuration.StatsConfigBuilderFactory#createConfigBuilder()
      */
     public static StatsConfigBuilder buildConfig() {
-        return getUtil().buildConfig();
+        return getFactory().buildConfig();
     }
 
 }
