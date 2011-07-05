@@ -16,7 +16,6 @@ package org.stajistics.tracker.manual;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
@@ -62,7 +61,7 @@ public class DefaultManualTracker extends AbstractTracker implements ManualTrack
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in commit()");
-            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Misc.handleUncaughtException(getKey(), e);
         }
     }
 

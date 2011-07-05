@@ -21,7 +21,8 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.span.SpanTracker;
 
@@ -40,29 +41,25 @@ public class LifeCycleMonitor<T> {
 
     private final LifeCyclePoller lifeCyclePoller = new LifeCyclePoller();
 
-    private static LifeCycleMonitor<Object> defaultInstance;
+    private final StatsFactory factory;
 
     public LifeCycleMonitor() {
-
+        this(null);
     }
 
-    public static LifeCycleMonitor<Object> getDefaultInstance() {
-
-        if (defaultInstance == null) {
-            synchronized (LifeCycleMonitor.class) {
-                if (defaultInstance == null) {
-                    defaultInstance = new LifeCycleMonitor<Object>();
-                }
-            }
+    public LifeCycleMonitor(final StatsFactory factory) {
+        if (factory == null) {
+            this.factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+        } else {
+            this.factory = factory;
         }
-
-        return defaultInstance;
     }
+
 
     public void monitor(final T object,
                         final StatsKey key) {
 
-        SpanTracker tracker = Stats.track(key);
+        SpanTracker tracker = factory.track(key);
 
         Reference<T> ref = new PhantomReference<T>(object, refQueue);
         trackerMap.put(ref, tracker);
@@ -142,9 +139,10 @@ public class LifeCycleMonitor<T> {
 
     public static void main(String[] args) throws Exception {
 
-        LifeCycleMonitor<Object> lcm = LifeCycleMonitor.getDefaultInstance();
+        StatsFactory factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+        LifeCycleMonitor<Object> lcm = new LifeCycleMonitor<Object>(factory);
 
-        StatsKey key = Stats.newKey("test");
+        StatsKey key = factory.newKey("test");
 
         while (true) {
             for (int i = 0; i < 10000; i++) {

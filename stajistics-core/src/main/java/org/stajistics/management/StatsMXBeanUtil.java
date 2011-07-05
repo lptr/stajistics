@@ -14,7 +14,7 @@ import org.stajistics.StatsKey;
  */
 public class StatsMXBeanUtil {
 
-    public static final String STAJISTICS_DOMAIN = org.stajistics.Stats.class.getPackage().getName();
+    public static final String STAJISTICS_DOMAIN = org.stajistics.StatsFactory.class.getPackage().getName();
 
     public static final String OBJECT_NAME_ATTR_NAMESPACE = "namespace";
     public static final String OBJECT_NAME_ATTR_NAME = "name";

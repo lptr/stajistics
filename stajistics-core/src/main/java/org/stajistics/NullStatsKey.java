@@ -37,6 +37,11 @@ public final class NullStatsKey implements StatsKey {
         return instance;
     }
 
+    @Override
+    public String getNamespace() {
+        return "";
+    }
+
     /**
      * @return An empty String.
      */

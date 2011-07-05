@@ -21,6 +21,6 @@ import org.stajistics.StatsManager;
  */
 public interface StatsManagerFactory {
 
-    StatsManager createManager();
+    StatsManager createManager(String namespace);
 
 }

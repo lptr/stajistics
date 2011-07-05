@@ -293,7 +293,7 @@ public class StatsKeyMatcherMatchTest extends TestCase {
      * Create a non-mock key, so that equals() and hashCode() work
      */
     private static StatsKey newRealKey(final String name) {
-        return new SimpleStatsKey(name, new Mockery().mock(StatsKeyFactory.class));
+        return new SimpleStatsKey(null, name, new Mockery().mock(StatsKeyFactory.class));
     }
 
     private static StatsKey newKey(final String name) {

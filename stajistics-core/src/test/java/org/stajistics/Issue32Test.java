@@ -17,6 +17,7 @@ package org.stajistics;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.configuration.StatsConfig;
 
 /**
@@ -27,7 +28,9 @@ public class Issue32Test extends AbstractStajisticsTestCase {
 
     @Test
     public void testIndividualConfigAttributesAreNotInheritedFromParentConfigs() {
-        StatsManager statsManager = Stats.getManager();
+        StatsManager statsManager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
+        StatsFactory factory = new StatsFactory(statsManager);
+        
         StatsConfig defaultRootConfig = statsManager.getConfigManager()
                                                     .getRootConfig();
         StatsConfig newRootConfig = statsManager.getConfigBuilderFactory()
@@ -37,15 +40,15 @@ public class Issue32Test extends AbstractStajisticsTestCase {
         statsManager.getConfigManager()
                     .setRootConfig(newRootConfig);
 
-        StatsKey key = Stats.newKey("test");
+        StatsKey key = factory.newKey("test");
 
-        Stats.buildConfig()
-             .withUnit("[unit defined in child]")
-             .setConfigFor(key);
+        factory.buildConfig()
+               .withUnit("[unit defined in child]")
+               .setConfigFor(key);
 
         // Assert that individual attributes are not inherited from parent configs
-        assertNull(Stats.getConfigManager()
-                        .getConfig(key)
-                        .getDescription());
+        assertNull(statsManager.getConfigManager()
+                               .getConfig(key)
+                               .getDescription());
     }
 }

@@ -66,10 +66,10 @@ public class DefaultStatsConfigManagerTest extends AbstractStajisticsTestCase {
 
     private StatsKey[] createKeyHierarchy() {
         return new StatsKey[] {
-            new SimpleStatsKey("test", mockKeyFactory),
-            new SimpleStatsKey("test.child", mockKeyFactory),
-            new SimpleStatsKey("test.child.grandchild", mockKeyFactory),
-            new SimpleStatsKey("test.child.grandchild.greatgrandchild", mockKeyFactory)
+            new SimpleStatsKey(null, "test", mockKeyFactory),
+            new SimpleStatsKey(null, "test.child", mockKeyFactory),
+            new SimpleStatsKey(null, "test.child.grandchild", mockKeyFactory),
+            new SimpleStatsKey(null, "test.child.grandchild.greatgrandchild", mockKeyFactory)
         };
     }
 
@@ -154,7 +154,7 @@ public class DefaultStatsConfigManagerTest extends AbstractStajisticsTestCase {
             ignoring(mockEventManager);
         }});
 
-        StatsKey key = new SimpleStatsKey("test", mockKeyFactory);
+        StatsKey key = new SimpleStatsKey(null, "test", mockKeyFactory);
 
         StatsConfig rootConfig = configManager.getRootConfig();
 
@@ -162,12 +162,12 @@ public class DefaultStatsConfigManagerTest extends AbstractStajisticsTestCase {
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));
 
-        key = new SimpleStatsKey("test.child", mockKeyFactory);
+        key = new SimpleStatsKey(null, "test.child", mockKeyFactory);
         configManager.setConfig(key, null);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));
 
-        key = new SimpleStatsKey("test.child.grandchild", mockKeyFactory);
+        key = new SimpleStatsKey(null, "test.child.grandchild", mockKeyFactory);
         configManager.setConfig(key, null);
         assertSame(rootConfig, configManager.getRootConfig());
         assertSame(configManager.getRootConfig(), configManager.getConfig(key));

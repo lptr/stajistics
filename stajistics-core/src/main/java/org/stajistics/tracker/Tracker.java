@@ -16,7 +16,6 @@ package org.stajistics.tracker;
 
 import java.io.Serializable;
 
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.session.StatsSession;

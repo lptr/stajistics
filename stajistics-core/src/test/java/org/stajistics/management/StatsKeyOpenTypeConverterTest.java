@@ -29,7 +29,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertSimpleKey() {
-        StatsKey key = new SimpleStatsKey("test", null);
+        StatsKey key = new SimpleStatsKey(null, "test", null);
         String openKey = converter.toOpenType(key);
         assertEquals("test", openKey);
 
@@ -38,7 +38,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithKeyAttrDelimiterKeyNameSuffix() {
-        StatsKey key = new SimpleStatsKey("test?", null);
+        StatsKey key = new SimpleStatsKey(null, "test?", null);
         String openKey = converter.toOpenType(key);
         assertEquals("test\\?", openKey);
 
@@ -47,7 +47,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithStringAttribute() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("attr", "value"));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("attr", "value"));
         String openKey = converter.toOpenType(key);
         assertEquals("test?attr=value", openKey);
 
@@ -60,7 +60,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
         attributes.put("attr1", "one");
         attributes.put("attr2", "two");
 
-        StatsKey key = new DefaultStatsKey("test", null, attributes);
+        StatsKey key = new DefaultStatsKey(null, "test", null, attributes);
         String openKey = converter.toOpenType(key);
         assertEquals("test?attr1=one&attr2=two", openKey);
 
@@ -69,7 +69,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithBooleanAttribute() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("cool", true));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("cool", true));
         String openKey = converter.toOpenType(key);
         assertEquals("test?cool=b_t", openKey);
 
@@ -78,7 +78,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithIntegerAttribute() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("cats", 3));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("cats", 3));
         String openKey = converter.toOpenType(key);
         assertEquals("test?cats=i_3", openKey);
 
@@ -87,7 +87,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithLongAttribute() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("id", 42L));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("id", 42L));
         String openKey = converter.toOpenType(key);
         assertEquals("test?id=l_42", openKey);
 
@@ -102,7 +102,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
         attributes.put("attr3", 44);
         attributes.put("attr4", 66L);
 
-        StatsKey key = new DefaultStatsKey("test", null, attributes);
+        StatsKey key = new DefaultStatsKey(null, "test", null, attributes);
         String openKey = converter.toOpenType(key);
         assertEquals("test?attr1=one&attr2=b_t&attr3=i_44&attr4=l_66", openKey);
 
@@ -111,7 +111,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithKeyNameEscapes() {
-        StatsKey key = new SimpleStatsKey("the?crazy&character=test", null);
+        StatsKey key = new SimpleStatsKey(null, "the?crazy&character=test", null);
         String openKey = converter.toOpenType(key);
         assertEquals("the\\?crazy\\&character\\=test", openKey);
 
@@ -120,7 +120,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithAttrNameEscapes() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("the?crazy&funky=name", "value"));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("the?crazy&funky=name", "value"));
         String openKey = converter.toOpenType(key);
         assertEquals("test?the\\?crazy\\&funky\\=name=value", openKey);
 
@@ -129,7 +129,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithAttrValueEscapes() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("name", "the?crazy&funky=value"));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("name", "the?crazy&funky=value"));
         String openKey = converter.toOpenType(key);
         assertEquals("test?name=the\\?crazy\\&funky\\=value", openKey);
 
@@ -138,7 +138,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithEscapes() {
-        StatsKey key = new DefaultStatsKey("the?crazy&character=test",
+        StatsKey key = new DefaultStatsKey(null, "the?crazy&character=test",
                 null, Collections.<String,Object>singletonMap("the?crazy&funky=name", "the?crazy&funky=value"));
         String openKey = converter.toOpenType(key);
         assertEquals("the\\?crazy\\&character\\=test?the\\?crazy\\&funky\\=name=the\\?crazy\\&funky\\=value", openKey);
@@ -148,7 +148,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithStringAttrValueHavingBooleanAttrTypeEscape() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("name", "b_not_really_a_boolean"));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("name", "b_not_really_a_boolean"));
         String openKey = converter.toOpenType(key);
         assertEquals("test?name=\\b_not_really_a_boolean", openKey);
 
@@ -157,7 +157,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithStringAttrValueHavingIntegerAttrTypeEscape() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("name", "i_not_really_an_integer"));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("name", "i_not_really_an_integer"));
         String openKey = converter.toOpenType(key);
         assertEquals("test?name=\\i_not_really_an_integer", openKey);
 
@@ -166,7 +166,7 @@ public class StatsKeyOpenTypeConverterTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testConvertKeyWithStringAttrValueHavingLongAttrTypeEscape() {
-        StatsKey key = new DefaultStatsKey("test", null, Collections.<String,Object>singletonMap("name", "l_not_really_a_long"));
+        StatsKey key = new DefaultStatsKey(null, "test", null, Collections.<String,Object>singletonMap("name", "l_not_really_a_long"));
         String openKey = converter.toOpenType(key);
         assertEquals("test?name=\\l_not_really_a_long", openKey);
 

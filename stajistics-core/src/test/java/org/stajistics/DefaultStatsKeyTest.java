@@ -25,10 +25,11 @@ import java.util.Map;
 public class DefaultStatsKeyTest extends AbstractStatsKeyTestCase {
 
     @Override
-    protected StatsKey createStatsKey(final String name,
+    protected StatsKey createStatsKey(final String namespace,
+                                      final String name,
                                       final StatsKeyFactory keyFactory,
                                       final Map<String,Object> attributes) {
-        return new DefaultStatsKey(name, keyFactory, attributes);
+        return new DefaultStatsKey(namespace, name, keyFactory, attributes);
     }
 
 }

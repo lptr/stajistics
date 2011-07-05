@@ -77,7 +77,11 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testConstructWithNullUpdateQueue() {
         try {
-            new AsynchronousSession(mockKey, mockEventManager, mockTaskService, null, (DataRecorder[])null);
+            new AsynchronousSession(mockKey, 
+                                    mockEventManager, 
+                                    mockTaskService, 
+                                    null, 
+                                    (DataRecorder[])null);
             fail();
         } catch (NullPointerException npe) {
             assertEquals("updateQueue", npe.getMessage());
@@ -87,8 +91,8 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testTrackWithNastyTaskService() {
         StatsSession service = new AsynchronousSession(mockKey,
-                                                            mockEventManager,
-                                                            new NastyTaskService());
+                                                       mockEventManager,
+                                                       new NastyTaskService());
 
         service.track(mockTracker, 1L);
     }
@@ -96,8 +100,8 @@ public class AsynchronousSessionTest extends AbstractStatsSessionTestCase {
     @Test
     public void testUpdateWithNastyTaskService() {
         StatsSession service = new AsynchronousSession(mockKey,
-                                                            mockEventManager,
-                                                            new NastyTaskService());
+                                                       mockEventManager,
+                                                       new NastyTaskService());
 
         service.update(mockTracker, 1L);
     }

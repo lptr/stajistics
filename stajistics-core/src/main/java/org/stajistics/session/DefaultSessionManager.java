@@ -23,9 +23,10 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyMatcher;
+import org.stajistics.StatsManager;
+import org.stajistics.StatsManagerRegistry;
 import org.stajistics.StatsProperties;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
@@ -193,10 +194,8 @@ public class DefaultSessionManager implements StatsSessionManager {
         DataRecorder[] dataRecorders = config.getDataRecorderFactory()
                                              .createDataRecorders();
 
-        //TODO: How to get StatsManager properly
         StatsSession session = config.getSessionFactory()
                                      .createSession(key,
-                                                    Stats.getManager(),
                                                     dataRecorders);
 
         logger.debug("Created StatsSession for key: {}", key);

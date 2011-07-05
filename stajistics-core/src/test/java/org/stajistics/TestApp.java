@@ -10,13 +10,14 @@ import org.stajistics.tracker.span.SpanTracker;
 public class TestApp {
 
     public static void main(String[] args) throws Exception {
+        
+        StatsFactory statsFactory = StatsFactory.forClass(TestApp.class);
 
-        StatsKey key = Stats.newKey("Test1");
+        StatsKey key = statsFactory.newKey("Test1");
 
-        SpanTracker tracker = Stats.track(key);
+        SpanTracker tracker = statsFactory.track(key);
 
-        for (long i = 0; i < 100000; i++)
-        {
+        for (long i = 0; i < 100000; i++) {
             Long.toString(i);
         }
 

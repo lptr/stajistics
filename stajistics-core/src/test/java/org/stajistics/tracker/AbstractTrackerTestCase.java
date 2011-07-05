@@ -25,6 +25,7 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StatsConstants;
 import org.stajistics.StatsKey;
 import org.stajistics.TestUtil;
 import org.stajistics.data.DataSet;
@@ -51,9 +52,11 @@ public abstract class AbstractTrackerTestCase<T extends Tracker> extends Abstrac
 
     @Before
     public void setUp() throws Exception {
+        mockKey = mockery.mock(StatsKey.class);
         mockSession = mockery.mock(StatsSession.class);
 
         mockery.checking(new Expectations() {{
+            allowing(mockKey).getNamespace(); will(returnValue(StatsConstants.DEFAULT_NAMESPACE));
             allowing(mockSession).getKey(); will(returnValue(mockKey));
         }});
     }
@@ -100,7 +103,6 @@ public abstract class AbstractTrackerTestCase<T extends Tracker> extends Abstrac
         assertNotNull(fieldValue);
         assertTrue(fieldValue instanceof TrackerFactory<?>);
 
-        final StatsKey mockKey = mockery.mock(StatsKey.class);
         TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
 
         final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);

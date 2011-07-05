@@ -88,7 +88,7 @@ public class DefaultStatsSessionMXBean implements StatsSessionMXBean,DynamicMBea
     }
 
     protected StatsSessionManager getSessionManager() {
-        StatsManager manager = StatsManagerRegistry.getStatsManager(namespace);
+        StatsManager manager = StatsManagerRegistry.getInstance().getStatsManager(namespace);
         return manager.getSessionManager();
     }
 

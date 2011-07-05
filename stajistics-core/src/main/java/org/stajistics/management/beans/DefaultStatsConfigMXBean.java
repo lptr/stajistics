@@ -59,7 +59,7 @@ public class DefaultStatsConfigMXBean implements StatsConfigMXBean {
     }
 
     protected StatsManager getStatsManager() {
-        return StatsManagerRegistry.getStatsManager(namespace);
+        return StatsManagerRegistry.getInstance().getStatsManager(namespace);
     }
 
     @Override

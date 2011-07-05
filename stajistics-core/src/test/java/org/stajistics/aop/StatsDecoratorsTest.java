@@ -26,10 +26,14 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyBuilder;
+import org.stajistics.StatsManager;
 import org.stajistics.TestUtil;
 import org.stajistics.tracker.TrackerLocator;
+import org.stajistics.tracker.incident.IncidentTracker;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  *
@@ -37,23 +41,50 @@ import org.stajistics.tracker.TrackerLocator;
  */
 public class StatsDecoratorsTest extends AbstractStajisticsTestCase {
 
-    private StatsKey mockKey;
+    private StatsDecorators decorators;
+
+    private StatsManager mockManager;
     private TrackerLocator mockTrackerLocator;
+    private SpanTracker mockSpanTracker;
+    private StatsKey mockKey;
+    
+    private StatsFactory statsFactory;
+    
 
     @Before
     public void setUp() {
-        mockKey = mockery.mock(StatsKey.class);
+        mockManager = mockery.mock(StatsManager.class);
         mockTrackerLocator = mockery.mock(TrackerLocator.class);
+        mockSpanTracker = mockery.mock(SpanTracker.class);
+
+        statsFactory = new StatsFactory(mockManager);
+
+        mockKey = mockery.mock(StatsKey.class);
         TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
+
+        mockery.checking(new Expectations() {{
+            allowing(mockManager).getTrackerLocator();
+            will(returnValue(mockTrackerLocator));
+
+            allowing(mockTrackerLocator).getSpanTracker(mockKey);
+            will(returnValue(mockSpanTracker));
+        }});
+
+        decorators = new StatsDecorators(statsFactory);
     }
 
     @Test
     public void testWrapRunnable() {
         final Runnable mockRunnable = mockery.mock(Runnable.class);
-        final Runnable wrappedRunnable = StatsDecorators.wrap(mockRunnable, mockKey);
+        final Runnable wrappedRunnable = decorators.wrap(mockRunnable, mockKey);
 
         mockery.checking(new Expectations() {{
+            one(mockSpanTracker).track();
+            will(returnValue(mockSpanTracker));
+
             one(mockRunnable).run();
+
+            one(mockSpanTracker).commit();
         }});
 
         wrappedRunnable.run();
@@ -63,10 +94,16 @@ public class StatsDecoratorsTest extends AbstractStajisticsTestCase {
     @SuppressWarnings("unchecked")
     public void testWrapCallable() throws Exception {
         final Callable<Long> mockCallable = mockery.mock(Callable.class);
-        final Callable<Long> wrappedCallable = StatsDecorators.wrap(mockCallable, mockKey);
+        final Callable<Long> wrappedCallable = decorators.wrap(mockCallable, mockKey);
 
         mockery.checking(new Expectations() {{
-            one(mockCallable).call(); will(returnValue(666L));
+            one(mockSpanTracker).track();
+            will(returnValue(mockSpanTracker));
+
+            one(mockCallable).call();
+            will(returnValue(666L));
+
+            one(mockSpanTracker).commit();
         }});
 
         assertEquals(666L, (long)wrappedCallable.call());
@@ -76,22 +113,41 @@ public class StatsDecoratorsTest extends AbstractStajisticsTestCase {
     @SuppressWarnings("unchecked")
     public void testWrapCallableThrowsException() throws Exception {
         final Callable<Long> mockCallable = mockery.mock(Callable.class);
-        final Callable<Long> wrappedCallable = StatsDecorators.wrap(mockCallable, mockKey);
+        final Callable<Long> wrappedCallable = decorators.wrap(mockCallable, mockKey);
         final Exception exception = new Exception();
         final StatsKeyBuilder mockKeyBuilder = mockery.mock(StatsKeyBuilder.class);
         final StatsKey mockKey2 = mockery.mock(StatsKey.class, "mockKey2");
         TestUtil.buildStatsKeyExpectations(mockery, mockKey2, "test2");
+        final IncidentTracker mockIncidentTracker = mockery.mock(IncidentTracker.class);
 
         mockery.checking(new Expectations() {{
-            one(mockCallable).call(); will(throwException(exception));
-            one(mockKey).buildCopy(); will(returnValue(mockKeyBuilder));
+            one(mockSpanTracker).track();
+            will(returnValue(mockSpanTracker));
+
+            one(mockCallable).call();
+            will(throwException(exception));
+
+            one(mockSpanTracker).commit();
+
+            one(mockTrackerLocator).getIncidentTracker(mockKey2);
+            will(returnValue(mockIncidentTracker));
+
+            one(mockIncidentTracker).incident();
+
+            one(mockKey).buildCopy();
+            will(returnValue(mockKeyBuilder));
 
             //TODO: this is more-so checking the exception key handling
             // rather than callable wrapper exception handling
-            one(mockKeyBuilder).withNameSuffix(with("exception")); will(returnValue(mockKeyBuilder));
+            one(mockKeyBuilder).withNameSuffix(with("exception"));
+            will(returnValue(mockKeyBuilder));
+
             one(mockKeyBuilder).withAttribute(with("threw"),
-                                              with("java.lang.Exception")); will(returnValue(mockKeyBuilder));
-            one(mockKeyBuilder).newKey(); will(returnValue(mockKey2));
+                                              with("java.lang.Exception"));
+            will(returnValue(mockKeyBuilder));
+
+            one(mockKeyBuilder).newKey();
+            will(returnValue(mockKey2));
         }});
 
         try {
@@ -105,12 +161,16 @@ public class StatsDecoratorsTest extends AbstractStajisticsTestCase {
     @Test
     public void testWrapObserver() {
         final Observer mockObserver = mockery.mock(Observer.class);
-        final Observer wrappedObserver = StatsDecorators.wrap(mockObserver, mockKey);
+        final Observer wrappedObserver = decorators.wrap(mockObserver, mockKey);
         final Observable observable = new Observable();
 
         mockery.checking(new Expectations() {{
-            one(mockObserver).update(with(observable),
-                                     with("hello"));
+            one(mockSpanTracker).track();
+            will(returnValue(mockSpanTracker));
+
+            one(mockObserver).update(observable, "hello");
+
+            one(mockSpanTracker).commit();
         }});
 
         wrappedObserver.update(observable, "hello");
@@ -119,12 +179,13 @@ public class StatsDecoratorsTest extends AbstractStajisticsTestCase {
     @Test
     public void testWrapThreadFactory() {
         final ThreadFactory mockThreadFactory = mockery.mock(ThreadFactory.class);
-        final ThreadFactory wrappedThreadFacrtory = StatsDecorators.wrap(mockThreadFactory, mockKey);
+        final ThreadFactory wrappedThreadFacrtory = decorators.wrap(mockThreadFactory, mockKey);
         final Runnable mockRunnable = mockery.mock(Runnable.class);
         final Thread thread = new Thread("test");
 
         mockery.checking(new Expectations() {{
-            one(mockThreadFactory).newThread(with(aNonNull(Runnable.class))); will(returnValue(thread));
+            one(mockThreadFactory).newThread(with(aNonNull(Runnable.class)));
+            will(returnValue(thread));
         }});
 
         assertEquals(thread, wrappedThreadFacrtory.newThread(mockRunnable));

@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StatsConstants;
 import org.stajistics.StatsManager;
 
 /**
@@ -30,12 +31,12 @@ public abstract class AbstractStatsManagerFactoryTestCase extends AbstractStajis
     protected abstract StatsManagerFactory createManagerFactory();
 
     protected StatsManager createManager() {
-        return createManagerFactory().createManager();
+        return createManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
     }
 
     @Test
     public void testCreateManagerNotNull() {
-        assertNotNull(createManagerFactory().createManager());
+        assertNotNull(createManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE));
     }
 
     @Test

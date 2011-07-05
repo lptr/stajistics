@@ -19,7 +19,6 @@ import org.jmock.integration.junit4.JMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 
 /**
  *
@@ -37,13 +36,12 @@ public abstract class AbstractStajisticsTestCase extends StajisticsAssert {
         resetMockery();
     }
 
-    protected void resetMockery() {
-        mockery = new Mockery();
+    @After
+    public void clearStatsManagerRegistry() {
+        StatsManagerRegistry.getInstance().clear();
     }
 
-    @After
-    public void resetStatsManager() {
-        // Ensure we're working with a clean slate for each test
-        Stats.loadManager(new DefaultStatsManagerFactory().createManager());
+    protected void resetMockery() {
+        mockery = new Mockery();
     }
 }

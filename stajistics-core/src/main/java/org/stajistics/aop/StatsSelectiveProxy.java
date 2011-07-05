@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
 
 /**
  *
@@ -33,11 +33,11 @@ public class StatsSelectiveProxy extends StatsProxy {
 
     protected final SelectionCriteria criteria;
 
-    protected StatsSelectiveProxy(final StatsManager statsManager,
+    protected StatsSelectiveProxy(final StatsFactory factory,
                                   final StatsKey key,
                                   final Object target,
                                   final SelectionCriteria criteria) {
-        super(statsManager, key, target);
+        super(factory, key, target);
 
         if (criteria == null) {
             throw new NullPointerException("criteria");
@@ -56,25 +56,25 @@ public class StatsSelectiveProxy extends StatsProxy {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> T wrap(final StatsManager statsManager,
+    public static <T> T wrap(final StatsFactory factory,
                              final StatsKey key,
                              final T target,
                              final SelectionCriteria criteria) {
         Class<? super T>[] ifaces = (Class<? super T>[]) target.getClass()
                                                                .getInterfaces();
-        return wrap(statsManager, key, target, criteria, ifaces);
+        return wrap(factory, key, target, criteria, ifaces);
     }
 
-    public static <T,U extends T> T wrap(final StatsManager statsManager,
+    public static <T,U extends T> T wrap(final StatsFactory factory,
                                          final StatsKey key,
                                          final U target,
                                          final SelectionCriteria criteria,
                                          final Class<T> iface) {
-        return wrap(statsManager, key, target, criteria, new Class[] { iface });
+        return wrap(factory, key, target, criteria, new Class[] { iface });
     }
 
     @SuppressWarnings("unchecked")
-    public static <T,U extends T> T wrap(final StatsManager statsManager,
+    public static <T,U extends T> T wrap(final StatsFactory factory,
                                          final StatsKey key,
                                          final U target,
                                          final SelectionCriteria criteria,
@@ -83,7 +83,7 @@ public class StatsSelectiveProxy extends StatsProxy {
                                         .getContextClassLoader();
 
         T proxy = (T) Proxy.newProxyInstance(classLoader, ifaces,
-                                             new StatsSelectiveProxy(statsManager, key, target, criteria));
+                                             new StatsSelectiveProxy(factory, key, target, criteria));
         return proxy;
     }
 

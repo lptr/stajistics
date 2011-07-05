@@ -26,7 +26,8 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.aop.StatsSelectiveProxy.EnabledCriteria;
@@ -34,6 +35,7 @@ import org.stajistics.aop.StatsSelectiveProxy.MethodCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.MethodModifierCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.MethodSetCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.SelectionCriteria;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 
 /**
  * TODO: run all StatsProxy tests against StatsSelectiveProxy
@@ -43,7 +45,8 @@ import org.stajistics.aop.StatsSelectiveProxy.SelectionCriteria;
  */
 public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
 
-    private StatsManager mockStatsManager;
+    private StatsManager statsManager;
+    private StatsFactory mockFactory;
     private StatsKey mockKey;
     private Service mockService;
 
@@ -74,10 +77,10 @@ public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
 
     @Before
     public void setUp() {
-        // TODO: these should be _actually_ mocked
-        mockStatsManager = Stats.getManager();
-        mockKey = mockStatsManager.getKeyFactory().createKey("test");
-
+        // TODO: this should be _actually_ mocked
+        statsManager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
+        mockFactory = new StatsFactory(statsManager);
+        mockKey = statsManager.getKeyFactory().createKey("test");
         mockService = mockery.mock(Service.class);
     }
 
@@ -94,7 +97,7 @@ public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
             one(mockService).query();
         }});
 
-        Service serviceProxy = StatsSelectiveProxy.wrap(mockStatsManager,
+        Service serviceProxy = StatsSelectiveProxy.wrap(mockFactory,
                                                         mockKey,
                                                         mockService,
                                                         mockCriteria);
@@ -115,7 +118,7 @@ public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
             one(mockService).query();
         }});
 
-        Service serviceProxy = StatsSelectiveProxy.wrap(mockStatsManager,
+        Service serviceProxy = StatsSelectiveProxy.wrap(mockFactory,
                                                         mockKey,
                                                         mockService,
                                                         mockCriteria);

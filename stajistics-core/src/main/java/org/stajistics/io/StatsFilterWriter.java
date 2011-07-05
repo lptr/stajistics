@@ -4,9 +4,9 @@ import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
 import org.stajistics.tracker.manual.ManualTracker;
 
 /**
@@ -21,20 +21,20 @@ public class StatsFilterWriter extends FilterWriter {
         this(null, key, out);
     }
 
-    public StatsFilterWriter(StatsManager statsManager,
+    public StatsFilterWriter(StatsFactory factory,
                              final StatsKey key,
                              final Writer out) {
         super(out);
 
-        if (statsManager == null) {
-            statsManager = Stats.getManager();
+        if (factory == null) {
+            factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
         }
 
         if (key == null) {
             throw new NullPointerException("key");
         }
 
-        tracker = statsManager.getTrackerLocator().getManualTracker(key);
+        tracker = factory.getManualTracker(key);
     }
 
     @Override

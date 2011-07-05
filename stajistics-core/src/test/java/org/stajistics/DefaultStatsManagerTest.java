@@ -42,13 +42,12 @@ import org.stajistics.tracker.TrackerLocator;
 public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
 
     private DefaultStatsManager newDefaultStatsManager() {
-        return new DefaultStatsManagerFactory().createManager(); // TODO: mock the managers
+        return new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE); // TODO: mock the managers
     }
 
     @Test
     public void testCreateWithDefaults() {
         StatsManager mgr = newDefaultStatsManager();
-        Stats.loadManager(mgr);
 
         assertNotNull(mgr.getConfigManager());
         assertNotNull(mgr.getSessionManager());
@@ -204,11 +203,14 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
     }
 
     private void expectInitialize(final StatsManager statsManager,
+                                  final StatsKeyFactory keyFactory,
                                   final EventManager eventManager,
                                   final TaskService taskService,
                                   final StatsConfigManager configManager,
                                   final StatsSessionManager sessionManager) {
         mockery.checking(new Expectations() {{
+            one(keyFactory).setNamespace(statsManager.getNamespace());
+
             one(eventManager).initialize();
             one(taskService).initialize();
             one(configManager).initialize();
@@ -237,10 +239,10 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                          configBuilderFactory,
                                                          taskService);
 
-        expectInitialize(mgr, eventManager, taskService, configManager, sessionManager);
+        expectInitialize(mgr, keyFactory, eventManager, taskService, configManager, sessionManager);
 
         try {
-            StatsManagerRegistry.getStatsManager("ns");
+            StatsManagerRegistry.getInstance().getStatsManager("ns");
             fail("Found namespace: ns");
         } catch (StatsNamespaceNotFoundException e) {
             // Expected
@@ -249,12 +251,12 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
         try {
             mgr.initialize();
 
-            assertEquals(mgr, StatsManagerRegistry.getStatsManager("ns"));
+            assertEquals(mgr, StatsManagerRegistry.getInstance().getStatsManager("ns"));
 
             // Try again to test no effect
             mgr.initialize();
         } finally {
-            StatsManagerRegistry.removeStatsManager("ns");
+            StatsManagerRegistry.getInstance().removeStatsManager("ns");
         }
     }
 
@@ -278,7 +280,7 @@ public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
                                                          configBuilderFactory,
                                                          taskService);
 
-        expectInitialize(mgr, eventManager, taskService, configManager, sessionManager);
+        expectInitialize(mgr, keyFactory, eventManager, taskService, configManager, sessionManager);
         mgr.initialize();
 
         mockery.checking(new Expectations() {{

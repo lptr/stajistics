@@ -1,17 +1,20 @@
 package org.stajistics;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
+import org.stajistics.bootstrap.StatsManagerFactory;
 import org.stajistics.configuration.StatsConfigBuilder;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 /**
  * @author The Stajistics Project
@@ -38,6 +41,57 @@ public class StatsFactoryTest extends AbstractStajisticsTestCase {
         factory = new StatsFactory(mockManager);
     }
 
+    @Test
+    public void testLoadStatsManagerFactoryFromProperties() throws Exception {
+        try {
+            System.getProperties()
+                  .setProperty(StatsManagerFactory.class.getName(),
+                               ClassLoadableMockStatsManagerFactory.class.getName());
+
+            StatsManagerFactory managerFactory = StatsFactory.loadStatsManagerFactoryFromProperties();
+
+            assertNotNull(managerFactory);
+            assertInstanceOf(ClassLoadableMockStatsManagerFactory.class, managerFactory);
+
+        } finally {
+            System.getProperties()
+                  .remove(StatsManagerFactory.class.getName());
+        }
+    }
+
+    @Test(expected = ClassNotFoundException.class)
+    public void testLoadInvalidStatsManagerFactoryFromProperties() throws Exception {
+        try {
+            System.getProperties()
+                  .setProperty(StatsManagerFactory.class.getName(),
+                               "org.stajistics.DoesntExistAtAllInAnyWayWhatSoEverSoThereHa");
+
+            StatsFactory.loadStatsManagerFactoryFromProperties();
+            fail("Allowed loading of invalid " + StatsManagerFactory.class.getSimpleName() + " from properties");
+
+        } finally {
+            System.getProperties()
+                  .remove(StatsManager.class.getName());
+        }
+    }
+
+    @Test
+    public void testConstructWithNullManager() {
+        try {
+            new StatsFactory(null);
+            fail("Allowed construction of " + StatsFactory.class.getSimpleName() + " with null statsManager");
+        } catch (NullPointerException npe) {
+            assertEquals("statsManager", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetManager() {
+        assertSame(mockManager, factory.getManager());
+    }
+
+    
+    
     @Test
     public void testStartWithKeyName() {
         final String keyName = "test.name";
@@ -246,4 +300,10 @@ public class StatsFactoryTest extends AbstractStajisticsTestCase {
         assertSame(mockConfigBuilder, factory.buildConfig());
     }
 
+    public static final class ClassLoadableMockStatsManagerFactory implements StatsManagerFactory {
+        @Override
+        public StatsManager createManager(String namespace) {
+            return null;
+        }
+    }
 }

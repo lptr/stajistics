@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
 import org.stajistics.tracker.manual.ManualTracker;
 
 /**
@@ -22,20 +22,20 @@ public class StatsFilterReader extends FilterReader {
         this(null, key, in);
     }
 
-    public StatsFilterReader(StatsManager statsManager,
+    public StatsFilterReader(StatsFactory factory,
                              final StatsKey key,
                              final Reader in) {
         super(in);
 
-        if (statsManager == null) {
-            statsManager = Stats.getManager();
+        if (factory == null) {
+            factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
         }
 
         if (key == null) {
             throw new NullPointerException("key");
         }
 
-        tracker = statsManager.getTrackerLocator().getManualTracker(key);
+        tracker = factory.getManualTracker(key);
     }
 
     @Override

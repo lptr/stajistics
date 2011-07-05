@@ -36,6 +36,7 @@ public abstract class AbstractStatsKey implements StatsKey {
     private static final String NULL = "<null>";
 
     private final StatsKeyFactory keyFactory;
+    private final String namespace;
     private final String name;
 
     private int hashCode;
@@ -48,8 +49,15 @@ public abstract class AbstractStatsKey implements StatsKey {
      *
      * @throws NullPointerException If <tt>name</tt> is <tt>null</tt>.
      */
-    public AbstractStatsKey(final String name,
+    public AbstractStatsKey(final String namespace,
+                            final String name,
                             final StatsKeyFactory keyFactory) {
+        if (namespace == null) {
+            this.namespace = StatsConstants.DEFAULT_NAMESPACE;
+        } else {
+            this.namespace = namespace;
+        }
+
         if (name == null) {
             this.name = NULL;
         } else {
@@ -79,6 +87,11 @@ public abstract class AbstractStatsKey implements StatsKey {
         }
 
         return keyFactory.createKeyBuilder(this);
+    }
+
+    @Override
+    public String getNamespace() {
+        return namespace;
     }
 
     @Override
@@ -162,11 +175,10 @@ public abstract class AbstractStatsKey implements StatsKey {
             return false;
         }
 
-        // If we have the same hashCode, attribute count, and key name,
-        // assume that we have the same attribute names and values, and are thus equal.
-
-        return true;
+        return areAttributesEqual(otherKey);
     }
+
+    protected abstract boolean areAttributesEqual(final StatsKey other);
 
     @SuppressWarnings("unchecked")
     @Override

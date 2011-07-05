@@ -161,7 +161,6 @@ public class ImmutableSession implements StatsSession {
     public static final class Factory implements StatsSessionFactory {
         @Override
         public StatsSession createSession(final StatsKey key,
-                                          final StatsManager manager,
                                           final DataRecorder[] dataRecorders) {
             return new ImmutableSession(key);
         }

@@ -25,10 +25,12 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsKeyUtil;
 import org.stajistics.StatsManager;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.tracker.TrackerFactory;
@@ -50,17 +52,18 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
         }
     }
 
-    private StatsManager mockStatsManager;
+    private StatsFactory mockFactory;
     private StatsKey mockKey;
     private Service mockService;
+    
+    private StatsManager statsManager;
 
     @Before
     public void setUp() {
-        // TODO: these should be _actually_ mocked
-        mockStatsManager = Stats.getManager();
-        Stats.loadManager(mockStatsManager);
-        mockKey = mockStatsManager.getKeyFactory().createKey("test");
-
+        // TODO: this should be _actually_ mocked
+        statsManager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
+        mockFactory = new StatsFactory(statsManager);
+        mockKey = statsManager.getKeyFactory().createKey("test");
         mockService = mockery.mock(Service.class);
     }
 
@@ -70,32 +73,32 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
             one(mockService).query();
         }});
 
-        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        Service serviceProxy = StatsProxy.wrap(mockFactory, mockKey, mockService);
         serviceProxy.query();
     }
 
     @Test
     public void testWrapWithKeyTarget() {
         Service serviceImpl = new ServiceImpl();
-        serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl);
-        assertInstanceOf(serviceImpl, Service2.class);
+        serviceImpl = StatsProxy.wrap(mockFactory, mockKey, serviceImpl);
+        assertInstanceOf(Service2.class, serviceImpl);
     }
 
     @Test
     public void testWrapWithKeyTargetInterface() {
         Service serviceImpl = new ServiceImpl();
-        serviceImpl = StatsProxy.wrap(mockStatsManager, mockKey, serviceImpl, Service.class);
-        assertNotInstanceOf(serviceImpl, Service2.class);
+        serviceImpl = StatsProxy.wrap(mockFactory, mockKey, serviceImpl, Service.class);
+        assertNotInstanceOf(Service2.class, serviceImpl);
     }
 
     @Test
     public void testWrapWithKeyTargetInterfaceArray() {
         Service serviceImpl = new ServiceImpl();
-        serviceImpl = StatsProxy.wrap(mockStatsManager,
+        serviceImpl = StatsProxy.wrap(mockFactory,
                                       mockKey,
                                       serviceImpl,
                                       new Class<?>[] { Service.class, Service2.class });
-        assertInstanceOf(serviceImpl, Service2.class);
+        assertInstanceOf(Service2.class, serviceImpl);
     }
 
     @SuppressWarnings("serial")
@@ -113,9 +116,9 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
             one(mockTracker).commit();
         }});
 
-        mockStatsManager.getConfigBuilderFactory()
-                        .createConfigBuilder()
-                        .withTrackerFactory(new TrackerFactory<Tracker>() {
+        statsManager.getConfigBuilderFactory()
+                    .createConfigBuilder()
+                    .withTrackerFactory(new TrackerFactory<Tracker>() {
             @Override
             public Tracker createTracker(final StatsKey key,
                                          final StatsSessionManager sessionManager) {
@@ -134,7 +137,7 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
             one(mockService).query();
         }});
 
-        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        Service serviceProxy = StatsProxy.wrap(mockFactory, mockKey, mockService);
 
         serviceProxy.query();
     }
@@ -153,14 +156,16 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
         final IncidentTracker exceptionTracker = mockery.mock(IncidentTracker.class, "exceptionTracker");
 
         mockery.checking(new Expectations() {{
-            one(methodTracker).track(); will(returnValue(methodTracker));
-            one(exceptionTracker).incident(); will(returnValue(exceptionTracker));
+            one(methodTracker).track();
+            will(returnValue(methodTracker));
+            one(exceptionTracker).incident();
+            will(returnValue(exceptionTracker));
             one(methodTracker).commit();
         }});
 
-        mockStatsManager.getConfigBuilderFactory()
-                        .createConfigBuilder()
-                        .withTrackerFactory(new TrackerFactory<Tracker>() {
+        statsManager.getConfigBuilderFactory()
+                    .createConfigBuilder()
+                    .withTrackerFactory(new TrackerFactory<Tracker>() {
             @Override
             public Tracker createTracker(final StatsKey key,
                                          final StatsSessionManager sessionManager) {
@@ -185,10 +190,11 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
         final IllegalStateException exception = new IllegalStateException();
 
         mockery.checking(new Expectations() {{
-            one(mockService).query(); will(throwException(exception));
+            one(mockService).query();
+            will(throwException(exception));
         }});
 
-        Service serviceProxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        Service serviceProxy = StatsProxy.wrap(mockFactory, mockKey, mockService);
 
         try {
             serviceProxy.query();
@@ -201,26 +207,26 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
 
     @Test
     public void testProxyEqualsProxy() {
-        Service proxy1 = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
-        Service proxy2 = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        Service proxy1 = StatsProxy.wrap(mockFactory, mockKey, mockService);
+        Service proxy2 = StatsProxy.wrap(mockFactory, mockKey, mockService);
         assertEquals(proxy1, proxy2);
     }
 
     @Test
     public void testProxyEqualsNonProxy() {
-        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        Service proxy = StatsProxy.wrap(mockFactory, mockKey, mockService);
         assertEquals(proxy, mockService); // yes, this is the correct oder for this test
     }
 
     @Test
     public void testNonProxyEqualsProxy() {
-        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        Service proxy = StatsProxy.wrap(mockFactory, mockKey, mockService);
         assertFalse(mockService.equals(proxy));
     }
 
     @Test
     public void testUnwrapProxy() {
-        Service proxy = StatsProxy.wrap(mockStatsManager, mockKey, mockService);
+        Service proxy = StatsProxy.wrap(mockFactory, mockKey, mockService);
         Service unwrappedServiceImpl = StatsProxy.unwrap(proxy);
         assertSame(mockService, unwrappedServiceImpl);
     }

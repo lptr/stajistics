@@ -73,7 +73,6 @@ public abstract class AbstractStatsSessionManagerTestCase extends AbstractStajis
             one(mockDataRecorderFactory).createDataRecorders(); will(returnValue(mockDataRecorders));
             one(mockConfig).getSessionFactory(); will(returnValue(mockSessionFactory));
             one(mockSessionFactory).createSession(with(key),
-                                                  with(aNonNull(StatsManager.class)),
                                                   with(mockDataRecorders));
             will(returnValue(mockSession));
             allowing(mockSession).getKey(); will(returnValue(key));

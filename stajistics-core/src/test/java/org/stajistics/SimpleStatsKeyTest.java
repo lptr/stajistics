@@ -31,10 +31,11 @@ import org.junit.Test;
 public class SimpleStatsKeyTest extends AbstractStatsKeyTestCase {
 
     @Override
-    protected StatsKey createStatsKey(final String name,
+    protected StatsKey createStatsKey(final String namespace,
+                                      final String name,
                                       final StatsKeyFactory keyFactory,
                                       final Map<String, Object> attributes) {
-        return new SimpleStatsKey(name, keyFactory);
+        return new SimpleStatsKey(namespace, name, keyFactory);
     }
 
     @Test
@@ -42,7 +43,7 @@ public class SimpleStatsKeyTest extends AbstractStatsKeyTestCase {
         final Map<String,Object> testAttributes = new HashMap<String,Object>();
         testAttributes.put("test1", Boolean.TRUE);
 
-        StatsKey key = createStatsKey(TEST_NAME, null, testAttributes);
+        StatsKey key = createStatsKey(TEST_NAMESPACE, TEST_NAME, null, testAttributes);
         assertNull(key.getAttribute("test1"));
         assertNull(key.getAttribute("test2"));
     }

@@ -117,14 +117,16 @@ public class DefaultStatsManager implements StatsManager {
             @Override
             public Void call() throws Exception {
                 if (namespace == null) {
-                    if (StatsManagerRegistry.getStatsManagerCount() == 0) {
+                    if (StatsManagerRegistry.getInstance().getStatsManagerCount() == 0) {
                         namespace = StatsConstants.DEFAULT_NAMESPACE;
                     } else {
                         namespace = Integer.toHexString(System.identityHashCode(this));
                     }
                 }
 
-                StatsManagerRegistry.registerStatsManager(DefaultStatsManager.this);
+                keyFactory.setNamespace(namespace);
+
+                StatsManagerRegistry.getInstance().registerStatsManager(DefaultStatsManager.this);
 
                 eventManager.initialize();
                 taskService.initialize();
@@ -157,7 +159,7 @@ public class DefaultStatsManager implements StatsManager {
                 taskService.shutdown();
                 eventManager.shutdown();
 
-                StatsManagerRegistry.removeStatsManager(DefaultStatsManager.this);
+                StatsManagerRegistry.getInstance().removeStatsManager(DefaultStatsManager.this);
 
                 return null;
             }

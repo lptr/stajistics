@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.session.StatsSession;
 import org.stajistics.tracker.AbstractTracker;
 import org.stajistics.tracker.Tracker;
@@ -48,7 +47,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in track()");
-            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Misc.handleUncaughtException(getKey(), e);
         }
 
         return this;
@@ -74,7 +73,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in commit()");
-            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Misc.handleUncaughtException(getKey(), e);
         }
     }
 

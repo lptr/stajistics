@@ -43,7 +43,7 @@ import org.stajistics.session.StatsSession;
  * characters can appear in a key name. Dot (.) characters, however, are interpreted as
  * hierarchy delimiters.</p>
  *
- * <p>StatsKeys are organized into a hierarchy through the following naming convention. A key is
+ * <p>StatsKeys are organised into a hierarchy through the following naming convention. A key is
  * the ancestor of another key if its name followed by a dot is a prefix of the descendant key name.
  * A key is a parent of a child key if there are no ancestors between it and the descendant key.</p>
  *
@@ -93,7 +93,7 @@ import org.stajistics.session.StatsSession;
  *
  * </dd>
  *
- * @see Stats
+ * @see StatsFactory
  * @see StatsKeyBuilder
  * @see StatsKeyFactory
  *
@@ -101,6 +101,8 @@ import org.stajistics.session.StatsSession;
  */
 public interface StatsKey extends Comparable<StatsKey>,Serializable {
 
+    String getNamespace();
+    
     /**
      * Get the key name.
      *

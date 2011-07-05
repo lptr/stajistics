@@ -43,6 +43,7 @@ import org.junit.runner.RunWith;
 @RunWith(JMock.class)
 public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCase {
 
+    protected static final String TEST_NAMESPACE = "testNamespace";
     protected static final String TEST_NAME = "testName";
     protected static final String TEST_UNIT = "testUnit";
     protected static final Map<String,Object> TEST_ATTRIBUTES = new HashMap<String,Object>();
@@ -54,12 +55,14 @@ public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCas
         mockKeyFactory = mockery.mock(StatsKeyFactory.class);
     }
 
-    protected abstract StatsKey createStatsKey(String name,
+    protected abstract StatsKey createStatsKey(String namespace,
+                                               String name,
                                                StatsKeyFactory keyFactory,
                                                Map<String,Object> attributes);
 
     protected StatsKey createStatsKey(final String name) {
-        return createStatsKey(name,
+        return createStatsKey(TEST_NAMESPACE,
+                              name,
                               mockKeyFactory,
                               TEST_ATTRIBUTES);
     }
@@ -67,7 +70,8 @@ public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCas
     protected StatsKey createStatsKey(final String name,
                                       final String attrName,
                                       final String attrValue) {
-        return createStatsKey(name,
+        return createStatsKey(TEST_NAMESPACE,
+                              name,
                               mockKeyFactory,
                               Collections.<String,Object>singletonMap(attrName, attrValue));
     }
@@ -80,14 +84,14 @@ public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCas
 
     @Test
     public void testConstructWithNullKeyFactory() {
-        StatsKey key = createStatsKey(TEST_NAME, null, Collections.<String,Object>emptyMap());
+        StatsKey key = createStatsKey(TEST_NAMESPACE, TEST_NAME, null, Collections.<String,Object>emptyMap());
         assertSame(NullStatsKeyBuilder.getInstance(), key.buildCopy());
     }
 
     @Test
     public void testConstructWithNullAttributes() {
         try {
-            createStatsKey(TEST_NAME, mockKeyFactory, null);
+            createStatsKey(TEST_NAMESPACE, TEST_NAME, mockKeyFactory, null);
 
             fail("Allowed construction with null attributes");
 
@@ -101,7 +105,7 @@ public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCas
         final Map<String,Object> testAttributes = new HashMap<String,Object>();
         testAttributes.put("test1", Boolean.TRUE);
 
-        StatsKey key = createStatsKey(TEST_NAME, null, testAttributes);
+        StatsKey key = createStatsKey(TEST_NAMESPACE, TEST_NAME, null, testAttributes);
         assertEquals(Boolean.TRUE, key.getAttribute("test1"));
         assertNull(key.getAttribute("test2"));
     }
@@ -121,11 +125,11 @@ public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCas
 
     @Test
     public void testGetHierarchyDepth() {
-	assertEquals(1, createStatsKey("a").getHierarchyDepth());
-	assertEquals(2, createStatsKey("a.b").getHierarchyDepth());
-	assertEquals(3, createStatsKey("a.b.c").getHierarchyDepth());
-	assertEquals(4, createStatsKey("a.b.c.d").getHierarchyDepth());
-	assertEquals(5, createStatsKey("a.b.c.d.e").getHierarchyDepth());
+        assertEquals(1, createStatsKey("a").getHierarchyDepth());
+        assertEquals(2, createStatsKey("a.b").getHierarchyDepth());
+        assertEquals(3, createStatsKey("a.b.c").getHierarchyDepth());
+        assertEquals(4, createStatsKey("a.b.c.d").getHierarchyDepth());
+        assertEquals(5, createStatsKey("a.b.c.d.e").getHierarchyDepth());
     }
 
     @Test
@@ -162,10 +166,12 @@ public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCas
 
     @Test
     public void testEqualsKeyWithDifferentAttributes() {
-        StatsKey key1 = createStatsKey(TEST_NAME,
+        StatsKey key1 = createStatsKey(TEST_NAMESPACE,
+                                       TEST_NAME,
                                        mockKeyFactory,
                                        TEST_ATTRIBUTES);
-        StatsKey key2 = createStatsKey(TEST_NAME,
+        StatsKey key2 = createStatsKey(TEST_NAMESPACE,
+                                       TEST_NAME,
                                        mockKeyFactory,
                                        Collections.<String,Object>singletonMap("test", "test"));
         assertFalse(key1.equals(key2));
@@ -211,7 +217,8 @@ public abstract class AbstractStatsKeyTestCase extends AbstractStajisticsTestCas
 
     @Test
     public void testToStringContainsAttributes() {
-        StatsKey key = createStatsKey(TEST_NAME,
+        StatsKey key = createStatsKey(TEST_NAMESPACE,
+                                      TEST_NAME,
                                       mockKeyFactory,
                                       Collections.<String,Object>singletonMap("name", "value"));
         assertTrue(key.toString().contains("name=value"));

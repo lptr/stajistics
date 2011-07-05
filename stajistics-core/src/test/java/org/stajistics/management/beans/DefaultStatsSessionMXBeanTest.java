@@ -65,12 +65,12 @@ public class DefaultStatsSessionMXBeanTest extends AbstractJMXTestCase {
             will(returnValue(mockSessionManager));
         }});
         
-        StatsManagerRegistry.registerStatsManager(mockManager);
+        StatsManagerRegistry.getInstance().registerStatsManager(mockManager);
     }
 
     @After
     public void tearDown() {
-        StatsManagerRegistry.removeStatsManager(mockManager);
+        StatsManagerRegistry.getInstance().removeStatsManager(mockManager);
     }
     
     protected DefaultStatsSessionMXBean createSessionMBean(final StatsSession session) {
