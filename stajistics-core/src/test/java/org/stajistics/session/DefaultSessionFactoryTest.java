@@ -4,10 +4,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.jmock.Expectations;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
+import org.stajistics.StatsConstants;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.TaskService;
@@ -17,6 +20,11 @@ import org.stajistics.task.TaskService;
  */
 public class DefaultSessionFactoryTest extends AbstractStajisticsTestCase {
 
+    @Before
+    public void setUp() {
+        new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
+    }
+    
     @After
     public void tearDown() {
         System.getProperties().remove(DefaultSessionFactory.PROP_DEFAULT_SESSION_IMPL);
@@ -57,6 +65,9 @@ public class DefaultSessionFactoryTest extends AbstractStajisticsTestCase {
         final DataRecorder[] dataRecorders = new DataRecorder[] {};
 
         mockery.checking(new Expectations() {{
+            allowing(mockKey).getNamespace();
+            will(returnValue(StatsConstants.DEFAULT_NAMESPACE));
+            
             allowing(mockManager).getEventManager();
             will(returnValue(mockEventManager));
 
@@ -64,7 +75,7 @@ public class DefaultSessionFactoryTest extends AbstractStajisticsTestCase {
             will(returnValue(mockTaskService));
         }});
 
-        StatsSession session = DefaultSessionFactory.getInstance().createSession(mockKey, mockManager, dataRecorders);
+        StatsSession session = DefaultSessionFactory.getInstance().createSession(mockKey, dataRecorders);
         return session;
     }
 }

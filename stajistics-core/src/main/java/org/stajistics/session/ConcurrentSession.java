@@ -19,9 +19,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.StatsManagerRegistry;
 import org.stajistics.data.DataSet;
 import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
@@ -189,7 +189,7 @@ public class ConcurrentSession extends AbstractStatsSession {
                         e,
                         "Failed to update {}",
                         dataRecorder);
-                Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                Misc.handleUncaughtException(getKey(), e);
             }
         }
 
@@ -298,10 +298,10 @@ public class ConcurrentSession extends AbstractStatsSession {
     public static final class Factory implements StatsSessionFactory {
         @Override
         public StatsSession createSession(final StatsKey key,
-                                          final StatsManager manager,
                                           final DataRecorder[] dataRecorders) {
+            StatsManager statsManager = StatsManagerRegistry.getInstance().getStatsManager(key.getNamespace());
             return new ConcurrentSession(key,
-                                         manager.getEventManager(),
+                                         statsManager.getEventManager(),
                                          dataRecorders);
         }
     }

@@ -40,11 +40,12 @@ public class SingleAttributeStatsKey extends AbstractStatsKey {
      * @throws NullPointerException If <tt>name</tt> is <tt>null</tt>. 
      *                              If <tt>attrName</tt> is <tt>null</tt> and <tt>attrValue</tt> is not.
      */
-    public SingleAttributeStatsKey(final String name,
+    public SingleAttributeStatsKey(final String namespace,
+                                   final String name,
                                    final StatsKeyFactory keyFactory,
                                    final String attrName,
                                    final Object attrValue) {
-        super(name, keyFactory);
+        super(namespace, name, keyFactory);
 
         if (attrName == null && attrValue != null) {
             throw new NullPointerException("attrValue");
@@ -77,6 +78,19 @@ public class SingleAttributeStatsKey extends AbstractStatsKey {
     @Override
     public int getAttributeCount() {
         return attrName == null ? 0 : 1;
+    }
+
+    @Override
+    protected boolean areAttributesEqual(final StatsKey other) {
+        if (getAttributeCount() != other.getAttributeCount()) {
+            return false;
+        }
+        
+        if (attrName == null) {
+            return true;
+        }
+
+        return attrValue.equals(other.getAttribute(attrName));
     }
 
     @Override

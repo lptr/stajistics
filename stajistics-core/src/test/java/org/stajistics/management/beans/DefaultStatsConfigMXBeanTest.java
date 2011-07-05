@@ -69,12 +69,12 @@ public class DefaultStatsConfigMXBeanTest extends AbstractJMXTestCase {
             will(returnValue(mockConfigManager));
         }});
 
-        StatsManagerRegistry.registerStatsManager(mockManager);
+        StatsManagerRegistry.getInstance().registerStatsManager(mockManager);
     }
 
     @After
     public void tearDown() {
-        StatsManagerRegistry.removeStatsManager(mockManager);
+        StatsManagerRegistry.getInstance().removeStatsManager(mockManager);
     }
     
     @Test

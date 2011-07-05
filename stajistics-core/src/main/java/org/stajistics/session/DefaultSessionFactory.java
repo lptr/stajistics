@@ -15,7 +15,6 @@
 package org.stajistics.session;
 
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
 import org.stajistics.StatsProperties;
 import org.stajistics.session.recorder.DataRecorder;
 
@@ -39,7 +38,6 @@ public class DefaultSessionFactory implements StatsSessionFactory {
 
     @Override
     public StatsSession createSession(final StatsKey key,
-                                      final StatsManager manager,
                                       final DataRecorder[] dataRecorders) {
 
         StatsSessionFactory sessionFactory = ConcurrentSession.FACTORY;
@@ -57,6 +55,6 @@ public class DefaultSessionFactory implements StatsSessionFactory {
             }
         }
 
-        return sessionFactory.createSession(key, manager, dataRecorders);
+        return sessionFactory.createSession(key, dataRecorders);
     }
 }

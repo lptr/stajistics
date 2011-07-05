@@ -11,8 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.DefaultStatsKeyFactory;
 import org.stajistics.DefaultStatsManager;
+import org.stajistics.StatsConstants;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.configuration.DefaultStatsConfigManager;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
@@ -105,6 +107,8 @@ public class StatsManagementFactoryTest extends AbstractJMXTestCase {
 
     @Test
     public void testGetKeys() throws Exception {
+        new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
+
         StatsManager statsManager = registerStatsManagerMXBean(StatsMXBeanUtil.getStatsManagerObjectName("test"));
         registerSessionManagerMXBean(StatsMXBeanUtil.getSessionManagerObjectName("test"),
                                      statsManager.getSessionManager());

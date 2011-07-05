@@ -29,9 +29,14 @@ public class DefaultStatsManagerFactory implements StatsManagerFactory {
     private static final String PROP_MANAGEMENT_ENABLED = StatsMXBeanRegistrar.class.getName() + ".enabled";
 
     @Override
-    public DefaultStatsManager createManager() {
+    public DefaultStatsManager createManager(final String namespace) {
+        if (namespace == null) {
+            throw new NullPointerException("namespace");
+        }
+
         boolean stajisticsEnabled = StatsProperties.getBooleanProperty(PROP_STAJISTICS_ENABLED, true);
         DefaultStatsManager manager = new DefaultStatsManager.Builder()
+                                                             .withNamespace(namespace)
                                                              .withEnabled(stajisticsEnabled)
                                                              .newManager();
 

@@ -21,9 +21,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.jmock.Expectations;
 import org.junit.Test;
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsManager;
 import org.stajistics.TestUtil;
 import org.stajistics.UncaughtExceptionHandler;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.tracker.AbstractTrackerTestCase;
 
 
@@ -222,20 +224,17 @@ public abstract class AbstractSpanTrackerTestCase
 
     @Test
     public void testTrackEatsSessionException() {
+        StatsManager statsManager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
+
         final UncaughtExceptionHandler mockUncaughtExceptionHandler = mockery.mock(UncaughtExceptionHandler.class);
         mockery.checking(new Expectations() {{
             one(mockUncaughtExceptionHandler).uncaughtException(with(mockKey),
                                                                 with(aNonNull(RuntimeException.class)));
         }});
 
-        Stats.getManager().setUncaughtExceptionHandler(mockUncaughtExceptionHandler);
-        try {
-            final SpanTracker tracker = createStatsTracker(new NastySession(mockKey));
-
-            tracker.track();
-        } finally {
-            Stats.getManager().setUncaughtExceptionHandler(null);
-        }
+        statsManager.setUncaughtExceptionHandler(mockUncaughtExceptionHandler);
+        final SpanTracker tracker = createStatsTracker(new NastySession(mockKey));
+        tracker.track();
     }
 
     @Test

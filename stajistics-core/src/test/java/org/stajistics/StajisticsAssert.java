@@ -69,21 +69,21 @@ public class StajisticsAssert {
         throw assertionError;
     }
 
-    public static void assertInstanceOf(final Object test, final Class<?> iface) {
-        assertInstanceOf(null, test, iface);
+    public static void assertInstanceOf(final Class<?> iface, final Object test) {
+        assertInstanceOf(null, iface, test);
     }
 
-    public static void assertInstanceOf(final String message, final Object test, final Class<?> clazz) {
+    public static void assertInstanceOf(final String message, final Class<?> clazz, final Object test) {
         if (!clazz.isInstance(test)) {
             fail(message, "Object is not an instance of %s: %s", clazz.getName(), test);
         }
     }
 
-    public static void assertNotInstanceOf(final Object test, final Class<?> iface) {
-        assertNotInstanceOf(null, test, iface);
+    public static void assertNotInstanceOf(final Class<?> iface, final Object test) {
+        assertNotInstanceOf(null, iface, test);
     }
 
-    public static void assertNotInstanceOf(final String message, final Object test, final Class<?> clazz) {
+    public static void assertNotInstanceOf(final String message, final Class<?> clazz, final Object test) {
         if (clazz.isInstance(test)) {
             fail(message, "Object is an instance of %s: %s", clazz.getName(), test);
         }
@@ -137,7 +137,7 @@ public class StajisticsAssert {
 
     public static void assertSerializable(final String message, final Object test) {
         try {
-            assertInstanceOf(test, Serializable.class);
+            assertInstanceOf(Serializable.class, test);
         } catch (StajisticsAssertionError e) {
             compoundFail(message, e);
         }

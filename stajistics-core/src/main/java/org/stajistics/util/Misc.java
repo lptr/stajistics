@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
+import org.stajistics.StatsKey;
+import org.stajistics.StatsManager;
+import org.stajistics.StatsManagerRegistry;
 
 /**
  * Defines various static utility methods.
@@ -36,6 +39,31 @@ public final class Misc {
         }
 
         return result;
+    }
+
+    public static void handleUncaughtException(final StatsKey key,
+                                               final Exception ex) {
+        String namespace = null;
+        if (key != null) {
+            namespace = key.getNamespace();
+        }
+        handleUncaughtException(namespace, key, ex);
+    }
+
+    public static void handleUncaughtException(final String namespace,
+                                               final Exception ex) {
+        handleUncaughtException(namespace, null, ex);
+    }
+
+    private static void handleUncaughtException(final String namespace,
+                                                final StatsKey key,
+                                                final Exception ex) {
+        try {
+            StatsManager statsManager = StatsManagerRegistry.getInstance().getStatsManager(namespace);
+            statsManager.getUncaughtExceptionHandler().uncaughtException(key, ex);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

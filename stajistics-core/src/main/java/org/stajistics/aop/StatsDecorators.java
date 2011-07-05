@@ -20,7 +20,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.span.SpanTracker;
 
@@ -32,9 +33,21 @@ import org.stajistics.tracker.span.SpanTracker;
  */
 public class StatsDecorators {
 
-    private StatsDecorators() {}
+    private final StatsFactory factory;
 
-    private static void rethrow(final Throwable t) {
+    public StatsDecorators() {
+        this(null);
+    }
+
+    public StatsDecorators(final StatsFactory factory) {
+        if (factory == null) {
+            this.factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+        } else {
+            this.factory = factory;
+        }
+    }
+
+    private void rethrow(final Throwable t) {
         if (t instanceof RuntimeException) {
             throw (RuntimeException)t;
         }
@@ -45,13 +58,13 @@ public class StatsDecorators {
         throw new RuntimeException(t);
     }
 
-    public static Runnable wrap(final Runnable r,
-                                final StatsKey key) {
+    public Runnable wrap(final Runnable r,
+                         final StatsKey key) {
         return new Runnable() {
             @Override
             public void run() {
                 try {
-                    SpanTracker tracker = Stats.track(key);
+                    SpanTracker tracker = factory.track(key);
                     try {
                         r.run();
                     } finally {
@@ -59,20 +72,20 @@ public class StatsDecorators {
                     }
 
                 } catch (Throwable t) {
-                    Stats.failure(t, key);
+                    factory.failure(t, key);
                     rethrow(t);
                 }
             }
         };
     }
 
-    public static <T> Callable<T> wrap(final Callable<T> c,
-                                       final StatsKey key) {
+    public <T> Callable<T> wrap(final Callable<T> c,
+                                final StatsKey key) {
         return new Callable<T>() {
             @Override
             public T call() throws Exception {
                 try {
-                    SpanTracker tracker = Stats.track(key);
+                    SpanTracker tracker = factory.track(key);
                     try {
                         return c.call();
                     } finally {
@@ -80,7 +93,7 @@ public class StatsDecorators {
                     }
 
                 } catch (Throwable t) {
-                    Stats.failure(t, key);
+                    factory.failure(t, key);
 
                     if (t instanceof Exception) {
                         throw (Exception)t;
@@ -94,14 +107,14 @@ public class StatsDecorators {
         };
     }
 
-    public static Observer wrap(final Observer observer,
-                                final StatsKey key) {
+    public Observer wrap(final Observer observer,
+                         final StatsKey key) {
         return new Observer() {
             @Override
             public void update(final Observable o,
                                final Object arg) {
                 try {
-                    SpanTracker tracker = Stats.track(key);
+                    SpanTracker tracker = factory.track(key);
                     try {
                         observer.update(o, arg);
                     } finally {
@@ -109,27 +122,27 @@ public class StatsDecorators {
                     }
 
                 } catch (Throwable t) {
-                    Stats.failure(t, key);
+                    factory.failure(t, key);
                     rethrow(t);
                 }
             }
         };
     }
 
-    public static ThreadFactory wrap(final ThreadFactory threadFactory,
-                                     final StatsKey key) {
+    public ThreadFactory wrap(final ThreadFactory threadFactory,
+                              final StatsKey key) {
         return new ThreadFactoryWrapper(threadFactory, key);
     }
 
-    public static Executor wrap(final Executor executor,
-                                final StatsKey executorKey,
-                                final StatsKey commandKey) {
+    public Executor wrap(final Executor executor,
+                         final StatsKey executorKey,
+                         final StatsKey commandKey) {
         return new ExecutorWrapper(executor, executorKey, commandKey);
     }
 
     /* NESTED CLASSES */
 
-    protected static class ThreadFactoryWrapper implements ThreadFactory {
+    protected class ThreadFactoryWrapper implements ThreadFactory {
 
         protected final ThreadFactory threadFactory;
         protected final StatsKey key;
@@ -146,11 +159,11 @@ public class StatsDecorators {
 
         @Override
         public Thread newThread(final Runnable r) {
-            return threadFactory.newThread(StatsDecorators.wrap(r, key));
+            return threadFactory.newThread(wrap(r, key));
         }
     }
 
-    protected static class ExecutorWrapper implements Executor {
+    protected class ExecutorWrapper implements Executor {
 
         protected final Executor executor;
         protected final StatsKey executorKey;
@@ -177,12 +190,12 @@ public class StatsDecorators {
         @Override
         public void execute(final Runnable command) {
             try {
-                Stats.incident(executorKey);
+                factory.incident(executorKey);
 
-                executor.execute(StatsDecorators.wrap(command, commandKey));
+                executor.execute(wrap(command, commandKey));
 
             } catch (Throwable t) {
-                Stats.failure(t, executorKey);
+                factory.failure(t, executorKey);
                 rethrow(t);
             }
         }

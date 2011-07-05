@@ -2,6 +2,8 @@ package org.stajistics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
+import org.stajistics.bootstrap.StatsManagerFactory;
 import org.stajistics.configuration.StatsConfigBuilder;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.Tracker;
@@ -11,7 +13,16 @@ import org.stajistics.tracker.manual.ManualTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
- * 
+ * <p>A facade to the Stajistics core API. Maintains an instance of a
+ * {@link StatsManager}. Provides convenience methods for manipulating the
+ * underlying API.</p>
+ *
+ * <p>The methods in this class that return {@link Tracker} instances do not throw
+ * Exceptions, checked nor unchecked. Rather, these methods catch and log Exceptions and return
+ * a no-operation {@link Tracker} instance. The necessity in this design is to shield a
+ * client application from any problems related to invoking statistics collection, possibly caused
+ * by misconfiguration. To bypass this Exception-swallowing behaviour, the use of this facade
+ * can be discarded and the underlying API can be accessed directly.</p>
  *
  * @author The Stajistics Project
  */
@@ -19,7 +30,10 @@ public class StatsFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(StatsFactory.class);
 
-    private final StatsManager statsManager;
+    protected static final String PROP_MANAGER_FACTORY = StatsManagerFactory.class.getName();
+    protected static final String PROP_AUTO_INIT_DEFAULT_MANAGER = StatsFactory.class.getName() + ".autoInitDefaultManager";
+
+    protected final StatsManager statsManager;
 
     public StatsFactory(final StatsManager statsManager) {
         if (statsManager == null) {
@@ -33,20 +47,30 @@ public class StatsFactory {
             throw new NullPointerException("aClass");
         }
 
-        Class<?> cls = aClass;
-        while (cls != Object.class) {
-            String namespace = cls.getPackage().getName();
-            if (StatsManagerRegistry.isStatsManagerDefined(namespace)) {
-                StatsManager statsManager = StatsManagerRegistry.getStatsManager(namespace);
+        final StatsManagerRegistry reg = StatsManagerRegistry.getInstance();
+        String pkg = aClass.getPackage().getName();
+
+        do {
+            String namespace = pkg;
+            if (reg.isStatsManagerDefined(namespace)) {
+                StatsManager statsManager = reg.getStatsManager(namespace);
                 if (statsManager != null) {
+                    logger.debug("Found StatsManager at namespace '{}' for class '{}'.", namespace, aClass);
                     return new StatsFactory(statsManager);
                 }
             }
 
-            cls = cls.getSuperclass();
-        }
+            int i = pkg.lastIndexOf('.');
+            if (i > -1) {
+                pkg = pkg.substring(0, i);
+            } else {
+                pkg = null;
+            }
+        } while (pkg != null);
 
-        throw new StatsNamespaceNotFoundException("No namespaces found for class: " + aClass.getName());
+        logger.debug("No matching namespaces defined for class '{}'. Attemping to use default namespace.", aClass);
+
+        return forNamespace(StatsConstants.DEFAULT_NAMESPACE);
     }
 
     public static StatsFactory forNamespace(final String namespace) {
@@ -54,14 +78,66 @@ public class StatsFactory {
             throw new NullPointerException("namespace");
         }
 
-        if (StatsManagerRegistry.isStatsManagerDefined(namespace)) {
-            StatsManager statsManager = StatsManagerRegistry.getStatsManager(namespace);
-            if (statsManager != null) {
+        final StatsManagerRegistry reg = StatsManagerRegistry.getInstance();
+        
+        if (reg.isStatsManagerDefined(namespace)) {
+            StatsManager statsManager = reg.getStatsManager(namespace);
+            return new StatsFactory(statsManager);
+        }
+
+        // Namespace not found
+
+        if (namespace.equals(StatsConstants.DEFAULT_NAMESPACE)) {
+            boolean autoInitDefaultManager = Boolean.parseBoolean(System.getProperty(PROP_AUTO_INIT_DEFAULT_MANAGER, 
+                                                                                     Boolean.TRUE.toString()));
+            if (autoInitDefaultManager) {
+                loadDefaultStatsManager();
+                StatsManager statsManager = reg.getStatsManager(namespace);
                 return new StatsFactory(statsManager);
             }
         }
 
         throw new StatsNamespaceNotFoundException(namespace);
+    }
+
+    protected static StatsManager loadDefaultStatsManager() {
+
+        StatsManager manager = null;
+
+        try {
+            StatsManagerFactory managerFactory = loadStatsManagerFactoryFromProperties();
+            if (managerFactory != null) {
+                manager = managerFactory.createManager(StatsConstants.DEFAULT_NAMESPACE);
+                if (manager == null) {
+                    logger.error(StatsManagerFactory.class.getSimpleName() + " created null " + 
+                                 StatsManager.class.getSimpleName() + ": " + managerFactory.getClass());
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error("Failed to load " + StatsManager.class.getSimpleName() + ": " + e.toString(), e);
+        }
+
+        if (manager == null) {
+            manager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
+        }
+
+        return manager;
+    }
+
+    protected static StatsManagerFactory loadStatsManagerFactoryFromProperties() throws Exception {
+        StatsManagerFactory managerFactory = null;
+
+        String managerFactoryClassName = System.getProperty(PROP_MANAGER_FACTORY);
+        if (managerFactoryClassName != null) {
+            @SuppressWarnings("unchecked")
+            Class<StatsManagerFactory> managerFactoryClass =
+                    (Class<StatsManagerFactory>)Class.forName(managerFactoryClassName);
+
+            managerFactory = managerFactoryClass.newInstance();
+        }
+
+        return managerFactory;
     }
 
     public StatsManager getManager() {
@@ -78,7 +154,7 @@ public class StatsFactory {
     public boolean isEnabled() {
         return statsManager.isEnabled();
     }
-    
+
     /**
      * Obtain a {@link SpanTracker} for the given <tt>keyName</tt> that can be used
      * to collect statistics related to some span. Equivalent to calling

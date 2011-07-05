@@ -4,9 +4,9 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
 import org.stajistics.tracker.manual.ManualTracker;
 
 /**
@@ -21,20 +21,20 @@ public class StatsFilterOutputStream extends FilterOutputStream {
         this(null, key, out);
     }
 
-    public StatsFilterOutputStream(StatsManager statsManager,
+    public StatsFilterOutputStream(StatsFactory factory,
                                    final StatsKey key,
                                    final OutputStream out) {
         super(out);
 
-        if (statsManager == null) {
-            statsManager = Stats.getManager();
+        if (factory == null) {
+            factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
         }
 
         if (key == null) {
             throw new NullPointerException("key");
         }
 
-        tracker = statsManager.getTrackerLocator().getManualTracker(key);
+        tracker = factory.getManualTracker(key);
     }
 
     @Override

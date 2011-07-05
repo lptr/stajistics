@@ -15,6 +15,7 @@
 package org.stajistics;
 
 import org.junit.Test;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.configuration.DefaultStatsConfigManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
@@ -28,18 +29,18 @@ public class Issue31Test extends AbstractStajisticsTestCase {
 
     @Test
     public void testConfigChangedEventIsNotFiredWhenUpdatingRootConfig() {
+        StatsManager statsManager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
         EventManager mockEventManager = mockery.mock(EventManager.class);
 
         StatsConfigManager configManager = new DefaultStatsConfigManager(mockEventManager,
-                                                                         Stats.getManager()
-                                                                              .getKeyFactory());
+                                                                         statsManager.getKeyFactory());
 
         StatsConfig defaultRootConfig = configManager.getRootConfig();
-        StatsConfig newRootConfig = Stats.getManager()
-                                         .getConfigBuilderFactory()
-                                         .createConfigBuilder(defaultRootConfig)
-                                         .withDescription("dummy")
-                                         .newConfig();
+
+        StatsConfig newRootConfig = statsManager.getConfigBuilderFactory()
+                                                .createConfigBuilder(defaultRootConfig)
+                                                .withDescription("dummy")
+                                                .newConfig();
         configManager.setRootConfig(newRootConfig);
     }
 }

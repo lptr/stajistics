@@ -18,6 +18,7 @@ import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
@@ -50,6 +51,7 @@ public abstract class TestUtil {
                                                  final String attrName,
                                                  final String attrValue) {
         mockery.checking(new Expectations() {{
+            allowing(mockKey).getNamespace(); will(returnValue(StatsConstants.DEFAULT_NAMESPACE));
             allowing(mockKey).getName(); will(returnValue(keyName));
             allowing(mockKey).getAttribute(with((String)null)); will(returnValue(null));
 

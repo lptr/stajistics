@@ -16,7 +16,6 @@ package org.stajistics.tracker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.session.StatsSession;
 import org.stajistics.util.Misc;
@@ -79,7 +78,7 @@ public abstract class AbstractTracker implements Tracker {
             Misc.logHandledException(logger,
                     e,
                     "Caught Exception in toString()");
-            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+            Misc.handleUncaughtException(getKey(), e);
         }
         buf.append(']');
 

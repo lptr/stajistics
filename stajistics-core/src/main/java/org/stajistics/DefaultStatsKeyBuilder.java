@@ -30,6 +30,7 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
     private static final String NULL = "<null>";
 
     protected StatsKeyFactory keyFactory;
+    protected String namespace;
     protected String name;
 
     protected String firstAttrName;
@@ -44,8 +45,10 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
      * @param keyFactory The factory that supports the creation of StatsKey instances. 
      *                   Must not be <tt>null</tt>.
      */
-    public DefaultStatsKeyBuilder(final String name,
+    public DefaultStatsKeyBuilder(final String namespace,
+                                  final String name,
                                   final StatsKeyFactory keyFactory) {
+        this.namespace = namespace == null ? StatsConstants.DEFAULT_NAMESPACE : namespace;
         this.name = name == null ? NULL : name;
         this.keyFactory = keyFactory;
     }
@@ -156,18 +159,19 @@ public class DefaultStatsKeyBuilder implements StatsKeyBuilder {
         if (attributes == null) {
             // If no attributes
             if (firstAttrName == null) {
-                return new SimpleStatsKey(name, keyFactory);
+                return new SimpleStatsKey(namespace, name, keyFactory);
             }
 
             // One attribute
-            return new SingleAttributeStatsKey(name,
+            return new SingleAttributeStatsKey(namespace,
+                                               name,
                                                keyFactory, 
                                                firstAttrName, 
                                                firstAttrValue);
         }
 
         // Many attributes
-        return new DefaultStatsKey(name, keyFactory, attributes);
+        return new DefaultStatsKey(namespace, name, keyFactory, attributes);
     }
 
 }

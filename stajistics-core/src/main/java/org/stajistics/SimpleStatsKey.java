@@ -34,9 +34,10 @@ public class SimpleStatsKey extends AbstractStatsKey {
      * @param keyFactory The factory that supports the creation of copies of this StatsKey instance.
      * @throws NullPointerException If <tt>name</tt> is <tt>null</tt>.
      */
-    public SimpleStatsKey(final String name,
+    public SimpleStatsKey(final String namespace,
+                          final String name,
                           final StatsKeyFactory keyFactory) {
-        super(name, keyFactory);
+        super(namespace, name, keyFactory);
 
         setHashCode();
     }
@@ -63,5 +64,10 @@ public class SimpleStatsKey extends AbstractStatsKey {
     @Override
     public int getAttributeCount() {
         return 0;
+    }
+
+    @Override
+    protected boolean areAttributesEqual(final StatsKey other) {
+        return other.getAttributeCount() == 0;
     }
 }

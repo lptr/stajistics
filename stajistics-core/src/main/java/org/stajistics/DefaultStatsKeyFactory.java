@@ -23,14 +23,29 @@ package org.stajistics;
  */
 public class DefaultStatsKeyFactory implements StatsKeyFactory {
 
+    private String namespace;
+
+    @Override
+    public String getNamespace() {
+        return namespace;
+    }
+
+    @Override
+    public void setNamespace(final String namespace) {
+        if (namespace == null) {
+            throw new NullPointerException("namespace");
+        }
+        this.namespace = namespace;
+    }
+
     @Override
     public StatsKey createKey(final String name) {
-        return new SimpleStatsKey(name, this);
+        return new SimpleStatsKey(namespace, name, this);
     }
 
     @Override
     public StatsKeyBuilder createKeyBuilder(final String name) {
-        return new DefaultStatsKeyBuilder(name, this);
+        return new DefaultStatsKeyBuilder(namespace, name, this);
     }
 
     @Override

@@ -48,23 +48,22 @@ public class DefaultStatsKeyBuilderTest extends AbstractStajisticsTestCase {
     }
 
     @Test
-    public void testConstructWithNullName() {
-        try {
-            new DefaultStatsKeyBuilder((String)null, mockKeyFactory);
+    public void testConstructWithNullNamespace() {
+        StatsKeyBuilder builder = new DefaultStatsKeyBuilder(null, "test", mockKeyFactory);
+        assertEquals(StatsConstants.DEFAULT_NAMESPACE, builder.newKey().getNamespace());
+    }
 
-        } catch (NullPointerException npe) {
-            assertEquals("name", npe.getMessage());
-        }
+    @Test
+    public void testConstructWithNullName() {
+        StatsKeyBuilder builder = new DefaultStatsKeyBuilder("namespace", (String)null, mockKeyFactory);
+        assertEquals("<null>", builder.newKey().getName());
     }
 
     @Test
     public void testConstructWithNameAndNullKeyFactory() {
-        try {
-            new DefaultStatsKeyBuilder("test", null);
-
-        } catch (NullPointerException npe) {
-            assertEquals("keyFactory", npe.getMessage());
-        }
+        StatsKeyBuilder builder = new DefaultStatsKeyBuilder("namespace", "test", null);
+        StatsKey key = builder.newKey(); // Assert no exceptions
+        assertSame(NullStatsKeyBuilder.getInstance(), key.buildCopy());
     }
 
     @Test

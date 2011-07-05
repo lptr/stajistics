@@ -19,9 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
 import org.stajistics.StatsFactory;
 import org.stajistics.tracker.span.SpanTracker;
 
@@ -45,21 +44,18 @@ public class StatsProxy implements InvocationHandler {
 
     protected static final String ATTR_METHOD = "method";
 
-    protected final StatsManager statsManager;
     protected final StatsFactory factory;
     protected final StatsKey key;
     protected final Object target;
 
-    protected StatsProxy(final StatsManager statsManager,
+    protected StatsProxy(final StatsFactory factory,
                          final StatsKey key,
                          final Object target) {
-
-        if (statsManager == null) {
-            this.statsManager = Stats.getManager();
+        if (factory == null) {
+            this.factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
         } else {
-            this.statsManager = statsManager;
+            this.factory = factory;
         }
-        this.factory = new StatsFactory(this.statsManager);
 
         if (key == null) {
             throw new NullPointerException("key");
@@ -81,23 +77,23 @@ public class StatsProxy implements InvocationHandler {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> T wrap(final StatsManager statsManager,
+    public static <T> T wrap(final StatsFactory factory,
                              final StatsKey key,
                              final T target) {
         Class<? super T>[] ifaces = (Class<? super T>[])target.getClass()
                                                               .getInterfaces();
-        return wrap(statsManager, key, target, ifaces);
+        return wrap(factory, key, target, ifaces);
     }
 
-    public static <T,U extends T> T wrap(final StatsManager statsManager,
+    public static <T,U extends T> T wrap(final StatsFactory factory,
                                          final StatsKey key,
                                          final U target,
                                          final Class<T> iface) {
-        return wrap(statsManager, key, target, new Class[] { iface });
+        return wrap(factory, key, target, new Class[] { iface });
     }
 
     @SuppressWarnings("unchecked")
-    public static <T,U extends T> T wrap(final StatsManager statsManager,
+    public static <T,U extends T> T wrap(final StatsFactory factory,
                                          final StatsKey key,
                                          final U target,
                                          final Class<?>[] ifaces) {
@@ -106,7 +102,7 @@ public class StatsProxy implements InvocationHandler {
 
         T proxy = (T) Proxy.newProxyInstance(classLoader,
                                              ifaces,
-                                             new StatsProxy(statsManager, key, target));
+                                             new StatsProxy(factory, key, target));
         return proxy;
     }
 

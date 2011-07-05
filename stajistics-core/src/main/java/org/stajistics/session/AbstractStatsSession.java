@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
 import org.stajistics.StatsKey;
 import org.stajistics.data.DataSet;
 import org.stajistics.data.DefaultDataSet;
@@ -156,7 +155,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                         "Failed to getField({}) from {}",
                         name,
                         dataRecorders[i]);
-                Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                Misc.handleUncaughtException(getKey(), e);
             }
         }
 
@@ -208,7 +207,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                         e,
                         "Failed to collectData() from {}",
                         dataRecorder);
-                Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                Misc.handleUncaughtException(getKey(), e);
             }
         }
     }
@@ -262,7 +261,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                                     e,
                                     "Failed to restore {}",
                                     dataRecorder);
-                            Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                            Misc.handleUncaughtException(getKey(), e);
                         }
                     }
                 }
@@ -289,7 +288,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                         e,
                         "Failed to clear {}",
                         dataRecorder);
-                Stats.getManager().getUncaughtExceptionHandler().uncaughtException(getKey(), e);
+                Misc.handleUncaughtException(getKey(), e);
             }
         }
     }

@@ -30,7 +30,8 @@ import org.junit.Test;
 public class SingleAttributeStatsKeyTest extends AbstractStatsKeyTestCase {
 
     @Override
-    protected StatsKey createStatsKey(final String name,
+    protected StatsKey createStatsKey(final String namespace,
+                                      final String name,
                                       final StatsKeyFactory keyFactory,
                                       final Map<String,Object> attributes) {
         String attrName = null;
@@ -44,7 +45,8 @@ public class SingleAttributeStatsKeyTest extends AbstractStatsKeyTestCase {
             attrValue = entry.getValue();
         }
 
-        return new SingleAttributeStatsKey(name,
+        return new SingleAttributeStatsKey(namespace,
+                                           name,
                                            keyFactory,
                                            attrName,
                                            attrValue);
@@ -53,7 +55,7 @@ public class SingleAttributeStatsKeyTest extends AbstractStatsKeyTestCase {
     @Test
     @Override
     public void testConstructWithNullAttributes() {
-        StatsKey key = createStatsKey(TEST_NAME, mockKeyFactory, null);
+        StatsKey key = createStatsKey(TEST_NAMESPACE, TEST_NAME, mockKeyFactory, null);
         assertEquals(0, key.getAttributeCount());
         assertTrue(key.getAttributes().isEmpty());
     }
