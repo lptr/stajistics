@@ -14,15 +14,12 @@
  */
 package org.stajistics.management;
 
-import javax.management.MBeanServer;
-
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.task.TaskService;
 
 /**
  *
@@ -33,8 +30,6 @@ import org.stajistics.task.TaskService;
 public interface StatsMXBeanRegistrar {
 
     String getNamespace();
-    
-    MBeanServer getMBeanServer();
 
     void registerStatsManagerMXBean(StatsManager statsManager);
 
@@ -47,10 +42,6 @@ public interface StatsMXBeanRegistrar {
     void registerSessionManagerMXBean(StatsSessionManager sessionManager);
 
     void unregisterSessionManagerMXBean();
-
-    void registerTaskServiceMXBean(TaskService taskService);
-
-    void unregisterTaskServiceMXBean();
 
     void registerConfigMXBean(StatsKey key, StatsConfig config);
 

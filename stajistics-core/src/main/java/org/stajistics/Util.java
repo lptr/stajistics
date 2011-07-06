@@ -51,7 +51,7 @@ public final class Util {
         }
     }
 
-    public static void assertNotEmptyAfterTrim(CharSequence test, final String varName) {
+    public static void assertNotBlank(CharSequence test, final String varName) {
         if (test != null) {
             test = test.toString().trim();
         }

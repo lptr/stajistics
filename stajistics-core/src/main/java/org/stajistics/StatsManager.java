@@ -82,13 +82,6 @@ public interface StatsManager extends Serializable,ServiceLifeCycle {
     StatsConfigBuilderFactory getConfigBuilderFactory();
 
     /**
-     * Get the {@link TaskService}.
-     *
-     * @return The {@link TaskService}, never <tt>null</tt>.
-     */
-    TaskService getTaskService();
-
-    /**
      * Determine if statistics collection is enabled.
      *
      * @return <tt>true</tt> if statistics collection is enabled, <tt>false</tt> otherwise.

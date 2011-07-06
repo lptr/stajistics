@@ -30,8 +30,9 @@ public class StatsMXBeanUtil {
     public static final String MANAGER_NAME_STATS = "StatsManager";
     public static final String MANAGER_NAME_CONFIG = "ConfigManager";
     public static final String MANAGER_NAME_SESSION = "SessionManager";
-    public static final String MANAGER_NAME_TASK_SERVICE = "TaskService";
     public static final String MANAGER_NAME_SNAPSHOT = "SnapshotManager";
+
+    public static final String NAME_TASK_SERVICE = "TaskService";
 
     private StatsMXBeanUtil() {}
 
@@ -97,22 +98,28 @@ public class StatsMXBeanUtil {
 
     /**
      * 
-     * @param namespace
      * @param quote
      * @return
      */
-    public static String getTaskServiceObjectNameString(final String namespace, final boolean quote) {
-        return buildManagerName(namespace, MANAGER_NAME_TASK_SERVICE, quote);
+    public static String getTaskServiceObjectNameString(final boolean quote) {
+        StringBuilder buf = new StringBuilder(64);
+        buf.append(STAJISTICS_DOMAIN);
+        appendAttr(buf, OBJECT_NAME_ATTR_NAME, NAME_TASK_SERVICE, quote, true);
+        return buf.toString();
     }
 
     /**
      * 
-     * @param namespace
      * @return
      * @throws MalformedObjectNameException
      */
-    public static ObjectName getTaskServiceObjectName(final String namespace) throws MalformedObjectNameException {
-        ObjectName objectName = new ObjectName(getTaskServiceObjectNameString(namespace, true));
+    public static ObjectName getTaskServiceObjectName() {
+        ObjectName objectName;
+        try {
+            objectName = new ObjectName(getTaskServiceObjectNameString(true));
+        } catch (MalformedObjectNameException e) {
+            throw new RuntimeException("Internal error", e);
+        }
         return objectName;
     }
 
@@ -163,8 +170,8 @@ public class StatsMXBeanUtil {
     private static void appendAttr(final StringBuilder buf, 
                                    final String key, 
                                    final String value,
-                                   final boolean quote) {
-        boolean first = key.equals(OBJECT_NAME_ATTR_NAMESPACE);
+                                   final boolean quote,
+                                   final boolean first) {
         if (first) {
             buf.append(':');
         } else {
@@ -211,9 +218,9 @@ public class StatsMXBeanUtil {
         StringBuilder buf = new StringBuilder(128);
         buf.append(STAJISTICS_DOMAIN);
 
-        appendAttr(buf, OBJECT_NAME_ATTR_NAMESPACE, namespace, quote);
-        appendAttr(buf, OBJECT_NAME_ATTR_TYPE, TYPE_MANAGER, quote);
-        appendAttr(buf, OBJECT_NAME_ATTR_NAME, managerName, quote);
+        appendAttr(buf, OBJECT_NAME_ATTR_NAMESPACE, namespace, quote, true);
+        appendAttr(buf, OBJECT_NAME_ATTR_TYPE, TYPE_MANAGER, quote, false);
+        appendAttr(buf, OBJECT_NAME_ATTR_NAME, managerName, quote, false);
 
         return buf.toString();
     }
@@ -227,18 +234,18 @@ public class StatsMXBeanUtil {
         StringBuilder buf = new StringBuilder(128);
         buf.append(STAJISTICS_DOMAIN);
 
-        appendAttr(buf, OBJECT_NAME_ATTR_NAMESPACE, namespace, quote);
-        appendAttr(buf, OBJECT_NAME_ATTR_TYPE, type, quote);
-        appendAttr(buf, OBJECT_NAME_ATTR_NAME, key.getName(), quote);
+        appendAttr(buf, OBJECT_NAME_ATTR_NAMESPACE, namespace, quote, true);
+        appendAttr(buf, OBJECT_NAME_ATTR_TYPE, type, quote, false);
+        appendAttr(buf, OBJECT_NAME_ATTR_NAME, key.getName(), quote, false);
 
         boolean includeAttributes = subtype.equals(SUBTYPE_SESSION); // Session beans are StatsKey-unique
         if (includeAttributes) {
             for (Map.Entry<String,Object> entry : key.getAttributes().entrySet()) {
-                appendAttr(buf, entry.getKey(), entry.getValue().toString(), quote);
+                appendAttr(buf, entry.getKey(), entry.getValue().toString(), quote, false);
             }
         }
 
-        appendAttr(buf, OBJECT_NAME_ATTR_SUB_TYPE, subtype, quote);
+        appendAttr(buf, OBJECT_NAME_ATTR_SUB_TYPE, subtype, quote, false);
 
         return buf.toString();
     }

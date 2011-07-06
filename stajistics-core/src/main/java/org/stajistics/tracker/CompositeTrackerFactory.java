@@ -15,7 +15,7 @@
 package org.stajistics.tracker;
 
 import static org.stajistics.Util.assertNotEmpty;
-import static org.stajistics.Util.assertNotEmptyAfterTrim;
+import static org.stajistics.Util.assertNotBlank;
 import static org.stajistics.Util.assertNotNull;
 
 import java.util.Collection;
@@ -119,7 +119,7 @@ public class CompositeTrackerFactory<T extends Tracker>
 
         public Builder<T> withFactory(final String nameSuffix,
                                       final TrackerFactory<T> factory) {
-            assertNotEmptyAfterTrim(nameSuffix, "nameSuffix");
+            assertNotBlank(nameSuffix, "nameSuffix");
             assertNotNull(factory, "factory");
 
             factoryMap.put(nameSuffix, factory);

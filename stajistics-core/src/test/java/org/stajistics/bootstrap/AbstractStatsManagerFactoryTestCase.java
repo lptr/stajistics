@@ -58,12 +58,6 @@ public abstract class AbstractStatsManagerFactoryTestCase extends AbstractStajis
     }
 
     @Test
-    public void testManagerHasNonNullTaskService() {
-        StatsManager mgr = createManager();
-        assertNotNull(mgr.getTaskService());
-    }
-
-    @Test
     public void testManagerHasNonNullTrackerLocator() {
         StatsManager mgr = createManager();
         assertNotNull(mgr.getTrackerLocator());

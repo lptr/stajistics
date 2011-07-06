@@ -29,8 +29,6 @@ import static org.stajistics.management.StatsMXBeanUtil.getStatsManagerObjectNam
 import static org.stajistics.management.StatsMXBeanUtil.getTaskServiceObjectName;
 import static org.stajistics.management.StatsMXBeanUtil.getTaskServiceObjectNameString;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 
@@ -43,6 +41,7 @@ import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
+import org.stajistics.management.beans.DefaultTaskServiceMXBean;
 import org.stajistics.management.beans.StatsConfigMXBean;
 import org.stajistics.management.beans.StatsConfigManagerMXBean;
 import org.stajistics.management.beans.StatsManagerMXBean;
@@ -65,31 +64,22 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
 
     private final StatsMXBeanFactory mxBeanFactory;
 
+    private static MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+
     private final String namespace;
-    private boolean isPlatformMBeanServer;
-    private transient MBeanServer mBeanServer;
 
     public DefaultStatsMXBeanRegistrar(final String namespace) {
         this(namespace, new DefaultStatsMXBeanFactory());
     }
 
     public DefaultStatsMXBeanRegistrar(final String namespace,
-                                       final StatsMXBeanFactory mBeanFactory) {
-        this(namespace, mBeanFactory, ManagementFactory.getPlatformMBeanServer());
-    }
-
-    public DefaultStatsMXBeanRegistrar(final String namespace,
-                                       final StatsMXBeanFactory mxBeanFactory,
-                                       final MBeanServer mBeanServer) {
+                                       final StatsMXBeanFactory mxBeanFactory) {
         assertNotEmpty(namespace, "namespace");
         assertNotNull(mxBeanFactory, "mxBeanFactory");
         assertNotNull(mBeanServer, "mBeanServer");
 
         this.namespace = namespace;
         this.mxBeanFactory = mxBeanFactory;
-        this.mBeanServer = mBeanServer;
-
-        this.isPlatformMBeanServer = mBeanServer.equals(ManagementFactory.getPlatformMBeanServer());
     }
 
     @Override
@@ -97,9 +87,13 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
         return namespace;
     }
 
-    @Override
-    public MBeanServer getMBeanServer() {
+    public static MBeanServer getMBeanServer() {
         return mBeanServer;
+    }
+
+    public static void setMBeanServer(final MBeanServer mBeanServer) {
+        assertNotNull(mBeanServer, "mBeanServer");
+        DefaultStatsMXBeanRegistrar.mBeanServer = mBeanServer;
     }
 
     @Override
@@ -203,33 +197,31 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
         }
     }
 
-    @Override
-    public void registerTaskServiceMXBean(final TaskService taskService) {
+    public static void registerTaskServiceMXBean(final TaskService taskService) {
         try {
-            TaskServiceMXBean taskServiceMBean = mxBeanFactory.createTaskServiceMXBean(taskService);
-            
-            ObjectName objectName = getTaskServiceObjectName(namespace);
+            TaskServiceMXBean taskServiceMBean = new DefaultTaskServiceMXBean(taskService); //TODO: make configurable
+
+            ObjectName objectName = getTaskServiceObjectName();
             registerMBean(taskServiceMBean, objectName);
 
             logRegistrationSuccess(true, TaskServiceMXBean.class, null, objectName);
 
         } catch (Exception e) {
-            logRegistrationFailure(true, TaskServiceMXBean.class, null, getTaskServiceObjectNameString(namespace, true), e);
+            logRegistrationFailure(true, TaskServiceMXBean.class, null, getTaskServiceObjectNameString(true), e);
 
             throw new StatsManagementException(e);
         }
     }
 
-    @Override
-    public void unregisterTaskServiceMXBean() {
+    public static void unregisterTaskServiceMXBean() {
         try {
-            ObjectName objectName = getTaskServiceObjectName(namespace);
+            ObjectName objectName = getTaskServiceObjectName();
             mBeanServer.unregisterMBean(objectName);
 
             logRegistrationSuccess(false, TaskServiceMXBean.class, null, objectName);
 
         } catch (Exception e) {
-            logRegistrationFailure(false, TaskServiceMXBean.class, null, getTaskServiceObjectNameString(namespace, true), e);
+            logRegistrationFailure(false, TaskServiceMXBean.class, null, getTaskServiceObjectNameString(true), e);
 
             throw new StatsManagementException(e);
         }
@@ -304,8 +296,8 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
         }
     }
 
-    private void registerMBean(final Object mBean,
-                               final ObjectName name) throws Exception {
+    private static void registerMBean(final Object mBean,
+                                      final ObjectName name) throws Exception {
         if (mBeanServer.isRegistered(name)) {
             logger.warn("Replacing existing MBean: {}", name);
 
@@ -315,10 +307,10 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
         mBeanServer.registerMBean(mBean, name);
     }
 
-    private void logRegistrationSuccess(final boolean register,
-                                        final Class<?> mBeanType,
-                                        final StatsKey key,
-                                        final ObjectName objectName) {
+    private static void logRegistrationSuccess(final boolean register,
+                                               final Class<?> mBeanType,
+                                               final StatsKey key,
+                                               final ObjectName objectName) {
         if (logger.isDebugEnabled()) {
             StringBuilder buf = new StringBuilder(256);
             if (register) {
@@ -341,11 +333,11 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
         }
     }
 
-    private void logRegistrationFailure(final boolean register,
-                                        final Class<?> mBeanType,
-                                        final StatsKey key,
-                                        final String objectName,
-                                        final Exception e) {
+    private static void logRegistrationFailure(final boolean register,
+                                               final Class<?> mBeanType,
+                                               final StatsKey key,
+                                               final String objectName,
+                                               final Exception e) {
         if (logger.isErrorEnabled()) {
             StringBuilder buf = new StringBuilder(256);
             buf.append("Failed to ");
@@ -369,18 +361,4 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
         }
     }
 
-    /* Restore transient fields */
-    private void readObject(final ObjectInputStream in)
-            throws IOException,ClassNotFoundException {
-        in.defaultReadObject();
-
-        if (!isPlatformMBeanServer) {
-            isPlatformMBeanServer = true;
-
-            logger.warn("Restoring transient MBeanServer after deserialization to the "
-                      + "platform MBeanServer when the orginal was non-platform");
-        }
-
-        mBeanServer = ManagementFactory.getPlatformMBeanServer();
-    }
 }

@@ -52,7 +52,6 @@ public class DefaultStatsManager implements StatsManager {
     protected final TrackerLocator trackerLocator;
     protected final StatsKeyFactory keyFactory;
     protected final StatsConfigBuilderFactory configBuilderFactory;
-    protected final TaskService taskService;
 
     private final ServiceLifeCycle.Support lifeCycleSupport = new Support();
 
@@ -74,15 +73,13 @@ public class DefaultStatsManager implements StatsManager {
                                final EventManager eventManager,
                                final TrackerLocator trackerLocator,
                                final StatsKeyFactory keyFactory,
-                               final StatsConfigBuilderFactory configBuilderFactory,
-                               final TaskService taskService) {
+                               final StatsConfigBuilderFactory configBuilderFactory) {
         assertNotNull(configManager, "configManager");
         assertNotNull(sessionManager, "sessionManager");
         assertNotNull(eventManager, "eventManager");
         assertNotNull(trackerLocator, "trackerLocator");
         assertNotNull(keyFactory, "keyFactory");
         assertNotNull(configBuilderFactory, "configBuilderFactory");
-        assertNotNull(taskService, "taskService");
 
         if (namespace != null && namespace.isEmpty()) {
             this.namespace = null;
@@ -96,7 +93,6 @@ public class DefaultStatsManager implements StatsManager {
         this.trackerLocator = trackerLocator;
         this.eventManager = eventManager;
         this.configBuilderFactory = configBuilderFactory;
-        this.taskService = taskService;
     }
 
     @Override
@@ -117,7 +113,6 @@ public class DefaultStatsManager implements StatsManager {
                 StatsManagerRegistry.getInstance().registerStatsManager(DefaultStatsManager.this);
 
                 eventManager.initialize();
-                taskService.initialize();
                 configManager.initialize();
                 sessionManager.initialize();
 
@@ -144,7 +139,6 @@ public class DefaultStatsManager implements StatsManager {
 
                 sessionManager.shutdown();
                 configManager.shutdown();
-                taskService.shutdown();
                 eventManager.shutdown();
 
                 StatsManagerRegistry.getInstance().removeStatsManager(DefaultStatsManager.this);
@@ -194,11 +188,6 @@ public class DefaultStatsManager implements StatsManager {
     }
 
     @Override
-    public TaskService getTaskService() {
-        return taskService;
-    }
-
-    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -233,7 +222,6 @@ public class DefaultStatsManager implements StatsManager {
         protected TrackerLocator trackerLocator = null;
         protected StatsKeyFactory keyFactory = null;
         protected StatsConfigBuilderFactory configBuilderFactory = null;
-        protected TaskService taskService = null;
         protected boolean enabled = true;
         protected UncaughtExceptionHandler uncaughtExceptionHandler = null;
 
@@ -278,12 +266,6 @@ public class DefaultStatsManager implements StatsManager {
             return this;
         }
 
-        public Builder withTaskService(final TaskService taskService) {
-            assertNotNull(taskService, "taskService");
-            this.taskService = taskService;
-            return this;
-        }
-
         public Builder withEnabled(final boolean enabled) {
             this.enabled = enabled;
             return this;
@@ -303,7 +285,6 @@ public class DefaultStatsManager implements StatsManager {
             StatsSessionManager sessionManager = this.sessionManager;
             TrackerLocator trackerLocator = this.trackerLocator;
             StatsConfigBuilderFactory configBuilderFactory = this.configBuilderFactory;
-            TaskService taskService = this.taskService;
 
             if (keyFactory == null) {
                 keyFactory = new DefaultStatsKeyFactory();
@@ -328,18 +309,13 @@ public class DefaultStatsManager implements StatsManager {
                 configBuilderFactory = new DefaultStatsConfigBuilderFactory(configManager);
             }
 
-            if (taskService == null) {
-                taskService = new ThreadPoolTaskService(eventManager);
-            }
-
             DefaultStatsManager manager = new DefaultStatsManager(namespace,
                                                                   configManager,
                                                                   sessionManager,
                                                                   eventManager,
                                                                   trackerLocator,
                                                                   keyFactory,
-                                                                  configBuilderFactory,
-                                                                  taskService);
+                                                                  configBuilderFactory);
 
             manager.setEnabled(enabled);
             if (uncaughtExceptionHandler != null) {

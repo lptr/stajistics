@@ -148,11 +148,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                     }
                 }
             } catch (Exception e) {
-                Misc.logHandledException(logger,
-                        e,
-                        "Failed to getField({}) from {}",
-                        name,
-                        dataRecorders[i]);
+                Misc.logHandledException(logger, e, "Failed to getField({}) from {}", name, dataRecorders[i]);
                 Misc.handleUncaughtException(getKey(), e);
             }
         }
@@ -201,10 +197,7 @@ public abstract class AbstractStatsSession implements StatsSession {
             try {
                 dataRecorder.collectData(this, dataSet);
             } catch (Exception e) {
-                Misc.logHandledException(logger,
-                        e,
-                        "Failed to collectData() from {}",
-                        dataRecorder);
+                Misc.logHandledException(logger, e, "Failed to collectData() from {}", dataRecorder);
                 Misc.handleUncaughtException(getKey(), e);
             }
         }
@@ -253,10 +246,7 @@ public abstract class AbstractStatsSession implements StatsSession {
                         try {
                             dataRecorder.restore(dataSet);
                         } catch (Exception e) {
-                            Misc.logHandledException(logger,
-                                    e,
-                                    "Failed to restore {}",
-                                    dataRecorder);
+                            Misc.logHandledException(logger, e, "Failed to restore {}", dataRecorder);
                             Misc.handleUncaughtException(getKey(), e);
                         }
                     }
@@ -280,10 +270,7 @@ public abstract class AbstractStatsSession implements StatsSession {
             try {
                 dataRecorder.clear();
             } catch (Exception e) {
-                Misc.logHandledException(logger,
-                        e,
-                        "Failed to clear {}",
-                        dataRecorder);
+                Misc.logHandledException(logger, e, "Failed to clear {}", dataRecorder);
                 Misc.handleUncaughtException(getKey(), e);
             }
         }

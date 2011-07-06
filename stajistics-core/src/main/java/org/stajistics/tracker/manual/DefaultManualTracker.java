@@ -58,9 +58,7 @@ public class DefaultManualTracker extends AbstractTracker implements ManualTrack
             session.track(this, now);
             session.update(this, now);
         } catch (Exception e) {
-            Misc.logHandledException(logger,
-                    e,
-                    "Caught Exception in commit()");
+            Misc.logHandledException(logger, e, "Caught Exception in commit()");
             Misc.handleUncaughtException(getKey(), e);
         }
     }

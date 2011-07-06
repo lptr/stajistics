@@ -10,7 +10,7 @@ import org.stajistics.tracker.span.SpanTracker;
 public class TestApp {
 
     public static void main(String[] args) throws Exception {
-        
+
         StatsFactory statsFactory = StatsFactory.forClass(TestApp.class);
 
         StatsKey key = statsFactory.newKey("Test1");

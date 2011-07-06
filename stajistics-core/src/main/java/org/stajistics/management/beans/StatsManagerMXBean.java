@@ -16,8 +16,6 @@ public interface StatsManagerMXBean {
 
     String getEventManagerImpl();
 
-    String getTaskServiceImpl();
-
     boolean getEnabled();
 
     void setEnabled(boolean enabled);

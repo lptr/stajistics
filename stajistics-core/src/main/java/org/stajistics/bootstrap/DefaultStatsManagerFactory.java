@@ -22,6 +22,9 @@ import org.stajistics.StatsProperties;
 import org.stajistics.management.DefaultStatsMXBeanRegistrar;
 import org.stajistics.management.StatsMXBeanRegistrar;
 import org.stajistics.management.StatsManagementEventHandler;
+import org.stajistics.task.TaskService;
+import org.stajistics.task.TaskServiceFactory;
+import org.stajistics.task.ThreadPoolTaskService;
 
 /**
  * @author The Stajistics Project
@@ -41,11 +44,27 @@ public class DefaultStatsManagerFactory implements StatsManagerFactory {
                                                              .withEnabled(stajisticsEnabled)
                                                              .newManager();
 
-        if (StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true)) {
+        final boolean managementEnabled = StatsProperties.getBooleanProperty(PROP_MANAGEMENT_ENABLED, true);
+
+        // Configure MBean management
+        if (managementEnabled) {
             StatsMXBeanRegistrar mxBeanRegistrar = new DefaultStatsMXBeanRegistrar(namespace);
             StatsManagementEventHandler managementEventHandler = new StatsManagementEventHandler(mxBeanRegistrar);
             manager.getEventManager()
                    .addGlobalEventHandler(managementEventHandler);
+        }
+
+        // Initialize TaskService if not already initialized
+        TaskServiceFactory taskServiceFactory = TaskServiceFactory.getInstance();
+        if (!taskServiceFactory.isTaskServiceLoaded()) {
+            TaskService taskService = new ThreadPoolTaskService(); // TODO: make configurable
+            taskService.initialize();
+
+            if (managementEnabled) {
+                DefaultStatsMXBeanRegistrar.registerTaskServiceMXBean(taskService);
+            }
+
+            taskServiceFactory.loadTaskService(taskService);
         }
 
         manager.initialize();

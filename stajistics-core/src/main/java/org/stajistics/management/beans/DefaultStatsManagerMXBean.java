@@ -51,11 +51,6 @@ public class DefaultStatsManagerMXBean implements StatsManagerMXBean {
     }
 
     @Override
-    public String getTaskServiceImpl() {
-        return statsManager.getTaskService().getClass().getName();
-    }
-
-    @Override
     public boolean getEnabled() {
         return statsManager.isEnabled();
     }

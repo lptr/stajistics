@@ -26,8 +26,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.stajistics.StatsProperties;
-import org.stajistics.event.EventManager;
-import org.stajistics.event.EventType;
 
 /**
  * @author The Stajistics Project
@@ -45,17 +43,12 @@ public class ThreadPoolTaskService implements TaskService {
     private static final String PROP_QUEUE_SIZE = ThreadPoolTaskService.class.getName() + ".queueSize";
     private static final int DEFAULT_QUEUE_SIZE = 10;
 
-    private final EventManager eventManager;
-
     // TODO: persist and restore upon de/serialization
     private transient final ThreadPoolExecutor executor;
 
     private final Support lifeCycleSupport = new Support();
 
-    public ThreadPoolTaskService(final EventManager eventManager) {
-        assertNotNull(eventManager, "eventManager");
-        this.eventManager = eventManager;
-
+    public ThreadPoolTaskService() {
         int noCPUs = Runtime.getRuntime().availableProcessors();
         int corePoolSize = StatsProperties.getIntegerProperty(PROP_CORE_POOL_SIZE,
                                                               noCPUs + 1);
@@ -79,11 +72,8 @@ public class ThreadPoolTaskService implements TaskService {
                                           createThreadFactory());
     }
 
-    public ThreadPoolTaskService(final EventManager eventManager, final ThreadPoolExecutor executor) {
-        assertNotNull(eventManager, "eventManager");
+    public ThreadPoolTaskService(final ThreadPoolExecutor executor) {
         assertNotNull(executor, "executor");
-
-        this.eventManager = eventManager;
         this.executor = executor;
     }
 
@@ -110,7 +100,6 @@ public class ThreadPoolTaskService implements TaskService {
             @Override
             public Void call() throws Exception {
                 executor.prestartCoreThread();
-                eventManager.fireEvent(EventType.TASK_SERVICE_INITIALIZED, null, ThreadPoolTaskService.this);
                 return null;
             }
         });
@@ -126,7 +115,6 @@ public class ThreadPoolTaskService implements TaskService {
         lifeCycleSupport.shutdown(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                eventManager.fireEvent(EventType.TASK_SERVICE_SHUTTING_DOWN, null, ThreadPoolTaskService.this);
                 executor.shutdown();
                 return null;
             }

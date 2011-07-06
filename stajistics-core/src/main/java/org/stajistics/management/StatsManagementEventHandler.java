@@ -94,14 +94,6 @@ public class StatsManagementEventHandler implements EventHandler {
             case SESSION_MANAGER_SHUTTING_DOWN:
                 mxBeanRegistrar.unregisterSessionManagerMXBean();
                 return;
-
-            case TASK_SERVICE_INITIALIZED:
-                mxBeanRegistrar.registerTaskServiceMXBean((TaskService)target);
-                return;
-
-            case TASK_SERVICE_SHUTTING_DOWN:
-                mxBeanRegistrar.unregisterTaskServiceMXBean();
-                return;
         }
     }
 }

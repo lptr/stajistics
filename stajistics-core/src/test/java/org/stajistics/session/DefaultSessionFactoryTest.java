@@ -70,9 +70,6 @@ public class DefaultSessionFactoryTest extends AbstractStajisticsTestCase {
             
             allowing(mockManager).getEventManager();
             will(returnValue(mockEventManager));
-
-            allowing(mockManager).getTaskService();
-            will(returnValue(mockTaskService));
         }});
 
         StatsSession session = DefaultSessionFactory.getInstance().createSession(mockKey, dataRecorders);

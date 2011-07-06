@@ -27,6 +27,8 @@ import static org.stajistics.management.StatsMXBeanUtil.TYPE_KEYS;
 import static org.stajistics.management.StatsMXBeanUtil.buildKeyName;
 import static org.stajistics.management.StatsMXBeanUtil.buildManagerName;
 
+import java.lang.management.ManagementFactory;
+
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
@@ -80,8 +82,9 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
         mockMBeanFactory = mockery.mock(StatsMXBeanFactory.class);
 
         mBeanServer = MBeanServerFactory.newMBeanServer();
+        DefaultStatsMXBeanRegistrar.setMBeanServer(mBeanServer);
 
-        mxBeanRegistrar = new DefaultStatsMXBeanRegistrar(NAMESPACE, mockMBeanFactory, mBeanServer);
+        mxBeanRegistrar = new DefaultStatsMXBeanRegistrar(NAMESPACE, mockMBeanFactory);
 
         mockery.checking(new Expectations() {{
             allowing(mockStatsManager).getNamespace();
@@ -92,12 +95,13 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
     @After
     public void tearDown() {
         mxBeanRegistrar = null;
+        DefaultStatsMXBeanRegistrar.setMBeanServer(ManagementFactory.getPlatformMBeanServer());
     }
 
     @Test
     public void testConstructWithNullNamespace() {
         try {
-            new DefaultStatsMXBeanRegistrar(null, mockMBeanFactory, MBeanServerFactory.newMBeanServer());
+            new DefaultStatsMXBeanRegistrar(null, mockMBeanFactory);
         } catch (NullPointerException npe) {
             assertEquals("namespace", npe.getMessage());
         }
@@ -106,33 +110,24 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
     @Test
     public void testConstructWithEmptyNamespace() {
         try {
-            new DefaultStatsMXBeanRegistrar("", mockMBeanFactory, MBeanServerFactory.newMBeanServer());
+            new DefaultStatsMXBeanRegistrar("", mockMBeanFactory);
         } catch (IllegalArgumentException e) {
             assertEquals("empty namespace", e.getMessage());
         }
     }
 
     @Test
-    public void testConstructWithNullMBeanFactory() {
+    public void testConstructWithNullMXBeanFactory() {
         try {
-            new DefaultStatsMXBeanRegistrar(NAMESPACE, null, MBeanServerFactory.newMBeanServer());
+            new DefaultStatsMXBeanRegistrar(NAMESPACE, null);
         } catch (NullPointerException npe) {
             assertEquals("mxBeanFactory", npe.getMessage());
         }
     }
 
     @Test
-    public void testConstructWithNullMBeanServer() {
-        try {
-            new DefaultStatsMXBeanRegistrar(NAMESPACE, mockMBeanFactory, null);
-        } catch (NullPointerException npe) {
-            assertEquals("mBeanServer", npe.getMessage());
-        }
-    }
-
-    @Test
     public void testGetMBeanServer() {
-        assertSame(mBeanServer, mxBeanRegistrar.getMBeanServer());
+        assertSame(mBeanServer, DefaultStatsMXBeanRegistrar.getMBeanServer());
     }
 
     @Test
