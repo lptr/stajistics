@@ -1,5 +1,8 @@
 package org.stajistics;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.bootstrap.DefaultStatsManagerFactory;
@@ -36,16 +39,12 @@ public class StatsFactory {
     protected final StatsManager statsManager;
 
     public StatsFactory(final StatsManager statsManager) {
-        if (statsManager == null) {
-            throw new NullPointerException("statsManager");
-        }
+        assertNotNull(statsManager, "statsManager");
         this.statsManager = statsManager;
     }
 
     public static StatsFactory forClass(final Class<?> aClass) {
-        if (aClass == null) {
-            throw new NullPointerException("aClass");
-        }
+        assertNotNull(aClass, "aClass");
 
         final StatsManagerRegistry reg = StatsManagerRegistry.getInstance();
         String pkg = aClass.getPackage().getName();
@@ -74,10 +73,7 @@ public class StatsFactory {
     }
 
     public static StatsFactory forNamespace(final String namespace) {
-        if (namespace == null) {
-            throw new NullPointerException("namespace");
-        }
-
+        assertNotNull(namespace, "namespace");
         final StatsManagerRegistry reg = StatsManagerRegistry.getInstance();
         
         if (reg.isStatsManagerDefined(namespace)) {
@@ -442,9 +438,7 @@ public class StatsFactory {
     public void failure(final Throwable failure,
                         final StatsKey... keys) {
         try {
-            if (keys.length == 0) {
-                throw new IllegalArgumentException("must supply at least one key");
-            }
+            assertNotEmpty(keys, "keys");
 
             final TrackerLocator trackerLocator = statsManager.getTrackerLocator();
 

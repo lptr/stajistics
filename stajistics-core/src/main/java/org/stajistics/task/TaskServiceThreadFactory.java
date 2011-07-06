@@ -38,7 +38,7 @@ public class TaskServiceThreadFactory implements ThreadFactory {
     private final ThreadGroup threadGroup;
 
     public TaskServiceThreadFactory() {
-        namePrefix = TaskService.class.getSimpleName() + "-" + nextPoolId;
+        namePrefix = TaskService.class.getSimpleName() + "-" + nextPoolId.incrementAndGet();
         threadGroup = new ThreadGroup(namePrefix);
     }
 

@@ -14,6 +14,8 @@
  */
 package org.stajistics.session;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
@@ -58,12 +60,8 @@ public abstract class AbstractStatsSession implements StatsSession {
     public AbstractStatsSession(final StatsKey key,
                                 final EventManager eventManager,
                                 final DataRecorder... dataRecorders) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-        if (eventManager == null) {
-            throw new NullPointerException("eventManager");
-        }
+        assertNotNull(key, "key");
+        assertNotNull(eventManager, "eventManager");
 
         this.key = key;
         this.eventManager = eventManager;
@@ -213,9 +211,7 @@ public abstract class AbstractStatsSession implements StatsSession {
     }
 
     protected void restoreState(final DataSet dataSet) {
-        if (dataSet == null) {
-            throw new NullPointerException("dataSet");
-        }
+        assertNotNull(dataSet, "dataSet");
 
         if (!dataSet.isEmpty()) {
 

@@ -14,6 +14,8 @@
  */
 package org.stajistics.management.beans;
 
+import static org.stajistics.Util.assertNotNull;
+
 import org.stajistics.StatsManager;
 
 /**
@@ -24,9 +26,7 @@ public class DefaultStatsManagerMXBean implements StatsManagerMXBean {
     private final StatsManager statsManager;
     
     public DefaultStatsManagerMXBean(final StatsManager statsManager) {
-        if (statsManager == null) {
-            throw new NullPointerException("statsManager");
-        }
+        assertNotNull(statsManager, "statsManager");
         this.statsManager = statsManager;
     }
 
@@ -63,6 +63,11 @@ public class DefaultStatsManagerMXBean implements StatsManagerMXBean {
     @Override
     public void setEnabled(boolean enabled) {
         statsManager.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean getRunning() {
+        return statsManager.isRunning();
     }
 
     @Override

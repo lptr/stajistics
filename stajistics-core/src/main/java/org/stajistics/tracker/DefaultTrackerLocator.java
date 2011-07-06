@@ -14,6 +14,9 @@
  */
 package org.stajistics.tracker;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
@@ -42,12 +45,8 @@ public class DefaultTrackerLocator implements TrackerLocator {
 
     public DefaultTrackerLocator(final StatsConfigManager configManager,
                                  final StatsSessionManager sessionManager) {
-        if (configManager == null) {
-            throw new NullPointerException("configManager");
-        }
-        if (sessionManager == null) {
-            throw new NullPointerException("sessionManager");
-        }
+        assertNotNull(configManager, "configManager");
+        assertNotNull(sessionManager, "sessionManager");
 
         this.configManager = configManager;
         this.sessionManager = sessionManager;
@@ -55,10 +54,7 @@ public class DefaultTrackerLocator implements TrackerLocator {
 
     @Override
     public Tracker getTracker(final StatsKey key) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-
+        assertNotNull(key, "key");
         Tracker tracker = null;
 
         StatsConfig config = configManager.getOrCreateConfig(key);
@@ -95,14 +91,7 @@ public class DefaultTrackerLocator implements TrackerLocator {
 
     @Override
     public SpanTracker getSpanTracker(StatsKey... keys) {
-        if (keys == null) {
-            throw new NullPointerException("keys");
-        }
-
-        if (keys.length == 0) {
-            throw new IllegalArgumentException("must supply at least one key");
-        }
-
+        assertNotEmpty(keys, "keys");
         if (keys.length == 1) {
             return getSpanTracker(keys[0]);
         }
@@ -136,15 +125,7 @@ public class DefaultTrackerLocator implements TrackerLocator {
 
     @Override
     public IncidentTracker getIncidentTracker(final StatsKey... keys) {
-
-        if (keys == null) {
-            throw new NullPointerException("keys");
-        }
-
-        if (keys.length == 0) {
-            throw new IllegalArgumentException("must supply at least one key");
-        }
-
+        assertNotEmpty(keys, "keys");
         if (keys.length == 1) {
             return getIncidentTracker(keys[0]);
         }

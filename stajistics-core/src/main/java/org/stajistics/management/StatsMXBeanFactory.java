@@ -25,8 +25,10 @@ import org.stajistics.management.beans.StatsConfigManagerMXBean;
 import org.stajistics.management.beans.StatsManagerMXBean;
 import org.stajistics.management.beans.StatsSessionMXBean;
 import org.stajistics.management.beans.StatsSessionManagerMXBean;
+import org.stajistics.management.beans.TaskServiceMXBean;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.task.TaskService;
 
 /**
  *
@@ -36,13 +38,15 @@ import org.stajistics.session.StatsSessionManager;
  */
 public interface StatsMXBeanFactory extends Serializable {
 
-    StatsManagerMXBean createManagerMBean(StatsManager statsManager);
+    StatsManagerMXBean createManagerMXBean(StatsManager statsManager);
 
-    StatsConfigManagerMXBean createConfigManagerMBean(StatsConfigManager configManager);
+    StatsConfigManagerMXBean createConfigManagerMXBean(StatsConfigManager configManager);
+    
+    StatsSessionManagerMXBean createSessionManagerMXBean(StatsSessionManager sessionManager);
+    
+    TaskServiceMXBean createTaskServiceMXBean(TaskService taskService);
 
-    StatsConfigMXBean createConfigMBean(String namespace, StatsKey key, StatsConfig config);
+    StatsConfigMXBean createConfigMXBean(String namespace, StatsKey key, StatsConfig config);
 
-    StatsSessionManagerMXBean createSessionManagerMBean(StatsSessionManager sessionManager);
-
-    StatsSessionMXBean createSessionMBean(String namespace, StatsSession session);
+    StatsSessionMXBean createSessionMXBean(String namespace, StatsSession session);
 }

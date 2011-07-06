@@ -1,5 +1,7 @@
 package org.stajistics.io;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.io.FilterReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -31,10 +33,7 @@ public class StatsFilterReader extends FilterReader {
             factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
         }
 
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-
+        assertNotNull(key, "key");
         tracker = factory.getManualTracker(key);
     }
 

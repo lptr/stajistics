@@ -14,6 +14,8 @@
  */
 package org.stajistics.configuration;
 
+import static org.stajistics.Util.assertNotNull;
+
 /**
  * A factory for creating {@link StatsConfigBuilder}s.
  *
@@ -31,10 +33,7 @@ public class DefaultStatsConfigBuilderFactory implements StatsConfigBuilderFacto
      * @throws NullPointerException If <tt>configManager</tt> is <tt>null</tt>.
      */
     public DefaultStatsConfigBuilderFactory(final StatsConfigManager configManager) {
-        if (configManager == null) {
-            throw new NullPointerException("configManager");
-        }
-
+        assertNotNull(configManager, "configManager");
         this.configManager = configManager;
     }
 

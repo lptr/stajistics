@@ -23,13 +23,16 @@ import org.stajistics.management.beans.DefaultStatsConfigManagerMXBean;
 import org.stajistics.management.beans.DefaultStatsManagerMXBean;
 import org.stajistics.management.beans.DefaultStatsSessionMXBean;
 import org.stajistics.management.beans.DefaultStatsSessionManagerMXBean;
+import org.stajistics.management.beans.DefaultTaskServiceMXBean;
 import org.stajistics.management.beans.StatsConfigMXBean;
 import org.stajistics.management.beans.StatsConfigManagerMXBean;
 import org.stajistics.management.beans.StatsManagerMXBean;
 import org.stajistics.management.beans.StatsSessionMXBean;
 import org.stajistics.management.beans.StatsSessionManagerMXBean;
+import org.stajistics.management.beans.TaskServiceMXBean;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.task.TaskService;
 
 /**
  *
@@ -40,30 +43,37 @@ import org.stajistics.session.StatsSessionManager;
 public class DefaultStatsMXBeanFactory implements StatsMXBeanFactory {
 
     @Override
-    public StatsManagerMXBean createManagerMBean(StatsManager statsManager) {
+    public StatsManagerMXBean createManagerMXBean(StatsManager statsManager) {
         return new DefaultStatsManagerMXBean(statsManager);
     }
 
     @Override
-    public StatsConfigManagerMXBean createConfigManagerMBean(final StatsConfigManager configManager) {
+    public StatsConfigManagerMXBean createConfigManagerMXBean(final StatsConfigManager configManager) {
         return new DefaultStatsConfigManagerMXBean(configManager);
     }
 
     @Override
-    public StatsConfigMXBean createConfigMBean(final String namespace,
+    public StatsSessionManagerMXBean createSessionManagerMXBean(final StatsSessionManager sessionManager) {
+        return new DefaultStatsSessionManagerMXBean(sessionManager);
+    }
+
+    @Override
+    public TaskServiceMXBean createTaskServiceMXBean(final TaskService taskService) {
+        return new DefaultTaskServiceMXBean(taskService);
+    }
+
+    @Override
+    public StatsConfigMXBean createConfigMXBean(final String namespace,
                                                final StatsKey key,
                                                final StatsConfig config) {
         return new DefaultStatsConfigMXBean(namespace, key, config);
     }
 
     @Override
-    public StatsSessionMXBean createSessionMBean(final String namespace,
+    public StatsSessionMXBean createSessionMXBean(final String namespace,
                                                  final StatsSession session) {
         return new DefaultStatsSessionMXBean(namespace, session);
     }
 
-    @Override
-    public StatsSessionManagerMXBean createSessionManagerMBean(final StatsSessionManager sessionManager) {
-        return new DefaultStatsSessionManagerMXBean(sessionManager);
-    }
+
 }

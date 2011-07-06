@@ -14,6 +14,8 @@
  */
 package org.stajistics.management.beans;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -38,10 +40,7 @@ public class DefaultStatsSessionManagerMXBean implements StatsSessionManagerMXBe
     protected final StatsSessionManager sessionManager;
 
     public DefaultStatsSessionManagerMXBean(final StatsSessionManager sessionManager) {
-        if (sessionManager == null) {
-            throw new NullPointerException("sessionManager");
-        }
-
+        assertNotNull(sessionManager, "sessionManager");
         this.sessionManager = sessionManager;
     }
 

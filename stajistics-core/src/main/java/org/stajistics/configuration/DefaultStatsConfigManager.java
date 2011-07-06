@@ -1,5 +1,7 @@
 package org.stajistics.configuration;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -88,15 +90,9 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                                      final StatsKeyFactory keyFactory,
                                      final StatsConfig rootConfig,
                                      Map<String,StatsConfig> configMap) {
-        if (eventManager == null) {
-            throw new NullPointerException("eventManager");
-        }
-        if (keyFactory == null) {
-            throw new NullPointerException("keyFactory");
-        }
-        if (rootConfig == null) {
-            throw new NullPointerException("rootConfig");
-        }
+        assertNotNull(eventManager, "eventManager");
+        assertNotNull(keyFactory, "keyFactory");
+        assertNotNull(rootConfig, "rootConfig");
 
         this.eventManager = eventManager;
         this.keyFactory = keyFactory;
@@ -163,7 +159,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         lifeCycleSupport.shutdown(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                eventManager.fireEvent(EventType.CONFIG_MANAGER_SHUTTING_DOWN, null, this);
+                eventManager.fireEvent(EventType.CONFIG_MANAGER_SHUTTING_DOWN, null, DefaultStatsConfigManager.this);
                 clearConfigs();
                 return null;
             }
@@ -201,10 +197,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
 
     @Override
     public void setConfig(final StatsKey key, final StatsConfig config) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-
+        assertNotNull(key, "key");
         updateLock.lock();
 
         KeyEntry entry = entryFor(key);
@@ -424,9 +417,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
                  final KeyEntry parentEntry,
                  final StatsConfig config) {
 
-            if (key == null) {
-                throw new NullPointerException("key");
-            }
+            assertNotNull(key, "key");
 
             this.key = key;
             this.parentEntry = parentEntry;
@@ -528,10 +519,7 @@ public class DefaultStatsConfigManager implements StatsConfigManager {
         private final List<KeyEntry> entryList = new LinkedList<KeyEntry>();
 
         KeyEntryDestroyer(final Map<String, KeyEntry> keyMap) {
-            if (keyMap == null) {
-                throw new NullPointerException("keyMap");
-            }
-
+            assertNotNull(keyMap, "keyMap");
             this.keyMap = keyMap;
         }
 

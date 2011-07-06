@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -47,12 +49,8 @@ public class ThreadLocalTrackerFactoryDecorator<T extends Tracker>
 
     public ThreadLocalTrackerFactoryDecorator(final TrackerFactory<T> delegate,
                                               final EventManager eventManager) {
-        if (delegate == null) {
-            throw new NullPointerException("delegate");
-        }
-        if (eventManager == null) {
-            throw new NullPointerException("eventManager");
-        }
+        assertNotNull(delegate, "delegate");
+        assertNotNull(eventManager, "eventManager");
 
         this.delegate = delegate;
         this.eventManager = eventManager;

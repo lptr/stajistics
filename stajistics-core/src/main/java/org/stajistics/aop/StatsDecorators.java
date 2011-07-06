@@ -14,6 +14,8 @@
  */
 package org.stajistics.aop;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Callable;
@@ -149,9 +151,7 @@ public class StatsDecorators {
 
         public ThreadFactoryWrapper(final ThreadFactory threadFactory,
                                     final StatsKey key) {
-            if (threadFactory == null) {
-                throw new NullPointerException("threadFactory");
-            }
+            assertNotNull(threadFactory, "threadFactory");
 
             this.threadFactory = threadFactory;
             this.key = key;
@@ -172,15 +172,9 @@ public class StatsDecorators {
         public ExecutorWrapper(final Executor executor,
                                final StatsKey executorKey,
                                final StatsKey commandKey) {
-            if (executor == null) {
-                throw new NullPointerException("executor");
-            }
-            if (executorKey == null) {
-                throw new NullPointerException("executorKey");
-            }
-            if (commandKey == null) {
-                throw new NullPointerException("commandKey");
-            }
+            assertNotNull(executor, "executor");
+            assertNotNull(executorKey, "executorKey");
+            assertNotNull(commandKey, "commandKey");
 
             this.executor = executor;
             this.executorKey = executorKey;

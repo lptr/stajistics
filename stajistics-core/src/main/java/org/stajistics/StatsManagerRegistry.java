@@ -1,5 +1,7 @@
 package org.stajistics;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -39,9 +41,7 @@ public class StatsManagerRegistry {
     }
 
     public void removeStatsManager(final String namespace) {
-        if (namespace == null) {
-            throw new NullPointerException("namespace");
-        }
+        assertNotNull(namespace, "namespace");
         registry.remove(namespace);
     }
 

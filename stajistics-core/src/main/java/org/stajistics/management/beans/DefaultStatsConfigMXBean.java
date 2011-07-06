@@ -14,6 +14,9 @@
  */
 package org.stajistics.management.beans;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Map;
 
 import org.stajistics.StatsKey;
@@ -38,15 +41,9 @@ public class DefaultStatsConfigMXBean implements StatsConfigMXBean {
     public DefaultStatsConfigMXBean(final String namespace,
                                     final StatsKey key,
                                     final StatsConfig config) {
-        if (namespace == null) {
-            throw new NullPointerException("namespace");
-        }
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-        if (config == null) {
-            throw new NullPointerException("config");
-        }
+        assertNotEmpty(namespace, "namespace");
+        assertNotNull(key, "key");
+        assertNotNull(config, "config");
 
         this.namespace = namespace;
         this.key = key;

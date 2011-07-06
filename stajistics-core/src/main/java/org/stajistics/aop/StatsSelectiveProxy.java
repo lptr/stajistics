@@ -14,6 +14,9 @@
  */
 package org.stajistics.aop;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -39,10 +42,7 @@ public class StatsSelectiveProxy extends StatsProxy {
                                   final SelectionCriteria criteria) {
         super(factory, key, target);
 
-        if (criteria == null) {
-            throw new NullPointerException("criteria");
-        }
-
+        assertNotNull(criteria, "criteria");
         this.criteria = criteria;
     }
 
@@ -142,13 +142,7 @@ public class StatsSelectiveProxy extends StatsProxy {
 
         public CompositeSelectionCriteria(final List<SelectionCriteria> criteriaList,
                                           final Op operation) {
-            if (criteriaList == null) {
-                throw new NullPointerException("null criteriaList");
-            }
-            if (criteriaList.isEmpty()) {
-                throw new IllegalArgumentException("empty criteriaList");
-            }
-
+            assertNotEmpty(criteriaList, "criteriaList");
             this.criteriaList = criteriaList.toArray(new SelectionCriteria[criteriaList.size()]);
             this.operation = operation;
         }
@@ -194,9 +188,7 @@ public class StatsSelectiveProxy extends StatsProxy {
         }
 
         public EnabledCriteria(final AtomicBoolean enabled) {
-            if (enabled == null) {
-                throw new NullPointerException("enabled");
-            }
+            assertNotNull(enabled, "enabled");
             this.enabled = enabled;
         }
 
@@ -225,10 +217,7 @@ public class StatsSelectiveProxy extends StatsProxy {
 
         public MethodCriteria(final Method method,
                               final boolean include) {
-            if (method == null) {
-                throw new NullPointerException("method");
-            }
-
+            assertNotNull(method, "method");
             this.method = method;
             this.include = include;
         }
@@ -250,10 +239,7 @@ public class StatsSelectiveProxy extends StatsProxy {
 
         public MethodSetCriteria(final Set<Method> methodSet,
                                  final boolean include) {
-            if (methodSet == null) {
-                throw new NullPointerException("methodSet");
-            }
-
+            assertNotNull(methodSet, "methodSet");
             this.methodSet = methodSet;
             this.include = include;
         }

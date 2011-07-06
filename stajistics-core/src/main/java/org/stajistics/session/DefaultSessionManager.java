@@ -14,6 +14,8 @@
  */
 package org.stajistics.session;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -60,12 +62,8 @@ public class DefaultSessionManager implements StatsSessionManager {
 
     public DefaultSessionManager(final StatsConfigManager configManager,
                                  final EventManager eventManager) {
-        if (configManager == null) {
-            throw new NullPointerException("configManager");
-        }
-        if (eventManager == null) {
-            throw new NullPointerException("eventManager");
-        }
+        assertNotNull(configManager, "configManager");
+        assertNotNull(eventManager, "eventManager");
 
         this.configManager = configManager;
         this.eventManager = eventManager;
@@ -145,9 +143,7 @@ public class DefaultSessionManager implements StatsSessionManager {
 
     @Override
     public StatsSession getOrCreateSession(final StatsKey key) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
+        assertNotNull(key, "key");
 
         StatsSession session = sessionMap.get(key);
 

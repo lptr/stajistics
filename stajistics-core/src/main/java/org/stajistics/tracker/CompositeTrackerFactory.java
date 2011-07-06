@@ -14,6 +14,10 @@
  */
 package org.stajistics.tracker;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotEmptyAfterTrim;
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,13 +46,7 @@ public class CompositeTrackerFactory<T extends Tracker>
 
     @SuppressWarnings("unchecked")
     public CompositeTrackerFactory(final Map<String,TrackerFactory<T>> factoryMap) {
-        if (factoryMap == null) {
-            throw new NullPointerException("factoryMap");
-        }
-        if (factoryMap.isEmpty()) {
-            throw new IllegalArgumentException("factoryMap is empty");
-        }
-
+        assertNotEmpty(factoryMap, "factoryMap");
         this.factoryMap = factoryMap;
 
         int size = factoryMap.size();
@@ -121,15 +119,8 @@ public class CompositeTrackerFactory<T extends Tracker>
 
         public Builder<T> withFactory(final String nameSuffix,
                                       final TrackerFactory<T> factory) {
-            if (nameSuffix == null) {
-                throw new NullPointerException("nameSuffix");
-            }
-            if (nameSuffix.trim().length() == 0) {
-                throw new IllegalArgumentException("nameSuffix is empty");
-            }
-            if (factory == null) {
-                throw new NullPointerException("factory");
-            }
+            assertNotEmptyAfterTrim(nameSuffix, "nameSuffix");
+            assertNotNull(factory, "factory");
 
             factoryMap.put(nameSuffix, factory);
 

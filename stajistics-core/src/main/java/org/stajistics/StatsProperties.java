@@ -14,6 +14,9 @@
  */
 package org.stajistics;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Arrays;
 import java.util.Map;
 
@@ -335,10 +338,7 @@ public abstract class StatsProperties {
 
         @SuppressWarnings("unchecked")
         public MapStatsProperties(final Map propertyMap) {
-            if (propertyMap == null) {
-                throw new NullPointerException("propertyMap");
-            }
-
+            assertNotNull(propertyMap, "propertyMap");
             this.propertyMap = propertyMap;
         }
 
@@ -359,10 +359,7 @@ public abstract class StatsProperties {
         private StatsProperties[] properties;
 
         public MultiStatsProperties(final StatsProperties... properties) {
-            if (properties.length == 0) {
-                throw new IllegalArgumentException("Must supply at least one properties element");
-            }
-
+            assertNotEmpty(properties, "properties");
             this.properties = Arrays.copyOf(properties, properties.length);
         }
 

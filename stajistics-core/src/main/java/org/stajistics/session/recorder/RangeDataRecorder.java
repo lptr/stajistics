@@ -14,6 +14,8 @@
  */
 package org.stajistics.session.recorder;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,9 +47,7 @@ public class RangeDataRecorder implements DataRecorder {
     private final AtomicLong[] hits;
 
     public RangeDataRecorder(final RangeList rangeList) {
-        if (rangeList == null) {
-            throw new NullPointerException("rangeList");
-        }
+        assertNotNull(rangeList, "rangeList");
 
         int size = rangeList.size();
         if (size == 0) {

@@ -30,6 +30,7 @@ public class StatsMXBeanUtil {
     public static final String MANAGER_NAME_STATS = "StatsManager";
     public static final String MANAGER_NAME_CONFIG = "ConfigManager";
     public static final String MANAGER_NAME_SESSION = "SessionManager";
+    public static final String MANAGER_NAME_TASK_SERVICE = "TaskService";
     public static final String MANAGER_NAME_SNAPSHOT = "SnapshotManager";
 
     private StatsMXBeanUtil() {}
@@ -91,6 +92,27 @@ public class StatsMXBeanUtil {
      */
     public static ObjectName getConfigManagerObjectName(final String namespace) throws MalformedObjectNameException {
         ObjectName objectName = new ObjectName(getConfigManagerObjectNameString(namespace, true));
+        return objectName;
+    }
+
+    /**
+     * 
+     * @param namespace
+     * @param quote
+     * @return
+     */
+    public static String getTaskServiceObjectNameString(final String namespace, final boolean quote) {
+        return buildManagerName(namespace, MANAGER_NAME_TASK_SERVICE, quote);
+    }
+
+    /**
+     * 
+     * @param namespace
+     * @return
+     * @throws MalformedObjectNameException
+     */
+    public static ObjectName getTaskServiceObjectName(final String namespace) throws MalformedObjectNameException {
+        ObjectName objectName = new ObjectName(getTaskServiceObjectNameString(namespace, true));
         return objectName;
     }
 
