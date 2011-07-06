@@ -52,19 +52,15 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
     protected StatsSession session;
 
     @Before
-    public void setUp() {
+    public void baseSetUp() {
         mockKey = mockery.mock(StatsKey.class);
         TestUtil.buildStatsKeyExpectations(mockery, mockKey, "test");
 
         mockTracker = mockery.mock(Tracker.class);
         mockEventManager = mockery.mock(EventManager.class);
 
-        initMocks();
-
         session = createStatsSession();
     }
-
-    protected void initMocks() {}
 
     protected abstract StatsSession createStatsSession(DataRecorder... dataRecorders);
 
@@ -218,7 +214,9 @@ public abstract class AbstractStatsSessionTestCase extends AbstractStajisticsTes
     public void testClear() {
         mockery.checking(new Expectations() {{
             ignoring(mockEventManager);
-            allowing(mockTracker).getValue(); will(returnValue(1.0));
+
+            allowing(mockTracker).getValue();
+            will(returnValue(1.0));
         }});
 
         for (int i = 0; i < 10; i++) {

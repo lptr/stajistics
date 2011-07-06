@@ -31,9 +31,6 @@ public enum EventType {
     SESSION_MANAGER_INITIALIZED,
     SESSION_MANAGER_SHUTTING_DOWN,
 
-    TASK_SERVICE_INITIALIZED,
-    TASK_SERVICE_SHUTTING_DOWN,
-
     CONFIG_CREATED,
     CONFIG_CHANGED,
     CONFIG_DESTROYED,
@@ -74,16 +71,6 @@ public enum EventType {
         switch (this) {
             case SESSION_MANAGER_INITIALIZED:
             case SESSION_MANAGER_SHUTTING_DOWN:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public boolean isTaskServiceEvent() {
-        switch (this) {
-            case TASK_SERVICE_INITIALIZED:
-            case TASK_SERVICE_SHUTTING_DOWN:
                 return true;
             default:
                 return false;

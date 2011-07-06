@@ -187,10 +187,7 @@ public class ConcurrentSession extends AbstractStatsSession {
             try {
                 dataRecorder.update(this, tracker, now);
             } catch (Exception e) {
-                Misc.logHandledException(logger,
-                        e,
-                        "Failed to update {}",
-                        dataRecorder);
+                Misc.logHandledException(logger, e, "Failed to update {}", dataRecorder);
                 Misc.handleUncaughtException(getKey(), e);
             }
         }

@@ -49,9 +49,7 @@ public class DefaultIncidentTracker extends AbstractTracker implements IncidentT
             session.track(this, now);
             session.update(this, now);
         } catch (Exception e) {
-            Misc.logHandledException(logger,
-                    e,
-                    "Caught Exception in incident()");
+            Misc.logHandledException(logger, e, "Caught Exception in incident()");
             Misc.handleUncaughtException(getKey(), e);
         }
 

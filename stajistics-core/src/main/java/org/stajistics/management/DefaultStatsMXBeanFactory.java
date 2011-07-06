@@ -58,11 +58,6 @@ public class DefaultStatsMXBeanFactory implements StatsMXBeanFactory {
     }
 
     @Override
-    public TaskServiceMXBean createTaskServiceMXBean(final TaskService taskService) {
-        return new DefaultTaskServiceMXBean(taskService);
-    }
-
-    @Override
     public StatsConfigMXBean createConfigMXBean(final String namespace,
                                                final StatsKey key,
                                                final StatsConfig config) {

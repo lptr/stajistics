@@ -14,27 +14,16 @@
  */
 package org.stajistics.task;
 
-import static org.stajistics.Util.assertNotNull;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.stajistics.event.EventManager;
-
 /**
  * @author The Stajistics Project
  */
 public class DebugTaskService implements TaskService {
-
-    private final EventManager eventManager;
-
-    public DebugTaskService(final EventManager eventManager) {
-        assertNotNull(eventManager, "eventManager");
-        this.eventManager = eventManager;
-    }
 
     @Override
     public void initialize() {}

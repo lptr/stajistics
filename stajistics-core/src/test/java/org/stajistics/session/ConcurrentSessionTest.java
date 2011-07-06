@@ -16,6 +16,7 @@ package org.stajistics.session;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jmock.Expectations;
 import org.junit.Test;
 import org.stajistics.session.recorder.DataRecorder;
 

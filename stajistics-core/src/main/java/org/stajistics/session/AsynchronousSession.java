@@ -31,6 +31,7 @@ import org.stajistics.event.EventManager;
 import org.stajistics.event.EventType;
 import org.stajistics.session.recorder.DataRecorder;
 import org.stajistics.task.TaskService;
+import org.stajistics.task.TaskServiceFactory;
 import org.stajistics.tracker.Tracker;
 import org.stajistics.util.Misc;
 
@@ -77,8 +78,6 @@ public class AsynchronousSession extends AbstractStatsSession {
     private volatile double max = Double.NEGATIVE_INFINITY;
     private volatile double sum = DataSet.Field.Default.SUM;
 
-    private final TaskService taskService;
-
     private final Queue<TrackerEntry> updateQueue;
     private final Lock updateQueueProcessingLock = new ReentrantLock();
 
@@ -86,22 +85,17 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     public AsynchronousSession(final StatsKey key,
                                final EventManager eventManager,
-                               final TaskService taskService,
                                final DataRecorder... dataRecorders) {
-        this(key, eventManager, taskService, new ConcurrentLinkedQueue<TrackerEntry>(), dataRecorders);
+        this(key, eventManager, new ConcurrentLinkedQueue<TrackerEntry>(), dataRecorders);
     }
 
     public AsynchronousSession(final StatsKey key,
                                final EventManager eventManager,
-                               final TaskService taskService,
                                final Queue<TrackerEntry> updateQueue,
                                final DataRecorder... dataRecorders) {
         super(key, eventManager, dataRecorders);
 
-        assertNotNull(taskService, "taskService");
         assertNotNull(updateQueue, "updateQueue");
-
-        this.taskService = taskService;
         this.updateQueue = updateQueue;
     }
 
@@ -111,12 +105,11 @@ public class AsynchronousSession extends AbstractStatsSession {
             updateQueue.add(entry);
 
             ProcessUpdateQueueTask processQueueTask = new ProcessUpdateQueueTask();
+
+            TaskService taskService = TaskServiceFactory.getInstance().getTaskService();
             taskService.execute(getClass(), processQueueTask);
         } catch (Exception e) {
-            Misc.logHandledException(logger,
-                    e,
-                    "Failed to queue task {}",
-                    entry);
+            Misc.logHandledException(logger, e, "Failed to queue task {}", entry);
             Misc.handleUncaughtException(getKey(), e);
         }
     }
@@ -223,10 +216,7 @@ public class AsynchronousSession extends AbstractStatsSession {
                 try {
                     dataRecorder.update(this, tracker, now);
                 } catch (Exception e) {
-                    Misc.logHandledException(logger,
-                            e,
-                            "Failed to update {}",
-                            dataRecorder);
+                    Misc.logHandledException(logger, e, "Failed to update {}", dataRecorder);
                     Misc.handleUncaughtException(getKey(), e);
                 }
             }
@@ -333,6 +323,7 @@ public class AsynchronousSession extends AbstractStatsSession {
         fireCleared();
     }
 
+    @Override
     protected void clearState() {
         stateLock.lock();
         try {
@@ -382,7 +373,7 @@ public class AsynchronousSession extends AbstractStatsSession {
     /*
      * NOTE: Must be called while holding updateQueueProcessingLock
      */
-    private void processUpdateQueue() {
+    protected void processUpdateQueue() {
         // Re-query queue size to avoid allocating a buffer if some
         // other thread has already processed the events
         int count = updateQueue.size();
@@ -417,7 +408,7 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     /* INNER CLASSES */
 
-    private final class ProcessUpdateQueueTask implements Runnable {
+    protected final class ProcessUpdateQueueTask implements Runnable {
 
         @Override
         public void run() {
@@ -434,7 +425,7 @@ public class AsynchronousSession extends AbstractStatsSession {
         }
     }
 
-    private static final class TrackerEntry {
+    protected static final class TrackerEntry {
 
         private final Tracker tracker;
         private final long now;
@@ -461,7 +452,6 @@ public class AsynchronousSession extends AbstractStatsSession {
             StatsManager statsManager = StatsManagerRegistry.getInstance().getStatsManager(key.getNamespace());
             return new AsynchronousSession(key,
                                            statsManager.getEventManager(),
-                                           statsManager.getTaskService(),
                                            dataRecorders);
         }
     }

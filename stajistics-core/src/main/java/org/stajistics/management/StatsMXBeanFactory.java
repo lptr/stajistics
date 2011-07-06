@@ -43,8 +43,6 @@ public interface StatsMXBeanFactory extends Serializable {
     StatsConfigManagerMXBean createConfigManagerMXBean(StatsConfigManager configManager);
     
     StatsSessionManagerMXBean createSessionManagerMXBean(StatsSessionManager sessionManager);
-    
-    TaskServiceMXBean createTaskServiceMXBean(TaskService taskService);
 
     StatsConfigMXBean createConfigMXBean(String namespace, StatsKey key, StatsConfig config);
 

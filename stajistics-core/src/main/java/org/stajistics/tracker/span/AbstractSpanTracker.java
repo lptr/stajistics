@@ -44,9 +44,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker
             startImpl(startTime);
 
         } catch (Exception e) {
-            Misc.logHandledException(logger,
-                    e,
-                    "Caught Exception in track()");
+            Misc.logHandledException(logger, e, "Caught Exception in track()");
             Misc.handleUncaughtException(getKey(), e);
         }
 
@@ -70,9 +68,7 @@ public abstract class AbstractSpanTracker extends AbstractTracker
 
             stopImpl(-1);
         } catch (Exception e) {
-            Misc.logHandledException(logger,
-                    e,
-                    "Caught Exception in commit()");
+            Misc.logHandledException(logger, e, "Caught Exception in commit()");
             Misc.handleUncaughtException(getKey(), e);
         }
     }
