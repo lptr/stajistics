@@ -14,6 +14,8 @@
  */
 package org.stajistics.aop;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -57,12 +59,8 @@ public class StatsProxy implements InvocationHandler {
             this.factory = factory;
         }
 
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-        if (target == null) {
-            throw new NullPointerException("target");
-        }
+        assertNotNull(key, "key");
+        assertNotNull(target, "target");
 
         this.key = key;
         this.target = target;

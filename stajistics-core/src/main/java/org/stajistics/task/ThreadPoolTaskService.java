@@ -14,6 +14,8 @@
  */
 package org.stajistics.task;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -51,10 +53,7 @@ public class ThreadPoolTaskService implements TaskService {
     private final Support lifeCycleSupport = new Support();
 
     public ThreadPoolTaskService(final EventManager eventManager) {
-        if (eventManager == null) {
-            throw new NullPointerException("null eventManager");
-        }
-
+        assertNotNull(eventManager, "eventManager");
         this.eventManager = eventManager;
 
         int noCPUs = Runtime.getRuntime().availableProcessors();
@@ -81,12 +80,8 @@ public class ThreadPoolTaskService implements TaskService {
     }
 
     public ThreadPoolTaskService(final EventManager eventManager, final ThreadPoolExecutor executor) {
-        if (eventManager == null) {
-            throw new NullPointerException("null eventManager");
-        }
-        if (executor == null) {
-            throw new NullPointerException("executor");
-        }
+        assertNotNull(eventManager, "eventManager");
+        assertNotNull(executor, "executor");
 
         this.eventManager = eventManager;
         this.executor = executor;
@@ -115,7 +110,7 @@ public class ThreadPoolTaskService implements TaskService {
             @Override
             public Void call() throws Exception {
                 executor.prestartCoreThread();
-                eventManager.fireEvent(EventType.TASK_SERVICE_INITIALIZED, null, this);
+                eventManager.fireEvent(EventType.TASK_SERVICE_INITIALIZED, null, ThreadPoolTaskService.this);
                 return null;
             }
         });
@@ -131,7 +126,7 @@ public class ThreadPoolTaskService implements TaskService {
         lifeCycleSupport.shutdown(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                eventManager.fireEvent(EventType.TASK_SERVICE_SHUTTING_DOWN, null, this);
+                eventManager.fireEvent(EventType.TASK_SERVICE_SHUTTING_DOWN, null, ThreadPoolTaskService.this);
                 executor.shutdown();
                 return null;
             }

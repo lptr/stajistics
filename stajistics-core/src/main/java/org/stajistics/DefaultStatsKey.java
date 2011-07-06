@@ -17,6 +17,8 @@ package org.stajistics;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.stajistics.Util.assertNotNull;
+
 /**
  * A {@link StatsKey} implementation that stores attributes in a {@link Map}. Do not
  * instantiate this class directly. Instead use the {@link StatsKeyFactory} provided by
@@ -43,10 +45,7 @@ public class DefaultStatsKey extends AbstractStatsKey {
                            final StatsKeyFactory keyFactory,
                            final Map<String,Object> attributes) {
         super(namespace, name, keyFactory);
-
-        if (attributes == null) {
-            throw new NullPointerException("attributes");
-        }
+        assertNotNull(attributes, "attributes");
 
         this.attributes = attributes;
 

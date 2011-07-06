@@ -14,6 +14,9 @@
  */
 package org.stajistics.management.beans;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,12 +79,8 @@ public class DefaultStatsSessionMXBean implements StatsSessionMXBean,DynamicMBea
 
     public DefaultStatsSessionMXBean(final String namespace,
                                      final StatsSession session) {
-        if (namespace == null) {
-            throw new NullPointerException("namespace");
-        }
-        if (session == null) {
-            throw new NullPointerException("session");
-        }
+        assertNotEmpty(namespace, "namespace");
+        assertNotNull(session, "session");
 
         this.namespace = namespace;
         this.session = session;

@@ -1,5 +1,7 @@
 package org.stajistics.io;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +32,7 @@ public class StatsFilterInputStream extends FilterInputStream {
             factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
         }
 
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-
+        assertNotNull(key, "key");
         tracker = factory.getManualTracker(key);
     }
 

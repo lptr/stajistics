@@ -1,5 +1,6 @@
 package org.stajistics.management;
 
+import static org.stajistics.Util.assertNotNull;
 import static org.stajistics.management.StatsMXBeanUtil.OBJECT_NAME_ATTR_NAMESPACE;
 import static org.stajistics.management.StatsMXBeanUtil.getConfigManagerObjectName;
 import static org.stajistics.management.StatsMXBeanUtil.getConfigManagerObjectNameString;
@@ -40,9 +41,7 @@ public class StatsManagementFactory {
      * @param mBeanServerConnection
      */
     public StatsManagementFactory(final MBeanServerConnection mBeanServerConnection) {
-        if (mBeanServerConnection == null) {
-            throw new NullPointerException("null mBeanServerConnection");
-        }
+        assertNotNull(mBeanServerConnection, "mBeanServerConnection");
         this.mBeanServerConnection = mBeanServerConnection;
     }
 

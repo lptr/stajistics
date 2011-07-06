@@ -22,6 +22,7 @@ import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.task.TaskService;
 
 /**
  *
@@ -37,21 +38,26 @@ public interface StatsMXBeanRegistrar {
 
     void registerStatsManagerMXBean(StatsManager statsManager);
 
-    void unregisterStatsManagerMXBean(StatsManager statsManager);
+    void unregisterStatsManagerMXBean();
 
     void registerConfigManagerMXBean(StatsConfigManager configManager);
 
     void unregisterConfigManagerMXBean();
+    
+    void registerSessionManagerMXBean(StatsSessionManager sessionManager);
+
+    void unregisterSessionManagerMXBean();
+
+    void registerTaskServiceMXBean(TaskService taskService);
+
+    void unregisterTaskServiceMXBean();
 
     void registerConfigMXBean(StatsKey key, StatsConfig config);
 
     void unregisterConfigMXBeanIfNecessary(StatsKey key);
 
-    void registerSessionManagerMXBean(StatsSessionManager sessionManager);
-
-    void unregisterSessionManagerMXBean();
-
     void registerSessionMXBean(StatsSession session);
 
     void unregisterSessionMXBeanIfNecessary(StatsKey key);
+
 }

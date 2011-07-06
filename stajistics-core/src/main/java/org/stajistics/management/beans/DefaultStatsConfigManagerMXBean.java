@@ -14,6 +14,8 @@
  */
 package org.stajistics.management.beans;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Set;
 
 import org.stajistics.configuration.StatsConfigManager;
@@ -29,10 +31,7 @@ public class DefaultStatsConfigManagerMXBean implements StatsConfigManagerMXBean
     private final StatsConfigManager configManager;
 
     public DefaultStatsConfigManagerMXBean(final StatsConfigManager configManager) {
-        if (configManager == null) {
-            throw new NullPointerException("configManager");
-        }
-
+        assertNotNull(configManager, "configManager");
         this.configManager = configManager;
     }
 

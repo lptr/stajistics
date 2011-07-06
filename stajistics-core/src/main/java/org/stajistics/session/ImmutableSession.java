@@ -14,6 +14,8 @@
  */
 package org.stajistics.session;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -48,12 +50,8 @@ public class ImmutableSession implements StatsSession {
 
     public ImmutableSession(final StatsKey key,
                             final DataSet dataSet) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-        if (dataSet == null) {
-            throw new NullPointerException("dataSet");
-        }
+        assertNotNull(key, "key");
+        assertNotNull(dataSet, "dataSet");
 
         this.key = key;
         this.dataSet = DataSets.unmodifiable(dataSet);

@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import static org.stajistics.Util.assertNotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.stajistics.StatsKey;
@@ -34,10 +36,7 @@ public abstract class AbstractTracker implements Tracker {
     protected double value = 0;
 
     public AbstractTracker(final StatsSession session) {
-        if (session == null) {
-            throw new NullPointerException("session");
-        }
-
+        assertNotNull(session, "session");
         this.session = session;
     }
 

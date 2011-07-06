@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import static org.stajistics.Util.assertNotNull;
+
 
 /**
  * The default implementation of {@link StatsKeyFactory}. Do not
@@ -32,9 +34,7 @@ public class DefaultStatsKeyFactory implements StatsKeyFactory {
 
     @Override
     public void setNamespace(final String namespace) {
-        if (namespace == null) {
-            throw new NullPointerException("namespace");
-        }
+        assertNotNull(namespace, "namespace");
         this.namespace = namespace;
     }
 

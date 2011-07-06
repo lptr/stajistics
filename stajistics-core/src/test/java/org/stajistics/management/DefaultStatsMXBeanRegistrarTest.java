@@ -117,7 +117,7 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
         try {
             new DefaultStatsMXBeanRegistrar(NAMESPACE, null, MBeanServerFactory.newMBeanServer());
         } catch (NullPointerException npe) {
-            assertEquals("mBeanFactory", npe.getMessage());
+            assertEquals("mxBeanFactory", npe.getMessage());
         }
     }
 
@@ -141,7 +141,7 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
         final StatsManagerMXBean mockManagerMBean = mockery.mock(StatsManagerMXBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockMBeanFactory).createManagerMBean(mockStatsManager);
+            one(mockMBeanFactory).createManagerMXBean(mockStatsManager);
             will(returnValue(mockManagerMBean));
         }});
 
@@ -160,7 +160,7 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
 
         mBeanServer.registerMBean(mockManagerMBean, objectName);
 
-        mxBeanRegistrar.unregisterStatsManagerMXBean(mockStatsManager);
+        mxBeanRegistrar.unregisterStatsManagerMXBean();
         assertTrue(mBeanServer.queryMBeans(objectName, null).isEmpty());
     }
 
@@ -170,7 +170,7 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
         final StatsSessionManagerMXBean mockSessionManagerMBean = mockery.mock(StatsSessionManagerMXBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockMBeanFactory).createSessionManagerMBean(with(mockSessionManager));
+            one(mockMBeanFactory).createSessionManagerMXBean(with(mockSessionManager));
             will(returnValue(mockSessionManagerMBean));
         }});
 
@@ -197,7 +197,7 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
         final StatsConfigManagerMXBean mockConfigManagerMBean = mockery.mock(StatsConfigManagerMXBean.class);
 
         mockery.checking(new Expectations() {{
-            one(mockMBeanFactory).createConfigManagerMBean(mockConfigManager);
+            one(mockMBeanFactory).createConfigManagerMXBean(mockConfigManager);
             will(returnValue(mockConfigManagerMBean));
         }});
 
@@ -229,7 +229,7 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
 
         mockery.checking(new Expectations() {{
             allowing(mockStatsManager).getConfigBuilderFactory(); will(returnValue(mockConfigBuilderFactory));
-            one(mockMBeanFactory).createConfigMBean(NAMESPACE, mockKey, mockConfig); will(returnValue(mockConfigMBean));
+            one(mockMBeanFactory).createConfigMXBean(NAMESPACE, mockKey, mockConfig); will(returnValue(mockConfigMBean));
             ignoring(mockConfig);
         }});
 
@@ -281,7 +281,7 @@ public class DefaultStatsMXBeanRegistrarTest extends AbstractStajisticsTestCase 
 
         mockery.checking(new Expectations() {{
             allowing(mockStatsManager).getSessionManager(); will(returnValue(mockSessionManager));
-            one(mockMBeanFactory).createSessionMBean(NAMESPACE, mockSession); will(returnValue(mockSessionMBean));
+            one(mockMBeanFactory).createSessionMXBean(NAMESPACE, mockSession); will(returnValue(mockSessionMBean));
             allowing(mockSession).getKey(); will(returnValue(mockKey));
             ignoring(mockSession);
         }});

@@ -14,6 +14,9 @@
  */
 package org.stajistics.data;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -28,9 +31,7 @@ public abstract class AbstractDataContainer implements DataContainer {
     private final Map<String,Object> dataMap;
 
     protected AbstractDataContainer(final Map<String,Object> dataMap) {
-        if (dataMap == null) {
-            throw new NullPointerException("dataMap");
-        }
+        assertNotNull(dataMap, "dataMap");
         this.dataMap = dataMap;
     }
 
@@ -89,15 +90,8 @@ public abstract class AbstractDataContainer implements DataContainer {
 
     @Override
     public void setField(final String name, final Object value) {
-        if (name == null) {
-            throw new NullPointerException("name");
-        }
-        if (value == null) {
-            throw new NullPointerException("value");
-        }
-        if (name.length() == 0) {
-            throw new IllegalArgumentException("empty name");
-        }
+        assertNotEmpty(name, "name");
+        assertNotNull(value, "value");
 
         dataMap.put(name, value);
     }

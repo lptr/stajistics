@@ -14,6 +14,8 @@
  */
 package org.stajistics.task;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -30,10 +32,7 @@ public class DebugTaskService implements TaskService {
     private final EventManager eventManager;
 
     public DebugTaskService(final EventManager eventManager) {
-        if (eventManager == null) {
-            throw new NullPointerException("null eventManager");
-        }
-
+        assertNotNull(eventManager, "eventManager");
         this.eventManager = eventManager;
     }
 

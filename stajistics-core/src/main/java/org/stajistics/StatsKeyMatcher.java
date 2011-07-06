@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -367,10 +369,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final StatsKeyMatcher delegate;
 
         NegationMatcher(final StatsKeyMatcher delegate) {
-            if (delegate == null) {
-                throw new NullPointerException("delegate");
-            }
-
+            assertNotNull(delegate, "delegate");
             this.delegate = delegate;
         }
 
@@ -406,15 +405,9 @@ public abstract class StatsKeyMatcher implements Serializable {
         CompositeMatcher(final Op op,
                          final StatsKeyMatcher matcher1,
                          final StatsKeyMatcher matcher2) {
-            if (op == null) {
-                throw new NullPointerException("op");
-            }
-            if (matcher1 == null) {
-                throw new NullPointerException("matcher1");
-            }
-            if (matcher2 == null) {
-                throw new NullPointerException("matcher2");
-            }
+            assertNotNull(op, "op");
+            assertNotNull(matcher1, "matcher1");
+            assertNotNull(matcher2, "matcher2");
 
             this.op = op;
             this.matcher1 = matcher1;
@@ -585,9 +578,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final StatsKey testKey;
 
         ExactMatcher(final StatsKey testKey) {
-            if (testKey == null) {
-                throw new NullPointerException("testKey");
-            }
+            assertNotNull(testKey, "testKey");
 
             this.testKey = testKey;
         }
@@ -615,12 +606,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final Object test;
 
         EqualsMatcher(final MatchTarget target, final Object test) {
-            if (target == null) {
-                throw new NullPointerException("target");
-            }
-            if (test == null) {
-                throw new NullPointerException("test");
-            }
+            assertNotNull(target, "target");
+            assertNotNull(test, "test");
 
             this.target = target;
             this.test = test;
@@ -671,12 +658,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final String prefix;
 
         PrefixMatcher(final MatchTarget target, final String prefix) {
-            if (target == null) {
-                throw new NullPointerException("target");
-            }
-            if (prefix == null) {
-                throw new NullPointerException("prefix");
-            }
+            assertNotNull(target, "target");
+            assertNotNull(prefix, "prefix");
 
             this.target = target;
             this.prefix = prefix;
@@ -728,9 +711,7 @@ public abstract class StatsKeyMatcher implements Serializable {
         }
 
         private static String formatKeyName(String keyName) {
-            if (keyName == null) {
-                throw new NullPointerException("keyName");
-            }
+            assertNotNull(keyName, "keyName");
 
             if (!keyName.endsWith(".")) {
                 keyName += ".";
@@ -745,12 +726,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final String suffix;
 
         SuffixMatcher(final MatchTarget target, final String suffix) {
-            if (target == null) {
-                throw new NullPointerException("target");
-            }
-            if (suffix == null) {
-                throw new NullPointerException("suffix");
-            }
+            assertNotNull(target, "target");
+            assertNotNull(suffix, "suffix");
 
             this.target = target;
             this.suffix = suffix;
@@ -801,12 +778,8 @@ public abstract class StatsKeyMatcher implements Serializable {
         private final String string;
 
         ContainsMatcher(final MatchTarget target, final String string) {
-            if (target == null) {
-                throw new NullPointerException("target");
-            }
-            if (string == null) {
-                throw new NullPointerException("string");
-            }
+            assertNotNull(target, "target");
+            assertNotNull(string, "string");
 
             this.target = target;
             this.string = string;
@@ -933,9 +906,7 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         LengthMatcher(final MatchTarget target,
                       int length) {
-            if (target == null) {
-                throw new NullPointerException("target");
-            }
+            assertNotNull(target, "target");
             if (length < 0) {
                 length = 0;
             }
@@ -989,12 +960,8 @@ public abstract class StatsKeyMatcher implements Serializable {
 
         public RegExMatcher(final MatchTarget target,
                             final Pattern pattern) {
-            if (target == null) {
-                throw new NullPointerException("target");
-            }
-            if (pattern == null) {
-                throw new NullPointerException("pattern");
-            }
+            assertNotNull(target, "target");
+            assertNotNull(pattern, "pattern");
 
             this.target = target;
             this.pattern = pattern;

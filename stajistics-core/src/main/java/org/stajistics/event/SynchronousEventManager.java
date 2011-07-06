@@ -14,6 +14,8 @@
  */
 package org.stajistics.event;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -96,23 +98,15 @@ public class SynchronousEventManager implements EventManager {
 
     @Override
     public void addGlobalEventHandler(final EventHandler eventHandler) {
-        if (eventHandler == null) {
-            throw new NullPointerException("eventHandler");
-        }
-
+        assertNotNull(eventHandler, "eventHandler");
         globalEventHandlers.add(eventHandler);
     }
 
     @Override
     public void addEventHandler(final StatsKey key,
                                 final EventHandler eventHandler) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-
-        if (eventHandler == null) {
-            throw new NullPointerException("eventHandler");
-        }
+        assertNotNull(key, "key");
+        assertNotNull(eventHandler, "eventHandler");
 
         List<EventHandler> eventHandlers = getEventHandlers(key, true);
         eventHandlers.add(eventHandler);
@@ -172,12 +166,8 @@ public class SynchronousEventManager implements EventManager {
     public void fireEvent(final EventType eventType,
                           final StatsKey key,
                           final Object target) {
-        if (eventType == null) {
-            throw new NullPointerException("eventType");
-        }
-        if (target == null) {
-            throw new NullPointerException("target");
-        }
+        assertNotNull(eventType, "eventType");
+        assertNotNull(target, "target");
 
         logger.trace("Firing event: {}, key: {}", eventType, key);
 

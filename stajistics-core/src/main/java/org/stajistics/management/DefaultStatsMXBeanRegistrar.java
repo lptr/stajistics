@@ -14,6 +14,8 @@
  */
 package org.stajistics.management;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
 import static org.stajistics.management.StatsMXBeanUtil.getConfigManagerObjectName;
 import static org.stajistics.management.StatsMXBeanUtil.getConfigManagerObjectNameString;
 import static org.stajistics.management.StatsMXBeanUtil.getConfigObjectName;
@@ -24,6 +26,8 @@ import static org.stajistics.management.StatsMXBeanUtil.getSessionObjectName;
 import static org.stajistics.management.StatsMXBeanUtil.getSessionObjectNameString;
 import static org.stajistics.management.StatsMXBeanUtil.getStatsManagerObjectName;
 import static org.stajistics.management.StatsMXBeanUtil.getStatsManagerObjectNameString;
+import static org.stajistics.management.StatsMXBeanUtil.getTaskServiceObjectName;
+import static org.stajistics.management.StatsMXBeanUtil.getTaskServiceObjectNameString;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -44,8 +48,10 @@ import org.stajistics.management.beans.StatsConfigManagerMXBean;
 import org.stajistics.management.beans.StatsManagerMXBean;
 import org.stajistics.management.beans.StatsSessionMXBean;
 import org.stajistics.management.beans.StatsSessionManagerMXBean;
+import org.stajistics.management.beans.TaskServiceMXBean;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.task.TaskService;
 
 /**
  *
@@ -57,7 +63,7 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
 
     private static Logger logger = LoggerFactory.getLogger(DefaultStatsMXBeanRegistrar.class);
 
-    private final StatsMXBeanFactory mBeanFactory;
+    private final StatsMXBeanFactory mxBeanFactory;
 
     private final String namespace;
     private boolean isPlatformMBeanServer;
@@ -73,23 +79,14 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
     }
 
     public DefaultStatsMXBeanRegistrar(final String namespace,
-                                       final StatsMXBeanFactory mBeanFactory,
+                                       final StatsMXBeanFactory mxBeanFactory,
                                        final MBeanServer mBeanServer) {
-        if (namespace == null) {
-            throw new NullPointerException("namespace");
-        }
-        if (namespace.isEmpty()) {
-            throw new IllegalArgumentException("empty namespace");
-        }
-        if (mBeanFactory == null) {
-            throw new NullPointerException("mBeanFactory");
-        }
-        if (mBeanServer == null) {
-            throw new NullPointerException("mBeanServer");
-        }
+        assertNotEmpty(namespace, "namespace");
+        assertNotNull(mxBeanFactory, "mxBeanFactory");
+        assertNotNull(mBeanServer, "mBeanServer");
 
         this.namespace = namespace;
-        this.mBeanFactory = mBeanFactory;
+        this.mxBeanFactory = mxBeanFactory;
         this.mBeanServer = mBeanServer;
 
         this.isPlatformMBeanServer = mBeanServer.equals(ManagementFactory.getPlatformMBeanServer());
@@ -111,7 +108,7 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
 
         try {
             StatsManagerMXBean statsManagerMBean =
-                mBeanFactory.createManagerMBean(statsManager);
+                mxBeanFactory.createManagerMXBean(statsManager);
 
             ObjectName objectName = getStatsManagerObjectName(namespace);
             registerMBean(statsManagerMBean, objectName);
@@ -126,9 +123,7 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
     }
 
     @Override
-    public void unregisterStatsManagerMXBean(final StatsManager statsManager) {
-        assert statsManager.getNamespace().equals(namespace);
-
+    public void unregisterStatsManagerMXBean() {
         try {
             ObjectName objectName = getStatsManagerObjectName(namespace);
             mBeanServer.unregisterMBean(objectName);
@@ -146,7 +141,7 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
     public void registerSessionManagerMXBean(final StatsSessionManager sessionManager) {
         try {
             StatsSessionManagerMXBean statsSessionManagerMBean =
-                mBeanFactory.createSessionManagerMBean(sessionManager);
+                mxBeanFactory.createSessionManagerMXBean(sessionManager);
 
             ObjectName objectName = getSessionManagerObjectName(namespace);
             registerMBean(statsSessionManagerMBean, objectName);
@@ -179,7 +174,7 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
     public void registerConfigManagerMXBean(final StatsConfigManager configManager) {
         try {
             StatsConfigManagerMXBean statsConfigManagerMBean =
-                mBeanFactory.createConfigManagerMBean(configManager);
+                mxBeanFactory.createConfigManagerMXBean(configManager);
 
             ObjectName objectName = getConfigManagerObjectName(namespace);
             registerMBean(statsConfigManagerMBean, objectName);
@@ -209,10 +204,42 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
     }
 
     @Override
+    public void registerTaskServiceMXBean(final TaskService taskService) {
+        try {
+            TaskServiceMXBean taskServiceMBean = mxBeanFactory.createTaskServiceMXBean(taskService);
+            
+            ObjectName objectName = getTaskServiceObjectName(namespace);
+            registerMBean(taskServiceMBean, objectName);
+
+            logRegistrationSuccess(true, TaskServiceMXBean.class, null, objectName);
+
+        } catch (Exception e) {
+            logRegistrationFailure(true, TaskServiceMXBean.class, null, getTaskServiceObjectNameString(namespace, true), e);
+
+            throw new StatsManagementException(e);
+        }
+    }
+
+    @Override
+    public void unregisterTaskServiceMXBean() {
+        try {
+            ObjectName objectName = getTaskServiceObjectName(namespace);
+            mBeanServer.unregisterMBean(objectName);
+
+            logRegistrationSuccess(false, TaskServiceMXBean.class, null, objectName);
+
+        } catch (Exception e) {
+            logRegistrationFailure(false, TaskServiceMXBean.class, null, getTaskServiceObjectNameString(namespace, true), e);
+
+            throw new StatsManagementException(e);
+        }
+    }
+
+    @Override
     public void registerConfigMXBean(final StatsKey key,
                                      final StatsConfig config) {
         try {
-            StatsConfigMXBean configMBean = mBeanFactory.createConfigMBean(namespace, key, config);
+            StatsConfigMXBean configMBean = mxBeanFactory.createConfigMXBean(namespace, key, config);
 
             ObjectName objectName = getConfigObjectName(namespace, key);
             registerMBean(configMBean, objectName);
@@ -246,8 +273,7 @@ public class DefaultStatsMXBeanRegistrar implements StatsMXBeanRegistrar,Seriali
     @Override
     public void registerSessionMXBean(final StatsSession session) {
         try {
-            StatsSessionMXBean sessionMBean = mBeanFactory.createSessionMBean(namespace,
-                                                                              session);
+            StatsSessionMXBean sessionMBean = mxBeanFactory.createSessionMXBean(namespace, session);
 
             ObjectName objectName = getSessionObjectName(namespace, session.getKey());
             registerMBean(sessionMBean, objectName);

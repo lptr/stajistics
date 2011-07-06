@@ -22,5 +22,7 @@ public interface StatsManagerMXBean {
 
     void setEnabled(boolean enabled);
 
+    boolean getRunning();
+
     void shutdown();
 }

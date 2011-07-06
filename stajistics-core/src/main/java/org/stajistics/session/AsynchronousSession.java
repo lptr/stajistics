@@ -14,6 +14,8 @@
  */
 package org.stajistics.session;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
@@ -96,12 +98,8 @@ public class AsynchronousSession extends AbstractStatsSession {
                                final DataRecorder... dataRecorders) {
         super(key, eventManager, dataRecorders);
 
-        if (taskService == null) {
-            throw new NullPointerException("taskService");
-        }
-        if (updateQueue == null) {
-            throw new NullPointerException("updateQueue");
-        }
+        assertNotNull(taskService, "taskService");
+        assertNotNull(updateQueue, "updateQueue");
 
         this.taskService = taskService;
         this.updateQueue = updateQueue;
@@ -307,9 +305,7 @@ public class AsynchronousSession extends AbstractStatsSession {
 
     @Override
     public void restore(final DataSet dataSet) {
-        if (dataSet == null) {
-            throw new NullPointerException("dataSet");
-        }
+        assertNotNull(dataSet, "dataSet");
 
         stateLock.lock();
         try {

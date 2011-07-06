@@ -14,6 +14,9 @@
  */
 package org.stajistics.configuration;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import org.stajistics.StatsConstants;
 import org.stajistics.StatsKey;
 import org.stajistics.session.DefaultSessionFactory;
@@ -63,9 +66,7 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
      */
     public DefaultStatsConfigBuilder(final StatsConfigManager configManager,
                                      final StatsConfig config) {
-        if (configManager == null) {
-            throw new NullPointerException("configManager");
-        }
+        assertNotNull(configManager, "configManager");
 
         this.configManager = configManager;
 
@@ -87,40 +88,28 @@ public class DefaultStatsConfigBuilder implements StatsConfigBuilder {
 
     @Override
     public StatsConfigBuilder withSessionFactory(final StatsSessionFactory sessionFactory) {
-        if (sessionFactory == null) {
-            throw new NullPointerException("sessionFactory");
-        }
-
+        assertNotNull(sessionFactory, "sessionFactory");
         this.sessionFactory = sessionFactory;
         return this;
     }
 
     @Override
     public StatsConfigBuilder withTrackerFactory(final TrackerFactory<?> trackerFactory) {
-        if (trackerFactory == null) {
-            throw new NullPointerException("trackerFactory");
-        }
-
+        assertNotNull(trackerFactory, "trackerFactory");
         this.trackerFactory = trackerFactory;
         return this;
     }
 
     @Override
     public StatsConfigBuilder withDataRecorderFactory(final DataRecorderFactory dataRecorderFactory) {
-        if (dataRecorderFactory == null) {
-            throw new NullPointerException("dataRecorderFactory");
-        }
-
+        assertNotNull(dataRecorderFactory, "dataRecorderFactory");
         this.dataRecorderFactory = dataRecorderFactory;
         return this;
     }
 
     @Override
     public StatsConfigBuilder withUnit(final String unit) {
-        if (unit == null) {
-            throw new NullPointerException("unit");
-        }
-
+        assertNotEmpty(unit, "unit");
         this.unit = unit;
         return this;
     }

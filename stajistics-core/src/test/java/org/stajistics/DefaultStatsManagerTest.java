@@ -41,7 +41,7 @@ import org.stajistics.tracker.TrackerLocator;
  */
 public class DefaultStatsManagerTest extends AbstractStajisticsTestCase {
 
-    private DefaultStatsManager newDefaultStatsManager() {
+    private StatsManager newDefaultStatsManager() {
         return new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE); // TODO: mock the managers
     }
 

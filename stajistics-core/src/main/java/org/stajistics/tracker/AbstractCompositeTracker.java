@@ -14,6 +14,8 @@
  */
 package org.stajistics.tracker;
 
+import static org.stajistics.Util.assertNotEmpty;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,10 +35,7 @@ public abstract class AbstractCompositeTracker<T extends Tracker>
     protected final T[] trackers;
 
     public AbstractCompositeTracker(final T... trackers) {
-        if (trackers.length == 0) {
-            throw new IllegalArgumentException("Must provide at least one tracker");
-        }
-
+        assertNotEmpty(trackers, "trackers");
         this.trackers = trackers;
     }
 

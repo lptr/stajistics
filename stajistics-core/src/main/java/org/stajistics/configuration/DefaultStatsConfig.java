@@ -14,6 +14,9 @@
  */
 package org.stajistics.configuration;
 
+import static org.stajistics.Util.assertNotEmpty;
+import static org.stajistics.Util.assertNotNull;
+
 import org.stajistics.Util;
 import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.recorder.DataRecorderFactory;
@@ -69,22 +72,10 @@ public class DefaultStatsConfig implements StatsConfig {
                               final DataRecorderFactory dataRecorderFactory,
                               final String unit,
                               final String description) {
-
-        if (trackerFactory == null) {
-            throw new NullPointerException("trackerFactory");
-        }
-        if (sessionFactory == null) {
-            throw new NullPointerException("sessionFactory");
-        }
-        if (dataRecorderFactory == null) {
-            throw new NullPointerException("dataRecorderFactory");
-        }
-        if (unit == null) {
-            throw new NullPointerException("unit");
-        }
-        if (unit.length() == 0) {
-            throw new IllegalArgumentException("empty unit");
-        }
+        assertNotNull(trackerFactory, "trackerFactory");
+        assertNotNull(sessionFactory, "sessionFactory");
+        assertNotNull(dataRecorderFactory, "dataRecorderFactory");
+        assertNotEmpty(unit, "unit");
 
         this.enabled = enabled;
         this.trackerFactory = trackerFactory;

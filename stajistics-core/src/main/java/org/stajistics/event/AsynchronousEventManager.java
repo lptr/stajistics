@@ -14,6 +14,8 @@
  */
 package org.stajistics.event;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.concurrent.Callable;
 
 import org.stajistics.StatsKey;
@@ -28,10 +30,7 @@ public class AsynchronousEventManager extends SynchronousEventManager {
     private final TaskService taskService;
 
     public AsynchronousEventManager(final TaskService taskService) {
-        if (taskService == null) {
-            throw new NullPointerException("taskService");
-        }
-
+        assertNotNull(taskService, "taskService");
         this.taskService = taskService;
     }
 
@@ -53,15 +52,9 @@ public class AsynchronousEventManager extends SynchronousEventManager {
         EventCallable(final EventType eventType,
                       final StatsKey key,
                       final Object target) {
-            if (eventType == null) {
-                throw new NullPointerException("eventType");
-            }
-            if (key == null) {
-                throw new NullPointerException("key");
-            }
-            if (target == null) {
-                throw new NullPointerException("target");
-            }
+            assertNotNull(eventType, "eventType");
+            assertNotNull(key, "key");
+            assertNotNull(target, "target");
 
             this.eventType = eventType;
             this.key = key;

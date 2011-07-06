@@ -78,7 +78,7 @@ public class CompositeTrackerFactoryTest extends AbstractStajisticsTestCase {
             new CompositeTrackerFactory<Tracker>(map);
             fail();
         } catch (IllegalArgumentException iae) {
-            assertEquals("factoryMap is empty", iae.getMessage());
+            assertEquals("empty factoryMap", iae.getMessage());
         }
     }
 
@@ -130,7 +130,7 @@ public class CompositeTrackerFactoryTest extends AbstractStajisticsTestCase {
             builder.withFactory("", trackerFactory1);
             fail();
         } catch (IllegalArgumentException iae) {
-            assertEquals("nameSuffix is empty", iae.getMessage());
+            assertEquals("empty nameSuffix", iae.getMessage());
         }
     }
 
@@ -141,7 +141,7 @@ public class CompositeTrackerFactoryTest extends AbstractStajisticsTestCase {
             builder.withFactory("\t ", trackerFactory1);
             fail();
         } catch (IllegalArgumentException iae) {
-            assertEquals("nameSuffix is empty", iae.getMessage());
+            assertEquals("empty nameSuffix", iae.getMessage());
         }
     }
 

@@ -14,6 +14,8 @@
  */
 package org.stajistics.management;
 
+import static org.stajistics.Util.assertNotNull;
+
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.configuration.StatsConfig;
@@ -22,6 +24,7 @@ import org.stajistics.event.EventHandler;
 import org.stajistics.event.EventType;
 import org.stajistics.session.StatsSession;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.task.TaskService;
 
 /**
  *
@@ -31,94 +34,74 @@ import org.stajistics.session.StatsSessionManager;
  */
 public class StatsManagementEventHandler implements EventHandler {
 
-    private StatsMXBeanRegistrar mxBeanRegistrar;
+    private final StatsMXBeanRegistrar mxBeanRegistrar;
 
-    private volatile StatsConfigManager configManager;
-    private volatile StatsSessionManager sessionManager;
-
-    protected StatsMXBeanRegistrar createStatsMXBeanRegistrar(final StatsManager statsManager) {
-        return new DefaultStatsMXBeanRegistrar(statsManager.getNamespace());
+    public StatsManagementEventHandler(final StatsMXBeanRegistrar mxBeanRegistrar) {
+        assertNotNull(mxBeanRegistrar, "mxBeanRegistrar");
+        this.mxBeanRegistrar = mxBeanRegistrar;
     }
 
     @Override
     public void handleStatsEvent(final EventType eventType,
                                  final StatsKey key,
                                  final Object target) {
+        // Check for speed-sensitive events first
         switch (eventType) {
-            case STATS_MANAGER_INITIALIZED:
-                StatsManager statsManager = (StatsManager)target;
-                mxBeanRegistrar = createStatsMXBeanRegistrar(statsManager);
-
-                // Initialize deferred components
-
-                if (configManager != null) {
-                    mxBeanRegistrar.registerConfigManagerMXBean(configManager);
-                    configManager = null;
-                }
-                if (sessionManager != null) {
-                    mxBeanRegistrar.registerSessionManagerMXBean(sessionManager);
-                    sessionManager = null;
-                }
-
-                mxBeanRegistrar.registerStatsManagerMXBean(statsManager);
-
-                break;
-    
-            case STATS_MANAGER_SHUTTING_DOWN:
-                mxBeanRegistrar.unregisterStatsManagerMXBean((StatsManager)target);
-                mxBeanRegistrar = null;
-                break;
-        }
-
-        if (mxBeanRegistrar == null) {
-            return;
-        }
-
-        switch (eventType) {
-            case CONFIG_MANAGER_INITIALIZED:
-                this.configManager = (StatsConfigManager)target; // Defer initialization
-                break;
-
-            case CONFIG_MANAGER_SHUTTING_DOWN:
-                mxBeanRegistrar.unregisterConfigManagerMXBean();
-                break;
-
-            case SESSION_MANAGER_INITIALIZED:
-                this.sessionManager = (StatsSessionManager)target; // Defer initialization
-                break;
-
-            case SESSION_MANAGER_SHUTTING_DOWN:
-                mxBeanRegistrar.unregisterSessionManagerMXBean();
-                break;
-
-            case TASK_SERVICE_INITIALIZED:
-                // TODO
-                break;
-
-            case TASK_SERVICE_SHUTTING_DOWN:
-                // TODO
-                break;
-
             case SESSION_CREATED:
                 mxBeanRegistrar.registerSessionMXBean((StatsSession)target);
-                break;
-
+                return;
+    
             case SESSION_DESTROYED:
                 mxBeanRegistrar.unregisterSessionMXBeanIfNecessary(key);
-                break;
-
+                return;
+    
             case CONFIG_CREATED:
                 mxBeanRegistrar.registerConfigMXBean(key, (StatsConfig)target);
-                break;
+                return;
                 
             case CONFIG_CHANGED:
                 mxBeanRegistrar.unregisterConfigMXBeanIfNecessary(key);
                 mxBeanRegistrar.registerConfigMXBean(key, (StatsConfig)target);
-                break;
-
+                return;
+    
             case CONFIG_DESTROYED:
                 mxBeanRegistrar.unregisterConfigMXBeanIfNecessary(key);
-                break;
+                return;
+        }
+
+        // Check for rarely occurring events second
+        switch (eventType) {
+            case STATS_MANAGER_INITIALIZED:
+                mxBeanRegistrar.registerStatsManagerMXBean((StatsManager)target);
+                return;
+
+            case STATS_MANAGER_SHUTTING_DOWN:
+                mxBeanRegistrar.unregisterStatsManagerMXBean();
+                return;
+
+            case CONFIG_MANAGER_INITIALIZED:
+                mxBeanRegistrar.registerConfigManagerMXBean((StatsConfigManager)target);
+                return;
+
+            case CONFIG_MANAGER_SHUTTING_DOWN:
+                mxBeanRegistrar.unregisterConfigManagerMXBean();
+                return;
+
+            case SESSION_MANAGER_INITIALIZED:
+                mxBeanRegistrar.registerSessionManagerMXBean((StatsSessionManager)target);
+                return;
+
+            case SESSION_MANAGER_SHUTTING_DOWN:
+                mxBeanRegistrar.unregisterSessionManagerMXBean();
+                return;
+
+            case TASK_SERVICE_INITIALIZED:
+                mxBeanRegistrar.registerTaskServiceMXBean((TaskService)target);
+                return;
+
+            case TASK_SERVICE_SHUTTING_DOWN:
+                mxBeanRegistrar.unregisterTaskServiceMXBean();
+                return;
         }
     }
 }

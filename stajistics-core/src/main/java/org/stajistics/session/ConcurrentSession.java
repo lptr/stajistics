@@ -14,6 +14,8 @@
  */
 package org.stajistics.session;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -264,9 +266,7 @@ public class ConcurrentSession extends AbstractStatsSession {
 
     @Override
     public void restore(final DataSet dataSet) {
-        if (dataSet == null) {
-            throw new NullPointerException("dataSet");
-        }
+        assertNotNull(dataSet, "dataSet");
 
         clearState();
         restoreState(dataSet);

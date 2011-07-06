@@ -1,5 +1,7 @@
 package org.stajistics.util.xml;
 
+import static org.stajistics.Util.assertNotEmpty;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,10 +32,7 @@ public abstract class AbstractXMLBindingManager<T> implements XMLBindingManager<
     }
 
     public void setEncoding(final String encoding) {
-        if (encoding == null) {
-            throw new NullPointerException("encoding");
-        }
-
+        assertNotEmpty(encoding, "encoding");
         this.encoding = encoding;
     }
 

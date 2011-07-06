@@ -14,6 +14,8 @@
  */
 package org.stajistics.session.recorder;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -210,10 +212,7 @@ public final class DataRecorders {
 
         private LockingDataRecorderDecorator(final DataRecorder delegate,
                                              final Lock lock) {
-            if (delegate == null) {
-                throw new NullPointerException("delegate");
-            }
-
+            assertNotNull(delegate, "delegate");
             this.delegate = delegate;
 
             if (lock == null) {

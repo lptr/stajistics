@@ -14,6 +14,8 @@
  */
 package org.stajistics.data;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.Set;
 
 /**
@@ -42,10 +44,7 @@ public class DataSets {
         private final MetaData delegateMetaData;
 
         ImmutableDataSetDecorator(final DataSet delegate) {
-            if (delegate == null) {
-                throw new NullPointerException("delegate");
-            }
-
+            assertNotNull(delegate, "delegate");
             this.delegate = delegate;
 
             if (delegate.hasMetaData()) {
@@ -128,9 +127,7 @@ public class DataSets {
         private final MetaData delegate;
 
         ImmutableMetaDataDecorator(final MetaData delegate) {
-            if (delegate == null) {
-                throw new NullPointerException("delegate");
-            }
+            assertNotNull(delegate, "delegate");
             this.delegate = delegate;
         }
 

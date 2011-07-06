@@ -14,6 +14,8 @@
  */
 package org.stajistics;
 
+import static org.stajistics.Util.assertNotNull;
+
 import java.util.concurrent.Callable;
 
 import org.stajistics.configuration.DefaultStatsConfigBuilderFactory;
@@ -74,27 +76,13 @@ public class DefaultStatsManager implements StatsManager {
                                final StatsKeyFactory keyFactory,
                                final StatsConfigBuilderFactory configBuilderFactory,
                                final TaskService taskService) {
-        if (configManager == null) {
-            throw new NullPointerException("configManager");
-        }
-        if (sessionManager == null) {
-            throw new NullPointerException("sessionManager");
-        }
-        if (eventManager == null) {
-            throw new NullPointerException("eventManager");
-        }
-        if (trackerLocator == null) {
-            throw new NullPointerException("trackerLocator");
-        }
-        if (keyFactory == null) {
-            throw new NullPointerException("keyFactory");
-        }
-        if (configBuilderFactory == null) {
-            throw new NullPointerException("configBuilderFactory");
-        }
-        if (taskService == null) {
-            throw new NullPointerException("taskService");
-        }
+        assertNotNull(configManager, "configManager");
+        assertNotNull(sessionManager, "sessionManager");
+        assertNotNull(eventManager, "eventManager");
+        assertNotNull(trackerLocator, "trackerLocator");
+        assertNotNull(keyFactory, "keyFactory");
+        assertNotNull(configBuilderFactory, "configBuilderFactory");
+        assertNotNull(taskService, "taskService");
 
         if (namespace != null && namespace.isEmpty()) {
             this.namespace = null;
@@ -255,64 +243,43 @@ public class DefaultStatsManager implements StatsManager {
         }
 
         public Builder withConfigManager(final StatsConfigManager configManager) {
-            if (configManager == null) {
-                throw new NullPointerException("configManager");
-            }
-
+            assertNotNull(configManager, "configManager");
             this.configManager = configManager;
             return this;
         }
 
         public Builder withSessionManager(final StatsSessionManager sessionManager) {
-            if (sessionManager == null) {
-                throw new NullPointerException("sessionManager");
-            }
-
+            assertNotNull(sessionManager, "sessionManager");
             this.sessionManager = sessionManager;
             return this;
         }
 
         public Builder withEventManager(final EventManager eventManager) {
-            if (eventManager == null) {
-                throw new NullPointerException("eventManager");
-            }
-
+            assertNotNull(eventManager, "eventManager");
             this.eventManager = eventManager;
             return this;
         }
 
         public Builder withTrackerLocator(final TrackerLocator trackerLocator) {
-            if (trackerLocator == null) {
-                throw new NullPointerException("trackerLocator");
-            }
-
+            assertNotNull(trackerLocator, "trackerLocator");
             this.trackerLocator = trackerLocator;
             return this;
         }
 
         public Builder withKeyFactory(final StatsKeyFactory keyFactory) {
-            if (keyFactory == null) {
-                throw new NullPointerException("keyFactory");
-            }
-
+            assertNotNull(keyFactory, "keyFactory");
             this.keyFactory = keyFactory;
             return this;
         }
 
         public Builder withConfigFactory(final StatsConfigBuilderFactory configBuilderFactory) {
-            if (configBuilderFactory == null) {
-                throw new NullPointerException("configBuilderFactory");
-            }
-
+            assertNotNull(configBuilderFactory, "configBuilderFactory");
             this.configBuilderFactory = configBuilderFactory;
             return this;
         }
 
         public Builder withTaskService(final TaskService taskService) {
-            if (taskService == null) {
-                throw new NullPointerException("taskService");
-            }
-
+            assertNotNull(taskService, "taskService");
             this.taskService = taskService;
             return this;
         }

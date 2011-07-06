@@ -14,6 +14,9 @@
  */
 package org.stajistics;
 
+import java.util.Collection;
+import java.util.Map;
+
 /**
  *
  *
@@ -23,6 +26,55 @@ package org.stajistics;
 public final class Util {
 
     private Util() {}
+
+    public static void assertNotNull(final Object test, final String varName) {
+        if (test == null) {
+            throw new NullPointerException(varName);
+        }
+    }
+
+    public static void assertNotEmpty(final Object[] test, final String varName) {
+        if (test == null) {
+            throw new NullPointerException(varName);
+        }
+        if (test.length == 0) {
+            throw new IllegalArgumentException("empty " + varName);
+        }
+    }
+
+    public static void assertNotEmpty(final CharSequence test, final String varName) {
+        if (test == null) {
+            throw new NullPointerException(varName);
+        }
+        if (test.length() == 0) {
+            throw new IllegalArgumentException("empty " + varName);
+        }
+    }
+
+    public static void assertNotEmptyAfterTrim(CharSequence test, final String varName) {
+        if (test != null) {
+            test = test.toString().trim();
+        }
+        assertNotEmpty(test, varName);
+    }
+
+    public static <E> void assertNotEmpty(final Collection<E> test, final String varName) {
+        if (test == null) {
+            throw new NullPointerException(varName);
+        }
+        if (test.isEmpty()) {
+            throw new IllegalArgumentException("empty " + varName);
+        }
+    }
+
+    public static <K,V> void assertNotEmpty(final Map<K,V> test, final String varName) {
+        if (test == null) {
+            throw new NullPointerException(varName);
+        }
+        if (test.isEmpty()) {
+            throw new IllegalArgumentException("empty " + varName);
+        }
+    }
 
     public static boolean equalsNullAware(final Object obj1, final Object obj2) {
         if (obj1 == null) {
