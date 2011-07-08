@@ -6,7 +6,7 @@
   <name>Stajistics Parent</name>
   <version>0.4-SNAPSHOT</version>
   <description>A Java monitoring and performance statistics collection API</description>
-  <url>http://www.stajistics.org</url>
+  <url>http://stajistics.org</url>
 
   <issueManagement>
     <system>Google Code Issue Tracker</system>
@@ -42,11 +42,12 @@
       <id>troy.kinsella</id>
       <name>Troy Kinsella</name>
       <email>troy@stajistics.org</email>
-      <url>http://www.stajistics.org</url>
+      <url>http://stajistics.org</url>
       <organization>stajistics.org</organization>
-      <organizationUrl>http://www.stajistics.org</organizationUrl>
+      <organizationUrl>http://stajistics.org</organizationUrl>
       <roles>
         <role>founder</role>
+        <role>owner</role>
         <role>developer</role>
       </roles>
       <timezone>-7</timezone>
@@ -55,11 +56,12 @@
       <id>lorant.pinter</id>
       <name>Lóránt Pintér</name>
       <email>lorant.pinter@gmail.com</email>
-      <url>http://www.stajistics.org</url>
+      <url>http://stajistics.org</url>
       <organization>stajistics.org</organization>
-      <organizationUrl>http://www.stajistics.org</organizationUrl>
+      <organizationUrl>http://stajistics.org</organizationUrl>
       <roles>
-        <role>committer</role>
+        <role>owner</role>
+        <role>developer</role>
       </roles>
       <timezone>+1</timezone>
     </developer>
@@ -85,10 +87,21 @@
     <junit-version>4.4</junit-version>
     <jmock-version>2.5.1</jmock-version>
     <slf4j-version>1.5.10</slf4j-version>
+
+    <maven-javadoc-plugin-version>2.8</maven-javadoc-plugin-version>
+    <maven-jxr-plugin-version>2.2</maven-jxr-plugin-version>
   </properties>
 
   <build>
     <defaultGoal>install</defaultGoal>
+
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+         <artifactId>wagon-ssh</artifactId>
+         <version>1.0-beta-6</version>
+      </extension>
+    </extensions>
 
     <pluginManagement>
       <plugins>
@@ -143,7 +156,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.8</version>
+          <version>${maven-javadoc-plugin-version}</version>
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -215,7 +228,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.1</version>
+          <version>2.2</version>
           <configuration>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <preparationGoals>clean install</preparationGoals>
@@ -243,6 +256,11 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.5</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.0-beta-3</version>
+         </plugin>
       </plugins>
     </pluginManagement>
 
@@ -262,6 +280,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin-version}</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -270,6 +289,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
+            <version>${maven-jxr-plugin-version}</version>
           </plugin>
         </plugins>
       </build>
@@ -281,6 +301,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven-javadoc-plugin-version}</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -289,6 +310,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
+            <version>${maven-jxr-plugin-version}</version>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -317,13 +339,15 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
           </plugin>
-          <plugin>
+          <!-- <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-changelog-plugin</artifactId>
-          </plugin>
+            <version>2.2</version>
+          </plugin> -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>2.9</version>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -336,10 +360,12 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>jdepend-maven-plugin</artifactId>
+            <version>2.0-beta-2</version>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>taglist-maven-plugin</artifactId>
+            <version>2.4</version>
             <configuration>
               <tags>
                 <tag>@fixme</tag>
