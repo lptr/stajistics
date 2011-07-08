@@ -14,8 +14,19 @@
  */
 package org.stajistics.integration.servlet;
 
+import static org.stajistics.Util.assertNotNull;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
+import org.stajistics.StatsFactory;
+import org.stajistics.StatsKey;
+import org.stajistics.io.StatsFilterWriter;
 
 /**
  * 
@@ -25,8 +36,21 @@ public class StatsHttpServletResponse extends HttpServletResponseWrapper {
 
     private int statusCode = SC_OK;
 
-    public StatsHttpServletResponse(final HttpServletResponse response) {
+    private final StatsFactory statsFactory;
+    private final StatsKey responseStreamKey;
+
+    private ServletOutputStream statsOutputStream;
+    private PrintWriter statsWriter;
+
+    public StatsHttpServletResponse(final HttpServletResponse response,
+                                    final StatsFactory statsFactory,
+                                    final StatsKey responseStreamKey) {
         super(response);
+
+        assertNotNull(statsFactory, "statsFactory");
+
+        this.statsFactory = statsFactory;
+        this.responseStreamKey = responseStreamKey;
     }
 
     @Override
@@ -44,4 +68,35 @@ public class StatsHttpServletResponse extends HttpServletResponseWrapper {
         super.reset();
         this.statusCode = SC_OK;
     }
+
+    protected ServletOutputStream wrapOutputStream(final ServletOutputStream out) {
+        return new StatsServletOutputStream(statsFactory, responseStreamKey, out);
+    }
+
+    protected PrintWriter wrapWriter(final Writer writer) {
+        return new PrintWriter(new StatsFilterWriter(statsFactory, responseStreamKey, writer));
+    }
+
+    @Override
+    public ServletOutputStream getOutputStream() throws IOException {
+        if (responseStreamKey != null) {
+            if (statsOutputStream == null) {
+                statsOutputStream = wrapOutputStream(super.getOutputStream()); 
+            }
+            return statsOutputStream;
+        }
+        return super.getOutputStream();
+    }
+
+    @Override
+    public PrintWriter getWriter() throws IOException {
+        if (responseStreamKey != null) {
+            if (statsWriter == null) {
+                statsWriter = wrapWriter(super.getWriter());
+            }
+            return statsWriter;
+        }
+        return super.getWriter();
+    }
+    
 }

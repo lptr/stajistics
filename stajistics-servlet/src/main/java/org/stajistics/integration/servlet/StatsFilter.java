@@ -14,23 +14,29 @@
  */
 package org.stajistics.integration.servlet;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilder;
 import org.stajistics.tracker.incident.DefaultIncidentTracker;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.span.SpanTracker;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *
@@ -42,74 +48,107 @@ public class StatsFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(StatsFilter.class);
 
+    static final String INIT_PARAM_NAMESPACE = "namespace";
     static final String INIT_PARAM_KEY_NAME = "keyName";
     static final String INIT_PARAM_BIND_PARAMS = "bindParameters";
     static final String INIT_PARAM_BIND_HEADERS = "bindHeaders";
-    static final String INIT_PARAM_TRACK_EXCEPTION_INCIDENTS = "trackExceptionIncidents";
-    static final String INIT_PARAM_EXCEPTION_KEY_NAME_SUFFIX = "exceptionKeyNameSuffix";
-    static final String INIT_PARAM_TRACK_RESPONSE_CODES = "trackResponseCodes";
-    static final String INIT_PARAM_RESPONSE_CODE_KEY_NAME_SUFFIX = "responseCodeKeyNameSuffix";
+    static final String INIT_PARAM_TRACK_REQUEST_URI = "trackRequestURI";
+    static final String INIT_PARAM_TRACK_RESPONSE_CODE = "trackResponseCode";
+    static final String INIT_PARAM_TRACK_REQUEST_STREAM = "trackRequestStream";
+    static final String INIT_PARAM_TRACK_RESPONSE_STREAM = "trackResponseStream";
+    static final String INIT_PARAM_TRACK_EXCEPTION = "trackException";
 
-    static final String DEFAULT_PARAM_EXCEPTION_KEY_NAME_SUFFIX = "exception";
-    static final String DEFAULT_PARAM_RESPONSE_CODE_KEY_NAME_SUFFIX = "responseCode";
+    static final String KEY_NAME_SUFFIX_REQUEST_URI = "requestURI";
+    static final String KEY_NAME_SUFFIX_REQUEST_STREAM = "requestStream";
+    static final String KEY_NAME_SUFFIX_RESPONSE_STREAM = "responseStream";
+    static final String KEY_NAME_SUFFIX_RESPONSE_CODE = "responseCode";
+    static final String KEY_NAME_SUFFIX_EXCEPTION = "exception";
 
     static final String KEY_ATTR_BINDING = "binding";
     static final String KEY_ATTR_BINDING_PARAM = "parameter";
     static final String KEY_ATTR_BINDING_HEADER = "header";
+    static final String KEY_ATTR_REQUEST_URI = "requestURI";
+
+    private StatsFactory statsFactory;
 
     private StatsKey key;
     private String[] bindParams;
     private String[] bindHeaders;
 
     private StatsKey exceptionKey;
+    private StatsKey requestURIKey;
     private StatsKey responseCodeKey;
+    private StatsKey requestStreamKey;
+    private StatsKey responseStreamKey;
 
     @Override
     public void init(final FilterConfig config) throws ServletException {
+
+        String namespace = config.getInitParameter(INIT_PARAM_NAMESPACE);
+        if (namespace != null) {
+        	statsFactory = StatsFactory.forNamespace(namespace);
+        } else {
+        	statsFactory = StatsFactory.forClass(StatsFilter.class);
+        }
+
         String keyName = config.getInitParameter(INIT_PARAM_KEY_NAME);
         if (keyName == null) {
             keyName = getClass().getName();
         }
 
-        key = Stats.newKey(keyName);
+        key = statsFactory.newKey(keyName);
 
         // Binding parameters
         bindParams = parseBindings(config, INIT_PARAM_BIND_PARAMS);
         bindHeaders = parseBindings(config, INIT_PARAM_BIND_HEADERS);
 
-        // Exception parameters
-        boolean exceptionIncidents = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_EXCEPTION_INCIDENTS));
-        if (exceptionIncidents) {
-            String exceptionKeyNameSuffix = config.getInitParameter(INIT_PARAM_EXCEPTION_KEY_NAME_SUFFIX);
-            if (exceptionKeyNameSuffix == null || exceptionKeyNameSuffix.length() == 0) {
-                exceptionKeyNameSuffix = DEFAULT_PARAM_EXCEPTION_KEY_NAME_SUFFIX;
-            }
-
-            exceptionKey = key.buildCopy()
-                              .withNameSuffix(exceptionKeyNameSuffix)
-                              .newKey();
-            configureIncidentTracker(exceptionKey);
+        // Request URI
+        boolean requestURI = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_REQUEST_URI));
+        if (requestURI) {
+        	requestURIKey = key.buildCopy()
+        					   .withNameSuffix(KEY_NAME_SUFFIX_REQUEST_URI)
+        					   .newKey();
         }
 
-        // Response codes
-        boolean responseCodes = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_RESPONSE_CODES));
-        if (responseCodes) {
-            String responseCodeKeyNameSuffix = config.getInitParameter(INIT_PARAM_RESPONSE_CODE_KEY_NAME_SUFFIX);
-            if (responseCodeKeyNameSuffix == null || responseCodeKeyNameSuffix.length() == 0) {
-                responseCodeKeyNameSuffix = DEFAULT_PARAM_RESPONSE_CODE_KEY_NAME_SUFFIX;
-            }
+        // Request stream
+        boolean requestStream = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_REQUEST_STREAM));
+        if (requestStream) {
+        	requestStreamKey = key.buildCopy()
+        						  .withNameSuffix(KEY_NAME_SUFFIX_REQUEST_STREAM)
+        						  .newKey();
+        }
 
+        // Response stream
+        boolean responseStream = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_RESPONSE_STREAM));
+        if (responseStream) {
+        	responseStreamKey = key.buildCopy()
+        						   .withNameSuffix(KEY_NAME_SUFFIX_RESPONSE_STREAM)
+        						   .newKey();
+        }
+
+        // Response code
+        boolean responseCode = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_RESPONSE_CODE));
+        if (responseCode) {
             responseCodeKey = key.buildCopy()
-                                 .withNameSuffix(responseCodeKeyNameSuffix)
+                                 .withNameSuffix(KEY_NAME_SUFFIX_RESPONSE_CODE)
                                  .newKey();
             configureIncidentTracker(responseCodeKey);
+        }
+
+        // Exceptions
+        boolean exceptionIncidents = Boolean.parseBoolean(config.getInitParameter(INIT_PARAM_TRACK_EXCEPTION));
+        if (exceptionIncidents) {
+            exceptionKey = key.buildCopy()
+                              .withNameSuffix(KEY_NAME_SUFFIX_EXCEPTION)
+                              .newKey();
+            configureIncidentTracker(exceptionKey);
         }
 
         logger.info("{} initialized", getClass().getSimpleName());
     }
 
     private void configureIncidentTracker(StatsKey key) {
-        StatsConfig originalConfig = Stats.getConfigManager().getConfig(key);
+        StatsConfig originalConfig = statsFactory.getManager().getConfigManager().getConfig(key);
         // Do we have an incident tracker configured already?
         if (originalConfig != null
                 && IncidentTracker.class
@@ -118,8 +157,9 @@ public class StatsFilter implements Filter {
         }
 
         // If not, configure one based on the (possibly) existing config
-        StatsConfigBuilder newConfigBuilder = Stats.getManager().getConfigBuilderFactory().createConfigBuilder(
-                originalConfig);
+        StatsConfigBuilder newConfigBuilder = statsFactory.getManager()
+                                                          .getConfigBuilderFactory()
+                                                          .createConfigBuilder(originalConfig);
         newConfigBuilder.withTrackerFactory(DefaultIncidentTracker.FACTORY);
         newConfigBuilder.setConfigFor(key);
     }
@@ -141,22 +181,16 @@ public class StatsFilter implements Filter {
 
     @Override
     public void destroy() {
-        key = null;
-        bindParams = null;
-        bindHeaders = null;
-
-        exceptionKey = null;
-
         logger.info("{} destroyed", getClass().getSimpleName());
     }
 
     private SpanTracker getSpanTracker(final ServletRequest request) {
 
         SpanTracker tracker;
-        if (bindParams == null && bindHeaders == null) {
-            tracker = Stats.getSpanTracker(key);
+        if (bindParams == null && bindHeaders == null && requestURIKey == null) {
+            tracker = statsFactory.getSpanTracker(key);
         } else {
-            tracker = Stats.getSpanTracker(getStatsKeys(request));
+            tracker = statsFactory.getSpanTracker(getStatsKeys(request));
         }
 
         return tracker;
@@ -166,6 +200,12 @@ public class StatsFilter implements Filter {
         List<StatsKey> keyList = new LinkedList<StatsKey>();
         keyList.add(key);
 
+        if (requestURIKey != null && request instanceof HttpServletRequest) {
+        	keyList.add(requestURIKey.buildCopy()
+        							 .withAttribute(KEY_ATTR_REQUEST_URI, 
+        									        ((HttpServletRequest)request).getRequestURI())
+        							 .newKey());
+        }
         if (bindParams != null) {
             addParamBoundStatsKeys(request, keyList);
         }
@@ -217,8 +257,34 @@ public class StatsFilter implements Filter {
         }
     }
 
+    protected ServletRequest wrapRequest(final ServletRequest request) {
+        if (request instanceof HttpServletRequest) {
+        	if (requestStreamKey != null) {
+        		StatsHttpServletRequest statsRequest =
+        			new StatsHttpServletRequest((HttpServletRequest)request,
+        										statsFactory,
+        										requestStreamKey);
+        		return statsRequest;
+        	}
+        }
+        return request;
+    }
+
+    protected ServletResponse wrapResponse(final ServletResponse response) {
+        if (response instanceof HttpServletResponse) {
+            if (responseCodeKey != null || responseStreamKey != null) {
+                StatsHttpServletResponse statsResponse = 
+                    new StatsHttpServletResponse((HttpServletResponse)response,
+                                                 statsFactory,
+                                                 responseStreamKey);
+                return statsResponse;
+            }
+        }
+        return response;
+    }
+
     @Override
-    public void doFilter(final ServletRequest request,
+    public void doFilter(ServletRequest request,
                          ServletResponse response,
                          final FilterChain chain)
             throws IOException, ServletException {
@@ -227,23 +293,21 @@ public class StatsFilter implements Filter {
         tracker.track();
 
         try {
-            StatsHttpServletResponse statsResponse = null;
-            if (responseCodeKey != null && response instanceof HttpServletResponse) {
-                statsResponse = new StatsHttpServletResponse((HttpServletResponse)response);
-                response = statsResponse;
-            }
+            request = wrapRequest(request);
+            response = wrapResponse(response);
 
             chain.doFilter(request, response);
 
-            if (statsResponse != null) {
-                Stats.incident(responseCodeKey.buildCopy()
-                                              .withAttribute("code", statsResponse.getStatus())
-                                              .newKey());
+            if (response != null && response.getClass() == StatsHttpServletResponse.class) {
+                StatsHttpServletResponse statsResponse = (StatsHttpServletResponse) response;
+                statsFactory.incident(responseCodeKey.buildCopy()
+                                                     .withAttribute("code", statsResponse.getStatus())
+                                                     .newKey());
             }
 
         } catch (Throwable t) {
             if (exceptionKey != null) {
-                Stats.failure(t, exceptionKey);
+                statsFactory.failure(t, exceptionKey);
             }
 
             if (t instanceof IOException) {
