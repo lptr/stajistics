@@ -14,14 +14,18 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import org.stajistics.Stats;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractConnectionDecorator;
 import org.stajistics.tracker.span.SpanTracker;
-
-import java.sql.*;
 
 /**
  *
@@ -30,6 +34,8 @@ import java.sql.*;
  * @author The Stajistics Project
  */
 public class StatsConnectionWrapper extends AbstractConnectionDecorator {
+
+    private static StatsFactory statsFactory = StatsFactory.forClass(StatsConnectionWrapper.class);
 
     private final StatsJDBCConfig config;
 
@@ -53,11 +59,11 @@ public class StatsConnectionWrapper extends AbstractConnectionDecorator {
         preparedStatementProxyFactory = config.getProxyFactory(PreparedStatement.class);
         statementProxyFactory = config.getProxyFactory(Statement.class);
 
-        StatsKey openClosedKey = Stats.buildKey(Connection.class.getName())
-                                      .withNameSuffix("open")
-                                      .newKey();
+        StatsKey openClosedKey = statsFactory.buildKey(Connection.class.getName())
+                                             .withNameSuffix("open")
+                                             .newKey();
 
-        openClosedTracker = Stats.track(openClosedKey);
+        openClosedTracker = statsFactory.track(openClosedKey);
     }
 
     @Override

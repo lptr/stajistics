@@ -14,15 +14,20 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import org.stajistics.Stats;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.ConnectionEvent;
+import javax.sql.ConnectionEventListener;
+import javax.sql.PooledConnection;
+import javax.sql.StatementEvent;
+import javax.sql.StatementEventListener;
+
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractPooledConnectionDecorator;
 import org.stajistics.tracker.span.SpanTracker;
-
-import javax.sql.*;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  *
@@ -30,6 +35,8 @@ import java.sql.SQLException;
  *
  */
 public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecorator {
+
+    private static StatsFactory statsFactory = StatsFactory.forClass(StatsPooledConnectionWrapper.class);
 
     private final StatsJDBCConfig config;
 
@@ -46,15 +53,15 @@ public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecora
 
         this.config = config;
 
-        StatsKey openClosedKey = Stats.buildKey(PooledConnection.class.getName())
-                                      .withNameSuffix("open")
-                                      .newKey();
+        StatsKey openClosedKey = statsFactory.buildKey(PooledConnection.class.getName())
+                                             .withNameSuffix("open")
+                                             .newKey();
 
-        StatsKey checkInCheckOutKey = Stats.buildKey(PooledConnection.class.getName())
-                                           .withNameSuffix("checkedOut")
-                                           .newKey();
+        StatsKey checkInCheckOutKey = statsFactory.buildKey(PooledConnection.class.getName())
+                                                  .withNameSuffix("checkedOut")
+                                                  .newKey();
 
-        openClosedTracker = Stats.track(openClosedKey);
+        openClosedTracker = statsFactory.track(openClosedKey);
         //checkInCheckOutTracker = null;
     }
 
