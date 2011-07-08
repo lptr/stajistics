@@ -14,7 +14,14 @@
  */
 package org.stajistics.jdbc;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.stajistics.StatsConstants;
 
 
 /**
@@ -93,6 +100,10 @@ public class StatsDataBaseURL {
         return parameterMap;
     }
 
+    public String getNamespace() {
+        return parameterMap.get(Parameters.NAMESPACE.getParameterName());
+    }
+
     private String extractDelegateDriverClassName(final StringBuilder buf) {
         String delegateDriverClassName = removeParameter(buf, Parameters.DELEGATE_DRIVER
                                                                         .getParameterName());
@@ -114,6 +125,10 @@ public class StatsDataBaseURL {
             if (parameterValue != null) {
                 parameterMap.put(parameterName, parameterValue);
             }
+        }
+
+        if (parameterMap.get(Parameters.NAMESPACE.getParameterName()) == null) {
+            parameterMap.put(Parameters.NAMESPACE.getParameterName(), StatsConstants.DEFAULT_NAMESPACE);
         }
 
         return Collections.unmodifiableMap(parameterMap);
@@ -248,6 +263,7 @@ public class StatsDataBaseURL {
     /* NESTED CLASSES */
 
     public enum Parameters {
+        NAMESPACE("namespace"),
         DELEGATE_DRIVER("statsDelegateDriver"),
         KEY_PREFIX("statsKeyPrefix"),
         DRIVER_WRAPPER_ENABLED("statsDriverWrapperEnabled"),

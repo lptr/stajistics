@@ -14,13 +14,6 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import org.stajistics.Stats;
-import org.stajistics.StatsKey;
-import org.stajistics.aop.ProxyFactory;
-import org.stajistics.jdbc.StatsJDBCConfig;
-import org.stajistics.jdbc.decorator.AbstractStatementDecorator;
-import org.stajistics.tracker.span.SpanTracker;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,12 +21,21 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.stajistics.StatsFactory;
+import org.stajistics.StatsKey;
+import org.stajistics.aop.ProxyFactory;
+import org.stajistics.jdbc.StatsJDBCConfig;
+import org.stajistics.jdbc.decorator.AbstractStatementDecorator;
+import org.stajistics.tracker.span.SpanTracker;
+
 /**
  *
  * @author The Stajistics Project
  *
  */
 public class StatsStatementWrapper extends AbstractStatementDecorator {
+
+    private static StatsFactory statsFactory = StatsFactory.forClass(StatsStatementWrapper.class);
 
     private final StatsJDBCConfig config;
 
@@ -63,11 +65,11 @@ public class StatsStatementWrapper extends AbstractStatementDecorator {
 
         this.resultSetProxyFactory = config.getProxyFactory(ResultSet.class);
 
-        StatsKey openClosedKey = Stats.buildKey(Statement.class.getName())
-                                      .withNameSuffix("open")
-                                      .newKey();
+        StatsKey openClosedKey = statsFactory.buildKey(Statement.class.getName())
+                                             .withNameSuffix("open")
+                                             .newKey();
 
-        openClosedTracker = Stats.track(openClosedKey);
+        openClosedTracker = statsFactory.track(openClosedKey);
     }
 
     private void handleSQL(final String sql) {

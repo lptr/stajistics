@@ -14,7 +14,7 @@
  */
 package org.stajistics.jdbc;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.StatsManager;
 import org.stajistics.aop.ProxyFactory;
@@ -27,11 +27,11 @@ import org.stajistics.aop.StatsProxy;
  */
 public class DefaultJDBCProxyFactory<T> implements ProxyFactory<T> {
 
-    private final StatsManager manager;
+    private final StatsFactory factory;
     private final Class<T> proxyClass;
     private final StatsKey proxyKey;
 
-    public DefaultJDBCProxyFactory(final StatsManager manager,
+    public DefaultJDBCProxyFactory(final StatsFactory factory,
                                    final Class<T> proxyClass,
                                    final StatsKey proxyKey) {
         if (proxyKey == null) {
@@ -41,10 +41,10 @@ public class DefaultJDBCProxyFactory<T> implements ProxyFactory<T> {
             throw new NullPointerException("proxyClass");
         }
 
-        if (manager == null) {
-            this.manager = Stats.getManager();
+        if (factory == null) {
+            this.factory = StatsFactory.forClass(getClass());
         } else {
-            this.manager = manager;
+            this.factory = factory;
         }
 
         this.proxyClass = proxyClass;
@@ -56,22 +56,20 @@ public class DefaultJDBCProxyFactory<T> implements ProxyFactory<T> {
             throw new NullPointerException("proxyClass");
         }
 
-        StatsManager manager = Stats.getManager();
-        StatsKey key = manager.getKeyFactory()
-                              .createKeyBuilder(proxyClass.getName())
+        StatsFactory factory = StatsFactory.forClass(DefaultJDBCProxyFactory.class);
+        StatsKey key = factory.buildKey(proxyClass.getName())
                               .withNameSuffix("proxy")
                               .newKey();
 
-        DefaultJDBCProxyFactory<T> factory = new DefaultJDBCProxyFactory<T>(manager,
-                                                                            proxyClass,
-                                                                            key);
+        DefaultJDBCProxyFactory<T> proxyFactory = 
+            new DefaultJDBCProxyFactory<T>(factory, proxyClass, key);
 
-        return factory;
+        return proxyFactory;
     }
 
     @Override
     public T createProxy(final T instance) {
-        return StatsProxy.wrap(manager, 
+        return StatsProxy.wrap(factory, 
                                proxyKey, 
                                instance, 
                                proxyClass);

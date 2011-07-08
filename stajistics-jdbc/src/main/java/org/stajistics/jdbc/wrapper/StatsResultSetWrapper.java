@@ -14,14 +14,14 @@
  */
 package org.stajistics.jdbc.wrapper;
 
-import org.stajistics.Stats;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.jdbc.StatsJDBCConfig;
 import org.stajistics.jdbc.decorator.AbstractResultSetDecorator;
 import org.stajistics.tracker.span.SpanTracker;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  *
@@ -30,6 +30,8 @@ import java.sql.SQLException;
  */
 public class StatsResultSetWrapper extends AbstractResultSetDecorator {
 
+    private static StatsFactory statsFactory = StatsFactory.forClass(StatsResultSetWrapper.class);
+    
     private final StatsJDBCConfig config;
 
     private final SpanTracker openClosedTracker;
@@ -44,11 +46,11 @@ public class StatsResultSetWrapper extends AbstractResultSetDecorator {
 
         this.config = config;
 
-        StatsKey openClosedKey = Stats.buildKey(ResultSet.class.getName())
-                                      .withNameSuffix("open")
-                                      .newKey();
+        StatsKey openClosedKey = statsFactory.buildKey(ResultSet.class.getName())
+                                             .withNameSuffix("open")
+                                             .newKey();
 
-        openClosedTracker = Stats.track(openClosedKey);
+        openClosedTracker = statsFactory.track(openClosedKey);
     }
 
     @Override
