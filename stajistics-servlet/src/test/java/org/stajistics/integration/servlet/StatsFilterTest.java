@@ -14,17 +14,19 @@
  */
 package org.stajistics.integration.servlet;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.stajistics.Stats;
+import org.stajistics.StatsConstants;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
+import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 import org.stajistics.session.StatsSession;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -37,6 +39,7 @@ public class StatsFilterTest {
     private MockFilterChain chain;
     private MockFilterConfig config;
 
+    private StatsFactory statsFactory;
     private StatsFilter statsFilter;
 
     @Before
@@ -45,6 +48,8 @@ public class StatsFilterTest {
         chain = new MockFilterChain();
         config = new MockFilterConfig();
 
+        statsFactory = new StatsFactory(new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE));
+
         statsFilter = new StatsFilter();
     }
 
@@ -52,13 +57,13 @@ public class StatsFilterTest {
     public void testHit() throws Exception {
         req = new MockHttpServletRequest("GET", "/");
 
-        StatsKey key = Stats.newKey("test");
+        StatsKey key = statsFactory.newKey("test");
 
         config.addInitParameter(StatsFilter.INIT_PARAM_KEY_NAME, key.getName());
         statsFilter.init(config);
         statsFilter.doFilter(req, res, chain);
 
-        StatsSession session = Stats.getSessionManager().getSession(key);
+        StatsSession session = statsFactory.getManager().getSessionManager().getSession(key);
 
         assertEquals(1, session.getHits());
         assertEquals(1, session.getCommits());
@@ -69,7 +74,7 @@ public class StatsFilterTest {
         req = new MockHttpServletRequest("GET", "/");
         req.addParameter("testParam", "true");
 
-        StatsKey key = Stats.newKey("test");
+        StatsKey key = statsFactory.newKey("test");
         StatsKey paramKey = key.buildCopy()
                                .withAttribute(StatsFilter.KEY_ATTR_BINDING, StatsFilter.KEY_ATTR_BINDING_PARAM)
                                .withAttribute("testParam", "true")
@@ -80,12 +85,12 @@ public class StatsFilterTest {
         statsFilter.init(config);
         statsFilter.doFilter(req, res, chain);
 
-        StatsSession session = Stats.getSessionManager().getSession(key);
+        StatsSession session = statsFactory.getManager().getSessionManager().getSession(key);
 
         assertEquals(1, session.getHits());
         assertEquals(1, session.getCommits());
 
-        StatsSession paramSession = Stats.getSessionManager().getSession(paramKey);
+        StatsSession paramSession = statsFactory.getManager().getSessionManager().getSession(paramKey);
 
         assertEquals(1, paramSession.getHits());
         assertEquals(1, paramSession.getCommits());
@@ -96,7 +101,7 @@ public class StatsFilterTest {
         req = new MockHttpServletRequest("GET", "/");
         req.addHeader("testHeader", "true");
 
-        StatsKey key = Stats.newKey("test");
+        StatsKey key = statsFactory.newKey("test");
         StatsKey headerKey = key.buildCopy()
                                 .withAttribute(StatsFilter.KEY_ATTR_BINDING, StatsFilter.KEY_ATTR_BINDING_HEADER)
                                 .withAttribute("testHeader", "true")
@@ -107,12 +112,12 @@ public class StatsFilterTest {
         statsFilter.init(config);
         statsFilter.doFilter(req, res, chain);
 
-        StatsSession session = Stats.getSessionManager().getSession(key);
+        StatsSession session = statsFactory.getManager().getSessionManager().getSession(key);
 
         assertEquals(1, session.getHits());
         assertEquals(1, session.getCommits());
 
-        StatsSession headerSession = Stats.getSessionManager().getSession(headerKey);
+        StatsSession headerSession = statsFactory.getManager().getSessionManager().getSession(headerKey);
 
         assertEquals(1, headerSession.getHits());
         assertEquals(1, headerSession.getCommits());

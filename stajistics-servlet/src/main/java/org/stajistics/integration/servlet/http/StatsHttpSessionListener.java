@@ -14,15 +14,16 @@
  */
 package org.stajistics.integration.servlet.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.stajistics.Stats;
-import org.stajistics.StatsKey;
-import org.stajistics.tracker.span.SpanTracker;
-
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.stajistics.StatsFactory;
+import org.stajistics.StatsKey;
+import org.stajistics.tracker.span.SpanTracker;
 
 /**
  *
@@ -32,27 +33,38 @@ public class StatsHttpSessionListener implements HttpSessionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(StatsHttpSessionListener.class);
 
+    private static final String INIT_PARAM_NAMESPACE = StatsHttpSessionListener.class.getSimpleName() + ".namespace";
+    private static final String INIT_PARAM_KEY_NAME = StatsHttpSessionListener.class.getSimpleName() + ".keyName";
+
     private static final String ATTR_TRACKER = StatsHttpSessionListener.class.getName() + "_tracker";
 
-    private final StatsKey key;
-
-    public StatsHttpSessionListener() {
-        key = Stats.newKey(getClass().getSimpleName());
-    }
+    private final StatsFactory statsFactory = StatsFactory.forClass(StatsHttpSessionListener.class);
 
     @Override
     public void sessionCreated(final HttpSessionEvent event) {
 
-        HttpSession session = event.getSession();
+        final HttpSession session = event.getSession();
+        final ServletContext servletContext = session.getServletContext();
+        final String servletContextName = servletContext.getServletContextName();
 
-        String servletContextName = session.getServletContext()
-                                           .getServletContextName();
+        StatsFactory f = statsFactory;
 
+        String namespace = session.getServletContext().getInitParameter(INIT_PARAM_NAMESPACE);
+        if (namespace != null) {
+        	f = StatsFactory.forNamespace(namespace);
+        }
+
+        String keyName = servletContext.getInitParameter(INIT_PARAM_KEY_NAME);
+        if (keyName == null) {
+        	keyName = getClass().getSimpleName();
+        }
+
+        StatsKey key = f.newKey(keyName);
         StatsKey ctxKey = key.buildCopy()
                              .withAttribute("servletContext", servletContextName)
                              .newKey();
 
-        SpanTracker tracker = Stats.track(key, ctxKey);
+        SpanTracker tracker = statsFactory.track(key, ctxKey);
 
         event.getSession()
              .setAttribute(ATTR_TRACKER, tracker);
