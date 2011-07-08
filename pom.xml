@@ -423,17 +423,17 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>nexus</id>
-      <url>http://nexus.tis.local/nexus/content/repositories/stajistics-hosted-snapshots</url>
+      <id>sonatype-snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
     <repository>
-      <id>nexus</id>
-      <url>http://nexus.tis.local/nexus/content/repositories/stajistics-hosted-releases</url>
+      <id>sonatype-releases</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
     <site>
-      <id>maven-reports</id>
-      <url>scp://vm-buildsvc.tis.local/var/www/maven-sites/</url>
+      <id>stajistics.org</id>
+      <url>scp://stajistics.org/home/troyk/stajistics.org/</url>
     </site>
   </distributionManagement>
 
