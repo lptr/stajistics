@@ -14,7 +14,7 @@
  */
 package org.stajistics.examples.basic;
 
-import org.stajistics.Stats;
+import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.span.SpanTracker;
 
@@ -27,20 +27,22 @@ import org.stajistics.tracker.span.SpanTracker;
  */
 public class MethodTimeDuration implements Runnable {
 
+    private static StatsFactory statsFactory = StatsFactory.forClass(MethodTimeDuration.class);
+
     public void run() {
 
-        StatsKey key = Stats.newKey("myMethod");
+        StatsKey key = statsFactory.newKey("myMethod");
 
         for (int i = 0; i < 20; i++) {
 
-            SpanTracker tracker = Stats.track(key);
+            SpanTracker tracker = statsFactory.track(key);
 
             myMethod();
 
             tracker.commit();
         }
 
-        System.out.println(Stats.getSessionManager().getSession(key));
+        System.out.println(statsFactory.getManager().getSessionManager().getSession(key));
     }
 
     private void myMethod() {
