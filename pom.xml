@@ -8,6 +8,12 @@
   <description>A Java monitoring and performance statistics collection API</description>
   <url>http://stajistics.org</url>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <issueManagement>
     <system>Google Code Issue Tracker</system>
     <url>http://code.google.com/p/stajistics/issues/list</url>
@@ -233,6 +239,7 @@
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
+            <mavenExecutorId>forked-path</mavenExecutorId>
           </configuration>
         </plugin>
         <plugin>
@@ -378,6 +385,27 @@
         </plugins>
       </reporting>
     </profile>
+    <profile>
+      <id>sign-artifacts</id>
+      <build>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-gpg-plugin</artifactId>
+	        <version>1.1</version>
+	        <executions>
+	          <execution>
+	            <id>sign-artifacts</id>
+	            <phase>verify</phase>
+	            <goals>
+	              <goal>sign</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+	      </plugin>
+	    </plugins>
+	  </build>
+    </profile>
   </profiles>
 
   <modules>
@@ -449,12 +477,12 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>sonatype-snapshots</id>
+      <id>sonatype-nexus-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
     <repository>
-      <id>sonatype-releases</id>
+      <id>sonatype-nexus-staging</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
     </repository>
     <site>
