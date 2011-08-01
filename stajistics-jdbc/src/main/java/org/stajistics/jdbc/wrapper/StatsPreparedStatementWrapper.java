@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
@@ -36,7 +37,7 @@ import org.stajistics.tracker.span.SpanTracker;
  */
 public class StatsPreparedStatementWrapper extends AbstractPreparedStatementDecorator {
 
-    private static StatsFactory statsFactory = StatsFactory.forClass(StatsPreparedStatementWrapper.class);
+    private static StatsFactory statsFactory = Stats.getFactory(StatsPreparedStatementWrapper.class);
 
     private final Connection connection;
     private final String sql;

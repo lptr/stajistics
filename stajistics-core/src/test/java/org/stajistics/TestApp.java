@@ -11,7 +11,7 @@ public class TestApp {
 
     public static void main(String[] args) throws Exception {
 
-        StatsFactory statsFactory = StatsFactory.forClass(TestApp.class);
+        StatsFactory statsFactory = Stats.getFactory(TestApp.class);
 
         StatsKey key = statsFactory.newKey("Test1");
 

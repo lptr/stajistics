@@ -14,9 +14,9 @@
  */
 package org.stajistics.jdbc;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
 import org.stajistics.aop.ProxyFactory;
 import org.stajistics.aop.StatsProxy;
 
@@ -42,7 +42,7 @@ public class DefaultJDBCProxyFactory<T> implements ProxyFactory<T> {
         }
 
         if (factory == null) {
-            this.factory = StatsFactory.forClass(getClass());
+            this.factory = Stats.getFactory(getClass());
         } else {
             this.factory = factory;
         }
@@ -56,7 +56,7 @@ public class DefaultJDBCProxyFactory<T> implements ProxyFactory<T> {
             throw new NullPointerException("proxyClass");
         }
 
-        StatsFactory factory = StatsFactory.forClass(DefaultJDBCProxyFactory.class);
+        StatsFactory factory = Stats.getFactory(DefaultJDBCProxyFactory.class);
         StatsKey key = factory.buildKey(proxyClass.getName())
                               .withNameSuffix("proxy")
                               .newKey();

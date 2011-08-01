@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.configuration.StatsConfig;
@@ -86,9 +87,9 @@ public class StatsFilter implements Filter {
 
         String namespace = config.getInitParameter(INIT_PARAM_NAMESPACE);
         if (namespace != null) {
-        	statsFactory = StatsFactory.forNamespace(namespace);
+        	statsFactory = Stats.getFactory(namespace);
         } else {
-        	statsFactory = StatsFactory.forClass(StatsFilter.class);
+        	statsFactory = Stats.getFactory(StatsFilter.class);
         }
 
         String keyName = config.getInitParameter(INIT_PARAM_KEY_NAME);

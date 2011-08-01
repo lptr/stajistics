@@ -6,6 +6,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsConstants;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
@@ -29,7 +30,7 @@ public class StatsFilterInputStream extends FilterInputStream {
         super(in);
 
         if (factory == null) {
-            factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+            factory = Stats.getFactory(StatsConstants.DEFAULT_NAMESPACE);
         }
 
         assertNotNull(key, "key");

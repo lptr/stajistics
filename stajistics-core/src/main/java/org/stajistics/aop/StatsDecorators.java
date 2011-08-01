@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsConstants;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
@@ -43,7 +44,7 @@ public class StatsDecorators {
 
     public StatsDecorators(final StatsFactory factory) {
         if (factory == null) {
-            this.factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+            this.factory = Stats.getFactory(StatsConstants.DEFAULT_NAMESPACE);
         } else {
             this.factory = factory;
         }

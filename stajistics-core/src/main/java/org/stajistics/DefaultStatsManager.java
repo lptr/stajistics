@@ -28,10 +28,6 @@ import org.stajistics.event.SynchronousEventManager;
 import org.stajistics.session.DefaultSessionManager;
 import org.stajistics.session.StatsSessionManager;
 import org.stajistics.task.TaskService;
-import org.stajistics.task.ThreadPoolTaskService;
-import org.stajistics.tracker.DefaultTrackerLocator;
-import org.stajistics.tracker.NullTrackerLocator;
-import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.util.ServiceLifeCycle;
 
 /**
@@ -49,7 +45,6 @@ public class DefaultStatsManager implements StatsManager {
     protected final StatsConfigManager configManager;
     protected final StatsSessionManager sessionManager;
     protected final EventManager eventManager;
-    protected final TrackerLocator trackerLocator;
     protected final StatsKeyFactory keyFactory;
     protected final StatsConfigBuilderFactory configBuilderFactory;
 
@@ -71,13 +66,11 @@ public class DefaultStatsManager implements StatsManager {
                                final StatsConfigManager configManager,
                                final StatsSessionManager sessionManager,
                                final EventManager eventManager,
-                               final TrackerLocator trackerLocator,
                                final StatsKeyFactory keyFactory,
                                final StatsConfigBuilderFactory configBuilderFactory) {
         assertNotNull(configManager, "configManager");
         assertNotNull(sessionManager, "sessionManager");
         assertNotNull(eventManager, "eventManager");
-        assertNotNull(trackerLocator, "trackerLocator");
         assertNotNull(keyFactory, "keyFactory");
         assertNotNull(configBuilderFactory, "configBuilderFactory");
 
@@ -90,7 +83,6 @@ public class DefaultStatsManager implements StatsManager {
         this.keyFactory = keyFactory;
         this.configManager = configManager;
         this.sessionManager = sessionManager;
-        this.trackerLocator = trackerLocator;
         this.eventManager = eventManager;
         this.configBuilderFactory = configBuilderFactory;
     }
@@ -169,15 +161,6 @@ public class DefaultStatsManager implements StatsManager {
     }
 
     @Override
-    public TrackerLocator getTrackerLocator() {
-        if (!enabled) {
-            return NullTrackerLocator.getInstance();
-        }
-
-        return trackerLocator;
-    }
-
-    @Override
     public StatsKeyFactory getKeyFactory() {
         return keyFactory;
     }
@@ -219,7 +202,6 @@ public class DefaultStatsManager implements StatsManager {
         protected StatsConfigManager configManager = null;
         protected StatsSessionManager sessionManager = null;
         protected EventManager eventManager = null;
-        protected TrackerLocator trackerLocator = null;
         protected StatsKeyFactory keyFactory = null;
         protected StatsConfigBuilderFactory configBuilderFactory = null;
         protected boolean enabled = true;
@@ -245,12 +227,6 @@ public class DefaultStatsManager implements StatsManager {
         public Builder withEventManager(final EventManager eventManager) {
             assertNotNull(eventManager, "eventManager");
             this.eventManager = eventManager;
-            return this;
-        }
-
-        public Builder withTrackerLocator(final TrackerLocator trackerLocator) {
-            assertNotNull(trackerLocator, "trackerLocator");
-            this.trackerLocator = trackerLocator;
             return this;
         }
 
@@ -283,7 +259,6 @@ public class DefaultStatsManager implements StatsManager {
             EventManager eventManager = this.eventManager;
             StatsConfigManager configManager = this.configManager;
             StatsSessionManager sessionManager = this.sessionManager;
-            TrackerLocator trackerLocator = this.trackerLocator;
             StatsConfigBuilderFactory configBuilderFactory = this.configBuilderFactory;
 
             if (keyFactory == null) {
@@ -301,10 +276,6 @@ public class DefaultStatsManager implements StatsManager {
                 sessionManager = new DefaultSessionManager(configManager, eventManager);
             }
 
-            if (trackerLocator == null) {
-                trackerLocator = new DefaultTrackerLocator(configManager, sessionManager);
-            }
-
             if (configBuilderFactory == null) {
                 configBuilderFactory = new DefaultStatsConfigBuilderFactory(configManager);
             }
@@ -313,7 +284,6 @@ public class DefaultStatsManager implements StatsManager {
                                                                   configManager,
                                                                   sessionManager,
                                                                   eventManager,
-                                                                  trackerLocator,
                                                                   keyFactory,
                                                                   configBuilderFactory);
 

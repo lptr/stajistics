@@ -29,7 +29,7 @@ public class Issue32Test extends AbstractStajisticsTestCase {
     @Test
     public void testIndividualConfigAttributesAreNotInheritedFromParentConfigs() {
         StatsManager statsManager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
-        StatsFactory factory = new StatsFactory(statsManager);
+        StatsFactory factory = new DefaultStatsFactory(statsManager);
         
         StatsConfig defaultRootConfig = statsManager.getConfigManager()
                                                     .getRootConfig();

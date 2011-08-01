@@ -20,8 +20,6 @@ import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
 import org.stajistics.session.StatsSessionManager;
-import org.stajistics.task.TaskService;
-import org.stajistics.tracker.TrackerLocator;
 import org.stajistics.util.ServiceLifeCycle;
 
 /**
@@ -59,13 +57,6 @@ public interface StatsManager extends Serializable,ServiceLifeCycle {
      * @return The {@link EventManager}, never <tt>null</tt>.
      */
     EventManager getEventManager();
-
-    /**
-     * Get the {@link TrackerLocator}.
-     *
-     * @return The {@link TrackerLocator}, never <tt>null</tt>.
-     */
-    TrackerLocator getTrackerLocator();
 
     /**
      * Get the {@link StatsKeyFactory}.

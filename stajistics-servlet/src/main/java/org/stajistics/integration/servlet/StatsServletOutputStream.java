@@ -3,10 +3,10 @@ package org.stajistics.integration.servlet;
 import static org.stajistics.Util.assertNotNull;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.servlet.ServletOutputStream;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsConstants;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
@@ -34,7 +34,7 @@ public class StatsServletOutputStream extends ServletOutputStream {
         super();
 
         if (factory == null) {
-            factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+            factory = Stats.getFactory(StatsConstants.DEFAULT_NAMESPACE);
         }
 
         assertNotNull(out, "out");

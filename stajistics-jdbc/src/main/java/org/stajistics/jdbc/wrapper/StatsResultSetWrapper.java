@@ -17,6 +17,7 @@ package org.stajistics.jdbc.wrapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.jdbc.StatsJDBCConfig;
@@ -30,7 +31,7 @@ import org.stajistics.tracker.span.SpanTracker;
  */
 public class StatsResultSetWrapper extends AbstractResultSetDecorator {
 
-    private static StatsFactory statsFactory = StatsFactory.forClass(StatsResultSetWrapper.class);
+    private static StatsFactory statsFactory = Stats.getFactory(StatsResultSetWrapper.class);
     
     private final StatsJDBCConfig config;
 

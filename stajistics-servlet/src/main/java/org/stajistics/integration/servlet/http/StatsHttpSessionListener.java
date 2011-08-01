@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.stajistics.Stats;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.span.SpanTracker;
@@ -38,7 +39,7 @@ public class StatsHttpSessionListener implements HttpSessionListener {
 
     private static final String ATTR_TRACKER = StatsHttpSessionListener.class.getName() + "_tracker";
 
-    private final StatsFactory statsFactory = StatsFactory.forClass(StatsHttpSessionListener.class);
+    private final StatsFactory statsFactory = Stats.getFactory(StatsHttpSessionListener.class);
 
     @Override
     public void sessionCreated(final HttpSessionEvent event) {
@@ -51,7 +52,7 @@ public class StatsHttpSessionListener implements HttpSessionListener {
 
         String namespace = session.getServletContext().getInitParameter(INIT_PARAM_NAMESPACE);
         if (namespace != null) {
-        	f = StatsFactory.forNamespace(namespace);
+        	f = Stats.getFactory(namespace);
         }
 
         String keyName = servletContext.getInitParameter(INIT_PARAM_KEY_NAME);

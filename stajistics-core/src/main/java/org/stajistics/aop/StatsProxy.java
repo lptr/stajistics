@@ -21,9 +21,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsConstants;
-import org.stajistics.StatsKey;
 import org.stajistics.StatsFactory;
+import org.stajistics.StatsKey;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
@@ -54,7 +55,7 @@ public class StatsProxy implements InvocationHandler {
                          final StatsKey key,
                          final Object target) {
         if (factory == null) {
-            this.factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+            this.factory = Stats.getFactory(StatsConstants.DEFAULT_NAMESPACE);
         } else {
             this.factory = factory;
         }
@@ -151,6 +152,11 @@ public class StatsProxy implements InvocationHandler {
     public Object invoke(final Object proxy,
                          final Method method,
                          final Object[] args) throws Throwable {
+        // Handle equals specially
+        if (method.equals(EQUALS_METHOD)) {
+            return target.equals(unwrap(args[0]));
+        }
+
         StatsKey methodKey = key.buildCopy()
                                 .withAttribute(ATTR_METHOD, getMethodString(method))
                                 .newKey();
@@ -158,10 +164,6 @@ public class StatsProxy implements InvocationHandler {
         try {
             final SpanTracker tracker = factory.track(methodKey);
             try {
-                if (method.equals(EQUALS_METHOD)) {
-                    return target.equals(unwrap(args[0]));
-                }
-
                 return method.invoke(target, args);
 
             } finally {

@@ -25,16 +25,10 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.StatsConstants;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsKeyUtil;
-import org.stajistics.StatsManager;
-import org.stajistics.bootstrap.DefaultStatsManagerFactory;
-import org.stajistics.session.StatsSessionManager;
-import org.stajistics.tracker.Tracker;
-import org.stajistics.tracker.TrackerFactory;
-import org.stajistics.tracker.incident.IncidentTracker;
+import org.stajistics.StatsKeyBuilder;
+import org.stajistics.TestUtil;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
@@ -54,22 +48,44 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
 
     private StatsFactory mockFactory;
     private StatsKey mockKey;
+    private StatsKeyBuilder mockKeyBuilder;
     private Service mockService;
-    
-    private StatsManager statsManager;
 
     @Before
     public void setUp() {
-        // TODO: this should be _actually_ mocked
-        statsManager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
-        mockFactory = new StatsFactory(statsManager);
-        mockKey = statsManager.getKeyFactory().createKey("test");
+        mockKey = mockery.mock(StatsKey.class, "key1");
+        TestUtil.buildStatsKeyExpectations(mockery, mockKey, "key1");
+        mockKeyBuilder = mockery.mock(StatsKeyBuilder.class);
+
+        mockFactory = mockery.mock(StatsFactory.class);
+
         mockService = mockery.mock(Service.class);
+    }
+
+    private StatsKey expectKeyForMethod(final String methodName) {
+        final StatsKey mockKey2 = mockery.mock(StatsKey.class, "key2");
+        TestUtil.buildStatsKeyExpectations(mockery, mockKey2, "key2");
+
+        mockery.checking(new Expectations() {{
+            allowing(mockKey).buildCopy();
+            will(returnValue(mockKeyBuilder));
+
+            one(mockKeyBuilder).withAttribute("method", methodName);
+            will(returnValue(mockKeyBuilder));
+            
+            one(mockKeyBuilder).newKey();
+            will(returnValue(mockKey2));
+        }});
+
+        return mockKey2;
     }
 
     @Test
     public void testMethodDelegation() {
+        final StatsKey mockKey2 = expectKeyForMethod("query");
+
         mockery.checking(new Expectations() {{
+            one(mockFactory).track(mockKey2);
             one(mockService).query();
         }});
 
@@ -101,40 +117,19 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
         assertInstanceOf(Service2.class, serviceImpl);
     }
 
-    @SuppressWarnings("serial")
     @Test
     public void testTrackMethodCall() {
-
-        StatsKey methodKey = mockKey.buildCopy()
-                                .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
-                                .newKey();
+        final StatsKey mockKey2 = expectKeyForMethod(StatsProxy.getMethodString(SERVICE_QUERY_METHOD));
 
         final SpanTracker mockTracker = mockery.mock(SpanTracker.class);
 
         mockery.checking(new Expectations() {{
-            one(mockTracker).track(); will(returnValue(mockTracker));
-            one(mockTracker).commit();
-        }});
+            one(mockFactory).track(mockKey2);
+            will(returnValue(mockTracker));
 
-        statsManager.getConfigBuilderFactory()
-                    .createConfigBuilder()
-                    .withTrackerFactory(new TrackerFactory<Tracker>() {
-            @Override
-            public Tracker createTracker(final StatsKey key,
-                                         final StatsSessionManager sessionManager) {
-
-                return mockTracker;
-            }
-
-            @Override
-            public Class<Tracker> getTrackerType() {
-                return Tracker.class;
-            }
-         })
-         .setConfigFor(methodKey);
-
-        mockery.checking(new Expectations() {{
             one(mockService).query();
+
+            one(mockTracker).commit();
         }});
 
         Service serviceProxy = StatsProxy.wrap(mockFactory, mockKey, mockService);
@@ -142,56 +137,23 @@ public class StatsProxyTest extends AbstractStajisticsTestCase {
         serviceProxy.query();
     }
 
-    @SuppressWarnings("serial")
     @Test
     public void testTrackExceptionIncident() {
-
-        final StatsKey methodKey = mockKey.buildCopy()
-                                          .withAttribute("method", StatsProxy.getMethodString(SERVICE_QUERY_METHOD))
-                                          .newKey();
-        final StatsKey exceptionKey = StatsKeyUtil.keyForFailure(methodKey,
-                                                                  new IllegalStateException());
-
+        final StatsKey mockKey2 = expectKeyForMethod(StatsProxy.getMethodString(SERVICE_QUERY_METHOD));
         final SpanTracker methodTracker = mockery.mock(SpanTracker.class, "methodTracker");
-        final IncidentTracker exceptionTracker = mockery.mock(IncidentTracker.class, "exceptionTracker");
-
-        mockery.checking(new Expectations() {{
-            one(methodTracker).track();
-            will(returnValue(methodTracker));
-            one(exceptionTracker).incident();
-            will(returnValue(exceptionTracker));
-            one(methodTracker).commit();
-        }});
-
-        statsManager.getConfigBuilderFactory()
-                    .createConfigBuilder()
-                    .withTrackerFactory(new TrackerFactory<Tracker>() {
-            @Override
-            public Tracker createTracker(final StatsKey key,
-                                         final StatsSessionManager sessionManager) {
-                if (key.equals(methodKey)) {
-                    return methodTracker;
-                }
-
-                if (key.equals(exceptionKey)) {
-                    return exceptionTracker;
-                }
-
-                throw new Error("key is neither the methodKey nor the exceptionKey");
-            }
-
-            @Override
-            public Class<Tracker> getTrackerType() {
-                return Tracker.class;
-            }
-        })
-        .setConfigFor(methodKey);
 
         final IllegalStateException exception = new IllegalStateException();
 
         mockery.checking(new Expectations() {{
+            one(mockFactory).track(mockKey2);
+            will(returnValue(methodTracker));
+
             one(mockService).query();
             will(throwException(exception));
+
+            one(methodTracker).commit();
+
+            one(mockFactory).failure(exception, mockKey2);
         }});
 
         Service serviceProxy = StatsProxy.wrap(mockFactory, mockKey, mockService);

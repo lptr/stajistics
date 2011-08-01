@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsConstants;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
@@ -30,7 +31,7 @@ public class StatsFilterReader extends FilterReader {
         super(in);
 
         if (factory == null) {
-            factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+            factory = Stats.getFactory(StatsConstants.DEFAULT_NAMESPACE);
         }
 
         assertNotNull(key, "key");

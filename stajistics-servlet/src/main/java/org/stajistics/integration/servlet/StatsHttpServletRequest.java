@@ -4,7 +4,6 @@ import static org.stajistics.Util.assertNotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
