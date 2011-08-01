@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.aop.ProxyFactory;
@@ -35,7 +36,7 @@ import org.stajistics.tracker.span.SpanTracker;
  */
 public class StatsConnectionWrapper extends AbstractConnectionDecorator {
 
-    private static StatsFactory statsFactory = StatsFactory.forClass(StatsConnectionWrapper.class);
+    private static StatsFactory statsFactory = Stats.getFactory(StatsConnectionWrapper.class);
 
     private final StatsJDBCConfig config;
 

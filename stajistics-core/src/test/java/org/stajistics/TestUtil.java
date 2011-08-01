@@ -18,14 +18,15 @@ import java.util.Collections;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.stajistics.bootstrap.DefaultStatsManagerFactory;
+import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilderFactory;
 import org.stajistics.configuration.StatsConfigManager;
 import org.stajistics.event.EventManager;
+import org.stajistics.session.StatsSessionFactory;
 import org.stajistics.session.StatsSessionManager;
+import org.stajistics.session.recorder.DataRecorderFactory;
 import org.stajistics.tracker.Tracker;
-import org.stajistics.tracker.TrackerLocator;
-import org.stajistics.tracker.manual.ManualTracker;
+import org.stajistics.tracker.TrackerFactory;
 
 /**
  *
@@ -67,9 +68,44 @@ public abstract class TestUtil {
         }});
     }
 
+    public static void buildStatsConfigExpectations(final Mockery mockery,
+                                                    final StatsKey mockKey,
+                                                    final StatsConfig mockConfig) {
+        buildStatsConfigExpectations(mockery, mockKey, mockConfig, true, "ms.", null);
+    }
+
+    public static void buildStatsConfigExpectations(final Mockery mockery,
+                                                    final StatsKey mockKey,
+                                                    final StatsConfig mockConfig,
+                                                    final boolean enabled,
+                                                    final String unit,
+                                                    final String description) {
+        final TrackerFactory<?> mockTrackerFactory = mockery.mock(TrackerFactory.class, "trackerFactory_" + mockKey.getName());
+        final StatsSessionFactory mockSessionFactory = mockery.mock(StatsSessionFactory.class, "sessionFactory_" + mockKey.getName());
+        final DataRecorderFactory mockDataRecorderFactory = mockery.mock(DataRecorderFactory.class, "dataRecorderFactory_" + mockKey.getName());
+
+        mockery.checking(new Expectations() {{
+            allowing(mockConfig).isEnabled();
+            will(returnValue(enabled));
+
+            allowing(mockConfig).getUnit();
+            will(returnValue(unit));
+
+            allowing(mockConfig).getTrackerFactory();
+            will(returnValue(mockTrackerFactory));
+
+            allowing(mockConfig).getSessionFactory();
+            will(returnValue(mockSessionFactory));
+
+            allowing(mockConfig).getDataRecorderFactory();
+            will(returnValue(mockDataRecorderFactory));
+
+            allowing(mockConfig).getDescription();
+            will(returnValue(description));
+        }});
+    }
+
     /**
-     * TODO: this needs more work to be useful
-     *
      * @param mockery
      * @param mockKey
      * @return
@@ -81,25 +117,61 @@ public abstract class TestUtil {
         final StatsConfigManager mockConfigManager = mockery.mock(StatsConfigManager.class);
         final EventManager mockEventManager = mockery.mock(EventManager.class);
         final StatsSessionManager mockSessionManager = mockery.mock(StatsSessionManager.class);
-        final TrackerLocator mockTrackerLocator = mockery.mock(TrackerLocator.class);
         final StatsKeyFactory mockKeyFactory = mockery.mock(StatsKeyFactory.class);
         final StatsConfigBuilderFactory mockConfigBuilderFactory = mockery.mock(StatsConfigBuilderFactory.class);
 
-        final Tracker mockTracker = mockery.mock(Tracker.class);
-        final ManualTracker mockManualTracker = mockery.mock(ManualTracker.class);
-
         mockery.checking(new Expectations() {{
-            allowing(mockManager).getConfigBuilderFactory(); will(returnValue(mockConfigBuilderFactory));
-            allowing(mockManager).getConfigManager(); will(returnValue(mockConfigManager));
-            allowing(mockManager).getEventManager(); will(returnValue(mockEventManager));
-            allowing(mockManager).getKeyFactory(); will(returnValue(mockKeyFactory));
-            allowing(mockManager).getSessionManager(); will(returnValue(mockSessionManager));
-            allowing(mockManager).getTrackerLocator(); will(returnValue(mockTrackerLocator));
+            allowing(mockManager).isEnabled();
+            will(returnValue(true));
 
-            allowing(mockTrackerLocator).getTracker(with(mockKey)); will(returnValue(mockTracker));
-            allowing(mockTrackerLocator).getManualTracker(with(mockKey)); will(returnValue(mockManualTracker));
+            allowing(mockManager).getConfigBuilderFactory();
+            will(returnValue(mockConfigBuilderFactory));
+
+            allowing(mockManager).getConfigManager();
+            will(returnValue(mockConfigManager));
+
+            allowing(mockManager).getEventManager();
+            will(returnValue(mockEventManager));
+
+            allowing(mockManager).getKeyFactory();
+            will(returnValue(mockKeyFactory));
+
+            allowing(mockManager).getSessionManager();
+            will(returnValue(mockSessionManager));
         }});
 
         return mockManager;
+    }
+
+    public static StatsKeyBuilder expectKeyConfiguration(final Mockery mockery,
+                                                         final StatsManager mockManager,
+                                                         final StatsKey mockKey,
+                                                         final StatsConfig mockConfig,
+                                                         final Tracker mockTracker) {
+        final StatsKeyBuilder mockKeyBuilder = mockery.mock(StatsKeyBuilder.class, "statsKeyBuilder_" + mockKey.getName());
+
+        mockery.checking(new Expectations() {{
+            allowing(mockKey).buildCopy();
+            will(returnValue(mockKeyBuilder));
+
+            allowing(mockManager.getKeyFactory()).createKey(mockKey.getName());
+            will(returnValue(mockKey));
+
+            allowing(mockManager.getKeyFactory()).createKeyBuilder(mockKey.getName());
+            will(returnValue(mockKeyBuilder));
+
+            allowing(mockManager.getKeyFactory()).createKeyBuilder(mockKey);
+            will(returnValue(mockKeyBuilder));
+
+            allowing(mockManager.getConfigManager()).getOrCreateConfig(mockKey);
+            will(returnValue(mockConfig));
+
+            if (mockTracker != null) {
+                allowing(mockConfig.getTrackerFactory()).createTracker(mockKey, mockManager.getSessionManager());
+                will(returnValue(mockTracker));
+            }
+        }});
+
+        return mockKeyBuilder;
     }
 }

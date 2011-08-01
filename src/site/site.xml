@@ -12,7 +12,8 @@
     <menu name="Stajistics">
       <item name="Overview" href="index.html" />      
     </menu>
-    <menu ref="modules" />
-    <menu ref="reports" />
+    <menu ref="parent" inherit="top" />
+    <menu ref="modules" inherit="top" />
+    <menu ref="reports" inherit="top" />
   </body>
 </project>

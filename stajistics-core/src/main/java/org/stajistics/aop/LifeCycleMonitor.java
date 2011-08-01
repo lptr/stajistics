@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsConstants;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
@@ -49,7 +50,7 @@ public class LifeCycleMonitor<T> {
 
     public LifeCycleMonitor(final StatsFactory factory) {
         if (factory == null) {
-            this.factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+            this.factory = Stats.getFactory(StatsConstants.DEFAULT_NAMESPACE);
         } else {
             this.factory = factory;
         }
@@ -139,7 +140,7 @@ public class LifeCycleMonitor<T> {
 
     public static void main(String[] args) throws Exception {
 
-        StatsFactory factory = StatsFactory.forNamespace(StatsConstants.DEFAULT_NAMESPACE);
+        StatsFactory factory = Stats.getFactory(StatsConstants.DEFAULT_NAMESPACE);
         LifeCycleMonitor<Object> lcm = new LifeCycleMonitor<Object>(factory);
 
         StatsKey key = factory.newKey("test");

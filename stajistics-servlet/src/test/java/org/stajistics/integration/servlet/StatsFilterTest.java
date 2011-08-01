@@ -22,6 +22,7 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.stajistics.DefaultStatsFactory;
 import org.stajistics.StatsConstants;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
@@ -48,7 +49,7 @@ public class StatsFilterTest {
         chain = new MockFilterChain();
         config = new MockFilterConfig();
 
-        statsFactory = new StatsFactory(new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE));
+        statsFactory = new DefaultStatsFactory(new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE));
 
         statsFilter = new StatsFilter();
     }

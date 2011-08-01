@@ -58,12 +58,6 @@ public abstract class AbstractStatsManagerFactoryTestCase extends AbstractStajis
     }
 
     @Test
-    public void testManagerHasNonNullTrackerLocator() {
-        StatsManager mgr = createManager();
-        assertNotNull(mgr.getTrackerLocator());
-    }
-
-    @Test
     public void testManagerHasNonNullKeyFactory() {
         StatsManager mgr = createManager();
         assertNotNull(mgr.getKeyFactory());

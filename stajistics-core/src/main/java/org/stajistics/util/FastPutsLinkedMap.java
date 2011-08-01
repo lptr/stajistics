@@ -89,8 +89,8 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
 
     @Override
     public V put(final K key, final V value) {
-        size = 0;
-        LinkedEntry<K,V> newEntry = new LinkedEntry(key, value, header, header.prev);
+        size = 0; // reset
+        LinkedEntry<K,V> newEntry = new LinkedEntry<K,V>(key, value, header, header.prev);
         newEntry.prev.next = newEntry;
         newEntry.next.prev = newEntry;
         return null;
@@ -107,7 +107,7 @@ public class FastPutsLinkedMap<K,V> extends AbstractMap<K,V> implements Serializ
     public V remove(final Object key) {
         LinkedEntry<K,V> entry = getEntry(key);
         if (entry != null) {
-            size = 0;
+            size = 0; // reset
             final V value = entry.getValue();
             do {
                 remove(entry);

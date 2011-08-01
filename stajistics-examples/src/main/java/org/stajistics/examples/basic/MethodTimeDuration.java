@@ -14,6 +14,7 @@
  */
 package org.stajistics.examples.basic;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.tracker.span.SpanTracker;
@@ -27,7 +28,7 @@ import org.stajistics.tracker.span.SpanTracker;
  */
 public class MethodTimeDuration implements Runnable {
 
-    private static StatsFactory statsFactory = StatsFactory.forClass(MethodTimeDuration.class);
+    private static StatsFactory statsFactory = Stats.getFactory(MethodTimeDuration.class);
 
     public void run() {
 

@@ -9,7 +9,7 @@ public interface UncaughtExceptionHandler extends Serializable {
 
     /**
      * 
-     * @param key
+     * @param key A key related to the Exception, or <tt>null</tt>.
      * @param e
      */
     void uncaughtException(StatsKey key, Throwable e);

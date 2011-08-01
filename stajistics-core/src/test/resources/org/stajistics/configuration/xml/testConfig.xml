@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<stajistics xmlns="http://www.stajistics.org/configuration/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<stajistics xmlns="http://www.stajistics.org/configuration/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <properties>
-        <property name="name1">value1</property>
-        <property name="name1">value1</property>
-    </properties>
+  <!-- <namespace>org.stajistics</namespace> -->
 
-    <rootConfig>
-        <sessionFactory>concurrent</sessionFactory>
-        <trackerFactory>default</trackerFactory>
-        <dataRecorderFactory>default</dataRecorderFactory>
-    </rootConfig>
+  <properties>
+    <property name="name1">value1</property>
+    <property name="name1">value1</property>
+  </properties>
 
-    <config key="org.stajistics" unit="ms" type="span">
-        <description>org.stajistics Description</description>
-        <sessionFactory>asynchronous</sessionFactory>
-        <trackerFactory>thread-local</trackerFactory>
-        <dataRecorderFactory>default</dataRecorderFactory>
-    </config>
+  <rootConfig unit="ms">
+    <sessionFactory>concurrent</sessionFactory>
+    <trackerFactory>default</trackerFactory>
+    <dataRecorderFactory>default</dataRecorderFactory>
+  </rootConfig>
+
+  <config key="org.stajistics" unit="ms" tracker-factory="" session-factory="" data-recorder-factory="">
+    org.stajistics Description
+  </config>
 
 </stajistics>

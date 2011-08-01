@@ -23,6 +23,7 @@ import javax.sql.PooledConnection;
 import javax.sql.StatementEvent;
 import javax.sql.StatementEventListener;
 
+import org.stajistics.Stats;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
 import org.stajistics.jdbc.StatsJDBCConfig;
@@ -36,7 +37,7 @@ import org.stajistics.tracker.span.SpanTracker;
  */
 public class StatsPooledConnectionWrapper extends AbstractPooledConnectionDecorator {
 
-    private static StatsFactory statsFactory = StatsFactory.forClass(StatsPooledConnectionWrapper.class);
+    private static StatsFactory statsFactory = Stats.getFactory(StatsPooledConnectionWrapper.class);
 
     private final StatsJDBCConfig config;
 

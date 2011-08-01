@@ -5,14 +5,14 @@ import static org.stajistics.Util.assertNotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.stajistics.bootstrap.DefaultStatsManagerFactory;
-import org.stajistics.bootstrap.StatsManagerFactory;
+import org.stajistics.configuration.StatsConfig;
 import org.stajistics.configuration.StatsConfigBuilder;
 import org.stajistics.tracker.NullTracker;
 import org.stajistics.tracker.Tracker;
-import org.stajistics.tracker.TrackerLocator;
+import org.stajistics.tracker.incident.CompositeIncidentTracker;
 import org.stajistics.tracker.incident.IncidentTracker;
 import org.stajistics.tracker.manual.ManualTracker;
+import org.stajistics.tracker.span.CompositeSpanTracker;
 import org.stajistics.tracker.span.SpanTracker;
 
 /**
@@ -29,116 +29,9 @@ import org.stajistics.tracker.span.SpanTracker;
  *
  * @author The Stajistics Project
  */
-public class StatsFactory {
+public interface StatsFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(StatsFactory.class);
-
-    protected static final String PROP_MANAGER_FACTORY = StatsManagerFactory.class.getName();
-    protected static final String PROP_AUTO_INIT_DEFAULT_MANAGER = StatsFactory.class.getName() + ".autoInitDefaultManager";
-
-    protected final StatsManager statsManager;
-
-    public StatsFactory(final StatsManager statsManager) {
-        assertNotNull(statsManager, "statsManager");
-        this.statsManager = statsManager;
-    }
-
-    public static StatsFactory forClass(final Class<?> aClass) {
-        assertNotNull(aClass, "aClass");
-
-        final StatsManagerRegistry reg = StatsManagerRegistry.getInstance();
-        String pkg = aClass.getPackage().getName();
-
-        do {
-            String namespace = pkg;
-            if (reg.isStatsManagerDefined(namespace)) {
-                StatsManager statsManager = reg.getStatsManager(namespace);
-                if (statsManager != null) {
-                    logger.debug("Found StatsManager at namespace '{}' for class '{}'.", namespace, aClass);
-                    return new StatsFactory(statsManager);
-                }
-            }
-
-            int i = pkg.lastIndexOf('.');
-            if (i > -1) {
-                pkg = pkg.substring(0, i);
-            } else {
-                pkg = null;
-            }
-        } while (pkg != null);
-
-        logger.debug("No matching namespaces defined for class '{}'. Attemping to use default namespace.", aClass);
-
-        return forNamespace(StatsConstants.DEFAULT_NAMESPACE);
-    }
-
-    public static StatsFactory forNamespace(final String namespace) {
-        assertNotNull(namespace, "namespace");
-        final StatsManagerRegistry reg = StatsManagerRegistry.getInstance();
-        
-        if (reg.isStatsManagerDefined(namespace)) {
-            StatsManager statsManager = reg.getStatsManager(namespace);
-            return new StatsFactory(statsManager);
-        }
-
-        // Namespace not found
-
-        if (namespace.equals(StatsConstants.DEFAULT_NAMESPACE)) {
-            boolean autoInitDefaultManager = Boolean.parseBoolean(System.getProperty(PROP_AUTO_INIT_DEFAULT_MANAGER, 
-                                                                                     Boolean.TRUE.toString()));
-            if (autoInitDefaultManager) {
-                loadDefaultStatsManager();
-                StatsManager statsManager = reg.getStatsManager(namespace);
-                return new StatsFactory(statsManager);
-            }
-        }
-
-        throw new StatsNamespaceNotFoundException(namespace);
-    }
-
-    protected static StatsManager loadDefaultStatsManager() {
-
-        StatsManager manager = null;
-
-        try {
-            StatsManagerFactory managerFactory = loadStatsManagerFactoryFromProperties();
-            if (managerFactory != null) {
-                manager = managerFactory.createManager(StatsConstants.DEFAULT_NAMESPACE);
-                if (manager == null) {
-                    logger.error(StatsManagerFactory.class.getSimpleName() + " created null " + 
-                                 StatsManager.class.getSimpleName() + ": " + managerFactory.getClass());
-                }
-            }
-
-        } catch (Exception e) {
-            logger.error("Failed to load " + StatsManager.class.getSimpleName() + ": " + e.toString(), e);
-        }
-
-        if (manager == null) {
-            manager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
-        }
-
-        return manager;
-    }
-
-    protected static StatsManagerFactory loadStatsManagerFactoryFromProperties() throws Exception {
-        StatsManagerFactory managerFactory = null;
-
-        String managerFactoryClassName = System.getProperty(PROP_MANAGER_FACTORY);
-        if (managerFactoryClassName != null) {
-            @SuppressWarnings("unchecked")
-            Class<StatsManagerFactory> managerFactoryClass =
-                    (Class<StatsManagerFactory>)Class.forName(managerFactoryClassName);
-
-            managerFactory = managerFactoryClass.newInstance();
-        }
-
-        return managerFactory;
-    }
-
-    public StatsManager getManager() {
-        return statsManager;
-    }
+    StatsManager getManager();
 
     /**
      * Determine if statistics collection is enabled.
@@ -147,9 +40,8 @@ public class StatsFactory {
      *
      * @see StatsManager#isEnabled()
      */
-    public boolean isEnabled() {
-        return statsManager.isEnabled();
-    }
+    boolean isEnabled();
+
 
     /**
      * Obtain a {@link SpanTracker} for the given <tt>keyName</tt> that can be used
@@ -160,17 +52,7 @@ public class StatsFactory {
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
-    public SpanTracker getSpanTracker(final String keyName) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getSpanTracker(newKey(keyName));
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + SpanTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-            return NullTracker.getInstance();
-        }
-    }
+    SpanTracker getSpanTracker(String keyName);
 
     /**
      * Obtain a {@link SpanTracker} for the given <tt>key</tt> that can be used
@@ -180,17 +62,7 @@ public class StatsFactory {
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
-    public SpanTracker getSpanTracker(final StatsKey key) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getSpanTracker(key);
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + SpanTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(key, e);
-            return NullTracker.getInstance();
-        }
-    }
+    SpanTracker getSpanTracker(StatsKey key);
 
     /**
      * Obtain a {@link SpanTracker} for the given <tt>keys</tt> that can be used
@@ -200,17 +72,7 @@ public class StatsFactory {
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      */
-    public SpanTracker getSpanTracker(final StatsKey... keys) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getSpanTracker(keys);
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + SpanTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-            return NullTracker.getInstance();
-        }
-    }
+    SpanTracker getSpanTracker(StatsKey... keys);
 
     /**
      * A convenience method equivalent to calling:
@@ -220,21 +82,9 @@ public class StatsFactory {
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see TrackerLocator#getSpanTracker(StatsKey)
      * @see SpanTracker#track()
      */
-    public SpanTracker track(final String keyName) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getSpanTracker(newKey(keyName))
-                               .track();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-            return NullTracker.getInstance();
-        }
-    }
+    SpanTracker track(String keyName);
 
     /**
      * A convenience method equivalent to calling:
@@ -244,21 +94,9 @@ public class StatsFactory {
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see TrackerLocator#getSpanTracker(StatsKey)
      * @see SpanTracker#track()
      */
-    public SpanTracker track(final StatsKey key) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getSpanTracker(key)
-                               .track();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(key, e);
-            return NullTracker.getInstance();
-        }
-    }
+    SpanTracker track(StatsKey key);
 
     /**
      * A convenience method equivalent to calling:
@@ -268,21 +106,9 @@ public class StatsFactory {
      * @return A {@link SpanTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see TrackerLocator#getSpanTracker(StatsKey...)
      * @see SpanTracker#track()
      */
-    public SpanTracker track(final StatsKey... keys) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getSpanTracker(keys)
-                               .track();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke track on " + SpanTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-            return NullTracker.getInstance();
-        }
-    }
+    SpanTracker track(StatsKey... keys);
 
     /**
      * Obtain an {@link IncidentTracker} for the given <tt>keyName</tt> that can be
@@ -292,19 +118,8 @@ public class StatsFactory {
      * @return An {@link IncidentTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
      *
-     * @see TrackerLocator#getIncidentTracker(StatsKey)
      */
-    public IncidentTracker getIncidentTracker(final String keyName) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getIncidentTracker(newKey(keyName));
-        } catch (Exception e) {
-            logger.error("Failed to obtain an " + IncidentTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-            return NullTracker.getInstance();
-        }
-    }
+    IncidentTracker getIncidentTracker(String keyName);
 
     /**
      * Obtain an {@link IncidentTracker} for the given <tt>key</tt> that can be
@@ -313,20 +128,8 @@ public class StatsFactory {
      * @param key The {@link StatsKey} for which to return an incident tracker.
      * @return An {@link IncidentTracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
-     *
-     * @see TrackerLocator#getIncidentTracker(StatsKey)
      */
-    public IncidentTracker getIncidentTracker(final StatsKey key) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getIncidentTracker(key);
-        } catch (Exception e) {
-            logger.error("Failed to obtain an " + IncidentTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(key, e);
-            return NullTracker.getInstance();
-        }
-    }
+    IncidentTracker getIncidentTracker(StatsKey key);
 
     /**
      * Report an incident. Equivalent to calling:
@@ -334,20 +137,9 @@ public class StatsFactory {
      *
      * @param keyName The key name for which to report an incident.
      *
-     * @see TrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
-    public void incident(final String keyName) {
-        try {
-            statsManager.getTrackerLocator()
-                        .getIncidentTracker(newKey(keyName))
-                        .incident();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke an " + IncidentTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-        }
-    }
+    void incident(String keyName);
 
     /**
      * Report an incident. Equivalent to calling:
@@ -355,20 +147,9 @@ public class StatsFactory {
      *
      * @param key The {@link StatsKey} for which to report an incident.
      *
-     * @see TrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
-    public void incident(final StatsKey key) {
-        try {
-            statsManager.getTrackerLocator()
-                        .getIncidentTracker(key)
-                        .incident();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke an " + IncidentTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(key, e);
-        }
-    }
+    void incident(final StatsKey key);
 
     /**
      * Report an incident. Equivalent to calling:
@@ -376,20 +157,9 @@ public class StatsFactory {
      *
      * @param keys The {@link StatsKey}s for which to report an incident.
      *
-     * @see TrackerLocator#getIncidentTracker(StatsKey...)
      * @see IncidentTracker#incident()
      */
-    public void incident(final StatsKey... keys) {
-        try {
-            statsManager.getTrackerLocator()
-                        .getIncidentTracker(keys)
-                        .incident();
-        } catch (Exception e) {
-            logger.error("Failed to obtain and invoke an " + IncidentTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-        }
-    }
+    void incident(final StatsKey... keys);
 
     /**
      * Report a failure that is represented by a Throwable.
@@ -397,18 +167,8 @@ public class StatsFactory {
      * @param failure The Throwable that represents the failure.
      * @param keyName The key name for which to report an incident.
      */
-    public void failure(final Throwable failure,
-                        final String keyName) {
-        try {
-            statsManager.getTrackerLocator()
-                        .getIncidentTracker(StatsKeyUtil.keyForFailure(newKey(keyName), failure))
-                        .incident();
-        } catch (Exception e) {
-            logger.error("Failed to report a failure", e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-        }
-    }
+    void failure(final Throwable failure,
+                        final String keyName);
 
     /**
      * Report a failure that is represented by a Throwable.
@@ -416,18 +176,7 @@ public class StatsFactory {
      * @param failure The Throwable that represents the failure.
      * @param key The {@link StatsKey} for which to report a failure.
      */
-    public void failure(final Throwable failure,
-                        final StatsKey key) {
-        try {
-            statsManager.getTrackerLocator()
-                        .getIncidentTracker(StatsKeyUtil.keyForFailure(key, failure))
-                        .incident();
-        } catch (Exception e) {
-            logger.error("Failed to report a failure", e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(key, e);
-        }
-    }
+    void failure(Throwable failure, StatsKey key);
 
     /**
      * Report a failure that is represented by a Throwable.
@@ -435,23 +184,7 @@ public class StatsFactory {
      * @param keys The {@link StatsKey}s for which to report a failure.
      * @param failure The Throwable that represents the failure.
      */
-    public void failure(final Throwable failure,
-                        final StatsKey... keys) {
-        try {
-            assertNotEmpty(keys, "keys");
-
-            final TrackerLocator trackerLocator = statsManager.getTrackerLocator();
-
-            for (StatsKey key : keys) {
-                trackerLocator.getIncidentTracker(StatsKeyUtil.keyForFailure(key, failure))
-                              .incident();
-            }
-        } catch (Exception e) {
-            logger.error("Failed to report a failure", e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-        }
-    }
+    void failure(Throwable failure, StatsKey... keys);
 
     /**
      * Obtain a {@link ManualTracker} for the given key <tt>keyName</tt> that can be
@@ -460,20 +193,8 @@ public class StatsFactory {
      * @param keyName The key name for which to return a manual tracker.
      * @return A {@link Tracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
-     *
-     * @see TrackerLocator#getManualTracker(StatsKey)
      */
-    public ManualTracker getManualTracker(final String keyName) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getManualTracker(newKey(keyName));
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + ManualTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-            return NullTracker.getInstance();
-        }
-    }
+    ManualTracker getManualTracker(String keyName);
 
     /**
      * Obtain a {@link ManualTracker} for the given <tt>key</tt> that can be
@@ -482,20 +203,8 @@ public class StatsFactory {
      * @param key The {@link StatsKey} for which to return a manual tracker.
      * @return A {@link Tracker} instance,
      *         or a {@link NullTracker} if an Exception occurred, never <tt>null</tt>.
-     *
-     * @see TrackerLocator#getManualTracker(StatsKey)
      */
-    public ManualTracker getManualTracker(final StatsKey key) {
-        try {
-            return statsManager.getTrackerLocator()
-                               .getManualTracker(key);
-        } catch (Exception e) {
-            logger.error("Failed to obtain a " + ManualTracker.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(key, e);
-            return NullTracker.getInstance();
-        }
-    }
+    ManualTracker getManualTracker(StatsKey key);
 
     /**
      * Create a new {@link StatsKey} from the given <tt>name</tt>.
@@ -506,17 +215,7 @@ public class StatsFactory {
      *
      * @see StatsKeyFactory#createKey(String)
      */
-    public StatsKey newKey(final String name) {
-        try {
-            return statsManager.getKeyFactory()
-                               .createKey(name);
-        } catch (Exception e) {
-            logger.error("Failed to create a " + StatsKey.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-            return NullStatsKey.getInstance();
-        }
-    }
+    StatsKey newKey(String name);
 
     /**
      * Create a new {@link StatsKeyBuilder} which can create a new {@link StatsKey}
@@ -528,17 +227,7 @@ public class StatsFactory {
      *
      * @see StatsKeyFactory#createKeyBuilder(StatsKey)
      */
-    public StatsKeyBuilder buildKey(final String name) {
-        try {
-            return statsManager.getKeyFactory()
-                               .createKeyBuilder(name);
-        } catch (Exception e) {
-            logger.error("Failed to create a " + StatsKeyBuilder.class.getSimpleName(), e);
-            statsManager.getUncaughtExceptionHandler()
-                        .uncaughtException(null, e);
-            return NullStatsKeyBuilder.getInstance();
-        }
-    }
+    StatsKeyBuilder buildKey(String name);
 
     /**
      * Create a new {@link StatsConfigBuilder} which can assemble various configurations.
@@ -547,9 +236,6 @@ public class StatsFactory {
      *
      * @see org.stajistics.configuration.StatsConfigBuilderFactory#createConfigBuilder()
      */
-    public StatsConfigBuilder buildConfig() {
-        return statsManager.getConfigBuilderFactory()
-                           .createConfigBuilder();
-    }
+    StatsConfigBuilder buildConfig();
 
 }

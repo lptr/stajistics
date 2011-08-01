@@ -26,16 +26,15 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 import org.stajistics.AbstractStajisticsTestCase;
-import org.stajistics.StatsConstants;
 import org.stajistics.StatsFactory;
 import org.stajistics.StatsKey;
-import org.stajistics.StatsManager;
+import org.stajistics.StatsKeyBuilder;
+import org.stajistics.TestUtil;
 import org.stajistics.aop.StatsSelectiveProxy.EnabledCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.MethodCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.MethodModifierCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.MethodSetCriteria;
 import org.stajistics.aop.StatsSelectiveProxy.SelectionCriteria;
-import org.stajistics.bootstrap.DefaultStatsManagerFactory;
 
 /**
  * TODO: run all StatsProxy tests against StatsSelectiveProxy
@@ -45,9 +44,9 @@ import org.stajistics.bootstrap.DefaultStatsManagerFactory;
  */
 public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
 
-    private StatsManager statsManager;
     private StatsFactory mockFactory;
     private StatsKey mockKey;
+    private StatsKeyBuilder mockKeyBuilder;
     private Service mockService;
 
     private static final Method PRIVATE_METHOD;
@@ -77,19 +76,44 @@ public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
 
     @Before
     public void setUp() {
-        // TODO: this should be _actually_ mocked
-        statsManager = new DefaultStatsManagerFactory().createManager(StatsConstants.DEFAULT_NAMESPACE);
-        mockFactory = new StatsFactory(statsManager);
-        mockKey = statsManager.getKeyFactory().createKey("test");
+        mockKey = mockery.mock(StatsKey.class, "key1");
+        TestUtil.buildStatsKeyExpectations(mockery, mockKey, "key1");
+        mockKeyBuilder = mockery.mock(StatsKeyBuilder.class);
+
+        mockFactory = mockery.mock(StatsFactory.class);
+
         mockService = mockery.mock(Service.class);
     }
 
+    // TODO: Copied from StatsProxyTest -> consolidate 
+    private StatsKey expectKeyForMethod(final String methodName) {
+        final StatsKey mockKey2 = mockery.mock(StatsKey.class, "key2");
+        TestUtil.buildStatsKeyExpectations(mockery, mockKey2, "key2");
+
+        mockery.checking(new Expectations() {{
+            allowing(mockKey).buildCopy();
+            will(returnValue(mockKeyBuilder));
+
+            one(mockKeyBuilder).withAttribute("method", methodName);
+            will(returnValue(mockKeyBuilder));
+            
+            one(mockKeyBuilder).newKey();
+            will(returnValue(mockKey2));
+        }});
+
+        return mockKey2;
+    }
+    
     @Test
     public void testInvokeWithPassingCriteria() {
+
+        expectKeyForMethod("query");
 
         final SelectionCriteria mockCriteria = mockery.mock(SelectionCriteria.class);
 
         mockery.checking(new Expectations() {{
+            ignoring(mockFactory); // We're not verifying StatsProxy behaviour here
+
             one(mockCriteria).select(with(aNonNull(Method.class)),
                                      with(any(Object[].class)));
             will(returnValue(true));
@@ -112,7 +136,7 @@ public class StatsSelectiveProxyTest extends AbstractStajisticsTestCase {
 
         mockery.checking(new Expectations() {{
             one(mockCriteria).select(with(aNonNull(Method.class)),
-                                 with(any(Object[].class)));
+                                     with(any(Object[].class)));
             will(returnValue(false));
 
             one(mockService).query();

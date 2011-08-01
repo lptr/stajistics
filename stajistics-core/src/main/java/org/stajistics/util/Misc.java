@@ -2,6 +2,7 @@ package org.stajistics.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -92,7 +93,7 @@ public final class Misc {
                                    logger + ", " +
                                    error + ", " +
                                    message + ", " +
-                                   args + ")");
+                                   Arrays.toString(args) + ")");
                 return;
             }
 

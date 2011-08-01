@@ -15,4 +15,8 @@
     <url>http://code.google.com/p/stajistics/source/browse/#svn/trunk/stajistics-core</url>
   </scm>
 
+  <properties>
+    <site.basedir>${project.parent.basedir}</site.basedir>
+  </properties>
+
 </project>
